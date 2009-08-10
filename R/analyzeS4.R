@@ -260,6 +260,7 @@ convert.orient.anlz <- function(orient) {
          "5" = "sagittal flipped")
 }
 
+
 setMethod("image", signature(x="anlz"),
           function(x, z, w, col=gray(0:128/128), xlab="", ylab="",
                    axes=FALSE, ...) {
