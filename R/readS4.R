@@ -43,10 +43,9 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1) {
 
   if (GZ) {
     if (NIFTI) {
-      ls.nii.gz <- system(paste("ls", fname), intern=TRUE, ignore.stderr=TRUE)
-      if (length(ls.nii.gz) != 0) {
+      if (file.exists(fname)) {
         if (verbose)
-          cat(paste("  fname =", fname, "\n  file =", ls.nii.gz), fill=TRUE)
+          cat(paste("  fname =", fname, "\n  file =", fname), fill=TRUE)
         nim <- read.nifti.content(sub(".nii.gz", "", fname), gzipped=TRUE,
                                   verbose=verbose, warn=warn)
         options(warn=oldwarn)
@@ -58,10 +57,9 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1) {
     }
   } else {
     if (NIFTI) {
-      ls.nii <- system(paste("ls", fname), intern=TRUE, ignore.stderr=TRUE)
-      if (length(ls.nii) != 0) {
+      if (file.exists(fname)) {
         if (verbose)
-          cat(paste("  fname =", fname, "\n  file =", ls.nii), fill=TRUE)
+          cat(paste("  fname =", fname, "\n  file =", fname), fill=TRUE)
         nim <- read.nifti.content(sub(".nii", "", fname), gzipped=FALSE,
                                   verbose=verbose, warn=warn)
         options(warn=oldwarn)
@@ -303,10 +301,9 @@ readANALYZE <- function(fname, verbose=FALSE, warn=-1) {
   GZ <- ifelse(length(grep("gz", fname)) != 0, TRUE, FALSE)
 
   if (GZ) {
-    ls.hdr.gz <- system(paste("ls", fname), intern=TRUE, ignore.stderr=TRUE)
-    if (length(ls.hdr.gz) != 0) {
+    if (file.exists(fname)) {      
       if (verbose)
-        cat(paste("  fname =", fname, "\n  file =", ls.hdr.gz), fill=TRUE)
+	cat(paste("  fname =", fname), fill=TRUE)
       aim <- read.analyze.content(sub(".hdr.gz", "", fname), gzipped=TRUE,
                                   verbose=verbose, warn=warn)
       options(warn=oldwarn)
@@ -316,20 +313,17 @@ readANALYZE <- function(fname, verbose=FALSE, warn=-1) {
       stop(paste(fname, "is not recognized."))
     }
   } else {
-    ls.hdr <- system(paste("ls", fname), intern=TRUE, ignore.stderr=TRUE)
-    if (length(ls.hdr) != 0) {
+    if (file.exists(fname)) {
       if (verbose)
-        cat(paste("  fname =", fname, "\n  file =", ls.hdr), fill=TRUE)
+        cat(paste("  fname =", fname), fill=TRUE)
       aim <- read.analyze.content(sub(".hdr", "", fname), gzipped=FALSE,
                                   verbose=verbose, warn=warn)
       options(warn=oldwarn)
       return(aim)
     } else {
-      ls.hdr.gz <- system(paste("ls ", fname, ".hdr.gz", sep=""),
-                          intern=TRUE, ignore.stderr=TRUE)
-      if (length(ls.hdr.gz) != 0) {
+      if (file.exists(paste(fname, ".hdr.gz", sep=""))) {
         if (verbose)
-          cat(paste("  fname =", fname, "\n  file  =", ls.hdr.gz), fill=TRUE)
+          cat(paste("  fname =", fname, "\n  file  =", fname,".hdr.gz", sep=""), fill=TRUE)
         aim <- read.analyze.content(fname, gzipped=TRUE, verbose=verbose,
                                     warn=warn)
         options(warn=oldwarn)
