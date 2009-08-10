@@ -124,7 +124,10 @@ convert.slice <- function(sc) {
          "6" = "Alt_Dec2")      # alternating decreasing #2
 }
 
+############################################################################
 ## Bitwise conversion subroutines
+############################################################################
+
 xyzt2space <- function (xyzt) {
   ## define XYZT_TO_SPACE(xyzt)       ( (xyzt) & 0x07 )
   require("bitops")

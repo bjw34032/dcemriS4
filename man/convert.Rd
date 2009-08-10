@@ -1,0 +1,31 @@
+\name{}
+\alias{}
+\title{}
+\description{
+}
+\usage{
+convert.datatype(dt)
+convert.intent(ic)
+convert.form(fc)
+convert.units(units)
+convert.slice(sc)
+}
+\arguments{
+  \item{dt}{}
+  \item{ic}{}
+  \item{fc}{}
+  \item{units}{}
+  \item{sc}{}
+}
+\value{
+}
+\details{
+}
+\references{
+}
+\seealso{
+}
+%\examples{
+%}
+\author{B. Whitcher <\email{bjw34032@users.sourceforge.net}>}
+%\keyword{}
