@@ -9,7 +9,6 @@
 \alias{anlz-class}
 \alias{descrip<-,anlz-method}
 \alias{descrip,anlz-method}
-\alias{image,anlz-method}
 \alias{show,anlz-method}
 
 \title{Class "anlz"}

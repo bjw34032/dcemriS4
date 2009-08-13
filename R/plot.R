@@ -155,7 +155,7 @@ setMethod("orthographic", signature(x="nifti"),
             if (is.null(zlim))
               zlim <- c(x@"cal_min", x@"cal_max")
             if (is.na(W)) { # three-dimensional array
-              oldpar <- par()
+              oldpar <- par(no.readonly=TRUE)
               par(mfrow=c(2,2), mar=rep(0,4))
               graphics::image(1:X, 1:Z, x[,xyz[2],], col=col,
                               asp=x@pixdim[4]/x@pixdim[2],
@@ -175,7 +175,7 @@ setMethod("orthographic", signature(x="nifti"),
             } else { # four-dimensional array
               if (w < 1 || w > W)
                 stop("volume \"w\" out of range")
-              oldpar <- par()
+              oldpar <- par(no.readonly=TRUE)
               par(mfrow=c(2,2), mar=rep(0,4))
               graphics::image(1:X, 1:Z, x[,xyz[2],,w], col=col,
                               asp=x@pixdim[4]/x@pixdim[2],

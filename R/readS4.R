@@ -36,39 +36,31 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE) {
   ## Warnings?
   oldwarn <- options()$warn
   options(warn=warn)
-  ## Check if any file extensions are present
-  NIFTI <- ifelse(length(grep("nii", fname)) != 0, TRUE, FALSE)
-  GZ <- ifelse(length(grep("gz", fname)) != 0, TRUE, FALSE)
 
-  if (GZ) {
-    if (NIFTI) {
-      if (file.exists(fname)) {
-        if (verbose)
-          cat(paste("  fname =", fname, "\n  file =", fname), fill=TRUE)
-        nim <- read.nifti.content(sub(".nii.gz", "", fname), gzipped=TRUE,
-                                  verbose=verbose, warn=warn, reorient=reorient)
-        options(warn=oldwarn)
-        return(nim)
-      }
-    } else {
-      options(warn=oldwarn)
-      stop(paste(fname, "is not recognized."))
-    }
-  } else {
-    if (NIFTI) {
-      if (file.exists(fname)) {
-        if (verbose)
-          cat(paste("  fname =", fname, "\n  file =", fname), fill=TRUE)
-        nim <- read.nifti.content(sub(".nii", "", fname), gzipped=FALSE,
-                                  verbose=verbose, warn=warn, reorient=reorient)
-        options(warn=oldwarn)
-        return(nim)
-      } else {
-        options(warn=oldwarn)
-        stop(paste(fname, "is not recognized."))
-      }
-    }
+  if (verbose) cat(paste("  fname =", fname), fill=TRUE)
+  ## Strip any extensions
+  fname <- sub(".gz", "", fname)
+  fname <- sub(".nii", "", fname)
+
+  ## If uncompressed files exist, then upload!
+  if (file.exists(paste(fname, "nii", sep="."))) {      
+    if (verbose)
+      cat(paste("  files = ", fname, ".nii", sep=""), fill=TRUE)
+    nim <- read.nifti.content(fname, gzipped=FALSE, verbose=verbose,
+                              warn=warn, reorient=reorient)
+    options(warn=oldwarn)
+    return(nim)
   }
+  ## If compressed files exist, then upload!
+  if (file.exists(paste(fname, "nii.gz", sep="."))) {
+    if (verbose)
+      cat(paste("  files = ", fname, ".nii.gz", sep=""), fill=TRUE)
+    nim <- read.nifti.content(fname, gzipped=TRUE, verbose=verbose,
+                              warn=warn, reorient=reorient)
+    options(warn=oldwarn)
+    return(nim)
+  }
+  invisible()
 }
 
 ############################################################################
@@ -87,6 +79,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
     fname <- paste(fname, suffix, sep=".")
     fid <- file(fname, "rb")
   }
+  if (verbose) cat("  nii   =", fname, fill=TRUE)
   ## Warnings?
   oldwarn <- options()$warn
   options(warn=warn)
@@ -187,6 +180,15 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   }
 
   n <- prod(nim@"dim_"[2:5])
+  if (onefile) {
+    close(fid)
+    fname <- sub(".hdr", ".img", fname)
+    if (gzipped) {
+      fid <- gzfile(fname, "rb")
+    } else {
+      fid <- file(fname, "rb")
+    }
+  }
   data <-
     switch(as.character(nim@"datatype"),
            "2" = readBin(fid, integer(), n, nim@"bitpix"/8, signed=FALSE,
@@ -242,44 +244,34 @@ readANALYZE <- function(fname, verbose=FALSE, warn=-1) {
   ## Warnings?
   oldwarn <- options()$warn
   options(warn=warn)
-  ## Check if any file extensions are present
-  ANLZ <- ifelse(length(grep("hdr|img", fname)) != 0, TRUE, FALSE)
-  GZ <- ifelse(length(grep("gz", fname)) != 0, TRUE, FALSE)
 
-  if (GZ) {
-    if (file.exists(fname)) {      
-      if (verbose)
-	cat(paste("  fname =", fname), fill=TRUE)
-      aim <- read.analyze.content(sub(".hdr.gz", "", fname), gzipped=TRUE,
-                                  verbose=verbose, warn=warn)
-      options(warn=oldwarn)
-      return(aim)
-    } else {
-      options(warn=oldwarn)
-      stop(paste(fname, "is not recognized."))
-    }
-  } else {
-    if (file.exists(fname)) {
-      if (verbose)
-        cat(paste("  fname =", fname), fill=TRUE)
-      aim <- read.analyze.content(sub(".hdr", "", fname), gzipped=FALSE,
-                                  verbose=verbose, warn=warn)
-      options(warn=oldwarn)
-      return(aim)
-    } else {
-      if (file.exists(paste(fname, ".hdr.gz", sep=""))) {
-        if (verbose)
-          cat(paste("  fname =", fname, "\n  file  =", fname,".hdr.gz", sep=""), fill=TRUE)
-        aim <- read.analyze.content(fname, gzipped=TRUE, verbose=verbose,
-                                    warn=warn)
-        options(warn=oldwarn)
-        return(aim)
-      } else {
-        options(warn=oldwarn)
-        stop(paste(fname, "is not recognized."))
-      }
-    }
+  if (verbose) cat(paste("  fname =", fname), fill=TRUE)
+  ## Strip any extensions
+  fname <- sub(".gz", "", fname)
+  fname <- sub(".hdr", "", fname)
+  fname <- sub(".img", "", fname)
+
+  ## If uncompressed files exist, then upload!
+  if (file.exists(paste(fname, "hdr", sep=".")) &&
+      file.exists(paste(fname, "img", sep="."))) {      
+    if (verbose)
+      cat(paste("  files = ", fname, ".{hdr,img}", sep=""), fill=TRUE)
+    aim <- read.analyze.content(fname, gzipped=FALSE, verbose=verbose,
+                                warn=warn)
+    options(warn=oldwarn)
+    return(aim)
   }
+  ## If compressed files exist, then upload!
+  if (file.exists(paste(fname, "hdr.gz", sep=".")) &&
+      file.exists(paste(fname, "img.gz", sep="."))) {      
+    if (verbose)
+      cat(paste("  files = ", fname, ".{hdr.gz,img.gz}", sep=""), fill=TRUE)
+    aim <- read.analyze.content(fname, gzipped=TRUE, verbose=verbose,
+                                warn=warn)
+    options(warn=oldwarn)
+    return(aim)
+  }
+  invisible()
 }
 
 ############################################################################
@@ -291,13 +283,12 @@ read.analyze.content <- function(fname, gzipped=TRUE, verbose=FALSE,
   ## Open header file
   if (gzipped) {
     fname <- paste(fname, "hdr.gz", sep=".")
-    if (verbose) cat("  hdr =", fname, fill=TRUE)
     fid <- gzfile(fname, "rb")
   } else {
     fname <- paste(fname, "hdr", sep=".")
-    if (verbose) cat("  hdr =", fname, fill=TRUE)
     fid <- file(fname, "rb")
   }
+  if (verbose) cat("  hdr   =", fname, fill=TRUE)
   ## Warnings?
   oldwarn <- options()$warn
   options(warn=warn)
@@ -361,12 +352,13 @@ read.analyze.content <- function(fname, gzipped=TRUE, verbose=FALSE,
   close(fid)
   ## Open image file
   if (gzipped) {
-    fname <- paste(fname, ".img.gz", sep=".")
+    fname <- sub(".hdr", ".img", fname) # paste(fname, ".img.gz", sep=".")
     fid <- gzfile(fname, "rb")
   } else {
-    fname <- paste(fname, "img", sep=".")
+    fname <- sub(".hdr", ".img", fname) # paste(fname, "img", sep=".")
     fid <- file(fname, "rb")
   }
+  if (verbose) cat("  img   =", fname, fill=TRUE)
   n <- prod(aim@"dim_"[2:5])
   data <- switch(as.character(aim@"datatype"),
                  "1" = readBin(fid, integer(), n, aim@"bitpix"/8, signed=FALSE, endian=endian),

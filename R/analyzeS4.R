@@ -172,26 +172,6 @@ setValidity("anlz", function(object) {
   else return(retval)
 })
 
-## setGeneric("img", function(object) { standardGeneric("img") })
-## setMethod("img", "anlz", function(object) { object@.Data })
-## setGeneric("img<-", function(x, value) { standardGeneric("img<-") })
-## setReplaceMethod("img", signature(x="anlz", value="array"),
-##           function(x, value) {
-##             x@.Data <- value
-##             x
-##           })
-
-## setGeneric("hdr", function(object) { standardGeneric("hdr") })
-## setMethod("hdr", "anlz", # signature(object="anlz", name="ANY"),
-##           function(object) { object@"descrip" })
-## setGeneric("hdr<-", function(x, name, value) { standardGeneric("hdr<-") })
-## setReplaceMethod("hdr", signature(x="anlz", name="character", value="ANY"),
-##           function(x, name, value) {
-##             x@name <- value
-##             validObject(x)
-##             x
-##           })
-
 #############################################################################
 ## anlz()
 #############################################################################
@@ -242,8 +222,19 @@ if (!isGeneric("descrip")) {
 setMethod("descrip", "anlz", function(object) { object@descrip })
 setGeneric("descrip<-", function(x, value) { standardGeneric("descrip<-") })
 setReplaceMethod("descrip", "anlz",
-                 function(x, value) {
-                   x@descrip <- value
-                   x
-                 })
+                 function(x, value) { x@descrip <- value ; x })
 
+#############################################################################
+## aux.file() and aux.file<-()
+#############################################################################
+
+if (!isGeneric("aux.file")) {
+  if (is.function("aux.file"))
+    setGeneric("aux.file", aux_file)
+  else
+    setGeneric("aux.file", function(object) { standardGeneric("aux.file") })
+}
+setMethod("aux.file", "anlz", function(object) { object@aux_file })
+setGeneric("aux.file<-", function(x, value) { standardGeneric("aux.file<-") })
+setReplaceMethod("aux.file", "anlz",
+                 function(x, value) { x@"aux_file" <- value ; x })
