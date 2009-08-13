@@ -33,7 +33,7 @@
 ## $ Id: $
 ##
 
-readNIfTI <- function(fname, verbose=FALSE, warn=-1) {
+readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE) {
   ## Warnings?
   oldwarn <- options()$warn
   options(warn=warn)
@@ -47,7 +47,7 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1) {
         if (verbose)
           cat(paste("  fname =", fname, "\n  file =", fname), fill=TRUE)
         nim <- read.nifti.content(sub(".nii.gz", "", fname), gzipped=TRUE,
-                                  verbose=verbose, warn=warn)
+                                  verbose=verbose, warn=warn, reorient=reorient)
         options(warn=oldwarn)
         return(nim)
       }
@@ -61,7 +61,7 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1) {
         if (verbose)
           cat(paste("  fname =", fname, "\n  file =", fname), fill=TRUE)
         nim <- read.nifti.content(sub(".nii", "", fname), gzipped=FALSE,
-                                  verbose=verbose, warn=warn)
+                                  verbose=verbose, warn=warn, reorient=reorient)
         options(warn=oldwarn)
         return(nim)
       } else {
@@ -77,7 +77,7 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1) {
 ############################################################################
 
 read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
-                               verbose=FALSE, warn=-1) {
+                               verbose=FALSE, warn=-1, reorient=FALSE) {
   ## Open appropriate file
   if (gzipped) {
     suffix <- ifelse(onefile, "nii.gz", "hdr.gz")
@@ -202,6 +202,8 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
            )
   close(fid)
 
+  ##THE SLOW BIT FOLLOWS
+
   ## 3D IMAGE (VOLUME) ORIENTATION AND LOCATION IN SPACE:
   ## There are 3 different methods by which continuous coordinates can
   ## attached to voxels.  The discussion below emphasizes 3D volumes,
@@ -218,67 +220,12 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   ## This is a right-handed coordinate system.  However, the exact
   ## direction these axes point with respect to the subject depends on
   ## qform_code (Method 2) and sform_code (Method 3).
-
   dims <- 2:(1+nim@"dim_"[1])
-
-  if (nim@"qform_code" <= 0 && nim@"sform_code" <= 0) {
-    if (verbose) cat("  dims =", nim@"dim_"[dims], fill=TRUE)
-    nim@.Data <- array(data, nim@"dim_"[dims])
+  if (reorient) {
+    nim@.Data <- reorient(nim, data, verbose)
+    nim@"reoriented" <- TRUE
   } else {
-    i <- 0:(nim@"dim_"[2]-1)
-    j <- 0:(nim@"dim_"[3]-1)
-    k <- 0:(nim@"dim_"[4]-1)
-    ijk <- cbind(rep(i, nim@"dim_"[3] * nim@"dim_"[4]),
-                 rep(rep(j, each=nim@"dim_"[2]), nim@"dim_"[4]),
-                 rep(k, each=nim@"dim_"[2] * nim@"dim_"[3]))
-    index.ijk <- (ijk[,1] +
-                  ijk[,2] * nim@"dim_"[2] +
-                  ijk[,3] * nim@"dim_"[2] * nim@"dim_"[3])
-    ## check for qform codes
-    if (nim@"qform_code" > 0) {
-      if (verbose) cat("  NIfTI-1: qform_code > 0", fill=TRUE)
-      qfac <- nim@"pixdim"[1]
-      R <- quaternion2rotation(nim@"quatern_b",
-                               nim@"quatern_c",
-                               nim@"quatern_d")
-      ## HACK!!! To ensure matrix is integer-valued
-      R <- round(R)
-      qoffset <- c(nim@"qoffset_x", nim@"qoffset_y", nim@"qoffset_z")
-      if (qfac < 0)
-        R[3,3] <- -R[3,3]
-      if (all(abs(R) == diag(3))) {
-        ## HACK!!! Multiply x-dimension for proper orientation in R
-        R[1,] <- -R[1,]
-        xyz <-
-          t(sweep(R %*% t(sweep(ijk, 2, as.array(nim@"pixdim"[2:4]), "*")),
-                  1, as.array(qoffset), "+"))
-        index.xyz <- (xyz[,1] +
-                      xyz[,2] * nim@"dim_"[2] +
-                      xyz[,3] * nim@"dim_"[2] * nim@"dim_"[3])      
-        if (verbose) cat("  dims =", nim@"dim_"[dims], fill=TRUE)
-        nim@.Data <- array(data[order(index.xyz)], nim@"dim_"[dims])
-      } else {
-        stop("-- rotation matrix is NOT (approximately) diagonal with +/- 1s --")
-      }
-    }
-    ## check for sform codes
-    if (nim@"sform_code" > 0) {
-      if (verbose) cat("  NIfTI-1: sform_code > 0", fill=TRUE)
-      xyz <- matrix(0, length(data), 3)
-      xyz[,1] <- (nim@"srow_x"[1] * ijk[,1] + nim@"srow_x"[2] * ijk[,2] +
-                  nim@"srow_x"[3] * ijk[,3] + nim@"srow_x"[4])
-      ## HACK!!! Multiply x-dimension for proper orientation in R
-      xyz[,1] <- -xyz[,1]
-      xyz[,2] <- (nim@"srow_y"[1] * ijk[,1] + nim@"srow_y"[2] * ijk[,2] +
-                  nim@"srow_y"[3] * ijk[,3] + nim@"srow_y"[4])
-      xyz[,3] <- (nim@"srow_z"[1] * ijk[,1] + nim@"srow_z"[2] * ijk[,2] +
-                  nim@"srow_z"[3] * ijk[,3] + nim@"srow_z"[4])
-      index.xyz <- (xyz[,1] +
-                    xyz[,2] * nim@"dim_"[2] +
-                    xyz[,3] * nim@"dim_"[2] * nim@"dim_"[3])
-      if (verbose) cat("  dims =", nim@"dim_"[dims], fill=TRUE)
-      nim@.Data <- array(data[order(index.xyz)], nim@"dim_"[dims])
-    }
+    nim@.Data <- array(data, nim@"dim_"[dims])
   }
 
   ## Warnings?

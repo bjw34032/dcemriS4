@@ -96,77 +96,11 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
   writeChar(nim@"magic", fid, nchar=4, eos=NULL)
   writeBin(as.integer(nim@"extender"), fid, size=1)
   ## Write image file...
-  dims <- 2:(1+nim@"dim_"[1])
-  if (nim@"qform_code" <= 0 && nim@"sform_code" <= 0) {
-    if (verbose)
-      cat("  dims =", nim@"dim_"[dims], fill=TRUE)
-    writeBin(as.vector(nim), fid, size=nim@"bitpix"/8)
+  if (nim@"reoriented") {
+    writeBin(as.vector(inverseReorient(nim), verbose), fid, size=nim@"bitpix"/8)
   } else {
-    i <- 0:(nim@"dim_"[2]-1)
-    j <- 0:(nim@"dim_"[3]-1)
-    k <- 0:(nim@"dim_"[4]-1)
-    ijk <- cbind(rep(i, nim@"dim_"[3] * nim@"dim_"[4]),
-                 rep(rep(j, each=nim@"dim_"[2]), nim@"dim_"[4]),
-                 rep(k, each=nim@"dim_"[2] * nim@"dim_"[3]))
-    index.ijk <- (ijk[,1] +
-                  ijk[,2] * nim@"dim_"[2] +
-                  ijk[,3] * nim@"dim_"[2] * nim@"dim_"[3])
-    ## check for qform codes
-    if (nim@"qform_code" > 0) {
-      if (verbose) {
-        cat("  NIfTI-1: qform_code > 0", fill=TRUE)
-        cat("  dims =", nim@"dim_"[dims], fill=TRUE)
-      }
-      qfac <- nim@"pixdim"[1]
-      R <- quaternion2rotation(nim@"quatern_b",
-                               nim@"quatern_c",
-                               nim@"quatern_d")
-      ## HACK!!! To ensure matrix is integer-valued
-      R <- round(R)
-      qoffset <- c(nim@"qoffset_x", nim@"qoffset_y", nim@"qoffset_z")
-      if (qfac < 0)
-        R[3,3] <- -R[3,3]
-      if (all(abs(R) == diag(3))) {
-        ## HACK!!! Multiply x-dimension for proper orientation in R
-        R[1,] <- -R[1,]
-        xyz <-
-          t(sweep(R %*% t(sweep(ijk, 2, as.array(nim@"pixdim"[2:4]), "*")),
-                  1, as.array(qoffset), "+"))
-        index.xyz <- (xyz[,1] +
-                      xyz[,2] * nim@"dim_"[2] +
-                      xyz[,3] * nim@"dim_"[2] * nim@"dim_"[3])      
-        if (verbose) cat("  dims =", nim@"dim_"[dims], fill=TRUE)
-        writeBin(as.vector(nim@.Data[order(index.xyz)]), fid,
-                 size=nim@"bitpix"/8)
-        ## nim@.Data <- array(data[order(index.xyz)], nim@"dim_"[dims])
-      } else {
-        stop("-- rotation matrix is NOT diagonal with +/- 1s --")
-      }
-      ## stop("-- qform_code > 0 not implemented --")
-    }
-    ## check for sform codes
-    if (nim@"sform_code" > 0) {
-      if (verbose) {
-        cat("  NIfTI-1: sform_code > 0", fill=TRUE)
-        cat("  dims =", nim@"dim_"[dims], fill=TRUE)
-      }
-      xyz <- matrix(0, length(nim@.Data), 3)
-      xyz[,1] <- (nim@"srow_x"[1] * ijk[,1] + nim@"srow_x"[2] * ijk[,2] +
-                  nim@"srow_x"[3] * ijk[,3] + nim@"srow_x"[4])
-      ## HACK!!! Multiply x-dimension for proper orientation in R
-      xyz[,1] <- -xyz[,1]
-      xyz[,2] <- (nim@"srow_y"[1] * ijk[,1] + nim@"srow_y"[2] * ijk[,2] +
-                  nim@"srow_y"[3] * ijk[,3] + nim@"srow_y"[4])
-      xyz[,3] <- (nim@"srow_z"[1] * ijk[,1] + nim@"srow_z"[2] * ijk[,2] +
-                  nim@"srow_z"[3] * ijk[,3] + nim@"srow_z"[4])
-      index.xyz <- (xyz[,1] +
-                    xyz[,2] * nim@"dim_"[2] +
-                    xyz[,3] * nim@"dim_"[2] * nim@"dim_"[3])
-      writeBin(as.vector(nim@.Data[order(index.xyz)]), fid,
-               size=nim@"bitpix"/8)
-    }
+    writeBin(as.vector(nim@.Data), fid, size=nim@"bitpix"/8)
   }
-
   close(fid)
   ## Warnings?
   options(warn=oldwarn)
