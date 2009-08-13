@@ -29,7 +29,6 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## Time-stamp: <2009-07-18 09:09:06 (bjw34032)>
 ## $ Id: $
 ##
 
@@ -120,9 +119,9 @@ writeANALYZE <- function(aim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
     stop("Ouch!")
   ## Write header file...
   if (gzipped)
-    fid <- gzfile(paste(fname, ".hdr.gz", sep=""), "wb")
+    fid <- gzfile(paste(filename, ".hdr.gz", sep=""), "wb")
   else
-    fid <- file(paste(fname, ".hdr", sep=""), "wb")
+    fid <- file(paste(filename, ".hdr", sep=""), "wb")
   
   writeBin(as.integer(aim@"sizeof_hdr"), fid, size=4)
   writeChar(aim@"db_type", fid, nchar=10, eos=NULL)

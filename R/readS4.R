@@ -29,7 +29,6 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## Time-stamp: <2009-07-18 09:11:25 (bjw34032)>
 ## $ Id: $
 ##
 
@@ -231,7 +230,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   ## Warnings?
   options(warn=oldwarn)
   ## Check validity
-  validObject(nim)
+  ## validObject(nim)
   return(nim)
 }
 

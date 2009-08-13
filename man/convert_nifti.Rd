@@ -1,3 +1,8 @@
+% Part of the dcemri package for R
+% Distributed under the BSD license: see dcemri/COPYING
+%
+% $ Id: $
+
 \name{Convert NIfTI Codes}
 \alias{convert.datatype}
 \alias{convert.intent}

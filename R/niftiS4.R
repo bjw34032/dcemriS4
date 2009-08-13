@@ -182,6 +182,10 @@ setValidity("nifti", function(object) {
   ## number of data dimensions should match dim[1]
   if (length(indices) != length(dim(object@.Data)))
     retval <- c(retval, "dim[1]/img mismatch")
+  ## 
+  if (object@"cal_min" != min(object@.Data) ||
+      object@"cal_max" != max(object@.Data))
+    retval <- c(retval, "range(img) != c(cal_min,cal_max)")
   ## pixdim[0] is required when qform_code != 0
   if (object@"qform_code" != 0 && object@pixdim[1] == 0)
     retval <- c(retval, "pixdim[1] is required")              
@@ -263,13 +267,7 @@ is.nifti <- function(x) {
 ## descrip() accessor function to @descrip
 #############################################################################
 
-if (!isGeneric("descrip")) {
-  if (is.function("descrip"))
-    fun <- descrip
-  else
-    fun <- function(object) { standardGeneric("descrip") }
-  setGeneric("descrip", fun)
-}
+setGeneric("descrip", function(object) { standardGeneric("descrip") })
 setMethod("descrip", "nifti", function(object) { object@descrip })
 setGeneric("descrip<-", function(x, value) { standardGeneric("descrip<-") })
 setReplaceMethod("descrip", "nifti",
@@ -279,13 +277,7 @@ setReplaceMethod("descrip", "nifti",
 ## aux.file() accessor function to @"aux_file"
 #############################################################################
 
-if (!isGeneric("aux.file")) {
-  if (is.function("aux.file"))
-    fun <- aux.file
-  else
-    fun <- function(object) { standardGeneric("aux.file") }
-  setGeneric("aux.file", fun)
-}
+setGeneric("aux.file", function(object) { standardGeneric("aux.file") })
 setMethod("aux.file", "nifti", function(object) { object@"aux_file" })
 setGeneric("aux.file<-", function(x, value) { standardGeneric("aux.file<-") })
 setReplaceMethod("aux.file", "nifti",

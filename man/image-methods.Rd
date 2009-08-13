@@ -5,8 +5,10 @@
 
 \name{image-methods}
 \docType{methods}
+\alias{image.nifti}
 \alias{image-methods}
 \alias{image,ANY-method}
+\alias{image,anlz-method}
 \alias{image,nifti-method}
 \title{Methods for Function `image' in Package `dcemri'}
 \description{
@@ -14,6 +16,8 @@
 }
 \usage{
 \S4method{image}{nifti}(x, z=1, w=1, col=gray(0:64/64), plot.type=c("multiple","single"),
+      xlab="", ylab="", axes=FALSE, ...)
+\S4method{image}{anlz}(x, z=1, w=1, col=gray(0:64/64), plot.type=c("multiple","single"),
       xlab="", ylab="", axes=FALSE, ...)
 }
 \arguments{
@@ -34,6 +38,7 @@
   \describe{
     \item{x = "ANY"}{Generic function: see \code{\link[graphics]{image}}.}
     \item{x = "nifti"}{Produce images for \code{x}.}
+    \item{x = "anlz"}{Produce images for \code{x}.}
   }
 }
 \details{

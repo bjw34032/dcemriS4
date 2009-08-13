@@ -7,13 +7,14 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{nifti-class}
+\alias{aux.file<-}
 \alias{aux.file<-,nifti-method}
+\alias{aux.file}
 \alias{aux.file,nifti-method}
+\alias{descrip<-}
 \alias{descrip<-,nifti-method}
+\alias{descrip}
 \alias{descrip,nifti-method}
-\alias{image,nifti-method}
-\alias{orthographic,nifti-method}
-\alias{overlay,nifti,nifti-method}
 \alias{show,nifti-method}
 
 \title{Class "nifti"}

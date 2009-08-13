@@ -34,49 +34,52 @@
 
 #############################################################################
 ## image() for class="nifti"
+## promptMethods(image, "image-methods.Rd")
 #############################################################################
 
-setMethod("image", signature(x="nifti"),
-          function(x, z=1, w=1, col=gray(0:64/64),
-                   plot.type=c("multiple","single"), zlim=NULL,
-                   xlab="", ylab="", axes=FALSE, ...) {
-            ## set dimensions
-            X <- nrow(x) ; Y <- ncol(x) ; Z <- dim(x)[3] ; W <- dim(x)[4]
-            ## check dimensions
-            if (X == 0 || Y == 0 || Z == 0)
-              stop("size of NIfTI volume is zero, nothing to plot")
-            ## check for z-limits; use internal by default
-            if (is.null(zlim))
-              zlim <- c(x@"cal_min", x@"cal_max")
-            ## single or multiple images?
-            if (plot.type[1] == "multiple")
-              index <- 1:Z
-            else
-              index <- z
-            lz <- length(index)
-            ## plotting
-            if (is.na(W)) { # three-dimensional array
-              if (z < 1 || z > Z)
-                stop("slice \"z\" out of range")
-              oldpar <- par(no.readonly=TRUE)
-              par(mfrow=ceiling(rep(sqrt(lz),2)), mar=rep(0,4))
-              for (z in index)
-                graphics:::image(1:X, 1:Y, x[,,z], col=col, zlim=zlim,
-                                 axes=axes, xlab=xlab, ylab=ylab, ...)
-            } else { # four-dimensional array
-              if (w < 1 || w > W)
-                stop("volume \"w\" out of range")
-              if (z < 1 || z > Z)
-                stop("slice \"z\" out of range")
-              oldpar <- par(no.readonly=TRUE)
-              par(mfrow=ceiling(rep(sqrt(lz),2)), mar=rep(0,4))
-              for (z in index)
-                graphics:::image(1:X, 1:Y, x[,,z,w], col=col, zlim=zlim,
-                                 axes=axes, xlab=xlab, ylab=ylab, ...)
-            }
-            par(oldpar)
-            invisible()
-          })
+image.nifti <- function(x, z=1, w=1, col=gray(0:64/64),
+                        plot.type=c("multiple","single"), zlim=NULL,
+                        xlab="", ylab="", axes=FALSE, ...) {
+  ## set dimensions
+  X <- nrow(x) ; Y <- ncol(x) ; Z <- dim(x)[3] ; W <- dim(x)[4]
+  ## check dimensions
+  if (X == 0 || Y == 0 || Z == 0)
+    stop("size of NIfTI volume is zero, nothing to plot")
+  ## check for z-limits; use internal by default
+  if (is.null(zlim))
+    zlim <- c(x@"cal_min", x@"cal_max")
+  ## single or multiple images?
+  if (plot.type[1] == "multiple")
+    index <- 1:Z
+  else
+    index <- z
+  lz <- length(index)
+  ## plotting
+  if (is.na(W)) { # three-dimensional array
+    if (z < 1 || z > Z)
+      stop("slice \"z\" out of range")
+    oldpar <- par(no.readonly=TRUE)
+    par(mfrow=ceiling(rep(sqrt(lz),2)), mar=rep(0,4))
+    for (z in index)
+      graphics:::image(1:X, 1:Y, x[,,z], col=col, zlim=zlim,
+                       axes=axes, xlab=xlab, ylab=ylab, ...)
+  } else { # four-dimensional array
+    if (w < 1 || w > W)
+      stop("volume \"w\" out of range")
+    if (z < 1 || z > Z)
+      stop("slice \"z\" out of range")
+    oldpar <- par(no.readonly=TRUE)
+    par(mfrow=ceiling(rep(sqrt(lz),2)), mar=rep(0,4))
+    for (z in index)
+      graphics:::image(1:X, 1:Y, x[,,z,w], col=col, zlim=zlim,
+                       axes=axes, xlab=xlab, ylab=ylab, ...)
+  }
+  par(oldpar)
+  invisible()
+}
+
+setMethod("image", signature(x="nifti"), image.nifti)
+setMethod("image", signature(x="anlz"), image.nifti)
 
 #############################################################################
 ## overlay() for class="nifti"

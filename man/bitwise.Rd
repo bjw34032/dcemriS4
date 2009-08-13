@@ -1,3 +1,8 @@
+% Part of the dcemri package for R
+% Distributed under the BSD license: see dcemri/COPYING
+%
+% $ Id: $
+
 \name{Bitwise Conversion Subroutines}
 \alias{xyzt2space}
 \alias{xyzt2time}

@@ -29,6 +29,7 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
+## $ Id: $
 ##
 
 #############################################################################
@@ -191,6 +192,10 @@ setValidity("anlz", function(object) {
 ##             x
 ##           })
 
+#############################################################################
+## anlz()
+#############################################################################
+
 anlz <- function(img=array(0, dim=rep(1,4)), dim, ...) {
   if (missing(dim)) {
     if (is.array(img))
@@ -213,6 +218,10 @@ anlz <- function(img=array(0, dim=rep(1,4)), dim, ...) {
   return(obj)
 }
 
+#############################################################################
+## anlz()
+#############################################################################
+
 is.anlz <- function(x) {
   if (!is(x, "anlz"))
     return(FALSE)
@@ -220,12 +229,15 @@ is.anlz <- function(x) {
     return (TRUE)
 }
 
+#############################################################################
+## descrip() and descrip<-()
+#############################################################################
+
 if (!isGeneric("descrip")) {
   if (is.function("descrip"))
-     fun <- descrip
+    setGeneric("descrip", descrip)
   else
-    fun <- function(object) { standardGeneric("descrip") }
-  setGeneric("descrip", fun)
+    setGeneric("descrip", function(object) { standardGeneric("descrip") })
 }
 setMethod("descrip", "anlz", function(object) { object@descrip })
 setGeneric("descrip<-", function(x, value) { standardGeneric("descrip<-") })
@@ -234,47 +246,4 @@ setReplaceMethod("descrip", "anlz",
                    x@descrip <- value
                    x
                  })
-
-convert.datatype.anlz <- function(dt) {
-  switch(as.character(dt),
-         "0" = "UNKNOWN",
-         "1" = "BINARY",
-         "2" = "UNSIGNED_CHAR",
-         "4" = "SIGNED_SHORT",
-         "8" = "SIGNED_INT",
-         "16" = "FLOAT",
-         "32" = "COMPLEX",
-         "64" = "DOUBLE",
-         "128" = "RGB",
-         "255" = "ALL")
-}
-
-convert.orient.anlz <- function(orient) {
-  ## orient: slice orientation for this dataset.
-  switch(orient,
-         "0" = "transverse unflipped",
-         "1" = "coronal unflipped",
-         "2" = "sagittal unflipped",
-         "3" = "transverse flipped",
-         "4" = "coronal flipped",
-         "5" = "sagittal flipped")
-}
-
-
-setMethod("image", signature(x="anlz"),
-          function(x, z, w, col=gray(0:128/128), xlab="", ylab="",
-                   axes=FALSE, ...) {
-            X <- nrow(x) ; Y <- ncol(x) ; Z <- nsli(x) ; W <- ntim(x)
-            if (X == 0 || Y == 0 || Z == 0)
-              stop("size of ANALYZE volume is zero, nothing to plot")
-            if (missing(z)) {
-              if (Z > 1)
-                warning("missing slice for ANALYZE volume, assuming \"z = 1\"")
-              z <- 1
-            }
-            if (z < 1 || z > Z)
-              stop("slice \"z\" out of range")
-            graphics:::image(1:X, 1:Y, x[,,z], col=col, axes=axes,
-                             xlab=xlab, ylab=ylab, ...)
-          })
 
