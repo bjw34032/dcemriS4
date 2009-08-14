@@ -46,8 +46,11 @@ image.nifti <- function(x, z=1, w=1, col=gray(0:64/64),
   if (X == 0 || Y == 0 || Z == 0)
     stop("size of NIfTI volume is zero, nothing to plot")
   ## check for z-limits; use internal by default
-  if (is.null(zlim))
+  if (is.null(zlim)) {
     zlim <- c(x@"cal_min", x@"cal_max")
+    if (max(zlim) == 0)
+      zlim <- c(x@"glmin", x@"glmax")
+  }
   ## single or multiple images?
   if (plot.type[1] == "multiple")
     index <- 1:Z
@@ -99,11 +102,17 @@ setMethod("overlay", signature(x="nifti", y="nifti"),
             if (X == 0 || Y == 0 || Z == 0)
               stop("size of NIfTI volume is zero, nothing to plot")
             ## check for z-limits in x; use internal by default
-            if (is.null(zlim.x))
+            if (is.null(zlim.x)) {
               zlim.x <- c(x@"cal_min", x@"cal_max")
+              if (max(zlim.x) == 0)
+                zlim.x <- c(x@"glmin", x@"glmax")
+            }
             ## check for z-limits in y; use internal by default
-            if (is.null(zlim.y))
+            if (is.null(zlim.y)) {
               zlim.y <- c(y@"cal_min", y@"cal_max")
+              if (max(zlim.y) == 0)
+                zlim.y <- c(x@"glmin", x@"glmax")
+            }
             if (plot.type[1] == "multiple")
               index <- 1:Z
             else
@@ -115,10 +124,10 @@ setMethod("overlay", signature(x="nifti", y="nifti"),
               oldpar <- par(no.readonly=TRUE)
               par(mfrow=ceiling(rep(sqrt(lz),2)), mar=rep(0,4))
               for (z in index) {
-                graphics:::image(1:X, 1:Y, x[,,z], col=col.x, zlim=zlim.x,
-                                 axes=axes, xlab=xlab, ylab=ylab, ...)
-                graphics:::image(1:X, 1:Y, y[,,z], col=col.y, zlim=zlim.y,
-                                 add=TRUE)
+                graphics::image(1:X, 1:Y, x[,,z], col=col.x, zlim=zlim.x,
+                                axes=axes, xlab=xlab, ylab=ylab, ...)
+                graphics::image(1:X, 1:Y, y[,,z], col=col.y, zlim=zlim.y,
+                                add=TRUE)
               }
             } else { # four-dimensional array
               if (w < 1 || w > W)
@@ -128,10 +137,10 @@ setMethod("overlay", signature(x="nifti", y="nifti"),
               oldpar <- par(no.readonly=TRUE)
               par(mfrow=ceiling(rep(sqrt(lz),2)), mar=rep(0,4))
               for (z in index) {
-                graphics:::image(1:X, 1:Y, x[,,z,w], col=col.x, zlim=zlim.x,
-                                 axes=axes, xlab=xlab, ylab=ylab, ...)
-                graphics:::image(1:X, 1:Y, y[,,z], col=col.y, zlim=zlim.y,
-                                 add=TRUE)
+                graphics::image(1:X, 1:Y, x[,,z,w], col=col.x, zlim=zlim.x,
+                                axes=axes, xlab=xlab, ylab=ylab, ...)
+                graphics::image(1:X, 1:Y, y[,,z], col=col.y, zlim=zlim.y,
+                                add=TRUE)
               }
             }
             par(oldpar)
@@ -148,12 +157,18 @@ setMethod("orthographic", signature(x="nifti"),
                    zlim=NULL, col=gray(0:64/64), xlab="", ylab="",
                    axes=FALSE, ...) {
             X <- nrow(x) ; Y <- ncol(x) ; Z <- dim(x)[3] ; W <- dim(x)[4]
+            ## Center crosshairs if not specified
             if (is.null(xyz))
               xyz <- ceiling(c(X,Y,Z)/2)
+            ## check dimensions
             if (X == 0 || Y == 0 || Z == 0)
               stop("size of NIfTI volume is zero, nothing to plot")
-            if (is.null(zlim))
+            ## check for z-limits in x; use internal by default
+            if (is.null(zlim)) {
               zlim <- c(x@"cal_min", x@"cal_max")
+              if (max(zlim) == 0)
+                zlim <- c(x@"glmin", x@"glmax")
+            }
             if (is.na(W)) { # three-dimensional array
               oldpar <- par(no.readonly=TRUE)
               par(mfrow=c(2,2), mar=rep(0,4))

@@ -132,11 +132,16 @@ setClass("anlz",
 setMethod("show", "anlz", function(object) {
   cat("ANALYZE 7.5 format", fill=TRUE)
   cat("  Type            :", class(object), fill=TRUE)
-  cat("  Data Type       : ", object@"datatype", " (", convert.datatype.anlz(object@"datatype"), ")", sep="", fill=TRUE)
+  cat("  Data Type       : ", object@"datatype", " (",
+      convert.datatype.anlz(object@"datatype"), ")", sep="", fill=TRUE)
   cat("  Bits per Pixel  :", object@"bitpix", fill=TRUE)
-  cat("  Orient          : ", object@"orient", " (", convert.orient.anlz(object@"orient"), ")", sep="", fill=TRUE)
-  cat("  Dimension       :", paste(object@"dim_"[2:(1+object@"dim_"[1])], collapse=" x "), fill=TRUE)
-  cat("  Pixel Dimension :", paste(round(object@"pixdim"[2:(1+object@"dim_"[1])], 2), collapse=" x "), fill=TRUE)
+  cat("  Orient          : ", object@"orient", " (",
+      convert.orient.anlz(object@"orient"), ")", sep="", fill=TRUE)
+  cat("  Dimension       :",
+      paste(object@"dim_"[2:(1+object@"dim_"[1])], collapse=" x "), fill=TRUE)
+  cat("  Pixel Dimension :",
+      paste(round(object@"pixdim"[2:(1+object@"dim_"[1])], 2),
+            collapse=" x "), fill=TRUE)
   cat("  Voxel Units     :", object@"vox_units", fill=TRUE)
 })
 

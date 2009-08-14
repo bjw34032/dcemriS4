@@ -19,7 +19,8 @@ convert.orient.anlz <- function(orientation) {
          "2" = "sagittal unflipped",
          "3" = "transverse flipped",
          "4" = "coronal flipped",
-         "5" = "sagittal flipped")
+         "5" = "sagittal flipped",
+         "unknown")
 }
 
 
