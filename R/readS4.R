@@ -29,7 +29,7 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $ Id: $
+## $Id: $
 ##
 
 readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE) {
@@ -42,23 +42,28 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE) {
   fname <- sub(".gz", "", fname)
   fname <- sub(".nii", "", fname)
 
-  ## If uncompressed files exist, then upload!
-  if (file.exists(paste(fname, "nii", sep="."))) {      
-    if (verbose)
-      cat(paste("  files = ", fname, ".nii", sep=""), fill=TRUE)
-    nim <- read.nifti.content(fname, gzipped=FALSE, verbose=verbose,
-                              warn=warn, reorient=reorient)
-    options(warn=oldwarn)
-    return(nim)
-  }
-  ## If compressed files exist, then upload!
-  if (file.exists(paste(fname, "nii.gz", sep="."))) {
-    if (verbose)
-      cat(paste("  files = ", fname, ".nii.gz", sep=""), fill=TRUE)
-    nim <- read.nifti.content(fname, gzipped=TRUE, verbose=verbose,
-                              warn=warn, reorient=reorient)
-    options(warn=oldwarn)
-    return(nim)
+  if (file.exists(paste(fname, "nii", sep=".")) &&
+      file.exists(paste(fname, "nii.gz", sep="."))) {
+    stop("-- Both compressed and uncompressed files exist! --")
+  } else {
+    ## If uncompressed files exist, then upload!
+    if (file.exists(paste(fname, "nii", sep="."))) {      
+      if (verbose)
+        cat(paste("  files = ", fname, ".nii", sep=""), fill=TRUE)
+      nim <- read.nifti.content(fname, gzipped=FALSE, verbose=verbose,
+                                warn=warn, reorient=reorient)
+      options(warn=oldwarn)
+      return(nim)
+    }
+    ## If compressed files exist, then upload!
+    if (file.exists(paste(fname, "nii.gz", sep="."))) {
+      if (verbose)
+        cat(paste("  files = ", fname, ".nii.gz", sep=""), fill=TRUE)
+      nim <- read.nifti.content(fname, gzipped=TRUE, verbose=verbose,
+                                warn=warn, reorient=reorient)
+      options(warn=oldwarn)
+      return(nim)
+    }
   }
   invisible()
 }
@@ -180,7 +185,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   }
 
   n <- prod(nim@"dim_"[2:5])
-  if (onefile) {
+  if (!onefile) {
     close(fid)
     fname <- sub(".hdr", ".img", fname)
     if (gzipped) {
