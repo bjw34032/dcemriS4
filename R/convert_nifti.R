@@ -1,20 +1,42 @@
+
+nifti.datatypes <- list(
+    UINT8= 2,
+    INT16= 4,
+    INT32= 8,
+    FLOAT32= 16,
+    COMPLEX64= 32,
+    FLOAT64= 64,
+    RGB24= 128,
+    INT8= 256,
+    UINT16= 512,
+    UINT32= 768,
+    INT64= 1024,
+    UINT64= 1280,
+    FLOAT128= 1536,
+    COMPLEX128= 1792,
+    COMPLEX256= 2048,
+    RGBA32= 2304)
+
+nifti.datatypes.bitsperpix <- list(
+	UINT8=8,
+	INT8=8,
+	UINT16=16,
+	INT16=16,
+	UINT32=32,
+	INT32=32,
+	UINT64=64,
+	INT64=64,
+	FLOAT32=32,
+	FLOAT64=64,
+	FLOAT128=128,
+	COMPLEX64=64,
+	COMPLEX128=128,
+	COMPLEX256=256,
+	RGB24=24,
+	RGBA32=32)
+
 convert.datatype <- function(datatype) {
-  switch(as.character(datatype),
-         "2" = "UINT8",
-         "4" = "INT16",
-         "8" = "INT32",
-         "16" = "FLOAT32",
-         "32" = "COMPLEX64",
-         "64" = "FLOAT64",
-         "128" = "RGB24",
-         "256" = "INT8",
-         "512" = "UINT16",
-         "768" = "UINT32",
-         "1024" = "INT64",
-         "1280" = "UINT64",
-         "1536" = "FLOAT128",
-         "1792" = "COMPLEX128",
-         "2048" = "COMPLEX256")
+  names(which(nifti.datatypes == datatype))
 }
 
 convert.intent <- function(intent.code) {
@@ -125,3 +147,60 @@ dim2slice <- function(diminfo) {
   require("bitops")
   bitAnd(bitShiftR(diminfo, 4), 3)
 }
+
+as.nifti <- function(from, value=NULL) {
+  integertype <- function(from) {
+    intranges <- list(
+	"BINARY"=c(0,1),
+	"UINT8"=c(0, 255),
+	"INT16"=c(-32768,32767),
+	"INT32"=c(-2147483648, 2147483647))
+    fromRange <- range(from)
+    for (i in 1:length(intranges)) {
+      if (fromRange[1] >= intranges[[i]][1] &&
+	  fromRange[2]<= intranges[[i]][2]) {
+	return(names(intranges)[i])
+      }
+    }
+
+    warning("Range too large to be kept as integer forcing float")
+    floattype(from)
+  }
+
+  floattype <- function(from) {
+    return("FLOAT32")
+  }
+
+
+  if (is.null(value)) {
+    nim <- nifti()
+  } else {
+    nim <- value
+  }
+  # Determine a sensible datatype
+  if (is.array(from)) {
+    dataClass <- class(from[1])
+    datatypeString <- switch(dataClass,
+	logical="BINARY",
+	integer=integertype(from),
+	numeric=floattype(from),
+	stop("Can't transform data in from: ",class(from[1]))
+	)
+
+    nim@"data_type" <- datatypeString
+    nim@"datatype" <- nifti.datatypes[[datatypeString]]
+    nim@"bitpix" <- nifti.datatypes.bitsperpix[[datatypeString]]
+    nim@"cal_min" <- min(from)
+    nim@"cal_max" <- max(from)
+    nim@"dim_" <- c(length(dim(from)),dim(from))
+    if (length(nim@"dim_") < 8 ) {
+      nim@"dim_" <- c(nim@"dim_", rep(1, 8 - length(nim@"dim_")))
+    }
+    
+    nim@.Data<-from
+  } else {
+    warning("not an array")
+  }
+  return(nim)
+}
+setAs("array", "nifti", function(from) { as.nifti(from) }, as.nifti)
