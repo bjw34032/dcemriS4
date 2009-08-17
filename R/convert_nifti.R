@@ -40,41 +40,41 @@ convert.datatype <- function(datatype) {
 }
 
 nifti.intent.code <- list(
-         "None"= "0",
-         "Correl"= "2",
-         "Ttest"= "3",
-         "Ftest"= "4",
-         "Zscore"= "5",
-         "Chisq"= "6",
-         "Beta"= "7",
-         "Binom"= "8",
-         "Gamma"= "9",
-         "Poisson"= "10",
-         "Normal"= "11",
-         "Ftest_Nonc"= "12",
-         "Chisq_Nonc"= "13",
-         "Logistic"= "14",
-         "Laplace"= "15",
-         "Uniform"= "16",
-         "Ttest_Nonc"= "17",
-         "Weibull"= "18",
-         "Chi"= "19",
-         "Invgauss"= "20",
-         "Extval"= "21",
-         "Pval"= "22",
-         "Logpval"= "23",
-         "Log10pval"= "24",
-         "Estimate"= "1001",      # estimate of some parameter
-         "Label"= "1002",         # index into some set of labels
-         "Neuroname"= "1003",     # index into the NeuroNames labels set
-         "Genmatrix"= "1004",     # M x N matrix at each voxel
-         "Symmatrix"= "1005",     # N x N symmetric matrix at each voxel
-         "Dispvect"= "1006",      # a displacement field
-         "Vector"= "1007",        # a displacement vector
-         "Pointset"= "1008",      # a spatial coordinate
-         "Triangle"= "1009",      # triple of indexes
-         "Quaternion"= "1010",    # a quaternion
-         "Dimless"= "1011")       # Dimensionless value - no params
+         "None"= 0,
+         "Correl"= 2,
+         "Ttest"= 3,
+         "Ftest"= 4,
+         "Zscore"= 5,
+         "Chisq"= 6,
+         "Beta"= 7,
+         "Binom"= 8,
+         "Gamma"= 9,
+         "Poisson"= 10,
+         "Normal"= 11,
+         "Ftest_Nonc"= 12,
+         "Chisq_Nonc"= 13,
+         "Logistic"= 14,
+         "Laplace"= 15,
+         "Uniform"= 16,
+         "Ttest_Nonc"= 17,
+         "Weibull"= 18,
+         "Chi"= 19,
+         "Invgauss"= 20,
+         "Extval"= 21,
+         "Pval"= 22,
+         "Logpval"= 23,
+         "Log10pval"= 24,
+         "Estimate"= 1001,      # estimate of some parameter
+         "Label"= 1002,         # index into some set of labels
+         "Neuroname"= 1003,     # index into the NeuroNames labels set
+         "Genmatrix"= 1004,     # M x N matrix at each voxel
+         "Symmatrix"= 1005,     # N x N symmetric matrix at each voxel
+         "Dispvect"= 1006,      # a displacement field
+         "Vector"= 1007,        # a displacement vector
+         "Pointset"= 1008,      # a spatial coordinate
+         "Triangle"= 1009,      # triple of indexes
+         "Quaternion"= 1010,    # a quaternion
+         "Dimless"= 1011)       # Dimensionless value - no params
 
 convert.intent <- function(intent.code) {
   names(which(nifti.intent.code == intent.code))
@@ -198,6 +198,18 @@ as.nifti <- function(from, value=NULL) {
     }
     
     nim@.Data<-from
+  } else if (is.list(from)) {
+    nim <- lapply(from, function(x) { as.nifti(x, value) })
+    lapply(names(from), function(x) {
+	niftiobject <- nim[[x]]
+	if (is.nifti(niftiobject)) {
+	  niftiobject@"intent_code" <- nifti.intent.code[["Estimate"]]
+	  niftiobject@"intent_name" <- substr(x,1,15)
+	}
+      })
+  } else if (is.vector(from)) {
+    # coerce as array?
+    nim <- as.nifti(array(from), value)
   } else {
     warning("not an array")
   }
@@ -205,3 +217,5 @@ as.nifti <- function(from, value=NULL) {
 }
 
 setAs("array", "nifti", function(from) { as.nifti(from) }, as.nifti)
+setAs("list", "nifti", function(from) {as.nifti(from) }, as.nifti)
+setAs("vector", "nifti", function(from) {as.nifti(from) }, as.nifti)
