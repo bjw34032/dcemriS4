@@ -150,11 +150,10 @@ dim2slice <- function(diminfo) {
 
 as.nifti <- function(from, value=NULL) {
   integertype <- function(from) {
-    intranges <- list(
-	"BINARY"=c(0,1),
-	"UINT8"=c(0, 255),
-	"INT16"=c(-32768,32767),
-	"INT32"=c(-2147483648, 2147483647))
+    intranges <- list("BINARY" = c(0,1),
+                      "UINT8" = c(0,255),
+                      "INT16" = c(-32768,32767),
+                      "INT32" = c(-2147483648,2147483647))
     fromRange <- range(from)
     for (i in 1:length(intranges)) {
       if (fromRange[1] >= intranges[[i]][1] &&
@@ -162,7 +161,6 @@ as.nifti <- function(from, value=NULL) {
 	return(names(intranges)[i])
       }
     }
-
     warning("Range too large to be kept as integer forcing float")
     floattype(from)
   }
@@ -203,4 +201,5 @@ as.nifti <- function(from, value=NULL) {
   }
   return(nim)
 }
+
 setAs("array", "nifti", function(from) { as.nifti(from) }, as.nifti)

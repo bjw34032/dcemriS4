@@ -1,7 +1,7 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
 %
-% $ Id: $
+% $Id: $
 
 \name{nifti-class}
 \Rdversion{1.1}
