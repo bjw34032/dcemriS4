@@ -211,7 +211,8 @@ as.nifti <- function(from, value=NULL) {
     # coerce as array?
     nim <- as.nifti(array(from), value)
   } else {
-    warning("not an array")
+    cat("Warning cannot convert class=", class(from), " to nifti object.\n")
+    nim <- from
   }
   return(nim)
 }
