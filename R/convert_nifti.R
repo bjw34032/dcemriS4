@@ -72,7 +72,7 @@ nifti.intent.code <- list(
          "Dispvect"= "1006",      # a displacement field
          "Vector"= "1007",        # a displacement vector
          "Pointset"= "1008",      # a spatial coordinate
-         "Triangle"= "1009",      # triple of indexes 
+         "Triangle"= "1009",      # triple of indexes
          "Quaternion"= "1010",    # a quaternion
          "Dimless"= "1011")       # Dimensionless value - no params
 

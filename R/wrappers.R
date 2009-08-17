@@ -12,11 +12,11 @@ dcemri.lm.s4 <- function(nifticonc, time, mask, model="extended", aif=NULL,
   lm.fit$time <- NULL
 
   s4.fit <- lapply(lm.fit, function(x) { as.nifti(x, nifticonc) })
-  lapply(names(s4.fit), function(x) { 
+  lapply(names(s4.fit), function(x) {
 	niftiobject <- s4.fit[[x]]
 	niftiobject@"intent_code" <- nifit.intent.code[["Estimate"]]
 	niftiobject@"intent_name" <- substr(x,1,15)
-      }) 
+      })
 
   s4.fit[["time"]] <- time
   return(s4.fit)
