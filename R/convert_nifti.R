@@ -39,43 +39,45 @@ convert.datatype <- function(datatype) {
   names(which(nifti.datatypes == datatype))
 }
 
+nifti.intent.code <- list(
+         "None"= "0",
+         "Correl"= "2",
+         "Ttest"= "3",
+         "Ftest"= "4",
+         "Zscore"= "5",
+         "Chisq"= "6",
+         "Beta"= "7",
+         "Binom"= "8",
+         "Gamma"= "9",
+         "Poisson"= "10",
+         "Normal"= "11",
+         "Ftest_Nonc"= "12",
+         "Chisq_Nonc"= "13",
+         "Logistic"= "14",
+         "Laplace"= "15",
+         "Uniform"= "16",
+         "Ttest_Nonc"= "17",
+         "Weibull"= "18",
+         "Chi"= "19",
+         "Invgauss"= "20",
+         "Extval"= "21",
+         "Pval"= "22",
+         "Logpval"= "23",
+         "Log10pval"= "24",
+         "Estimate"= "1001",      # estimate of some parameter
+         "Label"= "1002",         # index into some set of labels
+         "Neuroname"= "1003",     # index into the NeuroNames labels set
+         "Genmatrix"= "1004",     # M x N matrix at each voxel
+         "Symmatrix"= "1005",     # N x N symmetric matrix at each voxel
+         "Dispvect"= "1006",      # a displacement field
+         "Vector"= "1007",        # a displacement vector
+         "Pointset"= "1008",      # a spatial coordinate
+         "Triangle"= "1009",      # triple of indexes 
+         "Quaternion"= "1010",    # a quaternion
+         "Dimless"= "1011")       # Dimensionless value - no params
+
 convert.intent <- function(intent.code) {
-  switch(as.character(intent.code),
-         "0" = "None",
-         "2" = "Correl",
-         "3" = "Ttest",
-         "4" = "Ftest",
-         "5" = "Zscore",
-         "6" = "Chisq",
-         "7" = "Beta",
-         "8" = "Binom",
-         "9" = "Gamma",
-         "10" = "Poisson",
-         "11" = "Normal",
-         "12" = "Ftest_Nonc",
-         "13" = "Chisq_Nonc",
-         "14" = "Logistic",
-         "15" = "Laplace",
-         "16" = "Uniform",
-         "17" = "Ttest_Nonc",
-         "18" = "Weibull",
-         "19" = "Chi",
-         "20" = "Invgauss",
-         "21" = "Extval",
-         "22" = "Pval",
-         "23" = "Logpval",
-         "24" = "Log10pval",
-         "1001" = "Estimate",      # estimate of some parameter
-         "1002" = "Label",         # index into some set of labels
-         "1003" = "Neuroname",     # index into the NeuroNames labels set
-         "1004" = "Genmatrix",     # M x N matrix at each voxel
-         "1005" = "Symmatrix",     # N x N symmetric matrix at each voxel
-         "1006" = "Dispvect",      # a displacement field
-         "1007" = "Vector",        # a displacement vector
-         "1008" = "Pointset",      # a spatial coordinate
-         "1009" = "Triangle",      # triple of indexes 
-         "1010" = "Quaternion",    # a quaternion
-         "1011" = "Dimless")       # Dimensionless value - no params
+  names(which(nifti.intent.code == intent.code))
 }
 
 convert.form <- function(form.code) {
