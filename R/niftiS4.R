@@ -134,13 +134,16 @@ setClass("nifti",
 #############################################################################
 
 setClass("niftiExtension",
+         representation(extensions="list"),
+         prototype(extensions=list()),
+         contains="nifti")
+setClass("niftiExtensionSection",
          representation(esize="numeric",
                         ecode="numeric",
                         edata="character"),
          prototype(esize=numeric(1),
                    ecode=numeric(1),
-                   edata=""),
-         contains="nifti")
+                   edata=""))
 
 #############################################################################
 ## setMethod("show", "nifti")
@@ -208,7 +211,32 @@ setValidity("nifti", function(object) {
   if (is.null(retval)) return(TRUE)
   else return(retval)
 })
-
+setValidity("niftiExtension", function(object) {
+      ## Allegedly setValidity will always check for superclasses
+      ## So we need only check that the list is empty or only contains niftiExtensionSections and check the validity of each of those
+      retval <- NULL
+      validSection <- getValidity(getClassDef("niftiExtensionSection"))
+      lapply(object@"extensions", function(x) { 
+	    if (!is(x, "niftiExtensionSection")) {
+	      retval <<- c(retval, paste("@extensions list contains non-niftiExtensionSection element:", class(x)))
+	    } else if (!(validSection(x) == TRUE)) {
+	      retval <<- c(retval, validSection(x))
+	    }
+	  })
+      if (is.null(retval)) return (TRUE)
+      else return(retval)
+    })
+setValidity("niftiExtensionSection", function(object) {
+      retval <- NULL
+      if (object@esize %% 16 != 0) {
+	retval <- c(retval, "esize is not a multiple of 16")
+      }
+      if ((object@esize - 8) < nchar(object@edata, type="bytes")) {
+	retval <- c(retval, "esize is too small for the data contained within the section")
+      }
+      if (is.null(retval)) return (TRUE)
+      else return(retval)
+    })
 ## setGeneric("img", function(object) { standardGeneric("img") })
 ## setMethod("img", "nifti", function(object) { object@.Data })
 ## setGeneric("img<-", function(x, value) { standardGeneric("img<-") })

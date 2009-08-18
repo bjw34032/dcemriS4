@@ -169,13 +169,13 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   ## proceeds (potentially) to the end of the file.
   if (nim@"extender"[1] > 0 || nim@"vox_offset" > 352) {
     nimext <- as(nim, "niftiExtension")
-    i <- 1
-    while (seek(fid) < nim@"vox_offset" && i < 2) {
-      nimext@esize <- readBin(fid, integer(), size=4, endian=endian)
-      nimext@ecode <- readBin(fid, integer(), size=4, endian=endian)
-      nimext@edata <- rawToChar(readBin(fid, "raw", n=nimext@esize-8,
+    while (seek(fid) < nim@"vox_offset" ) {
+      nimextsec <- new("niftiExtensionSection")
+      nimextsec@esize <- readBin(fid, integer(), size=4, endian=endian)
+      nimextsec@ecode <- readBin(fid, integer(), size=4, endian=endian)
+      nimextsec@edata <- rawToChar(readBin(fid, "raw", n=nimextsec@esize-8,
                                         endian=endian))
-      i <- i + 1
+      nimext@extensions <- c(nimext@extensions, nimextsec)
     }
     if (seek(fid) < nim@"vox_offset")
       stop("-- multiple extensions have been detected, not supported --")
