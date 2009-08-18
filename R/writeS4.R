@@ -33,10 +33,6 @@
 ##
 
 writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
-  ## Extensions?
-  if (nim@"extender"[1] > 0 || nim@"vox_offset" > 352) {
-    stop("-- extensions are not currently supported! --")
-  }
   ## Warnings?
   oldwarn <- options()$warn
   options(warn=warn)
@@ -94,6 +90,16 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
   writeChar(nim@"intent_name", fid, nchar=16, eos=NULL)
   writeChar(nim@"magic", fid, nchar=4, eos=NULL)
   writeBin(as.integer(nim@"extender"), fid, size=1)
+  ## Offset = 352
+  ## Extensions?
+  if (nim@"extender"[1] > 0 || nim@"vox_offset" > 352) {
+    lapply(nim@extensions, function(x) {
+	  writeBin(x@esize, fid, size=4)
+	  writeBin(x@ecode, fid, size=4)
+	  # As we've already checked validity
+	  writeBin(charToRaw(x@edata), fid, size=(x@esize-8))
+	})
+  }
   ## Write image file...
   if (nim@"reoriented") {
     writeBin(as.vector(inverseReorient(nim), verbose), fid, size=nim@"bitpix"/8)
