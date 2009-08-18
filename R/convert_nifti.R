@@ -150,7 +150,7 @@ dim2slice <- function(diminfo) {
   bitAnd(bitShiftR(diminfo, 4), 3)
 }
 
-as.nifti <- function(from, value=NULL) {
+as.nifti <- function(from, value=NULL, verbose=FALSE) {
   integertype <- function(from) {
     intranges <- list("BINARY" = c(0,1),
                       "UINT8" = c(0,255),
@@ -201,22 +201,18 @@ as.nifti <- function(from, value=NULL) {
   } else if (is.list(from)) {
     nim <- lapply(from, function(x) { as.nifti(x, value) })
     lapply(names(from), function(x) {
-	niftiobject <- nim[[x]]
-	if (is.nifti(niftiobject)) {
-	  niftiobject@"intent_code" <- nifti.intent.code[["Estimate"]]
-	  niftiobject@"intent_name" <- substr(x,1,15)
+	if (is.nifti(nim[[x]])) {
+	  nim[[x]]@"intent_code" <<- nifti.intent.code[["Estimate"]]
+	  nim[[x]]@"intent_name" <<- substr(x,1,15)
 	}
       })
-  } else if (is.vector(from)) {
-    # coerce as array?
-    nim <- as.nifti(array(from), value)
   } else {
-    cat("Warning cannot convert class=", class(from), " to nifti object.\n")
+    if (verbose) 
+      cat("Warning cannot convert class=", class(from), " to nifti object.\n")
     nim <- from
   }
   return(nim)
 }
 
-setAs("array", "nifti", function(from) { as.nifti(from) }, as.nifti)
-setAs("list", "nifti", function(from) {as.nifti(from) }, as.nifti)
-setAs("vector", "nifti", function(from) {as.nifti(from) }, as.nifti)
+setAs("array", "nifti", function(from) { as.nifti(from) }, function(from, value) { as.nifti(from, value) } )
+setAs("list", "nifti", function(from) { as.nifti(from) }, function(from, value) { as.nifti(from, value) } )
