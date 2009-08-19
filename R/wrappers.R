@@ -29,8 +29,12 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $ Id: $
+## $Id: $
 ##
+
+#############################################################################
+## Convert output from dcemri functions into S4 objects
+#############################################################################
 
 dcemri.lm.s4 <- function(conc, time, mask, ...) {
   as.nifti(dcemri::dcemri.lm(conc, time, mask, ...), conc)
@@ -44,7 +48,12 @@ dcemri.spline.s4 <- function(conc, time, img.mask, ...) {
   as.nifti(dcemri::dcemri.spline(conc, time, img.mask, ...), conc)
 }
 
-setGeneric("dcemri.lm", function(conc, ...) standardGeneric("dcemri.lm"))
+#############################################################################
+## setGeneric("dcemri.lm")
+#############################################################################
+
+setGeneric("dcemri.lm",
+           function(conc, ...) standardGeneric("dcemri.lm"))
 setMethod("dcemri.lm", signature(conc="nifti"), dcemri.lm.s4)
 setMethod("dcemri.lm", signature(conc="array"), function(conc,...) { 
       dcemri.lm.s4(as("nifti", conc), ...)
@@ -53,7 +62,12 @@ setMethod("dcemri.lm", signature(conc="anlz"), function(conc,...) {
       dcemri.lm.s4(as("nifti", conc), ...)
     })
 
-setGeneric("dcemri.bayes", function(conc, ...) standardGeneric("dcemri.bayes"))
+#############################################################################
+## setGeneric("dcemri.bayes")
+#############################################################################
+
+setGeneric("dcemri.bayes",
+           function(conc, ...) standardGeneric("dcemri.bayes"))
 setMethod("dcemri.bayes", signature(conc="nifti"), dcemri.bayes.s4)
 setMethod("dcemri.bayes", signature(conc="array"), function(conc,...) { 
       dcemri.bayes.s4(as("nifti", conc), ...)
@@ -62,7 +76,12 @@ setMethod("dcemri.bayes", signature(conc="anlz"), function(conc,...) {
       dcemri.bayes.s4(as("nifti", conc), ...)
     })
 
-setGeneric("dcemri.spline", function(conc, ...) standardGeneric("dcemri.spline"))
+#############################################################################
+## setGeneric("dcemri.spline")
+#############################################################################
+
+setGeneric("dcemri.spline",
+           function(conc, ...) standardGeneric("dcemri.spline"))
 setMethod("dcemri.spline", signature(conc="nifti"), dcemri.spline.s4)
 setMethod("dcemri.spline", signature(conc="array"), function(conc,...) { 
       dcemri.spline.s4(as("nifti", conc), ...)
@@ -70,5 +89,3 @@ setMethod("dcemri.spline", signature(conc="array"), function(conc,...) {
 setMethod("dcemri.spline", signature(conc="anlz"), function(conc,...) { 
       dcemri.spline.s4(as("nifti", conc), ...)
     })
-
-
