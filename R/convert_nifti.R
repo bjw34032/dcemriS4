@@ -185,6 +185,44 @@ dim2slice <- function(diminfo) {
 ############################################################################
 
 as.nifti <- function(from, value=NULL, verbose=FALSE) {
+  anlz.as.nifti <- function(from, value=nifti()) {
+    ## So what kind of thing do we keep?
+    slots <- c("dim_", "datatype", "bitpix", "pixdim", "descrip", "aux_file", ".Data")
+    sapply(slots, function(x) { slot(value, x) <<- slot(from, x); NULL })
+    #value@"data_type" <- convert.datatype(value@datatype)
+    calset <- !(from@"cal_max" == 0 && from@"cal_min" == 0)
+    value@"cal_max" <- ifelse(calset, from@"cal_min", from@"glmax" )
+    value@"cal_min" <- ifelse(calset, from@"cal_max", from@"glmin")
+    return(value)
+    # The below code should apply the orient code as per 
+    # http://eeg.sourceforge.net/ANALYZE75.pdf and 
+    # http://eeg.sourceforge.net/AnalyzeDirect_ANALYZEformat.pdf
+    # However the NIfTI website says that this field is not often set properly so
+    # I am unsure whether to apply this transform
+    #
+    #R<-diag(1, 4)
+    #R[,1]<- -R[,1] # as i is by default Left in the ANALYZE standard
+    #switch(from@"orient",
+    ## orient:   slice orientation for this dataset.
+    ##      0         transverse unflipped (i,j,k)=(L,A,S)
+    #0=R,
+    ##      1         coronal unflipped    (i,j,k)=(L,S,A)
+    #1=R[,2:3] <- R[,3:2],
+    ##      2         sagittal unflipped   (i,j,k)=(A,S,L)
+    #2=R[,c(1,3)] <- R[,c(3,1)],
+    ##      3         transverse flipped   (i,j,k)=(R,A,S)
+    #3=R[,1]<--R[,1],
+    ##      4         coronal flipped	    (i,j,k)=(R,S,A)
+    #4=R[,1]<--R[,1];R[,2:3] <- R[,3:2],
+    ##      5         sagittal flipped	    (i,j,k)=(A,S,R)
+    #5=R[,1]<--R[,1];R[,c(1,3)] <- R[,c(3,1)],
+    #stop("Unknown orientation: ",from@orient))
+    #value@"xyzt_units" <- from@"vox_units"
+    #value@"sform_code" <- 1
+    #value@"srow_x" <- R[1,]
+    #value@"srow_y" <- R[2,]
+    #value@"srow_z" <- R[3,]
+  }
   integertype <- function(from) {
     intranges <- list("BINARY" = c(0,1),
                       "UINT8" = c(0,255),
@@ -209,8 +247,10 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
   } else {
     nim <- value
   }
-  ## Determine a sensible datatype
-  if (is.array(from)) {
+  if (is("anlz",from)) {
+    nim <- anlz.as.nifti(from,value)
+  } else if (is.array(from)) {
+    ## Determine a sensible datatype
     dataClass <- class(from[1])
     datatypeString <- switch(dataClass,
                              logical = "BINARY",
@@ -245,6 +285,14 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
   }
   return(nim)
 }
+
+############################################################################
+## as("anlz", "nifti")
+############################################################################
+
+setAs("anlz", "nifti",
+      function(from) { as.nifti(from) },
+      function(from, value) { as.nifti(from, value) } )
 
 ############################################################################
 ## as("array", "nifti")
