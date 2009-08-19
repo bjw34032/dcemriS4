@@ -1,13 +1,13 @@
 dcemri.lm.s4 <- function(conc, time, mask, ...) {
-  as.nifti(dcemri.lm(conc, time, mask, ...), conc)
+  as.nifti(dcemri::dcemri.lm(conc, time, mask, ...), conc)
 }
 
 dcemri.bayes.s4 <- function(conc, time, img.mask, ...) {
-  as.nifti(dcemri.bayes(conc, time, img.mask, ...), conc)
+  as.nifti(dcemri::dcemri.bayes(conc, time, img.mask, ...), conc)
 }
 
 dcemri.spline.s4 <- function(conc, time, img.mask, ...) {
-  as.nifti(dcemri.spline(conc, time, img.mask, ...), conc)
+  as.nifti(dcemri::dcemri.spline(conc, time, img.mask, ...), conc)
 }
 
 setGeneric("dcemri.lm")
