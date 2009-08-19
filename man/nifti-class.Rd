@@ -7,10 +7,6 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{nifti-class}
-\alias{aux.file<-,nifti-method}
-\alias{aux.file,nifti-method}
-\alias{descrip<-,nifti-method}
-\alias{descrip,nifti-method}
 \alias{show,nifti-method}
 
 \title{Class "nifti"}
