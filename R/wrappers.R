@@ -33,61 +33,52 @@
 ##
 
 #############################################################################
-## Convert output from dcemri functions into S4 objects
-#############################################################################
-
-dcemri.lm.s4 <- function(conc, time, mask, ...) {
-  as.nifti(dcemri::dcemri.lm(conc, time, mask, ...), conc)
-}
-
-dcemri.bayes.s4 <- function(conc, time, img.mask, ...) {
-  as.nifti(dcemri::dcemri.bayes(conc, time, img.mask, ...), conc)
-}
-
-dcemri.spline.s4 <- function(conc, time, img.mask, ...) {
-  as.nifti(dcemri::dcemri.spline(conc, time, img.mask, ...), conc)
-}
-
-#############################################################################
 ## setGeneric("dcemri.lm")
 #############################################################################
+
+dcemri.lm.S4 <- function(conc, time, mask, ...) {
+  result <- dcemri::dcemri.lm(conc, time, mask, ...)
+  as(result, "nifti") <- conc
+}
 
 setGeneric("dcemri.lm",
            function(conc, ...) standardGeneric("dcemri.lm"))
 setMethod("dcemri.lm", signature(conc="nifti"), dcemri.lm.s4)
 setMethod("dcemri.lm", signature(conc="array"),
-          function(conc, ...) { 
-            dcemri.lm.s4(as(conc, "nifti"), ...)
-          })
+          function(conc, ...) dcemri.lm.S4(as(conc, "nifti"), ...))
 setMethod("dcemri.lm", signature(conc="anlz"),
-          function(conc, ...) { 
-            dcemri.lm.s4(as(conc, "nifti"), ...)
-          })
+          function(conc, ...) dcemri.lm.S4(as(conc, "nifti"), ...))
 
 #############################################################################
 ## setGeneric("dcemri.bayes")
 #############################################################################
 
+dcemri.bayes.S4 <- function(conc, time, img.mask, ...) {
+  result <- dcemri::dcemri.bayes(conc, time, img.mask, ...)
+  as(result, "nifti") <- conc
+}
+
 setGeneric("dcemri.bayes",
            function(conc, ...) standardGeneric("dcemri.bayes"))
 setMethod("dcemri.bayes", signature(conc="nifti"), dcemri.bayes.s4)
-setMethod("dcemri.bayes", signature(conc="array"), function(conc,...) { 
-      dcemri.bayes.s4(as("nifti", conc), ...)
-    })
-setMethod("dcemri.bayes", signature(conc="anlz"), function(conc,...) { 
-      dcemri.bayes.s4(as("nifti", conc), ...)
-    })
+setMethod("dcemri.bayes", signature(conc="array"),
+          function(conc,...) dcemri.bayes.S4(as("nifti", conc), ...))
+setMethod("dcemri.bayes", signature(conc="anlz"),
+          function(conc,...) dcemri.bayes.s4(as("nifti", conc), ...))
 
 #############################################################################
 ## setGeneric("dcemri.spline")
 #############################################################################
 
+dcemri.spline.S4 <- function(conc, time, img.mask, ...) {
+  result <- dcemri::dcemri.spline(conc, time, img.mask, ...)
+  as(result, "nifti") <- conc
+}
+
 setGeneric("dcemri.spline",
            function(conc, ...) standardGeneric("dcemri.spline"))
 setMethod("dcemri.spline", signature(conc="nifti"), dcemri.spline.s4)
-setMethod("dcemri.spline", signature(conc="array"), function(conc,...) { 
-      dcemri.spline.s4(as("nifti", conc), ...)
-    })
-setMethod("dcemri.spline", signature(conc="anlz"), function(conc,...) { 
-      dcemri.spline.s4(as("nifti", conc), ...)
-    })
+setMethod("dcemri.spline", signature(conc="array"),
+          function(conc, ...) dcemri.spline.S4(as(conc, "nifti"), ...))
+setMethod("dcemri.spline", signature(conc="anlz"),
+          function(conc, ...) dcemri.spline.S4(as(conc, "nifti"), ...))
