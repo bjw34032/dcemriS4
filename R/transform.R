@@ -134,7 +134,7 @@ reorient <- function(nim, data, verbose=FALSE, invert=FALSE) {
     RS <- R %*% S
 
     ## Now descale RS and work out the permutation
-    trans <- sign(RS)
+    trans <- sign(round(RS))
     ## We will need to do something with the trans later...
     trans[1,1] <- -1 * trans[1,1]
 
@@ -156,7 +156,7 @@ reorient <- function(nim, data, verbose=FALSE, invert=FALSE) {
     shift <- S[,4]
     A <- S[,1:3]
 
-    trans <- sign(A)
+    trans <- sign(round(A))
     trans[1,1] <- -1 * trans[1,1]
 
     if (invert)
