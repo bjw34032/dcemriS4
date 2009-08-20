@@ -55,12 +55,14 @@ dcemri.spline.s4 <- function(conc, time, img.mask, ...) {
 setGeneric("dcemri.lm",
            function(conc, ...) standardGeneric("dcemri.lm"))
 setMethod("dcemri.lm", signature(conc="nifti"), dcemri.lm.s4)
-setMethod("dcemri.lm", signature(conc="array"), function(conc,...) { 
-      dcemri.lm.s4(as("nifti", conc), ...)
-    })
-setMethod("dcemri.lm", signature(conc="anlz"), function(conc,...) { 
-      dcemri.lm.s4(as("nifti", conc), ...)
-    })
+setMethod("dcemri.lm", signature(conc="array"),
+          function(conc, ...) { 
+            dcemri.lm.s4(as(conc, "nifti"), ...)
+          })
+setMethod("dcemri.lm", signature(conc="anlz"),
+          function(conc, ...) { 
+            dcemri.lm.s4(as(conc, "nifti"), ...)
+          })
 
 #############################################################################
 ## setGeneric("dcemri.bayes")

@@ -32,6 +32,10 @@
 ## $Id: $
 ##
 
+############################################################################
+## NIfTI list structures
+############################################################################
+
 nifti.datatypes <- list(UINT8 = 2,
                         INT16 = 4,
                         INT32 = 8,
@@ -49,25 +53,22 @@ nifti.datatypes <- list(UINT8 = 2,
                         COMPLEX256 = 2048,
                         RGBA32 = 2304)
 
-nifti.datatypes.bitsperpix <- list(UINT8 = 8,
-                                   INT8 = 8,
-                                   UINT16 = 16,
-                                   INT16 = 16,
-                                   UINT32 = 32,
-                                   INT32 = 32,
-                                   UINT64 = 64,
-                                   INT64 = 64,
-                                   FLOAT32 = 32,
-                                   FLOAT64 = 64,
-                                   FLOAT128 = 128,
-                                   COMPLEX64 = 64,
-                                   COMPLEX128 = 128,
-                                   COMPLEX256 = 256,
-                                   RGB24 = 24,
-                                   RGBA32 = 32)
-
-convert.datatype <- function(datatype)
-  names(which(nifti.datatypes == datatype))
+nifti.bitpix <- list(UINT8 = 8,
+                     INT8 = 8,
+                     UINT16 = 16,
+                     INT16 = 16,
+                     UINT32 = 32,
+                     INT32 = 32,
+                     UINT64 = 64,
+                     INT64 = 64,
+                     FLOAT32 = 32,
+                     FLOAT64 = 64,
+                     FLOAT128 = 128,
+                     COMPLEX64 = 64,
+                     COMPLEX128 = 128,
+                     COMPLEX256 = 256,
+                     RGB24 = 24,
+                     RGBA32 = 32)
 
 nifti.intent.code <- list("None" = 0,
                           "Correl" = 2,
@@ -106,6 +107,13 @@ nifti.intent.code <- list("None" = 0,
                           "Triangle" = 1009,  # triple of indexes
                           "Quaternion" = 1010, # a quaternion
                           "Dimless" = 1011)   # Dimensionless value - no params
+
+############################################################################
+## Conversion subroutines
+############################################################################
+
+convert.datatype <- function(datatype)
+  names(which(nifti.datatypes == datatype))
 
 convert.intent <- function(intent.code)
   names(which(nifti.intent.code == intent.code))
@@ -224,15 +232,15 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
     #value@"srow_z" <- R[3,]
   }
   integertype <- function(from) {
-    intranges <- list("BINARY" = c(0,1),
-                      "UINT8" = c(0,255),
-                      "INT16" = c(-2^15,2^15-1),
-                      "INT32" = c(-2^31,2^31-1))
+    integer.ranges <- list("BINARY" = c(0, 1),
+                           "UINT8" = c(0, 255),
+                           "INT16" = c(-2^15, 2^15-1),
+                           "INT32" = c(-2^31, 2^31-1))
     fromRange <- range(from)
-    for (i in 1:length(intranges)) {
-      if (fromRange[1] >= intranges[[i]][1] &&
-	  fromRange[2]<= intranges[[i]][2]) {
-	return(names(intranges)[i])
+    for (i in 1:length(integer.ranges)) {
+      if (fromRange[1] >= integer.ranges[[i]][1] &&
+	  fromRange[2]<= integer.ranges[[i]][2]) {
+	return(names(integer.ranges)[i])
       }
     }
     warning("Range too large to be kept as integer forcing float")
@@ -260,11 +268,11 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
                                   class(from[1])))
     nim@"data_type" <- datatypeString
     nim@"datatype" <- nifti.datatypes[[datatypeString]]
-    nim@"bitpix" <- nifti.datatypes.bitsperpix[[datatypeString]]
+    nim@"bitpix" <- nifti.bitpix[[datatypeString]]
     nim@"cal_min" <- min(from)
     nim@"cal_max" <- max(from)
     nim@"dim_" <- c(length(dim(from)), dim(from))
-    if (length(nim@"dim_") < 8 )
+    if (length(nim@"dim_") < 8)
       nim@"dim_" <- c(nim@"dim_", rep(1, 8 - length(nim@"dim_")))
     nim@.Data <- from
   } else {
@@ -273,7 +281,7 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
       lapply(names(from), function(x) {
 	if (is.nifti(nim[[x]])) {
 	  nim[[x]]@"intent_code" <<- nifti.intent.code[["Estimate"]]
-	  nim[[x]]@"intent_name" <<- substr(x,1,15)
+	  nim[[x]]@"intent_name" <<- substr(x, 1, 15)
 	}
       })
     } else {

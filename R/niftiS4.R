@@ -177,11 +177,9 @@ setValidity("nifti", function(object) {
   ## datatype needed to specify type of image data
   if (!object@datatype %in% nifti.datatypes)
     retval <- c(retval, "datatype not recognized")
-  
   ## bitpix should correspond correctly to datatype
-  if (!object@bitpix == nifti.datatypes.bitsperpix[[convert.datatype(object@datatype)]]) 
+  if (!object@bitpix == nifti.bitpix[[convert.datatype(object@datatype)]]) 
     retval <- c(retval, "bitpix does not match the datatype")
-  
   ## dim should be non-zero for dim[1] dimensions
   if (!all(as.logical(object@"dim_"[indices])))
     retval <- c(retval, "dim[1]/dim mismatch")

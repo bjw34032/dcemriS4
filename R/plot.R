@@ -149,6 +149,11 @@ setMethod("overlay", signature(x="nifti", y="nifti"), overlay.nifti)
 setMethod("overlay", signature(x="anlz", y="anlz"), overlay.nifti)
 setMethod("overlay", signature(x="anlz", y="nifti"), overlay.nifti)
 setMethod("overlay", signature(x="nifti", y="anlz"), overlay.nifti)
+setMethod("overlay", signature(x="array", y="array"), overlay.nifti)
+setMethod("overlay", signature(x="array", y="nifti"), overlay.nifti)
+setMethod("overlay", signature(x="nifti", y="array"), overlay.nifti)
+setMethod("overlay", signature(x="array", y="anlz"), overlay.nifti)
+setMethod("overlay", signature(x="anlz", y="array"), overlay.nifti)
 
 #############################################################################
 ## orthographic() for class="nifti"
@@ -217,3 +222,8 @@ orthographic.nifti <- function(x, xyz=NULL, crosshairs=TRUE,
 setGeneric("orthographic", function(x, ...) standardGeneric("orthographic"))
 setMethod("orthographic", signature(x="nifti"), orthographic.nifti)
 setMethod("orthographic", signature(x="anlz"), orthographic.nifti)
+setMethod("orthographic", signature(x="array"),
+          function(x) {
+            x <- as(x, "nifti")
+            orthographic.nifti(x)
+          })
