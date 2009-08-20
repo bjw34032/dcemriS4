@@ -195,22 +195,23 @@ dim2slice <- function(diminfo) {
 as.nifti <- function(from, value=NULL, verbose=FALSE) {
   anlz.as.nifti <- function(from, value=nifti()) {
     ## So what kind of thing do we keep?
-    slots <- c("dim_", "datatype", "bitpix", "pixdim", "descrip", "aux_file", ".Data")
+    slots <- c("dim_", "datatype", "bitpix", "pixdim", "descrip",
+               "aux_file", ".Data")
     sapply(slots, function(x) { slot(value, x) <<- slot(from, x); NULL })
     #value@"data_type" <- convert.datatype(value@datatype)
     calset <- !(from@"cal_max" == 0 && from@"cal_min" == 0)
-    value@"cal_max" <- ifelse(calset, from@"cal_min", from@"glmax" )
+    value@"cal_max" <- ifelse(calset, from@"cal_min", from@"glmax")
     value@"cal_min" <- ifelse(calset, from@"cal_max", from@"glmin")
     return(value)
-    # The below code should apply the orient code as per 
-    # http://eeg.sourceforge.net/ANALYZE75.pdf and 
-    # http://eeg.sourceforge.net/AnalyzeDirect_ANALYZEformat.pdf
-    # However the NIfTI website says that this field is not often set properly so
-    # I am unsure whether to apply this transform
-    #
-    #R<-diag(1, 4)
-    #R[,1]<- -R[,1] # as i is by default Left in the ANALYZE standard
-    #switch(from@"orient",
+    ## The below code should apply the orient code as per 
+    ## http://eeg.sourceforge.net/ANALYZE75.pdf and 
+    ## http://eeg.sourceforge.net/AnalyzeDirect_ANALYZEformat.pdf
+    ## However the NIfTI website says that this field is not often
+    ##   set properly so I am unsure whether to apply this transform
+    ##
+    ##R<-diag(1, 4)
+    ##R[,1]<- -R[,1] # as i is by default Left in the ANALYZE standard
+    ##switch(from@"orient",
     ## orient:   slice orientation for this dataset.
     ##      0         transverse unflipped (i,j,k)=(L,A,S)
     #0=R,
@@ -239,7 +240,7 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
     fromRange <- range(from)
     for (i in 1:length(integer.ranges)) {
       if (fromRange[1] >= integer.ranges[[i]][1] &&
-	  fromRange[2]<= integer.ranges[[i]][2]) {
+	  fromRange[2] <= integer.ranges[[i]][2]) {
 	return(names(integer.ranges)[i])
       }
     }
@@ -277,13 +278,14 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
     nim@.Data <- from
   } else {
     if (is.list(from)) {
-      nim <- lapply(from, function(x) as.nifti(x, value))
-      lapply(names(from), function(x) {
-	if (is.nifti(nim[[x]])) {
-	  nim[[x]]@"intent_code" <<- nifti.intent.code[["Estimate"]]
-	  nim[[x]]@"intent_name" <<- substr(x, 1, 15)
-	}
-      })
+      nim <- lapply(from, function(x) { as(x, "nifti") <- value })
+      lapply(names(from),
+             function(x) {
+               if (is.nifti(nim[[x]])) {
+                 nim[[x]]@"intent_code" <<- nifti.intent.code[["Estimate"]]
+                 nim[[x]]@"intent_name" <<- substr(x, 1, 15)
+               }
+             })
     } else {
       if (verbose) 
         cat("Warning cannot convert class =", class(from),
