@@ -278,7 +278,7 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
     nim@.Data <- from
   } else {
     if (is.list(from)) {
-      nim <- lapply(from, function(x) { as(x, "nifti") <- value })
+      nim <- lapply(from, function(x) as.nifti(x, value))
       lapply(names(from),
              function(x) {
                if (is.nifti(nim[[x]])) {
@@ -319,3 +319,4 @@ setAs("array", "nifti",
 setAs("list", "nifti",
       function(from) { as.nifti(from) },
       function(from, value) { as.nifti(from, value) } )
+

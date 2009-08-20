@@ -39,6 +39,7 @@
 dcemri.lm.S4 <- function(conc, time, mask, ...) {
   result <- dcemri::dcemri.lm(conc, time, mask, ...)
   as(result, "nifti") <- conc
+  return(result)
 }
 
 setGeneric("dcemri.lm",
@@ -56,6 +57,7 @@ setMethod("dcemri.lm", signature(conc="anlz"),
 dcemri.bayes.S4 <- function(conc, time, img.mask, ...) {
   result <- dcemri::dcemri.bayes(conc, time, img.mask, ...)
   as(result, "nifti") <- conc
+  return(result)
 }
 
 setGeneric("dcemri.bayes",
@@ -73,6 +75,7 @@ setMethod("dcemri.bayes", signature(conc="anlz"),
 dcemri.spline.S4 <- function(conc, time, img.mask, ...) {
   result <- dcemri::dcemri.spline(conc, time, img.mask, ...)
   as(result, "nifti") <- conc
+  return(result)
 }
 
 setGeneric("dcemri.spline",
