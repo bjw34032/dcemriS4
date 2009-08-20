@@ -247,7 +247,7 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
   } else {
     nim <- value
   }
-  if (class(from) == "anlz") {
+  if (is(from, "anlz")) {
     nim <- anlz.as.nifti(from,value)
   } else if (is.array(from)) {
     ## Determine a sensible datatype
