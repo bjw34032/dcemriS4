@@ -102,7 +102,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
     if (verbose) cat("  ENDIAN = swap", fill=TRUE)
   }
   ## Construct S4 object
-  nim <- new("nifti")
+  nim <- nifti()
   nim@"sizeof_hdr" <- sizeof.hdr
   nim@"data_type" <- rawToChar(readBin(fid, "raw", n=10))
   nim@"db_name" <- rawToChar(readBin(fid, "raw", n=18))
@@ -167,21 +167,23 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   ## image data (and vox_offset must be set correctly to allow for
   ## this).  In a .hdr file, this extended data follows extension and
   ## proceeds (potentially) to the end of the file.
+  ##
+  ## FIXME This doesn't account for two-file
+  ##
   if (nim@"extender"[1] > 0 || nim@"vox_offset" > 352) {
-    nimext <- as(nim, "niftiExtension")
+    if (!is(nim, "niftiExtension")) {
+      nim <- as(nim, "niftiExtension")
+    }
     while (seek(fid) < nim@"vox_offset" ) {
       nimextsec <- new("niftiExtensionSection")
       nimextsec@esize <- readBin(fid, integer(), size=4, endian=endian)
       nimextsec@ecode <- readBin(fid, integer(), size=4, endian=endian)
       nimextsec@edata <- rawToChar(readBin(fid, "raw", n=nimextsec@esize-8,
                                         endian=endian))
-      nimext@extensions <- c(nimext@extensions, nimextsec)
+      nim@extensions <- append(nim@extensions, nimextsec)
     }
-    if (seek(fid) < nim@"vox_offset")
-      stop("-- multiple extensions have been detected, not supported --")
     if (seek(fid) > nim@"vox_offset")
       stop("-- extension size (esize) has overshot voxel offset --")
-    nim <- nimext
   }
 
   n <- prod(nim@"dim_"[2:5])
@@ -193,6 +195,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
     } else {
       fid <- file(fname, "rb")
     }
+    seek(fid, nim@"vox_offset")
   }
   data <-
     switch(as.character(nim@"datatype"),
@@ -238,6 +241,10 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   options(warn=oldwarn)
   ## Check validity
   ## validObject(nim)
+  if (getOption("NIfTI.audit.trail")) {
+    nim@trail <- NULL
+    nim<-nifti.extension.to.audit.trail(nim, filename=fname, call=match.call())
+  }
   return(nim)
 }
 

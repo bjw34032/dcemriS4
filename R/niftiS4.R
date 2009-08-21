@@ -31,6 +31,9 @@
 ## 
 ## $Id: $
 ##
+if (is.null(getOption("NIfTI.audit.trail")) && require(XML) ) {
+  options("NIfTI.audit.trail"=TRUE)
+}
 
 #############################################################################
 ## setClass("nifti")
@@ -144,6 +147,21 @@ setClass("niftiExtensionSection",
          prototype(esize=numeric(1),
                    ecode=numeric(1),
                    edata=""))
+
+if (getOption("NIfTI.audit.trail")) {
+  require(XML)
+  new.audit.trail <<- function() {
+    trail <- xmlNode("audit-trail",attrs=list(xmlns=audit.trail.namespace), namespace="")
+    return(trail)
+  }
+  setClass("niftiAuditTrail",
+      representation(trail="XMLNode"),
+      prototype(trail=new.audit.trail()),
+      contains="niftiExtension")
+  audit.trail.extension.ecode <<- 1002
+  audit.trail.namespace <<- "http://www.dcemri.org/namespaces/audit-trail/1.0"
+  setValidity("niftiAuditTrail",function(object) { })
+}
 
 #############################################################################
 ## setMethod("show", "nifti")
@@ -275,7 +293,11 @@ nifti <- function(img=array(0, dim=rep(1,4)), dim, ...) {
   y <- c(0.0, rep(1.0,length(dim)), rep(0.0,3))
   cal.max <- quantile(img, probs=0.95, na.rm=TRUE)
   cal.min <- quantile(img, probs=0.05, na.rm=TRUE)
-  obj <- new("nifti", .Data=array(img, dim=dim), "dim_"=x, "pixdim"=y,
+  niftiClass <- "nifti"
+  if (getOption("NIfTI.audit.trail")) {
+    niftiClass <- "niftiAuditTrail"
+  }
+  obj <- new(niftiClass, .Data=array(img, dim=dim), "dim_"=x, "pixdim"=y,
              "cal_max"=cal.max, "cal_min"=cal.min, ...)
   validObject(obj)
   return(obj)

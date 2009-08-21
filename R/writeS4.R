@@ -46,6 +46,22 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
     fid <- file(paste(filename, "nii", sep="."), "wb")
   }
 
+  extensions <- NULL
+  if (is(nim, "niftiExtension")) {
+    extensions <- nim@extensions
+  }
+  if (getOption("NIfTI.audit.trail") && is(nim,"niftiAuditTrail")) {
+    sec <- nifti.audit.trail.to.extension(nim,filename,match.call())
+    extensions <- append(extensions, sec)
+  }
+  if (!is.null(extensions)) {
+    # update the vox_offset  FIXME twofile!
+    totalesizes <- sum(unlist(lapply(extensions, function(x) { x@esize })))
+    nim@"extender"[1] <- 1
+    nim@"vox_offset" <- 352 + totalesizes
+  }
+
+
   writeBin(as.integer(nim@"sizeof_hdr"), fid, size=4)
   writeChar(nim@"data_type", fid, nchar=10, eos=NULL)
   writeChar(nim@"db_name", fid, nchar=18, eos=NULL)
@@ -93,14 +109,21 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
   ## Offset = 352
   ## Extensions?
   if (nim@"extender"[1] > 0 || nim@"vox_offset" > 352) {
-    lapply(nim@extensions, function(x) {
-	  writeBin(x@esize, fid, size=4)
-	  writeBin(x@ecode, fid, size=4)
-	  # As we've already checked validity
-	  writeBin(charToRaw(x@edata), fid, size=(x@esize-8))
-	})
+    if (!is.null(extensions) {
+
+      lapply(extensions, function(x) {
+	    writeBin(x@esize, fid, size=4)
+	    writeBin(x@ecode, fid, size=4)
+	    # As we've already checked validity
+	    writeBin(charToRaw(x@edata), fid, size=(x@esize-8))
+	  })
+    } else {
+       stop("@extender set but nim has no extensions")
+    }
   }
   ## Write image file...
+  # Shouldn't we seek?
+  #seek(fid, nim@"vox_offset")
   if (nim@"reoriented") {
     writeBin(as.vector(inverseReorient(nim), verbose), fid, size=nim@"bitpix"/8)
   } else {
