@@ -1,3 +1,8 @@
+% Part of the dcemri package for R
+% Distributed under the BSD license: see dcemri/COPYING
+%
+% $Id: $
+
 \name{coerce-methods}
 \docType{methods}
 %\alias{coerce-methods}

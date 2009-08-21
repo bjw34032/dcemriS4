@@ -244,7 +244,7 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
 	return(names(integer.ranges)[i])
       }
     }
-    warning("Range too large to be kept as integer forcing float")
+    warning("Range too large to be kept as integer, forcing float")
     floattype(from)
   }
 

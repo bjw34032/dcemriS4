@@ -32,7 +32,11 @@
 ## $Id: $
 ##
 
-performPermutation <- function(T, realdimensions, data, verbose=FALSE) {
+############################################################################
+## performPermutation
+############################################################################
+
+performPermutation <- function(T, real.dimensions, data, verbose=FALSE) {
   workingdims <- (
                   function(r) {
                     lr <- length(r)
@@ -41,7 +45,7 @@ performPermutation <- function(T, realdimensions, data, verbose=FALSE) {
                     else
                       stop("array has dim > 5")
                   }
-                  )(realdimensions)
+                  )(real.dimensions) # An anonymous function
 
   if (sum(T != 0) == 3 && det(T) != 0) {
     ## Now ensure T is descaled and work out the permutation
@@ -62,7 +66,7 @@ performPermutation <- function(T, realdimensions, data, verbose=FALSE) {
       translatedData <- array(data, workingdims)
       ## Now if we have to do a permutation or reverse more than the first
       ## index we will be going slow anyway, so...
-      prs <- ( # anonymous function
+      prs <- (
               function(reverse, dims) {
                 function(x) { 
                   if (reverse[x])
@@ -71,17 +75,17 @@ performPermutation <- function(T, realdimensions, data, verbose=FALSE) {
                     1:dims[x] 
                 }
               }
-              )(reverselist, workingdims)
+              )(reverselist, workingdims) # An anonymous function
       translatedData <- translatedData[prs(1), prs(2), prs(3), prs(4),
                                        prs(5), drop=FALSE]
-      return(array(aperm(translatedData, perms), dim=realdimensions))
+      return(array(aperm(translatedData, perms), dim=real.dimensions))
     } else {
       if (reverselist[1]) {
         ## We just need to reverse the first index.
         return(array(array(data, dim=workingdims)[workingdims[1]:1,,,,],
-                     dim=realdimensions))
+                     dim=real.dimensions))
       } else {
-        return(array(data, dim=realdimensions))
+        return(array(data, dim=real.dimensions))
       }
     }
   } else {
@@ -89,9 +93,9 @@ performPermutation <- function(T, realdimensions, data, verbose=FALSE) {
   }
 }
 
-inverseReorient <- function(nim) {
-  reorient(nim, nim@.Data, invert=TRUE)
-}
+############################################################################
+## reorient
+############################################################################
 
 reorient <- function(nim, data, verbose=FALSE, invert=FALSE) {
   ## from nifti1.h there are three different methods of orienting the
@@ -103,7 +107,7 @@ reorient <- function(nim, data, verbose=FALSE, invert=FALSE) {
   ## This function will try to reorient the data into an i, j, k space
   ## where increasing (+) (i,j,k) is correlated with
   ## (LEFT,ANTERIOR,SUPERIOR)
-  realdimensions <- nim@"dim_"[2:(1+nim@"dim_"[1])]
+  real.dimensions <- nim@"dim_"[2:(1+nim@"dim_"[1])]
 
   if (nim@"qform_code" > 0) {
     ## Method 2. 
@@ -141,7 +145,7 @@ reorient <- function(nim, data, verbose=FALSE, invert=FALSE) {
     if (invert)
       trans <- qr.solve(trans)
 
-    return(performPermutation(trans, realdimensions, data))
+    return(performPermutation(trans, real.dimensions, data))
   } 
   if (nim@"sform_code" > 0) {
     ## [x] is given by a general affine transformation from [i]
@@ -162,7 +166,7 @@ reorient <- function(nim, data, verbose=FALSE, invert=FALSE) {
     if (invert)
       trans <- qr.solve(trans)
 
-    return(performPermutation(trans, realdimensions, data))
+    return(performPermutation(trans, real.dimensions, data))
   }
 
   ## Finally Method 1.
@@ -172,8 +176,19 @@ reorient <- function(nim, data, verbose=FALSE, invert=FALSE) {
   if (invert)
     trans <- qr.solve(trans)
 
-  return(performPermutation(trans, realdimensions, data))
+  return(performPermutation(trans, real.dimensions, data))
 }
+
+############################################################################
+## inverseReorient
+############################################################################
+
+inverseReorient <- function(nim, verbose=FALSE)
+  reorient(nim, nim@.Data, verbose=verbose, invert=TRUE)
+
+############################################################################
+## integerTranslation
+############################################################################
 
 integerTranslation <- function(nim, data, verbose=FALSE) {
   ## 3D IMAGE (VOLUME) ORIENTATION AND LOCATION IN SPACE:
@@ -264,6 +279,10 @@ integerTranslation <- function(nim, data, verbose=FALSE) {
 ##      writeBin(as.vector(nim@.Data[order(index.xyz)]), fid,
 ##               size=nim@"bitpix"/8)
 
+############################################################################
+## invertIntegerTranslation
+############################################################################
+
 invertIntegerTranslation <- function(nim, verbose=FALSE) {
   dims <- 2:(1+nim@"dim_"[1])
   if (nim@"qform_code" <= 0 && nim@"sform_code" <= 0) {
@@ -331,6 +350,10 @@ invertIntegerTranslation <- function(nim, verbose=FALSE) {
     }
   }
 }
+
+############################################################################
+## translateCoordinate
+############################################################################
 
 translateCoordinate <- function(i, nim, verbose=FALSE) {
   ## 3D Image orientation and location in space (as per nifti1.h)

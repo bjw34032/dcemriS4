@@ -1,25 +1,24 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
 %
-% $ Id: $
+% $Id: $
 
 \name{niftiExtension-class}
 \Rdversion{1.1}
 \docType{class}
 \alias{niftiExtension-class}
-
-\title{Class "niftiExtension" ~~~ }
-\description{	 ~~ A concise (1-5 lines) description of what the class is.  ~~}
+\title{Class "niftiExtension"}
+\description{
+  ~~ A concise (1-5 lines) description of what the class is.  ~~
+}
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("niftiExtension", data, dim, dimnames, ...)}.
 	 ~~ describe objects here ~~ 
 }
 \section{Slots}{
-	 \describe{
+  \describe{
     \item{\code{.Data}:}{Object of class \code{"array"} ~~ }
-    \item{\code{esize}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{ecode}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{edata}:}{Object of class \code{"character"} ~~ }
+    \item{\code{extensions}:}{Object of class \code{"list"} ~~ }
     \item{\code{sizeof_hdr}:}{Object of class \code{"numeric"} ~~ }
     \item{\code{data_type}:}{Object of class \code{"character"} ~~ }
     \item{\code{db_name}:}{Object of class \code{"character"} ~~ }
@@ -64,6 +63,7 @@ Objects can be created by calls of the form \code{new("niftiExtension", data, di
     \item{\code{intent_name}:}{Object of class \code{"character"} ~~ }
     \item{\code{magic}:}{Object of class \code{"character"} ~~ }
     \item{\code{extender}:}{Object of class \code{"vector"} ~~ }
+    \item{\code{reoriented}:}{Object of class \code{"logical"} ~~ }
   }
 }
 \section{Extends}{
@@ -75,16 +75,17 @@ Class \code{"\linkS4class{vector}"}, by class "nifti", distance 4, with explicit
 Class \code{"\linkS4class{vector}"}, by class "nifti", distance 6, with explicit test and coerce.
 }
 \section{Methods}{
-No methods defined with class "niftiExtension" in the signature.
+  No methods defined with class "niftiExtension" in the signature.
 }
 \references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
+\author{Andrew Thornton <\email{zeripath@users.sourceforge.net}>}
 %\note{ ~~further notes~~ }
 
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  \code{\linkS4class{anlz}}, \code{\linkS4class{nifti}}
+	~~objects to See Also as \code{\link{~~fun~~}}, ~~~
+	or \code{\linkS4class{CLASSNAME}} for links to other classes
 }
 \examples{
 showClass("niftiExtension")
