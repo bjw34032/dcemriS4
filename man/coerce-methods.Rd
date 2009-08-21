@@ -10,8 +10,8 @@
  ~~ Methods for function \code{coerce} in Package `methods' ~~
 }
 \usage{
-as(object, "nifti")
-as(object, "nifti") <- value
+as(object, Class)
+as(object, Class) <- value
 }
 \arguments{
   \item{object}{}
