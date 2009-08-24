@@ -44,15 +44,14 @@ start.nifti.audit.trail.functionality <- function() {
   }
 }
 
-
-nifti.audit.trail.extension.ecode <- 1002
-nifti.audit.trail.namespace <- "http://www.dcemri.org/namespaces/audit-trail/1.0"
+dcemri.ecode <- 1002
+dcemri.namespace <- "http://www.dcemri.org/namespaces/audit-trail/1.0"
 
 new.audit.trail <- function() {
   if (getOption("NIfTI.audit.trail")) {
     require("XML")
-    trail <- xmlNode("audit-trail", attrs=list(xmlns=nifti.audit.trail.namespace),
-	namespace="")
+    trail <- xmlNode("audit-trail", attrs=list(xmlns=dcemri.namespace),
+                     namespace="")
     return(trail)
   }
 }
@@ -61,17 +60,17 @@ nifti.extension.to.audit.trail <- function(nim, filename=NULL, call=NULL) {
   if (getOption("NIfTI.audit.trail")) {
     if (!is(nim, "niftiAuditTrail"))
       nim <- as(nim, "niftiAuditTrail")
-    ## We enforce that there is a single extension with ecode == nifti.audit.trail.extension.ecode
-    ecodes <- lapply(nim@extensions, function(x) { x@ecode })
-    oei <- which(ecodes == nifti.audit.trail.extension.ecode)
+    ## We enforce that there is a single extension with ecode == dcemri.ecode
+    ecodes <- lapply(nim@extensions, function(x) x@ecode)
+    oei <- which(ecodes == dcemri.ecode)
     
     if (length(oei) == 0) {
-      nim@trail <- nifti.audit.trail.created(filename=filename,call=call)
+      nim@trail <- nifti.audit.trail.created(filename=filename, call=call)
     } else {
       ## One Trail
       if (length(oei) > 1) {
-	warning("Found more than one extension with ecode == ", 
-                nifti.audit.trail.extension.ecode, " Appending to last trail only")
+	warning("Found more than one extension with ecode ==", dcemri.ecode,
+                ", Appending to last trail only")
 	oei <- oei[length(oei)]
       }
       oe <- nim@extensions[[oei]]@edata
@@ -87,7 +86,7 @@ nifti.audit.trail.to.extension <- function(nim, filename=filename,
                                               call=call) {
   if (getOption("NIfTI.audit.trail")) {
     sec <- new("niftiExtensionSection")
-    sec@ecode <- nifti.audit.trail.extension.ecode
+    sec@ecode <- dcemri.ecode
     nim@trail <- nifti.audit.trail.system.node.event(nim@trail, "saved",
                                               filename=filename, call=call)
     ## Serialize the XML to sec@edata
@@ -121,7 +120,8 @@ nifti.audit.trail.system.node <- function(type="system-info", filename=NULL,
   }
 }
 
-nifti.audit.trail.created <- function(history=NULL, call=NULL, filename=NULL) {
+nifti.audit.trail.created <- function(history=NULL, call=NULL,
+                                      filename=NULL) {
   if (getOption("NIfTI.audit.trail")) {
     trail <- new.audit.trail()
     created <- nifti.audit.trail.system.node("created", "filename"=filename,
@@ -137,7 +137,8 @@ nifti.audit.trail.created <- function(history=NULL, call=NULL, filename=NULL) {
   }
 }
 
-nifti.audit.trail.event <- function(trail, type=NULL, call=NULL, comment=NULL) {
+nifti.audit.trail.event <- function(trail, type=NULL, call=NULL,
+                                    comment=NULL) {
   if (getOption("NIfTI.audit.trail")) {
     if (is(call, "call"))
       call <- as.character(as.expression(call))

@@ -34,7 +34,7 @@
 
 .First.lib <- function(lib, pkg) {
   ## library.dynam("dcemri", pkg, lib)
-  if (is.null(getOption("NIfTI.audit.trail")) && require("XML"))
+  if (require("XML") && (is.null(getOption("NIfTI.audit.trail")) || getOption("NIfTI.audit.trail")))
     start.nifti.audit.trail.functionality()
 }
 
