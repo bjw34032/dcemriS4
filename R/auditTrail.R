@@ -1,5 +1,18 @@
-if (getOption("NIfTI.audit.trail")) {
-  nifti.extension.to.audit.trail <<- function(nim, filename=NULL, call=NULL) {
+audit.trail.extension.ecode <- 1002
+audit.trail.namespace <- "http://www.dcemri.org/namespaces/audit-trail/1.0"
+
+
+new.audit.trail <- function() {
+  if (getOption("NIfTI.audit.trail")) {
+    require("XML")
+    trail <- xmlNode("audit-trail", attrs=list(xmlns=audit.trail.namespace),
+	namespace="")
+    return(trail)
+  }
+}
+
+nifti.extension.to.audit.trail <- function(nim, filename=NULL, call=NULL) {
+  if (getOption("NIfTI.audit.trail")) {
     if (!is(nim, "niftiAuditTrail"))
       nim <- as(nim, "niftiAuditTrail")
     ## We enforce that there is a single extension with ecode == audit.trail.extension.ecode
@@ -7,7 +20,7 @@ if (getOption("NIfTI.audit.trail")) {
     oei <- which(ecodes == audit.trail.extension.ecode)
     
     if (length(oei) == 0) {
-      nim@trail <- audit.trail.created(filename=filename,call=call)
+      nim@trail <- nifti.audit.trail.created(filename=filename,call=call)
     } else {
       ## One Trail
       if (length(oei) > 1) {
@@ -17,17 +30,19 @@ if (getOption("NIfTI.audit.trail")) {
       }
       oe <- nim@extensions[[oei]]@edata
       nim@extensions[[oei]] <- NULL
-      nim@trail <- audit.trail.systemNode.event(xmlRoot(xmlTreeParse(oe, asText=TRUE)), type="read", filename=filename, call=call)
+      nim@trail <- audit.trail.system.node.event(xmlRoot(xmlTreeParse(oe, asText=TRUE)), type="read", filename=filename, call=call)
 
     }
     return(nim)
   }
+}
 
-  nifti.audit.trail.to.extension <<- function(nim, filename=filename,
+nifti.audit.trail.to.extension <- function(nim, filename=filename,
                                               call=call) {
+  if (getOption("NIfTI.audit.trail")) {
     sec <- new("niftiExtensionSection")
     sec@ecode <- audit.trail.extension.ecode
-    nim@trail <- audit.trail.systemNode.event(nim@trail, "saved",
+    nim@trail <- audit.trail.system.node.event(nim@trail, "saved",
                                               filename=filename, call=call)
     ## Serialize the XML to sec@edata
     ## DIRTY DIRTY DIRTY you should wash your eyes out after reading this.
@@ -41,9 +56,11 @@ if (getOption("NIfTI.audit.trail")) {
     sec@esize <- (-sec@esize %% 16) + sec@esize
     return(sec)
   }
+}
 
-  audit.trail.system.node <- function(type="system-info", filename=NULL,
+nifti.audit.trail.system.node <- function(type="system-info", filename=NULL,
                                       call=NULL) {
+  if (getOption("NIfTI.audit.trail")) {
     if (is(call, "call"))
       call <- as.character(as.expression(call))
     currentDateTime <- format(Sys.time(), "%a %b %d %X %Y %Z")
@@ -56,10 +73,12 @@ if (getOption("NIfTI.audit.trail")) {
                             "dcemri-version"=packageDescription("dcemri")$Version)
     return(system)
   }
+}
 
-  audit.trail.created <<- function(history=NULL, call=NULL, filename=NULL) {
+nifti.audit.trail.created <- function(history=NULL, call=NULL, filename=NULL) {
+  if (getOption("NIfTI.audit.trail")) {
     trail <- new.audit.trail()
-    created <- audit.trail.system.node("created", "filename"=filename,
+    created <- nifti.audit.trail.system.node("created", "filename"=filename,
                                        "call"=call)
     if (!is.null(history)) {
       historyNode <- xmlNode("history")
@@ -70,8 +89,10 @@ if (getOption("NIfTI.audit.trail")) {
     trail <- addChildren(trail, created) 
     return(trail)
   }
+}
 
-  audit.trail.event <<- function(trail, type=NULL, call=NULL, comment=NULL) {
+nifti.audit.trail.event <- function(trail, type=NULL, call=NULL, comment=NULL) {
+  if (getOption("NIfTI.audit.trail")) {
     if (is(call,"call"))
       call <- as.character(as.expression(call))
     eventNode <- xmlNode("event", attrs=c("type"=type, "call"=call))
@@ -80,10 +101,12 @@ if (getOption("NIfTI.audit.trail")) {
     trail <- addChildren(trail, eventNode)
     return(trail)
   }
+}
 
-  audit.trail.systemNode.event <<- function(trail, type=NULL, call=NULL,
+nifti.audit.trail.system.node.event <<- function(trail, type=NULL, call=NULL,
                                             filename=NULL, comment=NULL) {
-    eventNode <- audit.trail.system.node(type=type, call=call,
+  if (getOption("NIfTI.audit.trail")) {
+    eventNode <- nifti.audit.trail.system.node(type=type, call=call,
                                          filename=filename)
     if (!is.null(comment))
       eventNode <- addChildren(eventNode, xmlTextNode(comment))

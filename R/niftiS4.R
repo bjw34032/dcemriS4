@@ -146,22 +146,6 @@ setClass("niftiExtensionSection",
                    ecode=numeric(1),
                    edata=""))
 
-if (getOption("NIfTI.audit.trail")) {
-  require("XML")
-  new.audit.trail <<- function() {
-    trail <- xmlNode("audit-trail", attrs=list(xmlns=audit.trail.namespace),
-                     namespace="")
-    return(trail)
-  }
-  setClass("niftiAuditTrail",
-      representation(trail="XMLNode"),
-      prototype(trail=new.audit.trail()),
-      contains="niftiExtension")
-  audit.trail.extension.ecode <<- 1002
-  audit.trail.namespace <<- "http://www.dcemri.org/namespaces/audit-trail/1.0"
-  setValidity("niftiAuditTrail", function(object) { })
-}
-
 #############################################################################
 ## setMethod("show", "nifti")
 #############################################################################
