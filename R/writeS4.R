@@ -51,16 +51,15 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
     extensions <- nim@extensions
   }
   if (getOption("NIfTI.audit.trail") && is(nim,"niftiAuditTrail")) {
-    sec <- nifti.audit.trail.to.extension(nim,filename,match.call())
+    sec <- niftiAuditTrailToExtension(nim, filename, match.call())
     extensions <- append(extensions, sec)
   }
   if (!is.null(extensions)) {
     # update the vox_offset  FIXME twofile!
-    totalesizes <- sum(unlist(lapply(extensions, function(x) { x@esize })))
+    totalesizes <- sum(unlist(lapply(extensions, function(x) x@esize)))
     nim@"extender"[1] <- 1
     nim@"vox_offset" <- 352 + totalesizes
   }
-
 
   writeBin(as.integer(nim@"sizeof_hdr"), fid, size=4)
   writeChar(nim@"data_type", fid, nchar=10, eos=NULL)

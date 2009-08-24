@@ -33,90 +33,99 @@
 ##
 
 ############################################################################
-## NIfTI list structures
-############################################################################
-
-nifti.datatypes <- list(UINT8 = 2,
-                        INT16 = 4,
-                        INT32 = 8,
-                        FLOAT32 = 16,
-                        COMPLEX64 = 32,
-                        FLOAT64 = 64,
-                        RGB24 = 128,
-                        INT8 = 256,
-                        UINT16 = 512,
-                        UINT32 = 768,
-                        INT64 = 1024,
-                        UINT64 = 1280,
-                        FLOAT128 = 1536,
-                        COMPLEX128 = 1792,
-                        COMPLEX256 = 2048,
-                        RGBA32 = 2304)
-
-nifti.bitpix <- list(UINT8 = 8,
-                     INT8 = 8,
-                     UINT16 = 16,
-                     INT16 = 16,
-                     UINT32 = 32,
-                     INT32 = 32,
-                     UINT64 = 64,
-                     INT64 = 64,
-                     FLOAT32 = 32,
-                     FLOAT64 = 64,
-                     FLOAT128 = 128,
-                     COMPLEX64 = 64,
-                     COMPLEX128 = 128,
-                     COMPLEX256 = 256,
-                     RGB24 = 24,
-                     RGBA32 = 32)
-
-nifti.intent.code <- list("None" = 0,
-                          "Correl" = 2,
-                          "Ttest" = 3,
-                          "Ftest" = 4,
-                          "Zscore" = 5,
-                          "Chisq" = 6,
-                          "Beta" = 7,
-                          "Binom" = 8,
-                          "Gamma" = 9,
-                          "Poisson" = 10,
-                          "Normal" = 11,
-                          "Ftest_Nonc" = 12,
-                          "Chisq_Nonc" = 13,
-                          "Logistic" = 14,
-                          "Laplace" = 15,
-                          "Uniform" = 16,
-                          "Ttest_Nonc" = 17,
-                          "Weibull" = 18,
-                          "Chi" = 19,
-                          "Invgauss" = 20,
-                          "Extval" = 21,
-                          "Pval" = 22,
-                          "Logpval" = 23,
-                          "Log10pval" = 24,
-                          "Estimate" = 1001,  # estimate of some parameter
-                          "Label" = 1002,     # index into some set of labels
-                          "Neuroname" = 1003, # index into the NeuroNames
-                                              # labels set
-                          "Genmatrix" = 1004, # M x N matrix at each voxel
-                          "Symmatrix" = 1005, # N x N symmetric matrix at
-                                              # each voxel
-                          "Dispvect" = 1006,  # a displacement field
-                          "Vector" = 1007,    # a displacement vector
-                          "Pointset" = 1008,  # a spatial coordinate
-                          "Triangle" = 1009,  # triple of indexes
-                          "Quaternion" = 1010, # a quaternion
-                          "Dimless" = 1011)   # Dimensionless value - no params
-
-############################################################################
 ## Conversion subroutines
 ############################################################################
 
-convert.datatype <- function(datatype)
-  names(which(nifti.datatypes == datatype))
+convert.bitpix <- function(datatype, returnCode=FALSE) {
+  nifti.bitpix <- list(UINT8 = 8,
+                       INT8 = 8,
+                       UINT16 = 16,
+                       INT16 = 16,
+                       UINT32 = 32,
+                       INT32 = 32,
+                       UINT64 = 64,
+                       INT64 = 64,
+                       FLOAT32 = 32,
+                       FLOAT64 = 64,
+                       FLOAT128 = 128,
+                       COMPLEX64 = 64,
+                       COMPLEX128 = 128,
+                       COMPLEX256 = 256,
+                       RGB24 = 24,
+                       RGBA32 = 32)
+  if (!returnCode && is.numeric(datatype))
+    return(names(which(nifti.bitpix == datatype)))
+  if (returnCode && is.character(datatype))
+    return(nifti.bitpix[[datatype]])
+  stop("Invalid \"datatype\" and \"returnCode\" combination")
+}
 
-convert.intent <- function(intent.code)
-  names(which(nifti.intent.code == intent.code))
+convert.datatype <- function(datatype, returnCode=FALSE) {
+  nifti.datatype <- list(UINT8 = 2,
+                         INT16 = 4,
+                         INT32 = 8,
+                         FLOAT32 = 16,
+                         COMPLEX64 = 32,
+                         FLOAT64 = 64,
+                         RGB24 = 128,
+                         INT8 = 256,
+                         UINT16 = 512,
+                         UINT32 = 768,
+                         INT64 = 1024,
+                         UINT64 = 1280,
+                         FLOAT128 = 1536,
+                         COMPLEX128 = 1792,
+                         COMPLEX256 = 2048,
+                         RGBA32 = 2304)
+  if (!returnCode && is.numeric(datatype))
+    return(names(which(nifti.datatype == datatype)))
+  if (returnCode && is.character(datatype))
+    return(nifti.datatype[[datatype]])
+  stop("Invalid \"datatype\" and \"returnCode\" combination")
+}
+
+convert.intent <- function(intent, returnCode=FALSE) {
+  nifti.intent <- list(None = 0,
+                       Correl = 2,
+                       Ttest = 3,
+                       Ftest = 4,
+                       Zscore = 5,
+                       Chisq = 6,
+                       Beta = 7,
+                       Binom = 8,
+                       Gamma = 9,
+                       Poisson = 10,
+                       Normal = 11,
+                       Ftest_Nonc = 12,
+                       Chisq_Nonc = 13,
+                       Logistic = 14,
+                       Laplace = 15,
+                       Uniform = 16,
+                       Ttest_Nonc = 17,
+                       Weibull = 18,
+                       Chi = 19,
+                       Invgauss = 20,
+                       Extval = 21,
+                       Pval = 22,
+                       Logpval = 23,
+                       Log10pval = 24,
+                       Estimate = 1001,  # estimate of some parameter
+                       Label = 1002,     # index into some set of labels
+                       Neuroname = 1003, # index into the NeuroNames labels set
+                       Genmatrix = 1004, # M x N matrix at each voxel
+                       Symmatrix = 1005, # N x N symmetric matrix at each voxel
+                       Dispvect = 1006,  # a displacement field
+                       Vector = 1007,    # a displacement vector
+                       Pointset = 1008,  # a spatial coordinate
+                       Triangle = 1009,  # triple of indexes
+                       Quaternion = 1010, # a quaternion
+                       Dimless = 1011)   # Dimensionless value - no params
+  if (!returnCode && is.numeric(intent))
+    return(names(which(nifti.intent == intent)))
+  if (returnCode && is.character(intent))
+    return(nifti.intent[[intent]])
+  stop("Invalid \"intent.code\" and \"returnCode\" combination")
+}
 
 convert.form <- function(form.code) {
   switch(as.character(form.code),
@@ -268,24 +277,24 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
                              stop("Can't transform data in from: ",
                                   class(from[1])))
     nim@"data_type" <- datatypeString
-    nim@"datatype" <- nifti.datatypes[[datatypeString]]
-    nim@"bitpix" <- nifti.bitpix[[datatypeString]]
+    nim@"datatype" <- convert.datatype(datatypeString, returnCode=TRUE)
+    nim@"bitpix" <- convert.bitpix(datatypeString, returnCode=TRUE)
     nim@"cal_min" <- min(from)
     nim@"cal_max" <- max(from)
     nim@"dim_" <- c(length(dim(from)), dim(from))
     if (length(nim@"dim_") < 8)
       nim@"dim_" <- c(nim@"dim_", rep(1, 8 - length(nim@"dim_")))
     nim@.Data <- from
-    if (getOption("NIfTI.audit.trail") && is(nim, "niftiAuditTrail")) {
-      nim@trail <- nifti.audit.trail.created(history=nim@trail, call=match.call())
-    }
+    if (getOption("NIfTI.audit.trail") && is(nim, "niftiAuditTrail"))
+      nim@trail <- niftiAuditTrailCreated(history=nim@trail, call=match.call())
   } else {
     if (is.list(from)) {
       nim <- lapply(from, function(x) as.nifti(x, value))
       lapply(names(from),
              function(x) {
                if (is.nifti(nim[[x]])) {
-                 nim[[x]]@"intent_code" <<- nifti.intent.code[["Estimate"]]
+                 nim[[x]]@"intent_code" <<- convert.intent("Estimate",
+                                                           returnCode=TRUE)
                  nim[[x]]@"intent_name" <<- substr(x, 1, 15)
                }
              })
