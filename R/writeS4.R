@@ -109,23 +109,24 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
   ## Offset = 352
   ## Extensions?
   if (nim@"extender"[1] > 0 || nim@"vox_offset" > 352) {
-    if (!is.null(extensions) {
-
-      lapply(extensions, function(x) {
-	    writeBin(x@esize, fid, size=4)
-	    writeBin(x@ecode, fid, size=4)
-	    # As we've already checked validity
-	    writeBin(charToRaw(x@edata), fid, size=(x@esize-8))
-	  })
+    if (!is.null(extensions)) {
+      lapply(extensions,
+             function(x) {
+               writeBin(x@esize, fid, size=4)
+               writeBin(x@ecode, fid, size=4)
+               ## As we've already checked validity
+               writeBin(charToRaw(x@edata), fid, size=(x@esize-8))
+             })
     } else {
-       stop("@extender set but nim has no extensions")
+      stop("@extender set but nim has no extensions")
     }
   }
   ## Write image file...
-  # Shouldn't we seek?
+  ## Shouldn't we seek?
   #seek(fid, nim@"vox_offset")
   if (nim@"reoriented") {
-    writeBin(as.vector(inverseReorient(nim), verbose), fid, size=nim@"bitpix"/8)
+    writeBin(as.vector(inverseReorient(nim), verbose), fid,
+             size=nim@"bitpix"/8)
   } else {
     writeBin(as.vector(nim@.Data), fid, size=nim@"bitpix"/8)
   }
@@ -139,7 +140,8 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
 ############################################################################
 ############################################################################
 
-writeANALYZE <- function(aim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
+writeANALYZE <- function(aim, filename, gzipped=TRUE, verbose=FALSE,
+                         warn=-1) {
   ## Warnings?
   oldwarn <- options()$warn
   options(warn=warn)

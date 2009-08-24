@@ -31,9 +31,6 @@
 ## 
 ## $Id: $
 ##
-if (is.null(getOption("NIfTI.audit.trail")) && require(XML) ) {
-  options("NIfTI.audit.trail"=TRUE)
-}
 
 #############################################################################
 ## setClass("nifti")
@@ -140,6 +137,7 @@ setClass("niftiExtension",
          representation(extensions="list"),
          prototype(extensions=list()),
          contains="nifti")
+
 setClass("niftiExtensionSection",
          representation(esize="numeric",
                         ecode="numeric",
@@ -149,9 +147,10 @@ setClass("niftiExtensionSection",
                    edata=""))
 
 if (getOption("NIfTI.audit.trail")) {
-  require(XML)
+  require("XML")
   new.audit.trail <<- function() {
-    trail <- xmlNode("audit-trail",attrs=list(xmlns=audit.trail.namespace), namespace="")
+    trail <- xmlNode("audit-trail", attrs=list(xmlns=audit.trail.namespace),
+                     namespace="")
     return(trail)
   }
   setClass("niftiAuditTrail",
@@ -160,7 +159,7 @@ if (getOption("NIfTI.audit.trail")) {
       contains="niftiExtension")
   audit.trail.extension.ecode <<- 1002
   audit.trail.namespace <<- "http://www.dcemri.org/namespaces/audit-trail/1.0"
-  setValidity("niftiAuditTrail",function(object) { })
+  setValidity("niftiAuditTrail", function(object) { })
 }
 
 #############################################################################
@@ -227,32 +226,39 @@ setValidity("nifti", function(object) {
   if (is.null(retval)) return(TRUE)
   else return(retval)
 })
+
 setValidity("niftiExtension", function(object) {
-      ## Allegedly setValidity will always check for superclasses
-      ## So we need only check that the list is empty or only contains niftiExtensionSections and check the validity of each of those
-      retval <- NULL
-      validSection <- getValidity(getClassDef("niftiExtensionSection"))
-      lapply(object@"extensions", function(x) { 
-	    if (!is(x, "niftiExtensionSection")) {
-	      retval <<- c(retval, paste("@extensions list contains non-niftiExtensionSection element:", class(x)))
-	    } else if (!(validSection(x) == TRUE)) {
-	      retval <<- c(retval, validSection(x))
-	    }
-	  })
-      if (is.null(retval)) return (TRUE)
-      else return(retval)
-    })
+  ## Allegedly setValidity will always check for superclasses
+  ## So we need only check that the list is empty or only contains niftiExtensionSections and check the validity of each of those
+  retval <- NULL
+  validSection <- getValidity(getClassDef("niftiExtensionSection"))
+  lapply(object@"extensions",
+         function(x) { 
+           if (!is(x, "niftiExtensionSection")) {
+             retval <<- c(retval, paste("@extensions list contains non-niftiExtensionSection element:", class(x)))
+           } else {
+             if (!(validSection(x) == TRUE)) {
+               retval <<- c(retval, validSection(x))
+             }
+           }
+         })
+  if (is.null(retval))
+    return(TRUE)
+  else
+    return(retval)
+})
+
 setValidity("niftiExtensionSection", function(object) {
-      retval <- NULL
-      if (object@esize %% 16 != 0) {
-	retval <- c(retval, "esize is not a multiple of 16")
-      }
-      if ((object@esize - 8) < nchar(object@edata, type="bytes")) {
-	retval <- c(retval, "esize is too small for the data contained within the section")
-      }
-      if (is.null(retval)) return (TRUE)
-      else return(retval)
-    })
+  retval <- NULL
+  if (object@esize %% 16 != 0)
+    retval <- c(retval, "esize is not a multiple of 16")
+  if ((object@esize - 8) < nchar(object@edata, type="bytes"))
+    retval <- c(retval, "esize is too small for the data contained within the section")
+  if (is.null(retval))
+    return(TRUE)
+  else
+    return(retval)
+})
 ## setGeneric("img", function(object) { standardGeneric("img") })
 ## setMethod("img", "nifti", function(object) { object@.Data })
 ## setGeneric("img<-", function(x, value) { standardGeneric("img<-") })
