@@ -276,6 +276,9 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
     if (length(nim@"dim_") < 8)
       nim@"dim_" <- c(nim@"dim_", rep(1, 8 - length(nim@"dim_")))
     nim@.Data <- from
+    if (getOption("NIfTI.audit.trail") && is(nim, "niftiAuditTrail")) {
+      nim@trail <- nifti.audit.trail.created(history=nim@trail, call=match.call())
+    }
   } else {
     if (is.list(from)) {
       nim <- lapply(from, function(x) as.nifti(x, value))

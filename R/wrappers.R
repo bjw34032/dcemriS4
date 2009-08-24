@@ -37,6 +37,7 @@
 #############################################################################
 
 dcemri.lm.S4 <- function(conc, time, mask, ...) {
+  conc@trail <- nifti.audit.trail.event(conc@trail,"dcemri.lm", match.call(call=sys.call(sys.parent(2))))
   result <- dcemri::dcemri.lm(conc, time, mask, ...)
   as(result, "nifti") <- conc
   return(result)
@@ -55,6 +56,7 @@ setMethod("dcemri.lm", signature(conc="anlz"),
 #############################################################################
 
 dcemri.bayes.S4 <- function(conc, time, img.mask, ...) {
+  conc@trail <- nifti.audit.trail.event(conc@trail,"dcemri.bayes", match.call(call=sys.call(sys.parent(2))))
   result <- dcemri::dcemri.bayes(conc, time, img.mask, ...)
   as(result, "nifti") <- conc
   return(result)
@@ -73,6 +75,7 @@ setMethod("dcemri.bayes", signature(conc="anlz"),
 #############################################################################
 
 dcemri.spline.S4 <- function(conc, time, img.mask, ...) {
+  conc@trail <- nifti.audit.trail.event(conc@trail,"dcemri.spline", match.call(call=sys.call(sys.parent(2))))
   result <- dcemri::dcemri.spline(conc, time, img.mask, ...)
   as(result, "nifti") <- conc
   return(result)
@@ -91,6 +94,7 @@ setMethod("dcemri.spline", signature(conc="anlz"),
 #############################################################################
 
 dcemri.map.S4 <- function(conc, time, img.mask, ...) {
+  conc@trail <- nifti.audit.trail.event(conc@trail,"dcemri.map", match.call(call=sys.call(sys.parent(2))))
   result <- dcemri::dcemri.map(conc, time, img.mask, ...)
   as(result, "nifti") <- conc
   return(result)

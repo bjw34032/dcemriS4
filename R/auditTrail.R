@@ -58,6 +58,7 @@ new.audit.trail <- function() {
 
 nifti.extension.to.audit.trail <- function(nim, filename=NULL, call=NULL) {
   if (getOption("NIfTI.audit.trail")) {
+    require("XML")
     if (!is(nim, "niftiAuditTrail"))
       nim <- as(nim, "niftiAuditTrail")
     ## We enforce that there is a single extension with ecode == dcemri.ecode
@@ -85,6 +86,7 @@ nifti.extension.to.audit.trail <- function(nim, filename=NULL, call=NULL) {
 nifti.audit.trail.to.extension <- function(nim, filename=filename,
                                               call=call) {
   if (getOption("NIfTI.audit.trail")) {
+    require("XML")
     sec <- new("niftiExtensionSection")
     sec@ecode <- dcemri.ecode
     nim@trail <- nifti.audit.trail.system.node.event(nim@trail, "saved",
@@ -93,7 +95,7 @@ nifti.audit.trail.to.extension <- function(nim, filename=filename,
     ## DIRTY DIRTY DIRTY you should wash your eyes out after reading this.
     useFancyQuotes <- getOption("useFancyQuotes")
     options("useFancyQuotes"=FALSE)
-    sec@edata <- toString.XMLNode(trail)
+    sec@edata <- toString.XMLNode(nim@trail)
     options("useFancyQuotes"=useFancyQuotes)
 
     ## Fix the esize to be congruent to 0 mod 16
@@ -106,6 +108,7 @@ nifti.audit.trail.to.extension <- function(nim, filename=filename,
 nifti.audit.trail.system.node <- function(type="system-info", filename=NULL,
                                       call=NULL) {
   if (getOption("NIfTI.audit.trail")) {
+    require("XML")
     if (is(call, "call"))
       call <- as.character(as.expression(call))
     currentDateTime <- format(Sys.time(), "%a %b %d %X %Y %Z")
@@ -123,24 +126,33 @@ nifti.audit.trail.system.node <- function(type="system-info", filename=NULL,
 nifti.audit.trail.created <- function(history=NULL, call=NULL,
                                       filename=NULL) {
   if (getOption("NIfTI.audit.trail")) {
-    trail <- new.audit.trail()
-    created <- nifti.audit.trail.system.node("created", "filename"=filename,
-                                       "call"=call)
-    if (!is.null(history)) {
-      historyNode <- xmlNode("history")
-      lapply(xmlChildren(history),
-             function(x) { historyNode <<- addChildren(historyNode, x) })
-      created <- addChildren(created, historyNode)
+    if (is(history, "niftiAuditTrail")) {
+      return(nifti.audit.trail.created(history@trail, call, filename))
+    } else {
+      require("XML")
+      trail <- new.audit.trail()
+      created <- nifti.audit.trail.system.node("created", "filename"=filename,
+	  "call"=call)
+      if (!is.null(history)) {
+	historyNode <- xmlNode("history")
+	lapply(xmlChildren(history),
+	    function(x) { historyNode <<- addChildren(historyNode, x) })
+	created <- addChildren(created, historyNode)
+      }
+      trail <- addChildren(trail, created) 
+      return(trail)
     }
-    trail <- addChildren(trail, created) 
-    return(trail)
   }
 }
 
 nifti.audit.trail.event <- function(trail, type=NULL, call=NULL,
                                     comment=NULL) {
   if (getOption("NIfTI.audit.trail")) {
-    if (is(call, "call"))
+    if (is(trail,"niftiAuditTrail")) {
+      return(nifti.audit.trail.event(trail@trail, type, call, comment))
+    }
+    require("XML")
+    if (is(call,"call"))
       call <- as.character(as.expression(call))
     eventNode <- xmlNode("event", attrs=c("type"=type, "call"=call))
     if (!is.null(comment))
@@ -153,8 +165,12 @@ nifti.audit.trail.event <- function(trail, type=NULL, call=NULL,
 nifti.audit.trail.system.node.event <- function(trail, type=NULL, call=NULL,
                                             filename=NULL, comment=NULL) {
   if (getOption("NIfTI.audit.trail")) {
+    if (is(trail,"niftiAuditTrail")) {
+      return(nifti.audit.trail.system.node.event(trail@trail, type, call, filename, comment))
+    }
+    require("XML")
     eventNode <- nifti.audit.trail.system.node(type=type, call=call,
-                                         filename=filename)
+	filename=filename)
     if (!is.null(comment))
       eventNode <- addChildren(eventNode, xmlTextNode(comment))
     trail <- addChildren(trail, eventNode)
