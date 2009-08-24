@@ -36,11 +36,7 @@
   #library.dynam("dcemri", pkg, lib)
   ## 
   if (is.null(getOption("NIfTI.audit.trail")) && require("XML")) {
-    options("NIfTI.audit.trail"=TRUE)
-    setClass("niftiAuditTrail",
-	representation(trail="XMLNode"),
-	prototype(trail=new.audit.trail()),
-	contains="niftiExtension")
+    start.nifti.audit.trail.functionality()
   }
 }
 

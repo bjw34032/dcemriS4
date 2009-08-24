@@ -1,3 +1,16 @@
+start.nifti.audit.trail.functionality <- function() {
+  if (require("XML")) {
+    if (!isClass("niftiAuditTrail")) {
+      options("NIfTI.audit.trail"=TRUE)
+      setClass("niftiAuditTrail",
+	  representation(trail="XMLNode"),
+	  prototype(trail=new.audit.trail()),
+	  contains="niftiExtension")
+    }
+  }
+}
+
+
 nifti.audit.trail.extension.ecode <- 1002
 nifti.audit.trail.namespace <- "http://www.dcemri.org/namespaces/audit-trail/1.0"
 
