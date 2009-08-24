@@ -84,8 +84,7 @@ Class \code{"\linkS4class{vector}"}, by class "nifti", distance 6, with explicit
 % ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-	~~objects to See Also as \code{\link{~~fun~~}}, ~~~
-	or \code{\linkS4class{CLASSNAME}} for links to other classes
+  \code{\linkS4class{nifti}}, \code{\linkS4class{niftiAuditTrail}}
 }
 \examples{
 showClass("niftiExtension")

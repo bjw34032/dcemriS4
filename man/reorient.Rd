@@ -5,14 +5,14 @@
 
 \name{reorient}
 \alias{reorient}
-\alias{invertReorient}
+\alias{inverseReorient}
 \title{reorient}
 \description{
   ...
 }
 \usage{
 reorient(nim, data, verbose=FALSE, invert=FALSE)
-invertReorient(nim, verbose=FALSE)
+inverseReorient(nim, verbose=FALSE)
 }
 \arguments{
   \item{nim}{}

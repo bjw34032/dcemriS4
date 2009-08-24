@@ -50,11 +50,9 @@ performPermutation <- function(T, real.dimensions, data, verbose=FALSE) {
   if (sum(T != 0) == 3 && det(T) != 0) {
     ## Now ensure T is descaled and work out the permutation
     trans <- sign(T)
-
     perms <- abs(trans %*% 1:3)
-    if (length(perms) != length(workingdims)) {
+    if (length(perms) != length(workingdims))
       perms <- (c(perms, (length(perms)+1):length(workingdims)))
-    }
 
     reverselist <- c(trans %*% rep(1,3) < 0,
                      rep(FALSE, length(workingdims)-3))
@@ -118,10 +116,9 @@ reorient <- function(nim, data, verbose=FALSE, invert=FALSE) {
     scalingFactor <- nim@"pixdim"[1]
     ## which is either = 1 or -1
     if (abs(scalingFactor) != 1) { 
-      if (verbose) {
+      if (verbose)
 	cat("ScalingFactor (nim@\"pixdim\"[1]) <-", scalingFactor,
 	    "!= -1 or 1. Defaulting to 1", fill=TRUE)
-      }
       scalingFactor <- 1 
     }
 

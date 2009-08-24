@@ -130,13 +130,17 @@ setClass("nifti",
          contains="array")
 
 #############################################################################
-## setClass("extension")
+## setClass("niftiExtension")
 #############################################################################
 
 setClass("niftiExtension",
          representation(extensions="list"),
          prototype(extensions=list()),
          contains="nifti")
+
+#############################################################################
+## setClass("niftiExtensionSection")
+#############################################################################
 
 setClass("niftiExtensionSection",
          representation(esize="numeric",
@@ -211,6 +215,10 @@ setValidity("nifti", function(object) {
   else return(retval)
 })
 
+#############################################################################
+## setValidity("niftiExtension")
+#############################################################################
+
 setValidity("niftiExtension", function(object) {
   ## Allegedly setValidity will always check for superclasses
   ## So we need only check that the list is empty or only contains niftiExtensionSections and check the validity of each of those
@@ -232,6 +240,10 @@ setValidity("niftiExtension", function(object) {
     return(retval)
 })
 
+#############################################################################
+## setValidity("niftiExtensionSection")
+#############################################################################
+
 setValidity("niftiExtensionSection", function(object) {
   retval <- NULL
   if (object@esize %% 16 != 0)
@@ -243,6 +255,7 @@ setValidity("niftiExtensionSection", function(object) {
   else
     return(retval)
 })
+
 ## setGeneric("img", function(object) { standardGeneric("img") })
 ## setMethod("img", "nifti", function(object) { object@.Data })
 ## setGeneric("img<-", function(x, value) { standardGeneric("img<-") })
