@@ -30,11 +30,20 @@
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
 ## $Id: flipangle.R 112 2009-08-12 13:34:53Z bjw34032 $
+##
+
+#############################################################################
+## dam() = double-angle method
+#############################################################################
 
 dam <- function(low, high, low.deg) {
   alpha <- acos(abs(high /(2*low)))
   (180/pi * alpha) / low.deg # radians to degrees
 }
+
+#############################################################################
+## R10.lm() = estimate R1 using Levenburg-Marquardt
+#############################################################################
 
 R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
   func <- function(x, y) {
@@ -52,6 +61,10 @@ R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
   list(R1=out$par[1], S0=out$par[2], info=out$info, message=out$message)
 }
 
+#############################################################################
+## E10.lm() = estimate exp(-TR*R1) using Levenburg-Marquardt
+#############################################################################
+
 E10.lm <- function(signal, alpha, guess, nprint=0) {
   func <- function(x, signal, alpha) {
     E1 <- x[1]
@@ -67,7 +80,7 @@ E10.lm <- function(signal, alpha, guess, nprint=0) {
 }
 
 #############################################################################
-## setGeneric("R1.fast")
+## R1.fast()
 #############################################################################
 
 R1.fast <- function(flip, flip.mask, fangles, TR, verbose=FALSE) {
@@ -109,15 +122,11 @@ R1.fast <- function(flip, flip.mask, fangles, TR, verbose=FALSE) {
   R10.array[flip.mask] <- R10
   M0.array[flip.mask] <- M0
 
-  result <- list(M0 = M0.array, R10 = R10.array)
-  if (verbose) cat("  Converting to NIfTI...", fill=TRUE)
-  flip@trail <- niftiAuditTrailEvent(flip, "processing", "R1.fast")
-  as(result, "nifti") <- flip
-  return(result)
+  list(M0 = M0.array, R10 = R10.array)
 }
 
 #############################################################################
-## 
+## CA.fast() = estimate contrast-agent concentration and other stuff
 #############################################################################
 
 CA.fast <- function(dynamic, dyn.mask, dangle, flip, fangles, TR,
@@ -142,6 +151,10 @@ CA.fast <- function(dynamic, dyn.mask, dangle, flip, fangles, TR,
 
   list(M0 = R1est$M0, R10 = R1est$R10, R1t = R1t, conc = conc)
 }
+
+#############################################################################
+## CA.fast2()
+#############################################################################
 
 CA.fast2 <- function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
                      verbose=FALSE) {
