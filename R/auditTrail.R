@@ -65,8 +65,7 @@ newAuditTrail <- function() {
   if (getOption("NIfTI.audit.trail")) {
     require("XML")
     trail <- xmlNode("audit-trail",
-                     attrs=list(xmlns=dcemri.info("namespace")),
-                     namespace="")
+                     namespaceDefinitions=dcemri.info("namespace"))
     return(trail)
   }
 }
