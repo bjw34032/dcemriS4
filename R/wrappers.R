@@ -33,76 +33,54 @@
 ##
 
 #############################################################################
-## setGeneric("dcemri.lm")
+## A couple of wrapper functions to make our generic methods look all the same
 #############################################################################
 
-dcemri.lm.S4 <- function(conc, time, mask, ...) {
-  conc@trail <- niftiAuditTrailEvent(conc@trail, "processing", "dcemri.lm")
-  result <- dcemri::dcemri.lm(conc, time, mask, ...)
-  as(result, "nifti") <- conc
+dcemriWrapper <- function(name, ...) {
+  wrapper(getFunction(name, generic=FALSE, where="package:dcemri"), name, ...)
+}
+
+wrapper <- function(fun, name, nim, ...) {
+  if (!is(nim, "nifti")) 
+    nim <- as(nim, "nifti")
+  
+  if (is(nim, "niftiAuditTrail")) 
+    nim@trail <- niftiAuditTrailEvent(nim, "processing", name)
+  
+  result <- fun(nim, ...)
+  as(result, "nifti") <- nim
   return(result)
 }
 
+#############################################################################
+## setGeneric("dcemri.lm")
+#############################################################################
+
 setGeneric("dcemri.lm",
            function(conc, ...) standardGeneric("dcemri.lm"))
-setMethod("dcemri.lm", signature(conc="nifti"), dcemri.lm.S4)
-setMethod("dcemri.lm", signature(conc="array"),
-          function(conc, ...) dcemri.lm.S4(as(conc, "nifti"), ...))
-setMethod("dcemri.lm", signature(conc="anlz"),
-          function(conc, ...) dcemri.lm.S4(as(conc, "nifti"), ...))
+setMethod("dcemri.lm", signature(conc="array"), 
+	  function(conc,...) dcemriWrapper("dcemri.lm", conc, ...))
 
 #############################################################################
 ## setGeneric("dcemri.bayes")
 #############################################################################
 
-dcemri.bayes.S4 <- function(conc, time, img.mask, ...) {
-  conc@trail <- niftiAuditTrailEvent(conc@trail, "processing", "dcemri.bayes")
-  result <- dcemri::dcemri.bayes(conc, time, img.mask, ...)
-  as(result, "nifti") <- conc
-  return(result)
-}
-
 setGeneric("dcemri.bayes",
            function(conc, ...) standardGeneric("dcemri.bayes"))
-setMethod("dcemri.bayes", signature(conc="nifti"), dcemri.bayes.S4)
-setMethod("dcemri.bayes", signature(conc="array"),
-          function(conc,...) dcemri.bayes.S4(as(conc, "nifti"), ...))
-setMethod("dcemri.bayes", signature(conc="anlz"),
-          function(conc,...) dcemri.bayes.S4(as(conc, "nifti"), ...))
+setMethod("dcemri.bayes", signature(conc="array"), 
+          function(conc, ...) dcemriWrapper("dcemri.bayes", conc, ...))
 
 #############################################################################
 ## setGeneric("dcemri.spline")
 #############################################################################
-
-dcemri.spline.S4 <- function(conc, time, img.mask, ...) {
-  conc@trail <- niftiAuditTrailEvent(conc@trail, "processing", "dcemri.spline")
-  result <- dcemri::dcemri.spline(conc, time, img.mask, ...)
-  as(result, "nifti") <- conc
-  return(result)
-}
-
 setGeneric("dcemri.spline",
            function(conc, ...) standardGeneric("dcemri.spline"))
-setMethod("dcemri.spline", signature(conc="nifti"), dcemri.spline.S4)
 setMethod("dcemri.spline", signature(conc="array"),
-          function(conc, ...) dcemri.spline.S4(as(conc, "nifti"), ...))
-setMethod("dcemri.spline", signature(conc="anlz"),
-          function(conc, ...) dcemri.spline.S4(as(conc, "nifti"), ...))
+          function(conc, ...) dcemriWrapper("dcemri.spline", conc, ...))
 
 #############################################################################
 ## setGeneric("dcemri.map")
 #############################################################################
-
-dcemri.map.S4 <- function(conc, time, img.mask, ...) {
-  conc@trail <- niftiAuditTrailEvent(conc@trail, "processing", "dcemri.map")
-  result <- dcemri::dcemri.map(conc, time, img.mask, ...)
-  as(result, "nifti") <- conc
-  return(result)
-}
-
 setGeneric("dcemri.map", function(conc, ...) standardGeneric("dcemri.map"))
-setMethod("dcemri.map", signature(conc="nifti"), dcemri.map.S4)
 setMethod("dcemri.map", signature(conc="array"),
-          function(conc, ...) dcemri.map.S4(as(conc, "nifti"), ...))
-setMethod("dcemri.map", signature(conc="anlz"),
-          function(conc, ...) dcemri.map.S4(as(conc, "nifti"), ...))
+          function(conc, ...) dcemriWrapper("dcemri.map", conc, ...))
