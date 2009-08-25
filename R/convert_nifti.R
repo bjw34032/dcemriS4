@@ -80,7 +80,7 @@ convert.datatype <- function(datatype.code=NULL) {
   return(names(which(nifti.datatype == as.numeric(datatype.code))))
 }
 
-convert.intent <- function(intent.code) {
+convert.intent <- function(intent.code=NULL) {
   nifti.intent <- list(None = 0,
                        Correl = 2,
                        Ttest = 3,
