@@ -29,7 +29,7 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $Id: $
+## $Id$
 ##
 
 readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE) {
@@ -211,7 +211,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
            )
   close(fid)
 
-  ##THE SLOW BIT FOLLOWS
+  ## THE SLOW BIT FOLLOWS
 
   ## 3D IMAGE (VOLUME) ORIENTATION AND LOCATION IN SPACE:
   ## There are 3 different methods by which continuous coordinates can

@@ -29,7 +29,7 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $Id: $
+## $Id$
 ##
 
 dcemri.info <- function(type) {
@@ -123,7 +123,7 @@ niftiAuditTrailSystemNode <- function(type="system-info", filename=NULL,
                                       call=NULL) {
   if (getOption("NIfTI.audit.trail")) {
     require("XML")
-    if (is(call, "character") && is(try(get(call, mode="function"), silent=TRUE),"function")) 
+    if (is(call, "character") && is(try(get(call, mode="function"), silent=TRUE), "function")) 
       call <- as.character(as.expression(getLastCallWithName(call)))
     if (is(call, "call"))
       call <- as.character(as.expression(call))
