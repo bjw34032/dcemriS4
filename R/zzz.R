@@ -36,6 +36,13 @@
   ## library.dynam("dcemri", pkg, lib)
   if (require("XML") && (is.null(getOption("NIfTI.audit.trail")) || getOption("NIfTI.audit.trail")))
     enableAuditTrail()
+  #lapply(list(
+  #	  "dcemri.lm", "dcemri.bayes", "dcemri.spline", "dcemri.map"
+  #	  ), function(x) { 
+  #	setGeneric(x, function(conc, ...) standardGeneric(x))
+  #	setMethod(x, signature(conc="array"), 
+  #	    function(conc, ...) dcemriWrapper(x, conc, ...))
+  #   })
 }
 
 
