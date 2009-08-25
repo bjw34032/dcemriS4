@@ -36,6 +36,8 @@
   ## library.dynam("dcemri", pkg, lib)
   if (require("XML") && (is.null(getOption("NIfTI.audit.trail")) || getOption("NIfTI.audit.trail")))
     enableAuditTrail()
+  else
+    options("NIfTI.audit.trail"=FALSE)
   #lapply(list(
   #	  "dcemri.lm", "dcemri.bayes", "dcemri.spline", "dcemri.map"
   #	  ), function(x) { 
