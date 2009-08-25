@@ -37,8 +37,7 @@
 #############################################################################
 
 dcemri.lm.S4 <- function(conc, time, mask, ...) {
-  conc@trail <- niftiAuditTrailEvent(conc@trail, "dcemri.lm",
-                                     match.call(call=sys.call(sys.parent(2))))
+  conc@trail <- niftiAuditTrailEvent(conc@trail, "processing", "dcemri.lm")
   result <- dcemri::dcemri.lm(conc, time, mask, ...)
   as(result, "nifti") <- conc
   return(result)
@@ -57,8 +56,7 @@ setMethod("dcemri.lm", signature(conc="anlz"),
 #############################################################################
 
 dcemri.bayes.S4 <- function(conc, time, img.mask, ...) {
-  conc@trail <- niftiAuditTrailEvent(conc@trail, "dcemri.bayes",
-                                     match.call(call=sys.call(sys.parent(2))))
+  conc@trail <- niftiAuditTrailEvent(conc@trail, "processing", "dcemri.bayes")
   result <- dcemri::dcemri.bayes(conc, time, img.mask, ...)
   as(result, "nifti") <- conc
   return(result)
@@ -77,8 +75,7 @@ setMethod("dcemri.bayes", signature(conc="anlz"),
 #############################################################################
 
 dcemri.spline.S4 <- function(conc, time, img.mask, ...) {
-  conc@trail <- niftiAuditTrailEvent(conc@trail, "dcemri.spline",
-                                     match.call(call=sys.call(sys.parent(2))))
+  conc@trail <- niftiAuditTrailEvent(conc@trail, "processing", "dcemri.spline")
   result <- dcemri::dcemri.spline(conc, time, img.mask, ...)
   as(result, "nifti") <- conc
   return(result)
@@ -97,8 +94,7 @@ setMethod("dcemri.spline", signature(conc="anlz"),
 #############################################################################
 
 dcemri.map.S4 <- function(conc, time, img.mask, ...) {
-  conc@trail <- niftiAuditTrailEvent(conc@trail, "dcemri.map",
-                                     match.call(call=sys.call(sys.parent(2))))
+  conc@trail <- niftiAuditTrailEvent(conc@trail, "processing", "dcemri.map")
   result <- dcemri::dcemri.map(conc, time, img.mask, ...)
   as(result, "nifti") <- conc
   return(result)

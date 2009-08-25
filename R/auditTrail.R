@@ -50,6 +50,11 @@ enableAuditTrail <- function() {
   }
 }
 
+getLastCall <- function(functionName) {
+  theCalls <- sys.calls()
+  theCalls[[max(which(sapply(theCalls, function(x) x[[1]] == functionName)))]]
+}
+
 newAuditTrail <- function() {
   if (getOption("NIfTI.audit.trail")) {
     require("XML")
@@ -112,6 +117,8 @@ niftiAuditTrailSystemNode <- function(type="system-info", filename=NULL,
                                       call=NULL) {
   if (getOption("NIfTI.audit.trail")) {
     require("XML")
+    if (is(call, "character") && is(try(get(call, mode="function"), silent=TRUE),"function")) 
+      call <- as.character(as.expression(getLastCall(call)))
     if (is(call, "call"))
       call <- as.character(as.expression(call))
     currentDateTime <- format(Sys.time(), "%a %b %d %X %Y %Z")
@@ -150,12 +157,24 @@ niftiAuditTrailCreated <- function(history=NULL, call=NULL, filename=NULL) {
     } else {
       require("XML")
       trail <- newAuditTrail()
-      created <- niftiAuditTrailSystemNode("created", "filename"=filename,
-                                           "call"=call)
-      if (!is.null(history)) {
+      if (is.null(history) || length(xmlChildren(history)) == 0) {
+	created <- niftiAuditTrailSystemNode("created", "filename"=filename,
+					     "call"=call)
+      } else {
+	historyChildren <- xmlChildren(history)
+
+	lastEvent <- historyChildren[[length(historyChildren)]]
+	
+	if (xmlName(lastEvent) == "event" && xmlAttrs(lastEvent)[["type"]] == "processing") {
+	  # We are in some processing history; the given call is not the correct call
+	  call <- xmlAttrs(lastEvent)[["call"]]
+	  historyChildren <- historyChildren[1:(length(historyChildren) - 1)]
+	} 
+
+	created <- niftiAuditTrailSystemNode("created", "filename"=filename,
+					     "call"=call)
 	historyNode <- xmlNode("history")
-	lapply(xmlChildren(history),
-	    function(x) historyNode <<- addChildren(historyNode, x))
+	xmlChildren(historyNode) <- historyChildren
 	created <- addChildren(created, historyNode)
       }
       trail <- addChildren(trail, created) 
@@ -171,7 +190,9 @@ niftiAuditTrailEvent <- function(trail, type=NULL, call=NULL,
       return(niftiAuditTrailEvent(trail@trail, type, call, comment))
     }
     require("XML")
-    if (is(call,"call"))
+    if (is(call, "character") && is(try(get(call, mode="function"), silent=TRUE),"function")) 
+      call <- as.character(as.expression(getLastCall(call)))
+    if (is(call, "call"))
       call <- as.character(as.expression(call))
     eventNode <- xmlNode("event", attrs=c("type"=type, "call"=call))
     if (!is.null(comment))
