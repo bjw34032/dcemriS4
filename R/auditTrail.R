@@ -50,9 +50,15 @@ enableAuditTrail <- function() {
   }
 }
 
-getLastCall <- function(functionName) {
+## Look back through call stack for the last call with the name functionName
+## otherwise return the function that called the function that called us
+getLastCallWithName <- function(functionName) {
   theCalls <- sys.calls()
-  theCalls[[max(which(sapply(theCalls, function(x) x[[1]] == functionName)))]]
+  correctCalls <- which(sapply(theCalls, function(x) x[[1]] == functionName))
+  if (length(correctCalls) == 0) {
+    return(theCalls[max(1,length(theCalls)-2)])
+  }
+  return(theCalls[[max(which(sapply(theCalls, function(x) x[[1]] == functionName)))]])
 }
 
 newAuditTrail <- function() {
@@ -118,7 +124,7 @@ niftiAuditTrailSystemNode <- function(type="system-info", filename=NULL,
   if (getOption("NIfTI.audit.trail")) {
     require("XML")
     if (is(call, "character") && is(try(get(call, mode="function"), silent=TRUE),"function")) 
-      call <- as.character(as.expression(getLastCall(call)))
+      call <- as.character(as.expression(getLastCallWithName(call)))
     if (is(call, "call"))
       call <- as.character(as.expression(call))
     currentDateTime <- format(Sys.time(), "%a %b %d %X %Y %Z")
@@ -191,7 +197,7 @@ niftiAuditTrailEvent <- function(trail, type=NULL, call=NULL,
     }
     require("XML")
     if (is(call, "character") && is(try(get(call, mode="function"), silent=TRUE),"function")) 
-      call <- as.character(as.expression(getLastCall(call)))
+      call <- as.character(as.expression(getLastCallWithName(call)))
     if (is(call, "call"))
       call <- as.character(as.expression(call))
     eventNode <- xmlNode("event", attrs=c("type"=type, "call"=call))
