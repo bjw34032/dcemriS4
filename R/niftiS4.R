@@ -180,7 +180,7 @@ setValidity("nifti", function(object) {
   if (object@"sizeof_hdr" != 348)
     retval <- c(retval, "sizeof_hdr != 348")
   ## datatype needed to specify type of image data
-  if (!object@datatype %in% nifti.datatypes)
+  if (!object@datatype %in% convert.datatype())
     retval <- c(retval, "datatype not recognized")
   ## bitpix should correspond correctly to datatype
   if (!object@bitpix == nifti.bitpix[[convert.datatype(object@datatype)]]) 
