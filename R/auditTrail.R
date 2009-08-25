@@ -90,7 +90,7 @@ niftiExtensionToAuditTrail <- function(nim, filename=NULL, call=NULL) {
       }
       oe <- nim@extensions[[oei]]@edata
       nim@extensions[[oei]] <- NULL
-      nim@trail <- niftiAuditTrailSystemNodeEvent(xmlRoot(xmlTreeParse(oe, asText=TRUE)), type="read", filename=filename, call=call)
+      nim@trail <- niftiAuditTrailSystemNodeEvent(xmlRoot(xmlParse(oe, asText=TRUE)), type="read", filename=filename, call=call)
 
     }
     return(nim)
