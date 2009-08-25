@@ -106,11 +106,7 @@ niftiAuditTrailToExtension <- function(nim, filename=filename, call=call) {
     nim@trail <- niftiAuditTrailSystemNodeEvent(nim@trail, "saved",
                                                 filename=filename, call=call)
     ## Serialize the XML to sec@edata
-    ## DIRTY DIRTY DIRTY you should wash your eyes out after reading this.
-    useFancyQuotes <- getOption("useFancyQuotes")
-    options("useFancyQuotes"=FALSE)
-    sec@edata <- toString.XMLNode(nim@trail)
-    options("useFancyQuotes"=useFancyQuotes)
+    sec@edata <- saveXML(nim@trail)
 
     ## Fix the esize to be congruent to 0 mod 16
     sec@esize <- nchar(sec@edata, type="bytes") + 8
