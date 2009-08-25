@@ -13,7 +13,7 @@
 ##       copyright notice, this list of conditions and the following
 ##       disclaimer in the documentation and/or other materials provided
 ##       with the distribution.
-##     * The names of the authors may not be used to endorse or promote
+##     * the names of the authors may not be used to endorse or promote
 ##       products derived from this software without specific prior
 ##       written permission.
 ## 
@@ -36,7 +36,7 @@
 ## Conversion subroutines
 ############################################################################
 
-convert.bitpix <- function(datatype, returnCode=FALSE) {
+convert.bitpix <- function(bitpix= NULL) {
   nifti.bitpix <- list(UINT8 = 8,
                        INT8 = 8,
                        UINT16 = 16,
@@ -53,14 +53,12 @@ convert.bitpix <- function(datatype, returnCode=FALSE) {
                        COMPLEX256 = 256,
                        RGB24 = 24,
                        RGBA32 = 32)
-  if (!returnCode && is.numeric(datatype))
-    return(names(which(nifti.bitpix == datatype)))
-  if (returnCode && is.character(datatype))
-    return(nifti.bitpix[[datatype]])
-  stop("Invalid \"datatype\" and \"returnCode\" combination")
+  if (is.null(bitpix)) return(nifti.bitpix)
+  return(names(which(nifti.bitpix == datatype)))
 }
 
-convert.datatype <- function(datatype, returnCode=FALSE) {
+
+convert.datatype <- function(datatype.code=NULL) {
   nifti.datatype <- list(UINT8 = 2,
                          INT16 = 4,
                          INT32 = 8,
@@ -77,14 +75,12 @@ convert.datatype <- function(datatype, returnCode=FALSE) {
                          COMPLEX128 = 1792,
                          COMPLEX256 = 2048,
                          RGBA32 = 2304)
-  if (!returnCode && is.numeric(datatype))
-    return(names(which(nifti.datatype == datatype)))
-  if (returnCode && is.character(datatype))
-    return(nifti.datatype[[datatype]])
-  stop("Invalid \"datatype\" and \"returnCode\" combination")
+  if (is.null(datatype.code)) return(nifti.datatype)
+
+  return(names(which(nifti.datatype == as.numeric(datatype.code))))
 }
 
-convert.intent <- function(intent, returnCode=FALSE) {
+convert.intent <- function(intent.code) {
   nifti.intent <- list(None = 0,
                        Correl = 2,
                        Ttest = 3,
@@ -120,11 +116,9 @@ convert.intent <- function(intent, returnCode=FALSE) {
                        Triangle = 1009,  # triple of indexes
                        Quaternion = 1010, # a quaternion
                        Dimless = 1011)   # Dimensionless value - no params
-  if (!returnCode && is.numeric(intent))
-    return(names(which(nifti.intent == intent)))
-  if (returnCode && is.character(intent))
-    return(nifti.intent[[intent]])
-  stop("Invalid \"intent.code\" and \"returnCode\" combination")
+  if (is.null(intent.code)) return(nifti.intent)
+
+  return(names(which(nifti.intent == as.numeric(intent.code))))
 }
 
 convert.form <- function(form.code) {
@@ -277,8 +271,8 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
                              stop("Can't transform data in from: ",
                                   class(from[1])))
     nim@"data_type" <- datatypeString
-    nim@"datatype" <- convert.datatype(datatypeString, returnCode=TRUE)
-    nim@"bitpix" <- convert.bitpix(datatypeString, returnCode=TRUE)
+    nim@"datatype" <- convert.datatype()[[datatypeString]]
+    nim@"bitpix" <- convert.bitpix()[[datatypeString]]
     nim@"cal_min" <- min(from)
     nim@"cal_max" <- max(from)
     nim@"dim_" <- c(length(dim(from)), dim(from))
@@ -293,8 +287,7 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
       lapply(names(from),
              function(x) {
                if (is.nifti(nim[[x]])) {
-                 nim[[x]]@"intent_code" <<- convert.intent("Estimate",
-                                                           returnCode=TRUE)
+                 nim[[x]]@"intent_code" <<- convert.intent()[["Estimate"]]
                  nim[[x]]@"intent_name" <<- substr(x, 1, 15)
                }
              })
