@@ -43,7 +43,7 @@ enableAuditTrail <- function() {
     if (!isClass("niftiAuditTrail")) {
       options("NIfTI.audit.trail"=TRUE)
       setClass("niftiAuditTrail",
-               representation(trail="XMLNode"),
+               representation(trail="XMLAbstractNode"),
                prototype(trail=newAuditTrail()),
                contains="niftiExtension")
     }
@@ -64,7 +64,7 @@ getLastCallWithName <- function(functionName) {
 newAuditTrail <- function() {
   if (getOption("NIfTI.audit.trail")) {
     require("XML")
-    trail <- xmlNode("audit-trail",
+    trail <- newXMLNode("audit-trail",
                      namespaceDefinitions=dcemri.info("namespace"))
     return(trail)
   }
@@ -98,7 +98,7 @@ niftiExtensionToAuditTrail <- function(nim, filename=NULL, call=NULL) {
 }
 
 niftiAuditTrailToExtension <- function(nim, filename=filename, call=call) {
-  if (getOption("NIfTI.audit.trail")) {
+  if (getOption("NIfTI.audit.trail") && is(nim, "niftiAuditTrail")) {
     require("XML")
     sec <- new("niftiExtensionSection")
     sec@ecode <- dcemri.info("ecode")
@@ -123,7 +123,7 @@ niftiAuditTrailSystemNode <- function(type="system-info", filename=NULL,
     if (is(call, "call"))
       call <- as.character(as.expression(call))
     currentDateTime <- format(Sys.time(), "%a %b %d %X %Y %Z")
-    system <- xmlNode(type, attrs=c("filename"=filename, "call"=call),
+    system <- newXMLNode(type, attrs=c("filename"=filename, "call"=call),
                       namespace="")
     system <- addAttributes(system,
                             "r-version"=version$version.string,
@@ -174,7 +174,7 @@ niftiAuditTrailCreated <- function(history=NULL, call=NULL, filename=NULL) {
 
 	created <- niftiAuditTrailSystemNode("created", "filename"=filename,
 					     "call"=call)
-	historyNode <- xmlNode("history")
+	historyNode <- newXMLNode("history")
 	xmlChildren(historyNode) <- historyChildren
 	created <- addChildren(created, historyNode)
       }
@@ -195,7 +195,7 @@ niftiAuditTrailEvent <- function(trail, type=NULL, call=NULL,
       call <- as.character(as.expression(getLastCallWithName(call)))
     if (is(call, "call"))
       call <- as.character(as.expression(call))
-    eventNode <- xmlNode("event", attrs=c("type"=type, "call"=call))
+    eventNode <- newXMLNode("event", attrs=c("type"=type, "call"=call))
     if (!is.null(comment))
       eventNode <- addChildren(eventNode, xmlTextNode(comment))
     trail <- addChildren(trail, eventNode)
