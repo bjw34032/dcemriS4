@@ -58,7 +58,7 @@ getLastCallWithName <- function(functionName) {
   if (length(correctCalls) == 0) {
     return(theCalls[max(1,length(theCalls)-2)])
   }
-  return(theCalls[[max(which(sapply(theCalls, function(x) x[[1]] == functionName)))]])
+  return(theCalls[[max(correctCalls)]])
 }
 
 newAuditTrail <- function() {
