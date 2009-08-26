@@ -145,7 +145,7 @@ niftiAuditTrailSystemNodeEvent <- function(trail, type=NULL, call=NULL,
     eventNode <- niftiAuditTrailSystemNode(type=type, call=call,
                                            filename=filename)
     if (!is.null(comment))
-      eventNode <- addChildren(eventNode, xmlTextNode(comment))
+      eventNode <- addChildren(eventNode, newXMLTextNode(comment))
     trail <- addChildren(trail, eventNode)
     return(trail)
   }
@@ -197,7 +197,7 @@ niftiAuditTrailEvent <- function(trail, type=NULL, call=NULL,
       call <- as.character(as.expression(call))
     eventNode <- newXMLNode("event", attrs=c("type"=type, "call"=call))
     if (!is.null(comment))
-      eventNode <- addChildren(eventNode, xmlTextNode(comment))
+      eventNode <- addChildren(eventNode, newXMLTextNode(comment))
     trail <- addChildren(trail, eventNode)
     return(trail)
   }
