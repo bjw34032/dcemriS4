@@ -54,7 +54,7 @@ convert.bitpix <- function(bitpix= NULL) {
                        RGB24 = 24,
                        RGBA32 = 32)
   if (is.null(bitpix)) return(nifti.bitpix)
-  return(names(which(nifti.bitpix == datatype)))
+  return(names(which(nifti.bitpix == bitpix)))
 }
 
 
