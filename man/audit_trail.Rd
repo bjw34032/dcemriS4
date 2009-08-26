@@ -30,16 +30,53 @@ niftiAuditTrailCreated(history = NULL, call = NULL, filename = NULL)
 niftiAuditTrailEvent(trail, type = NULL, call = NULL, comment = NULL)
 }
 \arguments{
-  \item{nim}{}
-  \item{filename}{}
-  \item{call}{}
-  \item{type}{}
-  \item{trail}{}
-  \item{comment}{}
-  \item{history}{}
+  \item{nim}{is an object of class \code{niftiAuditTrail} or can be converted to such.}
+  \item{filename}{The filename associated with the nifti object.}
+  \item{call}{A \code{call}, function name in the call-stack or a string.}
+  \item{type}{An identifier to add some meaning to the event}
+  \item{trail}{The \code{XMLAbstractNode} representing the audit trail or the \code{niftiAuditTrail} object with a trail that will be amended.}
+  \item{comment}{Some textual comment}
+  \item{history}{An \code{XMLAbstractNode} to take as history to add to the \code{trail}}
 }
 \details{
-  ...
+  The function \code{enableAuditTrail} is called as the package loads to switch
+on the audit trail functionality and declare the class \code{niftiAuditTrail}.
+Should you wish to prevent the audit trail functionality loading, you should set
+the option \code{NIfTI.audit.trail} to FALSE. Manually calling the function
+\code{enableAuditTrail} will override this setting and switch on the
+functionality.
+
+  The function \code{newAuditTrail} returns an \code{XMLAbstractNode}
+representing the root node of an audit trail. This is mostly intended as an
+internal function.
+
+  The function \code{niftiExtensionToAuditTrail} takes an object representing a
+NIfTI object, casts it as a \code{niftiAuditTrail} and checks if there is an
+extension (a \code{niftiExtensionSection}) with \code{ecode} equal to
+\code{dcemri.info("ecode")} i.e. has a extension with data representing a
+serialized audit trail. The function will then strip
+the object of this extension parsing the serialized \code{edata} into an audit
+trail and adding a \code{read} event to the trail.
+
+  The function \code{niftiAuditTrailToExtension} takes a \code{niftiAuditTrail}
+and returns a \code{niftiExtensionSection} with \code{edata} containing the
+serialized form of the audit trail after adding a \code{saved} event to the
+trail.
+
+  The function \code{niftiAuditTrailSystemNodeEvent} adds an element with name
+ equal to \code{type} to the \code{trail}. It uses the
+\code{niftiAuditTrailSystemNode} function to create the node.
+  
+  The function \code{niftiAuditTrailSystemNode} is an internal function creating
+an \code{XMLAbstractNode} element with name \code{type} and attributes giving
+information about the R system and library. The \code{filename} and \code{call}
+will also be added as attributes if available.
+
+  The function \code{niftiAuditTrailEvent} adds an element with name
+\code{event} to the \code{trail}. The arguments \code{type}, \code{filename},
+\code{call} are added as attributes and the \code{comment} is the text value of
+the element.
+
 }
 \value{
   ...
