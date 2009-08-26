@@ -280,7 +280,7 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
       nim@"dim_" <- c(nim@"dim_", rep(1, 8 - length(nim@"dim_")))
     nim@.Data <- from
     if (getOption("NIfTI.audit.trail") && is(nim, "niftiAuditTrail"))
-      nim@trail <- niftiAuditTrailCreated(history=nim@trail, call=match.call())
+      audit.trail(nim) <- niftiAuditTrailCreated(history=nim, call=match.call())
   } else {
     if (is.list(from)) {
       nim <- lapply(from, function(x) as.nifti(x, value))
@@ -289,6 +289,7 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
                if (is.nifti(nim[[x]])) {
                  nim[[x]]@"intent_code" <<- convert.intent()[["Estimate"]]
                  nim[[x]]@"intent_name" <<- substr(x, 1, 15)
+		 audit.trail(nim[[x]]) <<- niftiAuditTrailEvent(nim[[x]], type="Intent Changed", comment=paste("Parameter Estimate:", x))
                }
              })
     } else {

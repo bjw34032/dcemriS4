@@ -80,7 +80,7 @@ niftiExtensionToAuditTrail <- function(nim, filename=NULL, call=NULL) {
     oei <- which(ecodes == dcemri.info("ecode"))
     
     if (length(oei) == 0) {
-      nim@trail <- niftiAuditTrailCreated(filename=filename, call=call)
+      audit.trail(nim) <- niftiAuditTrailCreated(filename=filename, call=call)
     } else {
       ## One Trail
       if (length(oei) > 1) {
@@ -90,7 +90,7 @@ niftiExtensionToAuditTrail <- function(nim, filename=NULL, call=NULL) {
       }
       oe <- nim@extensions[[oei]]@edata
       nim@extensions[[oei]] <- NULL
-      nim@trail <- niftiAuditTrailSystemNodeEvent(xmlRoot(xmlParse(oe, asText=TRUE)), type="read", filename=filename, call=call)
+      audit.trail(nim) <- niftiAuditTrailSystemNodeEvent(xmlRoot(xmlParse(oe, asText=TRUE)), type="read", filename=filename, call=call)
 
     }
   }
@@ -102,10 +102,10 @@ niftiAuditTrailToExtension <- function(nim, filename=filename, call=call) {
     require("XML")
     sec <- new("niftiExtensionSection")
     sec@ecode <- dcemri.info("ecode")
-    nim@trail <- niftiAuditTrailSystemNodeEvent(nim@trail, "saved",
+    audit.trail(nim) <- niftiAuditTrailSystemNodeEvent(audit.trail(nim), "saved",
                                                 filename=filename, call=call)
     ## Serialize the XML to sec@edata
-    sec@edata <- saveXML(nim@trail)
+    sec@edata <- saveXML(audit.trail(nim))
 
     ## Fix the esize to be congruent to 0 mod 16
     sec@esize <- nchar(sec@edata, type="bytes") + 8
@@ -138,7 +138,7 @@ niftiAuditTrailSystemNodeEvent <- function(trail, type=NULL, call=NULL,
                                            filename=NULL, comment=NULL) {
   if (getOption("NIfTI.audit.trail")) {
     if (is(trail,"niftiAuditTrail")) {
-      return(niftiAuditTrailSystemNodeEvent(trail@trail, type, call,
+      return(niftiAuditTrailSystemNodeEvent(audit.trail(trail), type, call,
                                             filename, comment))
     }
     require("XML")
@@ -154,7 +154,7 @@ niftiAuditTrailSystemNodeEvent <- function(trail, type=NULL, call=NULL,
 niftiAuditTrailCreated <- function(history=NULL, call=NULL, filename=NULL) {
   if (getOption("NIfTI.audit.trail")) {
     if (is(history, "niftiAuditTrail")) {
-      return(niftiAuditTrailCreated(history@trail, call, filename))
+      return(niftiAuditTrailCreated(audit.trail(history), call, filename))
     } else {
       require("XML")
       trail <- newAuditTrail()
@@ -188,7 +188,7 @@ niftiAuditTrailEvent <- function(trail, type=NULL, call=NULL,
                                     comment=NULL) {
   if (getOption("NIfTI.audit.trail")) {
     if (is(trail,"niftiAuditTrail")) {
-      return(niftiAuditTrailEvent(trail@trail, type, call, comment))
+      return(niftiAuditTrailEvent(audit.trail(trail), type, call, comment))
     }
     require("XML")
     if (is(call, "character") && is(try(get(call, mode="function"), silent=TRUE),"function")) 
