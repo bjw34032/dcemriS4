@@ -338,6 +338,35 @@ setReplaceMethod("aux.file", "nifti",
                  function(x, value) { x@"aux_file" <- value ; x })
 
 #############################################################################
+## audit.trail() accessor function to @"trail"
+#############################################################################
+## These functions will work even if the audit trail functionality is not	     
+## activated. They should help reduce the difference in code paths.
+#############################################################################
+
+setGeneric("audit.trail", function(object) { standardGeneric("audit.trail") })
+setMethod("audit.trail", "nifti", function(object) { 
+      if (getOption("NIfTI.audit.trail") && is(object, "niftiAuditTrail")) {
+	object@"trail" 
+      } else {
+	NULL
+      }
+    })
+
+setGeneric("audit.trail<-", function(x, value) { standardGeneric("audit.trail<-") })
+setReplaceMethod("audit.trail", "nifti",
+    function(x, value) {
+      if (getOption("NIfTI.audit.trail")) {
+	if (!is(x, "niftiAuditTrail")) {
+	  x <- as(x, "niftiAuditTrail")
+	}
+	x@"trail" <- value
+      } 
+      x
+    })
+
+
+#############################################################################
 ## quaternion2rotation()
 #############################################################################
 
