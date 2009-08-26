@@ -77,9 +77,34 @@ will also be added as attributes if available.
 \code{call} are added as attributes and the \code{comment} is the text value of
 the element.
 
+  The function \code{niftiAuditTrailCreated} will create a new audit trail
+containing a system node element \code{created} with the child \code{history}
+with the contents \code{history}. If the last element of the \code{history}
+given is an \code{event} with \code{type="processing"}, then this node will be
+removed from the \code{history} and its \code{call} attribute will be used as
+the value of the \code{call} attribute on the \code{created} node.
+
+}
+\note{
+These functions are mostly intended to be used internally in order to document
+the changes that occur to NIfTI objects due to functions that are audit-trail
+aware. However, as the precise manner in which these functions are used is not
+documented anywhere else, I shall proceed to describe which functions are
+audit-trail aware and how they interact with the audit trail.
+
+\code{as.nifti} and its S4 alias \code{as(nim, "nifti")} will always produce
+\code{niftiAuditTrail} objects if the functionality is on. The function
+\code{niftiAuditTrailCreated} will be used and if an exemplar object
+is provided e.g. \code{as.nifti(array, niftiExemplar)} then the trail of the
+exemplar will be used as the \code{history}. 
+
+\code{readNIfTI} and \code{writeNIfTI} also always produce
+\code{niftiAuditTrail} objects if the functionality is on. The functions
+\code{niftiExtensionToAuditTrail} and \code{niftiAuditTrailToExtension} are used
+internally by these functions to facilitate this behaviour.
+
 }
 \value{
-  ...
 }
 %\references{}
 \author{
