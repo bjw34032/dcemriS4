@@ -56,31 +56,34 @@ wrapper <- function(fun, name, nim, ...) {
 ## setGeneric("dcemri.lm")
 #############################################################################
 
-setGeneric("dcemri.lm",
-           function(conc, ...) standardGeneric("dcemri.lm"))
-setMethod("dcemri.lm", signature(conc="array"), 
-	  function(conc,...) dcemriWrapper("dcemri.lm", conc, ...))
+#setGeneric("dcemri.lm",
+#           function(conc, ...) standardGeneric("dcemri.lm"))
+#setMethod("dcemri.lm", signature(conc="array"), 
+#	  function(conc,...) dcemriWrapper("dcemri.lm", conc, ...))
 
 #############################################################################
 ## setGeneric("dcemri.bayes")
 #############################################################################
 
-setGeneric("dcemri.bayes",
-           function(conc, ...) standardGeneric("dcemri.bayes"))
-setMethod("dcemri.bayes", signature(conc="array"), 
-          function(conc, ...) dcemriWrapper("dcemri.bayes", conc, ...))
+#setGeneric("dcemri.bayes",
+#           function(conc, ...) standardGeneric("dcemri.bayes"))
+#setMethod("dcemri.bayes", signature(conc="array"), 
+#          function(conc, ...) dcemriWrapper("dcemri.bayes", conc, ...))
 
 #############################################################################
 ## setGeneric("dcemri.spline")
 #############################################################################
-setGeneric("dcemri.spline",
-           function(conc, ...) standardGeneric("dcemri.spline"))
-setMethod("dcemri.spline", signature(conc="array"),
-          function(conc, ...) dcemriWrapper("dcemri.spline", conc, ...))
+
+#setGeneric("dcemri.spline",
+#           function(conc, ...) standardGeneric("dcemri.spline"))
+#setMethod("dcemri.spline", signature(conc="array"),
+#          function(conc, ...) dcemriWrapper("dcemri.spline", conc, ...))
 
 #############################################################################
 ## setGeneric("dcemri.map")
 #############################################################################
-setGeneric("dcemri.map", function(conc, ...) standardGeneric("dcemri.map"))
-setMethod("dcemri.map", signature(conc="array"),
-          function(conc, ...) dcemriWrapper("dcemri.map", conc, ...))
+
+#setGeneric("dcemri.map", function(conc, ...) standardGeneric("dcemri.map"))
+#setMethod("dcemri.map", signature(conc="array"),
+#          function(conc, ...) dcemriWrapper("dcemri.map", conc, ...))
+

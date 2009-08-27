@@ -5,6 +5,7 @@
 
 \name{Convert NIfTI Codes}
 \alias{convert.datatype}
+\alias{convert.bitpix}
 \alias{convert.intent}
 \alias{convert.form}
 \alias{convert.units}
@@ -15,8 +16,9 @@
   chartacter strings.
 }
 \usage{
-convert.datatype(datatype)
-convert.intent(intent.code)
+convert.datatype(datatype.code = NULL)
+convert.bitpix(bitpix = NULL)
+convert.intent(intent.code = NULL)
 convert.form(form.code)
 convert.units(units)
 convert.slice(slice.code)

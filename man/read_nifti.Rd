@@ -24,8 +24,10 @@ read.nifti.content(fname, onefile=TRUE, gzipped=TRUE, verbose=FALSE,
   \item{gzipped}{}
 }
 \details{
+  ...
 }
 \value{
+  ...
 }
 \references{
   NIfTI-1 \url{http://nifti.nimh.nih.gov/}
@@ -34,5 +36,9 @@ read.nifti.content(fname, onefile=TRUE, gzipped=TRUE, verbose=FALSE,
   \code{\link{readANALYZE}}
 }
 %\examples{}
-\author{Brandon Whitcher, Volker Schmid, Andrew Thornton}
+\author{
+  Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>,
+  Volker Schmid <\email{volkerschmid@users.sourceforge.net}>,
+  Andrew Thornton <\email{zeripath@users.sourceforge.net}>
+}
 %\keyword{}

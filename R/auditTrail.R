@@ -56,7 +56,7 @@ getLastCallWithName <- function(functionName) {
   theCalls <- sys.calls()
   correctCalls <- which(sapply(theCalls, function(x) x[[1]] == functionName))
   if (length(correctCalls) == 0) {
-    return(theCalls[max(1,length(theCalls)-2)])
+    return(theCalls[max(1, length(theCalls)-2)])
   }
   return(theCalls[[max(correctCalls)]])
 }
