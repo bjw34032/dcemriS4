@@ -15,23 +15,23 @@
  ~~ Methods for function \code{coerce} in Package `methods' ~~
 }
 \usage{
-as(object, Class)
-as(object, Class) <- value
+\S4method{as}{array,nifti}(object, Class)
+\S4method{as}{array,nifti}(object, Class) <- value
 }
 \arguments{
   \item{object}{}
+  \item{Class}{}
   \item{value}{}
 }
 \section{Methods}{
-\describe{
-
-\item{from = "array", to = "nifti"}{An object of class \code{array} is
-  coerced into a NIfTI object.}
-
-\item{from = "list", to = "nifti"}{All objects of class \code{array} in
-  the list are coerced into NIfTI objects.  All other objects are left
-  alone.  The original list structure is retained.}
-}}
+  \describe{
+    \item{from = "array", to = "nifti"}{An object of class \code{array}
+      is coerced into a NIfTI object.}
+    \item{from = "list", to = "nifti"}{All objects of class \code{array}
+      in the list are coerced into NIfTI objects.  All other objects are
+      left alone.  The original list structure is retained.}
+  }
+}
 \references{
 }
 \author{Andrew Thornton <\email{zeripath@users.sourceforge.net}>}

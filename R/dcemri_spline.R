@@ -94,7 +94,7 @@ setMethod("dcemri.spline", signature(conc="array"),
                as.double(1:(T^2)),
                as.double(t(D)),
                as.integer(silent),
-               PACKAGE="dcemri")
+               PACKAGE="dcemriS4")
 
   tau <- array(result[[5]], c(p-rw,nriters))
   beta <- array(result[[9]], c(p,nriters))
@@ -122,7 +122,7 @@ setMethod("dcemri.spline", signature(conc="array"),
                as.double(1:(T^2)),
                as.double(t(D)),
                as.integer(silent),
-               PACKAGE="dcemri")
+               PACKAGE="dcemriS4")
 
   tau <- array(result[[5]], c(p-rw,nriters))
   beta <- array(result[[9]], c(p,nriters))
