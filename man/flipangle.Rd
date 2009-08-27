@@ -6,6 +6,9 @@
 \name{Relaxivity}
 \alias{R10.lm}
 \alias{E10.lm}
+\alias{R1.fast,array-method}
+\alias{CA.fast,array-method}
+\alias{CA.fast2,array-method}
 \alias{R1.fast}
 \alias{CA.fast}
 \alias{CA.fast2}
@@ -18,10 +21,10 @@
 \usage{
 R10.lm(signal, alpha, TR, guess, nprint=0)
 E10.lm(signal, alpha, guess, nprint=0)
-R1.fast(flip, flip.mask, fangles, TR, verbose=FALSE)
-CA.fast(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
+\S4method{R1.fast}{array}(flip, flip.mask, fangles, TR, verbose=FALSE)
+\S4method{CA.fast}{array}(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
         verbose=FALSE)
-CA.fast2(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
+\S4method{CA.fast2}{array}(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
          verbose=FALSE)
 }
 \arguments{
@@ -144,7 +147,7 @@ unlist(out)
 par(mfrow=c(1,1))
 plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
 lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
-lines(alpha, gre(drop(out$M0), TR, 1/drop(out$R10), alpha), lwd=2, col=2)
+lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
 }
 \author{B. Whitcher}
 \keyword{misc}

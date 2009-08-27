@@ -42,19 +42,10 @@ dam <- function(low, high, low.deg) {
 }
 
 #############################################################################
-## setGeneric("R10.lm")
-#############################################################################
-
-setGeneric("R10.lm", function(signal, ...) standardGeneric("R10.lm"))
-setMethod("R10.lm", signature(signal="array"),
-          function(signal, alpha, TR, guess, nprint=0) 
-	    dcemriWrapper("R10.lm", signal, alpha, TR, guess, nprint))
-
-#############################################################################
 ## R10.lm() = estimate R1 using Levenburg-Marquardt
 #############################################################################
 
-.R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
+R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
   func <- function(x, y) {
     R1 <- x[1]
     m0 <- x[2]
@@ -71,19 +62,10 @@ setMethod("R10.lm", signature(signal="array"),
 }
 
 #############################################################################
-## setGeneric("E10.lm")
-#############################################################################
-
-setGeneric("E10.lm", function(signal, ...) standardGeneric("E10.lm"))
-setMethod("E10.lm", signature(signal="array"),
-          function(signal, alpha, guess, nprint=0) 
-	    dcemriWrapper("E10.lm", signal, alpha, guess, nprint))
-
-#############################################################################
 ## E10.lm() = estimate exp(-TR*R1) using Levenburg-Marquardt
 #############################################################################
 
-.E10.lm <- function(signal, alpha, guess, nprint=0) {
+E10.lm <- function(signal, alpha, guess, nprint=0) {
   func <- function(x, signal, alpha) {
     E1 <- x[1]
     m0 <- x[2]
@@ -133,7 +115,7 @@ setMethod("R1.fast", signature(flip="array"),
   if (verbose)
     cat("  Calculating R10 and M0...", fill=TRUE)
   for (k in 1:nvoxels) {
-    fit <- .E10.lm(flip.mat[k,], fangles.mat[k,],
+    fit <- E10.lm(flip.mat[k,], fangles.mat[k,],
                   guess=c(1, mean(flip.mat[k,])))
     if (fit$info == 1 || fit$info == 2 || fit$info == 3) {
       R10[k] <- log(fit$E10) / -TR

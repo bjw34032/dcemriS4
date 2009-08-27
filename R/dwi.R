@@ -32,14 +32,10 @@
 ##
 
 #############################################################################
-## setGeneric("adc.lm")
+## adc.lm() = estimate ADC using Levenburg-Marquardt
 #############################################################################
 
-setGeneric("adc.lm", function(signal, ...) standardGeneric("adc.lm"))
-setMethod("adc.lm", signature(signal="array"),
-	  function(signal, b, guess, nprint=0) dcemriWrapper("adc.lm", signal, b, guess, nprint))
-
-.adc.lm <- function(signal, b, guess, nprint=0) {
+adc.lm <- function(signal, b, guess, nprint=0) {
   func <- function(x, y) {
     S0 <- x[1]
     D <- x[2]
@@ -59,7 +55,8 @@ setMethod("adc.lm", signature(signal="array"),
 
 setGeneric("ADC.fast", function(dwi, ...) standardGeneric("ADC.fast"))
 setMethod("ADC.fast", signature(dwi="array"),
-          function(dwi, bvalues, dwi.mask, verbose=FALSE) dcemriWrapper("ADC.fast", dwi, bvalues, dwi.mask, verbose))
+          function(dwi, bvalues, dwi.mask, verbose=FALSE)
+          dcemriWrapper("ADC.fast", dwi, bvalues, dwi.mask, verbose))
 
 .ADC.fast <- function(dwi, bvalues, dwi.mask, verbose=FALSE) {
   if (length(dim(dwi)) != 4)  # Check dwi is a 4D array
