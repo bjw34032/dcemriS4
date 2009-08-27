@@ -36,7 +36,6 @@
 ## Conversion subroutines
 ############################################################################
 
-convert.bitpix <- function(bitpix= NULL) {
 convert.bitpix <- function(bitpix=NULL) {
   nifti.bitpix <- list(UINT8 = 8,
                        INT8 = 8,
@@ -330,4 +329,3 @@ setAs("array", "nifti",
 setAs("list", "nifti",
       function(from) { as.nifti(from) },
       function(from, value) { as.nifti(from, value) } )
-

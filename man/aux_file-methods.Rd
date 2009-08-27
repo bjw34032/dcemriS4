@@ -9,6 +9,8 @@
 \alias{aux.file,anlz-method}
 \alias{aux.file,nifti-method}
 \alias{aux.file}
+\alias{aux.file<-,nifti-method}
+\alias{aux.file<-,anlz-method}
 \alias{aux.file<-}
 \title{Extract or Replace NIfTI/Analyze Auxiliary File}
 \description{
@@ -23,14 +25,12 @@
   \item{x}{is an object of class \code{nifti} or \code{anlz}.}
 }
 \section{Methods}{
-\describe{
-
-\item{object = "anlz"}{Extract or replace Analyze auxiliary file.}
-
-\item{object = "nifti"}{Extract or replace NIfTI auxiliary file.}
-}}
-\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
-\examples{
+  \describe{
+    \item{object = "anlz"}{Extract or replace Analyze auxiliary file.}
+    \item{object = "nifti"}{Extract or replace NIfTI auxiliary file.}
+  }
 }
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
+%\examples{}
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}

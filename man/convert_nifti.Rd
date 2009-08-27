@@ -24,7 +24,8 @@ convert.units(units)
 convert.slice(slice.code)
 }
 \arguments{
-  \item{datatype}{defines data type.}
+  \item{datatype.code}{defines data type.}
+  \item{bitpix}{is the bit-per-pixel code.}
   \item{intent.code}{is the NIfTI intent code.}
   \item{form.code}{is the x,y,z coordinate system.}
   \item{units}{is the units of pixdim[1..4].}
