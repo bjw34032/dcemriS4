@@ -37,7 +37,7 @@
 
 setGeneric("adc.lm", function(signal, ...) standardGeneric("adc.lm"))
 setMethod("adc.lm", signature(signal="array"),
-	  function(signal, ...) dcemriWrapper("adc.lm", signal, ...))
+	  function(signal, b, guess, nprint=0) dcemriWrapper("adc.lm", signal, b, guess, nprint))
 
 .adc.lm <- function(signal, b, guess, nprint=0) {
   func <- function(x, y) {
@@ -59,7 +59,7 @@ setMethod("adc.lm", signature(signal="array"),
 
 setGeneric("ADC.fast", function(dwi, ...) standardGeneric("ADC.fast"))
 setMethod("ADC.fast", signature(dwi="array"),
-          function(dwi, ...) dcemriWrapper("ADC.fast", dwi, ...))
+          function(dwi, bvalues, dwi.mask, verbose=FALSE) dcemriWrapper("ADC.fast", dwi, bvalues, dwi.mask, verbose))
 
 .ADC.fast <- function(dwi, bvalues, dwi.mask, verbose=FALSE) {
   if (length(dim(dwi)) != 4)  # Check dwi is a 4D array
