@@ -175,7 +175,7 @@ niftiAuditTrailCreated <- function(history=NULL, call=NULL, filename=NULL) {
 	created <- niftiAuditTrailSystemNode("created", "filename"=filename,
 					     "call"=call)
 	historyNode <- newXMLNode("history")
-	xmlChildren(historyNode) <- historyChildren
+	historyNode <- addChildren(historyNode, historyChildren)
 	created <- addChildren(created, historyNode)
       }
       trail <- addChildren(trail, created) 
