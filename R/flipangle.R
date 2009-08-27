@@ -47,7 +47,8 @@ dam <- function(low, high, low.deg) {
 
 setGeneric("R10.lm", function(signal, ...) standardGeneric("R10.lm"))
 setMethod("R10.lm", signature(signal="array"),
-          function(signal, ...) dcemriWrapper("R10.lm", signal, ...))
+          function(signal, alpha, TR, guess, nprint=0) 
+	    dcemriWrapper("R10.lm", signal, alpha, TR, guess, nprint))
 
 #############################################################################
 ## R10.lm() = estimate R1 using Levenburg-Marquardt
@@ -75,7 +76,8 @@ setMethod("R10.lm", signature(signal="array"),
 
 setGeneric("E10.lm", function(signal, ...) standardGeneric("E10.lm"))
 setMethod("E10.lm", signature(signal="array"),
-          function(signal, ...) dcemriWrapper("E10.lm", signal, ...))
+          function(signal, alpha, guess, nprint=0) 
+	    dcemriWrapper("E10.lm", signal, alpha, guess, nprint))
 
 #############################################################################
 ## E10.lm() = estimate exp(-TR*R1) using Levenburg-Marquardt
@@ -101,7 +103,8 @@ setMethod("E10.lm", signature(signal="array"),
 
 setGeneric("R1.fast", function(flip, ...) standardGeneric("R1.fast"))
 setMethod("R1.fast", signature(flip="array"),
-          function(flip, ...) dcemriWrapper("R1.fast", flip, ...))
+          function(flip, flip.mask, fangles, TR, verbose=FALSE) 
+	    dcemriWrapper("R1.fast", flip, flip.mask, fangles, TR, verbose))
 
 #############################################################################
 ## R1.fast()
@@ -155,7 +158,10 @@ setMethod("R1.fast", signature(flip="array"),
 
 setGeneric("CA.fast", function(dynamic, ...) standardGeneric("CA.fast"))
 setMethod("CA.fast", signature(dynamic="array"),
-          function(dynamic, ...) dcemriWrapper("CA.fast", dynamic, ...))
+	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
+	      verbose=FALSE) 
+	    dcemriWrapper("CA.fast", dynamic, dyn.mask, dangle, flip, fangles,
+		TR, r1, verbose))
 
 #############################################################################
 ## CA.fast() = estimate contrast-agent concentration and other stuff
@@ -190,7 +196,10 @@ setMethod("CA.fast", signature(dynamic="array"),
 
 setGeneric("CA.fast2", function(dynamic, ...) standardGeneric("CA.fast2"))
 setMethod("CA.fast2", signature(dynamic="array"),
-          function(dynamic, ...) dcemriWrapper("CA.fast2", dynamic, ...))
+	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
+	      verbose=FALSE) 
+	    dcemriWrapper("CA.fast2", dynamic, dyn.mask, dangle, flip, fangles,
+		TR, r1, verbose))
 
 #############################################################################
 ## CA.fast2()
