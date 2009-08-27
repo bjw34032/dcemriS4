@@ -29,27 +29,17 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $Id$
 ##
 
-.First.lib <- function(lib, pkg) {
-  library.dynam(pkg, pkg, lib)
-  if (require("XML") && (is.null(getOption("NIfTI.audit.trail")) || getOption("NIfTI.audit.trail")))
-    enableAuditTrail()
-  else
-    options("NIfTI.audit.trail"=FALSE)
-  #lapply(list(
-  #	  "dcemri.lm", "dcemri.bayes", "dcemri.spline", "dcemri.map"
-  #	  ), function(x) { 
-  #	setGeneric(x, function(conc, ...) standardGeneric(x))
-  #	setMethod(x, signature(conc="array"), 
-  #	    function(conc, ...) dcemriWrapper(x, conc, ...))
-  #   })
-}
+nsli <- function(x)
+  dim(x)[3]
 
-.onAttach <- function (lib, pkg) {
-  cat(pkg,": A Package for Medical Image Analysis (version = ",
-      as.character(sessionInfo()$otherPkgs$dcemri["Version"]), ")",
-      sep="", fill=TRUE)
-}
+NSLI <- function(x)
+  dim(x)[3]
+
+ntim <- function(x)
+  dim(x)[4]
+
+NTIM <- function(x)
+  dim(x)[4]
 

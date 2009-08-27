@@ -42,10 +42,18 @@ dam <- function(low, high, low.deg) {
 }
 
 #############################################################################
+## setGeneric("R10.lm")
+#############################################################################
+
+setGeneric("R10.lm", function(signal, ...) standardGeneric("R10.lm"))
+setMethod("R10.lm", signature(signal="array"),
+          function(signal, ...) dcemriWrapper("R10.lm", signal, ...))
+
+#############################################################################
 ## R10.lm() = estimate R1 using Levenburg-Marquardt
 #############################################################################
 
-R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
+.R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
   func <- function(x, y) {
     R1 <- x[1]
     m0 <- x[2]
@@ -62,10 +70,18 @@ R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
 }
 
 #############################################################################
+## setGeneric("E10.lm")
+#############################################################################
+
+setGeneric("E10.lm", function(signal, ...) standardGeneric("E10.lm"))
+setMethod("E10.lm", signature(signal="array"),
+          function(signal, ...) dcemriWrapper("E10.lm", signal, ...))
+
+#############################################################################
 ## E10.lm() = estimate exp(-TR*R1) using Levenburg-Marquardt
 #############################################################################
 
-E10.lm <- function(signal, alpha, guess, nprint=0) {
+.E10.lm <- function(signal, alpha, guess, nprint=0) {
   func <- function(x, signal, alpha) {
     E1 <- x[1]
     m0 <- x[2]
@@ -80,10 +96,18 @@ E10.lm <- function(signal, alpha, guess, nprint=0) {
 }
 
 #############################################################################
+## setGeneric("R1.fast")
+#############################################################################
+
+setGeneric("R1.fast", function(flip, ...) standardGeneric("R1.fast"))
+setMethod("R1.fast", signature(flip="array"),
+          function(flip, ...) dcemriWrapper("R1.fast", flip, ...))
+
+#############################################################################
 ## R1.fast()
 #############################################################################
 
-R1.fast <- function(flip, flip.mask, fangles, TR, verbose=FALSE) {
+.R1.fast <- function(flip, flip.mask, fangles, TR, verbose=FALSE) {
 
   if (length(dim(flip)) != 4)  # Check flip is a 4D array
     stop("Flip-angle data must be a 4D array.")
@@ -106,7 +130,7 @@ R1.fast <- function(flip, flip.mask, fangles, TR, verbose=FALSE) {
   if (verbose)
     cat("  Calculating R10 and M0...", fill=TRUE)
   for (k in 1:nvoxels) {
-    fit <- E10.lm(flip.mat[k,], fangles.mat[k,],
+    fit <- .E10.lm(flip.mat[k,], fangles.mat[k,],
                   guess=c(1, mean(flip.mat[k,])))
     if (fit$info == 1 || fit$info == 2 || fit$info == 3) {
       R10[k] <- log(fit$E10) / -TR
@@ -126,10 +150,18 @@ R1.fast <- function(flip, flip.mask, fangles, TR, verbose=FALSE) {
 }
 
 #############################################################################
+## setGeneric("CA.fast")
+#############################################################################
+
+setGeneric("CA.fast", function(dynamic, ...) standardGeneric("CA.fast"))
+setMethod("CA.fast", signature(dynamic="array"),
+          function(dynamic, ...) dcemriWrapper("CA.fast", dynamic, ...))
+
+#############################################################################
 ## CA.fast() = estimate contrast-agent concentration and other stuff
 #############################################################################
 
-CA.fast <- function(dynamic, dyn.mask, dangle, flip, fangles, TR,
+.CA.fast <- function(dynamic, dyn.mask, dangle, flip, fangles, TR,
                      r1=4, verbose=FALSE) {
 
   if (length(dim(flip)) != 4)  # Check flip is a 4D array
@@ -153,10 +185,18 @@ CA.fast <- function(dynamic, dyn.mask, dangle, flip, fangles, TR,
 }
 
 #############################################################################
+## setGeneric("CA.fast2")
+#############################################################################
+
+setGeneric("CA.fast2", function(dynamic, ...) standardGeneric("CA.fast2"))
+setMethod("CA.fast2", signature(dynamic="array"),
+          function(dynamic, ...) dcemriWrapper("CA.fast2", dynamic, ...))
+
+#############################################################################
 ## CA.fast2()
 #############################################################################
 
-CA.fast2 <- function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
+.CA.fast2 <- function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
                      verbose=FALSE) {
   
   if (length(dim(flip)) != 4)  # Check flip is a 4D array

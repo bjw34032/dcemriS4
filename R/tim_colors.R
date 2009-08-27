@@ -29,27 +29,40 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $Id$
 ##
 
-.First.lib <- function(lib, pkg) {
-  library.dynam(pkg, pkg, lib)
-  if (require("XML") && (is.null(getOption("NIfTI.audit.trail")) || getOption("NIfTI.audit.trail")))
-    enableAuditTrail()
-  else
-    options("NIfTI.audit.trail"=FALSE)
-  #lapply(list(
-  #	  "dcemri.lm", "dcemri.bayes", "dcemri.spline", "dcemri.map"
-  #	  ), function(x) { 
-  #	setGeneric(x, function(conc, ...) standardGeneric(x))
-  #	setMethod(x, signature(conc="array"), 
-  #	    function(conc, ...) dcemriWrapper(x, conc, ...))
-  #   })
+tim.colors <- function(n=64) {
+  require("splines")
+  ## tims original 64 color definition definition:
+  
+  orig <- c("#00008F", "#00009F", "#0000AF", "#0000BF",
+            "#0000CF", "#0000DF", "#0000EF", "#0000FF",
+            "#0010FF", "#0020FF", "#0030FF", "#0040FF",
+            "#0050FF", "#0060FF", "#0070FF", "#0080FF",
+            "#008FFF", "#009FFF", "#00AFFF", "#00BFFF",
+            "#00CFFF", "#00DFFF", "#00EFFF", "#00FFFF",
+            "#10FFEF", "#20FFDF", "#30FFCF", "#40FFBF",
+            "#50FFAF", "#60FF9F", "#70FF8F", "#80FF80",
+            "#8FFF70", "#9FFF60", "#AFFF50", "#BFFF40",
+            "#CFFF30", "#DFFF20", "#EFFF10", "#FFFF00",
+            "#FFEF00", "#FFDF00", "#FFCF00", "#FFBF00",
+            "#FFAF00", "#FF9F00", "#FF8F00", "#FF8000",
+            "#FF7000", "#FF6000", "#FF5000", "#FF4000",
+            "#FF3000", "#FF2000", "#FF1000", "#FF0000",
+            "#EF0000", "#DF0000", "#CF0000", "#BF0000",
+            "#AF0000", "#9F0000", "#8F0000", "#800000")
+  if (n==64) return(orig)
+  rgb.tim <- t(col2rgb(orig))
+  temp <- matrix(NA, ncol=3, nrow=n)
+  x <- seq(0, 1, length.out=64)
+  xg <- seq(0, 1, length.out=n)
+  for (k in 1:3) {
+    ## hold <- splint(x, rgb.hot[,k], xg)
+    hold <- interpSpline(x, rgb.tim[,k])
+    hold <- predict(hold, xg)$y
+    hold[hold < 0] <- 0
+    hold[hold > 255] <- 255
+    temp[,k] <- round(hold)
+  }
+  rgb(temp[,1], temp[,2], temp[,3], maxColorValue=255)
 }
-
-.onAttach <- function (lib, pkg) {
-  cat(pkg,": A Package for Medical Image Analysis (version = ",
-      as.character(sessionInfo()$otherPkgs$dcemri["Version"]), ")",
-      sep="", fill=TRUE)
-}
-
