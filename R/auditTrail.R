@@ -175,6 +175,8 @@ niftiAuditTrailCreated <- function(history=NULL, call=NULL, filename=NULL) {
 	created <- niftiAuditTrailSystemNode("created", "filename"=filename,
 					     "call"=call)
 	historyNode <- newXMLNode("history")
+	## OK, serialize and reParse the history
+	historyChildren <- lapply(lapply(historyChildren, saveXML),function(x) xmlRoot(xmlParse(x, asText=TRUE)))
 	historyNode <- addChildren(historyNode, historyChildren)
 	created <- addChildren(created, historyNode)
       }
