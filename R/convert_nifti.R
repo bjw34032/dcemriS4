@@ -56,7 +56,7 @@ convert.bitpix <- function(bitpix=NULL) {
   if (is.null(bitpix))
     return(nifti.bitpix)
   else
-    return(names(which(nifti.bitpix == datatype)))
+    return(names(which(nifti.bitpix == bitpix)))
 }
 
 
