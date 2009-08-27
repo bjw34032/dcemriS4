@@ -1,3 +1,4 @@
+/*
 ##
 ##
 ## Copyright (c) 2009, Brandon Whitcher and Volker Schmid
@@ -29,27 +30,17 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $Id$
 ##
+*/
 
-.First.lib <- function(lib, pkg) {
-  library.dynam("dcemriS4", pkg, lib)
-  if (require("XML") && (is.null(getOption("NIfTI.audit.trail")) || getOption("NIfTI.audit.trail")))
-    enableAuditTrail()
-  else
-    options("NIfTI.audit.trail"=FALSE)
-  #lapply(list(
-  #	  "dcemri.lm", "dcemri.bayes", "dcemri.spline", "dcemri.map"
-  #	  ), function(x) { 
-  #	setGeneric(x, function(conc, ...) standardGeneric(x))
-  #	setMethod(x, signature(conc="array"), 
-  #	    function(conc, ...) dcemriWrapper(x, conc, ...))
-  #   })
-}
+#include <R.h>
+#include <Rmath.h>
+#include <R_ext/Lapack.h>
+#include <R_ext/BLAS.h>
 
-.onAttach <- function (lib, pkg) {
-  cat(pkg,": A Package for Medical Image Analysis (version = ",
-      as.character(sessionInfo()$otherPkgs$dcemri["Version"]), ")",
-      sep="", fill=TRUE)
-}
+double nulleins();
+double RNDGAM(double a, double b);
+double normal(double m, double s);
+void gausssample(double* temp, int* noa);
+double reins();
 
