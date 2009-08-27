@@ -365,6 +365,26 @@ setReplaceMethod("audit.trail", "nifti",
       x
     })
 
+setReplaceMethod("[", signature(x="nifti", i="missing", j="missing", value="array"),
+    function(x, value) {
+      x <- as.nifti(value, x)
+      validObject(x)
+      x
+    })  
+setReplaceMethod("[", signature(x="nifti", i="ANY", j="missing",  value="ANY"), 
+    function(x, i, value) {
+      x@.Data[i] <- value
+      audit.trail(x) <- niftiAuditTrailEvent(x, "modification", match.call(), paste("[", i,  "] <-", value))
+      x
+    })
+setReplaceMethod("[", signature(x="nifti", i="ANY", j="ANY",  value="ANY"),
+    function(x, i, j, ..., value) {
+      x@.Data[i,j,...] <- value
+      audit.trail(x) <- niftiAuditTrailEvent(x, "modification", match.call(), paste("[", i, j, ..., "] <-", value))
+      x
+    })
+
+
 
 #############################################################################
 ## quaternion2rotation()
