@@ -374,12 +374,16 @@ setReplaceMethod("[", signature(x="nifti", i="missing", j="missing", value="arra
 setReplaceMethod("[", signature(x="nifti", i="ANY", j="missing",  value="ANY"), 
     function(x, i, value) {
       x@.Data[i] <- value
+      if (value > x@cal_max) x@cal_max <- value
+      if (value < x@cal_min) x@cal_min <- value
       audit.trail(x) <- niftiAuditTrailEvent(x, "modification", match.call(), paste("[", i,  "] <-", value))
       x
     })
 setReplaceMethod("[", signature(x="nifti", i="ANY", j="ANY",  value="ANY"),
     function(x, i, j, ..., value) {
       x@.Data[i,j,...] <- value
+      if (value > x@cal_max) x@cal_max <- value
+      if (value < x@cal_min) x@cal_min <- value
       audit.trail(x) <- niftiAuditTrailEvent(x, "modification", match.call(), paste("[", i, j, ..., "] <-", value))
       x
     })
