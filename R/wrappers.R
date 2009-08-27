@@ -44,11 +44,12 @@ wrapper <- function(fun, name, nim, ...) {
   if (!is(nim, "nifti")) 
     nim <- as(nim, "nifti")
   
-  if (is(nim, "niftiAuditTrail")) 
-    nim@trail <- niftiAuditTrailEvent(nim@trail, "processing", name)
+  audit.trail(nim) <- niftiAuditTrailEvent(nim, "processing", name)
   
   result <- fun(nim, ...)
   as(result, "nifti") <- nim
+  audit.trail(nim) <- niftiAuditTrailEvent(nim, "completed", name)
+
   return(result)
 }
 
