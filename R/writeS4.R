@@ -51,7 +51,7 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
     extensions <- nim@extensions
   }
   if (getOption("NIfTI.audit.trail") && is(nim,"niftiAuditTrail")) {
-    sec <- niftiAuditTrailToExtension(nim, filename, match.call())
+    sec <- niftiAuditTrailToExtension(nim, getwd(), filename, match.call())
     extensions <- append(extensions, sec)
   }
   if (!is.null(extensions)) {

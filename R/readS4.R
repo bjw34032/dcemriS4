@@ -242,7 +242,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   ## Check validity
   ## validObject(nim)
   if (getOption("NIfTI.audit.trail"))
-    nim <- niftiExtensionToAuditTrail(nim, filename=fname, call=match.call())
+    nim <- niftiExtensionToAuditTrail(nim, workingDirectory=getwd(), filename=fname, call=match.call())
   return(nim)
 }
 
