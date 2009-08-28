@@ -29,8 +29,9 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $Id$
+## $Id: $
 ##
+
 #############################################################################
 ## setGeneric("dcemri.spline")
 #############################################################################
@@ -44,21 +45,20 @@ setMethod("dcemri.spline", signature(conc="array"),
 	  thin=5, burnin=100, ab.hyper=c(1e-5,1e-5),
 	  ab.tauepsilon=c(1,1/1000), k=4, p=25, rw=2,
 	  knots=NULL, nlr=FALSE, t0.compute=FALSE,
-	  samples=FALSE, multicore=FALSE, verbose=FALSE, ...) dcemriWrapper("dcemri.spline", conc, time, img.mask, time.input,
-                          model, aif,
-                          user, aif.observed, nriters,
-                          thin, burnin, ab.hyper,
-                          ab.tauepsilon, k, p, rw,
-                          knots, nlr, t0.compute,
-                          samples, multicore, verbose, ...))
+	  samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
+          dcemriWrapper("dcemri.spline", conc, time, img.mask, time.input,
+                        model, aif, user, aif.observed, nriters,
+                        thin, burnin, ab.hyper, ab.tauepsilon, k, p, rw,
+                        knots, nlr, t0.compute, samples, multicore,
+                        verbose, ...))
 
 .dcemri.spline.single <- function(conc, time, D, time.input, p, rw, knots,
-                                 k, A, t0.compute=FALSE, nlr=FALSE,
-                                 nriters=500, thin=5, burnin=100,
-                                 ab.hyper=c(1e-5,1e-5),
-                                 ab.tauepsilon=c(1,1/1000), silent=0,
-                                 multicore=FALSE, model=NULL, model.func=NULL,
-                                 model.guess=NULL, samples=FALSE, B=NULL) {
+                                  k, A, t0.compute=FALSE, nlr=FALSE,
+                                  nriters=500, thin=5, burnin=100,
+                                  ab.hyper=c(1e-5,1e-5),
+                                  ab.tauepsilon=c(1,1/1000), silent=0,
+                                  multicore=FALSE, model=NULL, model.func=NULL,
+                                  model.guess=NULL, samples=FALSE, B=NULL) {
 
   ## require("minpack.lm")
   require("minpack.lm")
@@ -134,12 +134,10 @@ setMethod("dcemri.spline", signature(conc="array"),
     for (j in 1:nriters)
       d[,j] <- D %*% beta[,j]
 
-    q05 <- function(x) {
+    q05 <- function(x)
       quantile(x, .005, na.rm=TRUE)
-    }
-    med.na <- function(x) {
+    med.na <- function(x)
       median(x, na.rm=TRUE)
-    }
 
     d1 <- apply(d, 1, q05)
     d2 <- apply(d, 1, med.na)
@@ -186,9 +184,9 @@ setMethod("dcemri.spline", signature(conc="array"),
     if (model=="AATH") 
       model.guess[2] <- median(MAX)
 
-    fcn <- function(p, time, x, N.Err, fcall, jcall) {
+    fcn <- function(p, time, x, N.Err, fcall, jcall)
       (x - do.call("fcall", c(list(time=time), as.list(p))))
-    }
+
     nls.lm.single <- function(fitted, par, fn, fcall, model, time) {
       fcall2 <- fcall
       if (length(fcall) > 1)
@@ -226,7 +224,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
       parameters <- list("E"=median(E), "F"=median(F), "TC"=median(TC),
                          "ve"=median(ve))
-      if(samples) 
+      if (samples) 
 	parameters <- list("E.samples"=E, "F.samples"=F, "TC.samples"=TC,
                            "ve.samples"=ve)
     }

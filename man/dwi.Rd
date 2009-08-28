@@ -1,9 +1,11 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
-% Time-stamp: <2009-08-05 17:07:17 (bjw34032)>
+%
+% $Id: $
 
 \name{Apparent Diffusion Coefficient}
 \alias{adc.lm}
+\alias{ADC.fast,array-method}
 \alias{ADC.fast}
 \title{Estimate the Apparent Diffusion Coefficient (ADC)}
 \description{
@@ -13,7 +15,7 @@
 }
 \usage{
 adc.lm(signal, b, guess, nprint=0)
-ADC.fast(dwi, bvalues, dwi.mask, verbose=FALSE)
+\S4method{ADC.fast}{array}(dwi, bvalues, dwi.mask, verbose=FALSE)
 }
 \arguments{
   \item{signal}{Signal intensity vector as a function of b-values.}
@@ -87,5 +89,5 @@ plot(b, signal, xlab="b-value", ylab="Signal intensity")
 lines(seq(0,800,10), dwi(S0, seq(0,800,10), D), lwd=2, col=1)
 lines(seq(0,800,10), dwi(ADC$S0, seq(0,800,10), ADC$D), lwd=2, col=2)
 }
-\author{Brandon Whitcher}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \keyword{models}

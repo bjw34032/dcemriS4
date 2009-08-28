@@ -86,5 +86,6 @@ curve.bayes <- kineticModel(time, list("ktrans"=fit.bayes$ktrans[3],
 lines(time, curve.bayes, col="blue")
 cbind(time, img[3,1,1,], curve.lm, curve.bayes)[20:30,]
 }
-\author{Brandon Whitcher, Volker Schmid}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}> and
+  Volker Schmid <\email{volkerschmid@users.sourceforge.net}>} 
 \keyword{models}

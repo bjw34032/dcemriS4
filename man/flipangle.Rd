@@ -149,5 +149,5 @@ plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
 lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
 lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
 }
-\author{B. Whitcher}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \keyword{misc}

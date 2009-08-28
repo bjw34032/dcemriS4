@@ -5,6 +5,7 @@
 
 \name{ftm}
 \alias{ftm}
+\alias{ftm,array-method}
 \title{Fast Template Matching via Cross-Correlation}
 \description{
   Motion correction and/or co-registration of three-dimensional arrays
@@ -13,7 +14,7 @@
   the FFT.
 }
 \usage{
-ftm(input, mask, template, plot=FALSE, ...)
+\S4method{ftm}{array}(input, mask, template, plot=FALSE, ...)
 }
 \arguments{
   \item{input}{is a four-dimensional array of signal intensities.}
@@ -52,7 +53,7 @@ ftm(input, mask, template, plot=FALSE, ...)
   Lewis, J.P. (2003) Fast normalized cross-correlation.
   \url{www.idiom.com/~zilla/}
 }
-\author{Brandon Whitcher}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \seealso{
   \code{\link{conv.fft}}, \code{\link{find.center}}, \code{\link{shift3D}}
 }

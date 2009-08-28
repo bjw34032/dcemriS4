@@ -32,8 +32,8 @@ NTIM(x)
 }
 % \references{}
 \seealso{
-  \code{\link{read.hdr}}, \code{\link{read.img}}
+  \code{\link{readNIfTI}}, \code{\link{readANALYZE}}
 }
 % \examples{}
-\author{B. Whitcher}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \keyword{misc}

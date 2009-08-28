@@ -26,5 +26,6 @@
 
 \item{x = "nifti", y = "nifti"}{ ~~describe this method here }
 }}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}

@@ -8,8 +8,10 @@
 %\alias{coerce-methods}
 \alias{coerce,array,nifti-method}
 \alias{coerce,list,nifti-method}
+\alias{coerce,anlz,nifti-method}
 \alias{coerce<-,array,nifti-method}
 \alias{coerce<-,list,nifti-method}
+\alias{coerce<-,anlz,nifti-method}
 \title{Force an Object to Belong to the NIfTI Class}
 \description{
  ~~ Methods for function \code{coerce} in Package `methods' ~~

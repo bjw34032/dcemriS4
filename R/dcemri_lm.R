@@ -30,8 +30,9 @@
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
 ##
-## $Id$
+## $Id: $
 ##
+
 #############################################################################
 ## setGeneric("dcemri.lm")
 #############################################################################
@@ -78,7 +79,7 @@ setMethod("dcemri.lm", signature(conc="array"),
                     switch(aif,
                            tofts.kermode="tofts.kermode",
                            fritz.hansen="fritz.hansen",
-                           stop("Only aif=\"tofts.kermode\" or aif=\"fritz.hansen\" acceptable aifs for model=\"weinmann\" or model=\"extended\"", call.=FALSE)
+                           stop("Only aif=\"tofts.kermode\" or aif=\"fritz.hansen\" are acceptable AIFs for model=\"weinmann\" or model=\"extended\"", call.=FALSE)
                            )
                   }
                 },
@@ -89,7 +90,7 @@ setMethod("dcemri.lm", signature(conc="array"),
                     switch(aif,
                            orton.exp="orton.exp",
                            user="user",
-                           stop("Only aif=\"orton.exp\" or aif=\"user\" acceptable aifs for model=\"orton.exp\""), call.=FALSE)
+                           stop("Only aif=\"orton.exp\" or aif=\"user\" are acceptable AIFs for model=\"orton.exp\""), call.=FALSE)
                   }
                 },
                 orton.cos = {
@@ -99,7 +100,7 @@ setMethod("dcemri.lm", signature(conc="array"),
                     switch(aif,
                            orton.cos="orton.cos",
                            user="user",
-                           stop("Only aif=\"orton.cos\" or aif=\"user\" acceptable aifs for model=\"orton.cos\""), call.=FALSE)
+                           stop("Only aif=\"orton.cos\" or aif=\"user\" are acceptable AIFs for model=\"orton.cos\""), call.=FALSE)
                   }
                 },
                 stop("Unknown model: " + model, call.=FALSE))
@@ -142,7 +143,7 @@ setMethod("dcemri.lm", signature(conc="array"),
            muB <- try(user$muB); AG <- try(user$AG); aG <- try(user$aG); 
            muG <- try(user$muG)
          },
-         print("WARNING: AIF parameters must be specified!"))
+         stop("AIF parameters must be specified!"))
   
   model.weinmann <- function(time, th1, th3, ...) {
     ## Convolution of Tofts & Kermode AIF with single-compartment model
@@ -223,7 +224,7 @@ setMethod("dcemri.lm", signature(conc="array"),
          extended = {
            model <- model.extended
            func <- function(theta, signal, time, ...)
-             signal - model.extended(time, theta[1], theta[2], theta[3])
+             signal - model(time, theta[1], theta[2], theta[3])
            guess <- c("th0"=-1, "th1"=0, "th3"=0.1)
            Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
         },
@@ -277,7 +278,7 @@ setMethod("dcemri.lm", signature(conc="array"),
   A[img.mask] <- kep$par
   B[img.mask] <- kep$error
   kep.out <- list(par=A, error=B)
-  if(mod %in% c("extended","orton.exp","orton.cos")) {
+  if (mod %in% c("extended","orton.exp","orton.cos")) {
     A <- B <- array(NA, c(I,J,K))
     A[img.mask] <- Vp$par
     B[img.mask] <- Vp$error
@@ -287,7 +288,7 @@ setMethod("dcemri.lm", signature(conc="array"),
   A[img.mask] <- sse
   sse.out <- A
   
-  if(mod %in% c("extended","orton.exp","orton.cos"))
+  if (mod %in% c("extended","orton.exp","orton.cos"))
     list(ktrans=ktrans.out$par, kep=kep.out$par, ktranserror=ktrans.out$error,
          keperror=kep.out$error, ve=ktrans.out$par/kep.out$par, vp=Vp.out$par,
          vperror=Vp.out$error, sse=sse.out, time=time)
