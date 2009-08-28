@@ -36,11 +36,11 @@
 ## A couple of wrapper functions to make our generic methods look all the same
 #############################################################################
 
-dcemriWrapper <- function(name, ...) {
-  wrapper(getFunction(paste(".",name,sep=""), generic=FALSE), name, ...)
+.dcemriWrapper <- function(name, ...) {
+  .wrapper(getFunction(paste(".",name,sep=""), generic=FALSE), name, ...)
 }
 
-wrapper <- function(fun, name, nim, ...) {
+.wrapper <- function(fun, name, nim, ...) {
   if (!is(nim, "nifti")) 
     nim <- as(nim, "nifti")
   

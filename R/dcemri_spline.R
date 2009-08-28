@@ -46,7 +46,7 @@ setMethod("dcemri.spline", signature(conc="array"),
 	  ab.tauepsilon=c(1,1/1000), k=4, p=25, rw=2,
 	  knots=NULL, nlr=FALSE, t0.compute=FALSE,
 	  samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
-          dcemriWrapper("dcemri.spline", conc, time, img.mask, time.input,
+          .dcemriWrapper("dcemri.spline", conc, time, img.mask, time.input,
                         model, aif, user, aif.observed, nriters,
                         thin, burnin, ab.hyper, ab.tauepsilon, k, p, rw,
                         knots, nlr, t0.compute, samples, multicore,

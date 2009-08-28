@@ -91,7 +91,7 @@ shift3D <- function(A, s, type, fill=0) {
 
 setGeneric("ftm", function(input, ...) standardGeneric("ftm"))
 setMethod("ftm", signature(input="array"),
-          function(input, ...) dcemriWrapper("ftm", input, ...))
+          function(input, ...) .dcemriWrapper("ftm", input, ...))
 
 
 .ftm <- function(input, mask, template, plot=FALSE, ...) {

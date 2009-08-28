@@ -57,7 +57,7 @@ adc.lm <- function(signal, b, guess, nprint=0) {
 setGeneric("ADC.fast", function(dwi, ...) standardGeneric("ADC.fast"))
 setMethod("ADC.fast", signature(dwi="array"),
           function(dwi, bvalues, dwi.mask, verbose=FALSE)
-          dcemriWrapper("ADC.fast", dwi, bvalues, dwi.mask, verbose))
+          .dcemriWrapper("ADC.fast", dwi, bvalues, dwi.mask, verbose))
 
 .ADC.fast <- function(dwi, bvalues, dwi.mask, verbose=FALSE) {
   if (length(dim(dwi)) != 4)  # Check dwi is a 4D array

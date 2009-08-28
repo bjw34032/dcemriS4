@@ -41,7 +41,7 @@ setGeneric("dcemri.lm",
            function(conc,  ...) standardGeneric("dcemri.lm"))
 setMethod("dcemri.lm", signature(conc="array"), 
 	  function(conc,time,img.mask, model="extended", aif=NULL,
-                      nprint=0, user=NULL, verbose=FALSE, ...) dcemriWrapper("dcemri.lm", conc, time, img.mask, model, aif,
+                      nprint=0, user=NULL, verbose=FALSE, ...) .dcemriWrapper("dcemri.lm", conc, time, img.mask, model, aif,
                       nprint, user, verbose, ...))
 
 

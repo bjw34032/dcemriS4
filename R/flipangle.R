@@ -86,7 +86,7 @@ E10.lm <- function(signal, alpha, guess, nprint=0) {
 setGeneric("R1.fast", function(flip, ...) standardGeneric("R1.fast"))
 setMethod("R1.fast", signature(flip="array"),
           function(flip, flip.mask, fangles, TR, verbose=FALSE) 
-	    dcemriWrapper("R1.fast", flip, flip.mask, fangles, TR, verbose))
+	    .dcemriWrapper("R1.fast", flip, flip.mask, fangles, TR, verbose))
 
 #############################################################################
 ## R1.fast()
@@ -142,7 +142,7 @@ setGeneric("CA.fast", function(dynamic, ...) standardGeneric("CA.fast"))
 setMethod("CA.fast", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
 	      verbose=FALSE) 
-	    dcemriWrapper("CA.fast", dynamic, dyn.mask, dangle, flip, fangles,
+	    .dcemriWrapper("CA.fast", dynamic, dyn.mask, dangle, flip, fangles,
 		TR, r1, verbose))
 
 #############################################################################
@@ -180,7 +180,7 @@ setGeneric("CA.fast2", function(dynamic, ...) standardGeneric("CA.fast2"))
 setMethod("CA.fast2", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
 	      verbose=FALSE) 
-	    dcemriWrapper("CA.fast2", dynamic, dyn.mask, dangle, flip, fangles,
+	    .dcemriWrapper("CA.fast2", dynamic, dyn.mask, dangle, flip, fangles,
 		TR, r1, verbose))
 
 #############################################################################

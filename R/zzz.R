@@ -43,7 +43,7 @@
   #	  ), function(x) { 
   #	setGeneric(x, function(conc, ...) standardGeneric(x))
   #	setMethod(x, signature(conc="array"), 
-  #	    function(conc, ...) dcemriWrapper(x, conc, ...))
+  #	    function(conc, ...) .dcemriWrapper(x, conc, ...))
   #   })
 }
 
