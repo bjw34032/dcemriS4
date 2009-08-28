@@ -53,3 +53,6 @@
       sep="", fill=TRUE)
 }
 
+.onLoad <- function(lib, pkg) {
+  .First.lib(lib, pkg)
+}
