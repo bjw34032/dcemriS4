@@ -1,7 +1,7 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
 %
-% $Id: aux_file-methods.Rd 191 2009-08-25 15:12:31Z bjw34032 $
+% $Id: $
 
 \name{audit.trail-methods}
 \docType{methods}

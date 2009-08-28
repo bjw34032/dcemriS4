@@ -7,9 +7,11 @@
 \docType{methods}
 %\alias{coerce-methods}
 \alias{coerce,array,nifti-method}
+\alias{as,array,nifti-method}
 \alias{coerce,list,nifti-method}
 \alias{coerce,anlz,nifti-method}
 \alias{coerce<-,array,nifti-method}
+\alias{as<-,array,nifti-method}
 \alias{coerce<-,list,nifti-method}
 \alias{coerce<-,anlz,nifti-method}
 \title{Force an Object to Belong to the NIfTI Class}
