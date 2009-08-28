@@ -87,6 +87,7 @@ dcemri.spline.single(conc, time, D, time.input, p, rw, knots, k,
   \code{\link{dcemri.map}}
 }
 \examples{
+%\dontrun{
 data("buckley")
 xi <- seq(5, 300, by=5)
 img <- array(t(breast$data)[,xi], c(13,1,1,60))
@@ -110,6 +111,7 @@ abline(0, 1, lwd=1.5, col="red")
 legend("right", c("fritz.hansen", "observed"), pch=1:2)
 
 cbind(breast$ktrans, fit.spline$ktrans[,,1], fit.spline.aif$ktrans[,,1])
+%}
 }
 \author{Volker Schmid <\email{volkerschmid@users.sourceforge.net}>}
 \keyword{models}
