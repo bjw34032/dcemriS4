@@ -616,13 +616,12 @@ setMethod("dcemri.spline", signature(conc="array"),
                       "beta.test"=beta.sample, "fit"=fitted.med,
                       "fit.sample"=fitted, "response"=response.med,
                       "response.sample"=response, "Fp"=Fp.img, "A"=A,
-                      "B"=B, "D"=D, "t0"=t0, "ourfit"=fit) 
+                      "B"=B, "D"=D, "t0"=t0) #, "ourfit"=fit) 
   if (nlr) {
     switch (model,
             weinmann = { return.list[["kep"]] <- kep.med }, 
             AATH = { return.list <-
-                       c(return.list, list("E"=E.med, "F"=F.med,
-                                           "TC"=TC.med)) })
+                       c(return.list, list("E"=E.med, "F"=F.med, "TC"=TC.med)) })
     return.list[["ktrans"]] <- ktrans.med
     return.list[["ve"]] <- ve.med
     if (samples) {
