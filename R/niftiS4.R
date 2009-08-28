@@ -325,7 +325,11 @@ setGeneric("descrip", function(object) { standardGeneric("descrip") })
 setMethod("descrip", "nifti", function(object) { object@descrip })
 setGeneric("descrip<-", function(x, value) { standardGeneric("descrip<-") })
 setReplaceMethod("descrip", "nifti",
-                 function(x, value) { x@descrip <- value ; x })
+                 function(x, value) { 
+		   x@descrip <- value 
+		   audit.trail(x) <- niftiAuditTrailEvent(x, "modification", match.call(), paste("descrip <-", value))
+		   x 
+		 })
 
 #############################################################################
 ## aux.file() accessor function to @"aux_file"
@@ -335,7 +339,11 @@ setGeneric("aux.file", function(object) { standardGeneric("aux.file") })
 setMethod("aux.file", "nifti", function(object) { object@"aux_file" })
 setGeneric("aux.file<-", function(x, value) { standardGeneric("aux.file<-") })
 setReplaceMethod("aux.file", "nifti",
-                 function(x, value) { x@"aux_file" <- value ; x })
+                 function(x, value) {
+		   x@"aux_file" <- value
+		   audit.trail(x) <- niftiAuditTrailEvent(x, "modification", match.call(), paste("aux.file <-", value))
+		   x 
+		 })
 
 #############################################################################
 ## audit.trail() accessor function to @"trail"
