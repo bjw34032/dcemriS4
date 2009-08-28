@@ -24,18 +24,19 @@
 dcemri.info(type)
 enableAuditTrail()
 newAuditTrail()
-niftiExtensionToAuditTrail(nim, filename = NULL, call = NULL)
-niftiAuditTrailToExtension(nim, filename = filename, call = call)
-niftiAuditTrailSystemNode(type="system-info", filename = NULL, call = NULL)
+niftiExtensionToAuditTrail(nim, workingDirectory = NULL, filename = NULL, call = NULL)
+niftiAuditTrailToExtension(nim, workingDirectory = NULL, filename = NULL, call = NULL)
+niftiAuditTrailSystemNode(type="system-info", workingDirectory = NULL, filename = NULL, call = NULL)
 niftiAuditTrailSystemNodeEvent(trail, type = NULL, call = NULL,
-                               filename = NULL, comment=NULL)
-niftiAuditTrailCreated(history = NULL, call = NULL, filename = NULL)
+                               workingDirectory = NULL, filename = NULL, comment=NULL)
+niftiAuditTrailCreated(history = NULL, call = NULL, workingDirectory = NULL, filename = NULL)
 niftiAuditTrailEvent(trail, type = NULL, call = NULL, comment = NULL)
 getLastCallWithName(functionName)
 }
 \arguments{
   \item{nim}{is an object of class \code{niftiAuditTrail} or can be
     converted to such.} 
+  \item{workingDirectory}{The working directory associated with the filename.}
   \item{filename}{The filename associated with the nifti object.}
   \item{call}{A \code{call}, function name in the call-stack or a
     string.} 
