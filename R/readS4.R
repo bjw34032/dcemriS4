@@ -32,7 +32,10 @@
 ## $Id$
 ##
 
-readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE) {
+readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE, call=NULL) {
+  if (is.null(call)) {
+    call <- match.call()
+  }
   ## Warnings?
   oldwarn <- options()$warn
   options(warn=warn)
@@ -51,7 +54,7 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE) {
       if (verbose)
         cat(paste("  files = ", fname, ".nii", sep=""), fill=TRUE)
       nim <- read.nifti.content(fname, gzipped=FALSE, verbose=verbose,
-                                warn=warn, reorient=reorient)
+                                warn=warn, reorient=reorient, call=call)
       options(warn=oldwarn)
       return(nim)
     }
@@ -60,7 +63,7 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE) {
       if (verbose)
         cat(paste("  files = ", fname, ".nii.gz", sep=""), fill=TRUE)
       nim <- read.nifti.content(fname, gzipped=TRUE, verbose=verbose,
-                                warn=warn, reorient=reorient)
+                                warn=warn, reorient=reorient, call=call)
       options(warn=oldwarn)
       return(nim)
     }
@@ -73,7 +76,7 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE) {
 ############################################################################
 
 read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
-                               verbose=FALSE, warn=-1, reorient=FALSE) {
+                               verbose=FALSE, warn=-1, reorient=FALSE, call=NULL) {
   ## Open appropriate file
   if (gzipped) {
     suffix <- ifelse(onefile, "nii.gz", "hdr.gz")
@@ -241,8 +244,12 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   options(warn=oldwarn)
   ## Check validity
   ## validObject(nim)
-  if (getOption("NIfTI.audit.trail"))
-    nim <- niftiExtensionToAuditTrail(nim, workingDirectory=getwd(), filename=fname, call=match.call())
+  if (getOption("NIfTI.audit.trail")) {
+    if (is.null(call)) {
+      call <- match.call()
+    }
+    nim <- niftiExtensionToAuditTrail(nim, workingDirectory=getwd(), filename=fname, call=call)
+  }
   return(nim)
 }
 

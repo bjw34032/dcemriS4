@@ -11,9 +11,9 @@
   ...
 }
 \usage{
-readNIfTI(fname, verbose=FALSE, warn=-1, reorient=TRUE)
+readNIfTI(fname, verbose=FALSE, warn=-1, reorient=TRUE, call=NULL)
 read.nifti.content(fname, onefile=TRUE, gzipped=TRUE, verbose=FALSE,
-                   warn=-1, reorient=FALSE)
+                   warn=-1, reorient=FALSE, call=NULL)
 }
 \arguments{
   \item{fname}{}
@@ -22,6 +22,7 @@ read.nifti.content(fname, onefile=TRUE, gzipped=TRUE, verbose=FALSE,
   \item{reorient}{}
   \item{onefile}{}
   \item{gzipped}{}
+  \item{call}{}
 }
 \details{
   ...
