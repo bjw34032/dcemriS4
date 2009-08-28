@@ -1,29 +1,29 @@
 useDynLib("dcemriS4")
-import( "grDevices", "graphics", "methods", "utils")
 
+import("grDevices", "graphics", "methods", "utils")
 
 exportPattern("^[^\\.]")
-exportClasses("nifti",
-    "anlz",
-    "niftiExtension",
-    "niftiExtensionSection")
-exportMethods(
-    "ADC.fast",
-    "audit.trail<-",
-    "audit.trail",
-    "aux.file<-",
-    "aux.file",
-    "CA.fast",
-    "CA.fast2",
-    "dcemri.bayes",
-    "dcemri.lm",
-    "dcemri.map",
-    "dcemri.spline",
-    "descrip<-",
-    "descrip",
-    "ftm",
-    "orthographic",
-    "overlay",
-    "R1.fast",
-    "show")
 
+exportClasses("nifti",
+              "anlz",
+              "niftiExtension",
+              "niftiExtensionSection")
+
+exportMethods("ADC.fast",
+              "audit.trail<-",
+              "audit.trail",
+              "aux.file<-",
+              "aux.file",
+              "CA.fast",
+              "CA.fast2",
+              "dcemri.bayes",
+              "dcemri.lm",
+              "dcemri.map",
+              "dcemri.spline",
+              "descrip<-",
+              "descrip",
+              "ftm",
+              "orthographic",
+              "overlay",
+              "R1.fast",
+              "show")
