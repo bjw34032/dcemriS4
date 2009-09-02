@@ -24,13 +24,20 @@
 dcemri.info(type)
 enableAuditTrail()
 newAuditTrail()
-niftiExtensionToAuditTrail(nim, workingDirectory = NULL, filename = NULL, call = NULL)
-niftiAuditTrailToExtension(nim, workingDirectory = NULL, filename = NULL, call = NULL)
-niftiAuditTrailSystemNode(type="system-info", workingDirectory = NULL, filename = NULL, call = NULL)
+niftiExtensionToAuditTrail(nim, workingDirectory = NULL,
+                           filename = NULL, call = NULL)
+niftiAuditTrailToExtension(nim, workingDirectory = NULL,
+                           filename = NULL, call = NULL)
+niftiAuditTrailSystemNode(type="system-info",
+                          workingDirectory = NULL,
+                          filename = NULL, call = NULL)
 niftiAuditTrailSystemNodeEvent(trail, type = NULL, call = NULL,
-                               workingDirectory = NULL, filename = NULL, comment=NULL)
-niftiAuditTrailCreated(history = NULL, call = NULL, workingDirectory = NULL, filename = NULL)
-niftiAuditTrailEvent(trail, type = NULL, call = NULL, comment = NULL)
+                               workingDirectory = NULL,
+                               filename = NULL, comment=NULL)
+niftiAuditTrailCreated(history = NULL, call = NULL,
+                       workingDirectory = NULL, filename = NULL)
+niftiAuditTrailEvent(trail, type = NULL, call = NULL,
+                     comment = NULL)
 getLastCallWithName(functionName)
 }
 \arguments{
@@ -132,13 +139,13 @@ getLastCallWithName(functionName)
 %\value{}
 %\references{}
 \author{
-  Andrew Thornton <\email{zeripath@users.sourceforge.net}>
+  Andrew Thornton \email{zeripath@users.sourceforge.net}
 }
 %\seealso{}
 \examples{
-## A good example of the use of these functions is shown by this wrapper 
-## function which takes a function fun(nim, ...) returning lists of
-## arrays which are nifti-ized using as(...)
+## A good example of the use of these functions is shown by this
+## wrapper function which takes a function fun(nim, ...) returning
+## lists of arrays which are nifti-ized using as(...)
 wrapper <- function(functionToWrap, nameOfCallingFunction, nim, ...) {
   if (!is(nim, "nifti")) 
     nim <- as(nim, "nifti")

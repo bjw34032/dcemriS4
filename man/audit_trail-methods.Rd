@@ -25,7 +25,7 @@
     \item{object = "nifti"}{Extract or replace NIfTI audit trail.}
   }
 }
-\author{Andrew Thornton <\email{zeripath@users.sourceforge.net}>}
+\author{Andrew Thornton \email{zeripath@users.sourceforge.net}}
 %\examples{}
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}

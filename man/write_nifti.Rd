@@ -7,7 +7,8 @@
 \alias{writeNIfTI}
 \title{writeNIfTI}
 \description{
-  ...
+  This function saves a NIfTI-class object to a single binary file in
+  NIfTI format.
 }
 \usage{
 writeNIfTI(nim, filename, gzipped = TRUE, verbose = FALSE, warn = -1)
@@ -23,13 +24,25 @@ writeNIfTI(nim, filename, gzipped = TRUE, verbose = FALSE, warn = -1)
     -1).  See \code{\link{options}} for more details.}
 }
 \details{
-  ...
+  The \code{writeNIfTI} function utilizes the internal \code{writeBin}
+  and \code{writeChar} command to write infromation to a binary file.
+
+  Current acceptable data types include
+  \describe{
+    \item{\dQuote{UINT8}}{DT BINARY (1 bit per voxel)}
+    \item{\dQuote{INT16}}{DT SIGNED SHORT (16 bits per voxel)}
+    \item{\dQuote{INT32}}{DT SINGED INT (32 bits per voxel)}
+    \item{\dQuote{FLOAT32}}{DT FLOAT (32 bits per voxel)}
+    \item{\dQuote{DOUBLE64}}{DT DOUBLE (64 bits per voxel)}
+    \item{\dQuote{UINT16}}{DT UNSIGNED SHORT (16 bits per voxel)}
+    }
 }
 \value{
-  ...
+  Nothing.
 }
 \references{
-  NIfTI-1 \url{http://nifti.nimh.nih.gov/}
+  NIfTI-1\cr
+  \url{http://nifti.nimh.nih.gov/}
 }
 \seealso{
   \code{\link{writeANALYZE}}
@@ -65,5 +78,6 @@ for (i in 1:length(datatypes$code)) {
 names(equal) <- datatypes$name
 unlist(equal)
 }
-\author{Brandon Whitcher \email{} and Volker Schmid \email{}}
+\author{Brandon Whitcher \email{bjw34032@users.sourceforge.net} and
+  Volker Schmid \email{volkerschmid@users.sourceforge.net}}
 \keyword{file}
