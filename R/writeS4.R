@@ -58,7 +58,7 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
   }
   if (!is.null(extensions)) {
     ## update the vox_offset  FIXME twofile!
-    totalesizes <- sum(unlist(lapply(extensions, function(x) x@esize)))
+    totalesizes <- sum(unlist(lapply(extensions, function(x) x@"esize")))
     nim@"extender"[1] <- 1
     nim@"vox_offset" <- 352 + totalesizes
     if (verbose) cat("  vox_offset =", nim@"vox_offset", fill=TRUE)
@@ -107,20 +107,19 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
   writeBin(nim@"srow_z", fid, size=4)
   writeChar(nim@"intent_name", fid, nchar=16, eos=NULL)
   writeChar(nim@"magic", fid, nchar=4, eos=NULL)
-  ## writeBin(as.integer(nim@"extender"), fid, size=1)
-  writeChar(as.character(nim@"extender"), fid, nchar=4, eos=NULL)
+  writeBin(as.integer(nim@"extender"), fid, size=1)
+  ## writeChar(as.character(nim@"extender"), fid, nchar=4, eos=NULL)
   ## Extensions?
   if (nim@"extender"[1] > 0 || nim@"vox_offset" > 352) {
     if (!is.null(extensions)) {
-      if (verbose) cat("  writing niftiExtension(s)", fill=TRUE)
+      if (verbose)
+        cat("  writing niftiExtension(s) at byte =", seek(fid), fill=TRUE)
       lapply(extensions,
              function(x) {
                writeBin(as.integer(x@"esize"), fid, size=4)
-               #writeBin(as.integer(x@"ecode"), fid, size=4)
-               writeBin(as.integer(4), fid, size=4)
-               ## As we've already checked validity
-               #writeBin(charToRaw(x@"edata"), fid, size=x@esize-8)
-               writeChar(x@"edata", fid, nchar=x@esize-8)
+               writeBin(as.integer(x@"ecode"), fid, size=4)
+               ## writeBin(charToRaw(x@"edata"), fid, size=x@esize-8)
+               writeChar(x@"edata", fid, nchar=x@"esize"-8-1)
                invisible()
              })
     } else {
@@ -134,6 +133,8 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
     data <- as.vector(nim@.Data)
   }
   ## Write image file...
+  if (verbose)
+    cat("  writing data at byte =", seek(fid), fill=TRUE)
   switch(as.character(nim@"datatype"),
          "2" = writeBin(as.integer(data), fid, size=nim@"bitpix"/8),
          "4" = writeBin(as.integer(data), fid, size=nim@"bitpix"/8),

@@ -204,7 +204,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
     } else {
       fid <- file(fname, "rb")
     }
-    seek(fid, nim@"vox_offset")
+    seek(fid, nim@"vox_offset") ## is this correct?
   }
   data <-
     switch(as.character(nim@"datatype"),
