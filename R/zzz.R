@@ -32,27 +32,16 @@
 ## $Id$
 ##
 
-.First.lib <- function(lib, pkg) {
-  library.dynam("dcemriS4", pkg, lib)
-  if (require("XML") && (is.null(getOption("NIfTI.audit.trail")) || getOption("NIfTI.audit.trail")))
-    enableAuditTrail()
-  else
-    options("NIfTI.audit.trail"=FALSE)
-  #lapply(list(
-  #	  "dcemri.lm", "dcemri.bayes", "dcemri.spline", "dcemri.map"
-  #	  ), function(x) { 
-  #	setGeneric(x, function(conc, ...) standardGeneric(x))
-  #	setMethod(x, signature(conc="array"), 
-  #	    function(conc, ...) .dcemriWrapper(x, conc, ...))
-  #   })
-}
-
 .onAttach <- function (lib, pkg) {
-  cat(pkg,": A Package for Medical Image Analysis (version = ",
-      as.character(sessionInfo()$otherPkgs$dcemri["Version"]), ")",
+  cat("\n", pkg,": A Package for Medical Image Analysis (version = ",
+      as.character(sessionInfo()$otherPkgs$dcemri["Version"]), ")\n",
       sep="", fill=TRUE)
 }
 
 .onLoad <- function(lib, pkg) {
-  .First.lib(lib, pkg)
+  if (require("XML") && (is.null(getOption("NIfTI.audit.trail")) || getOption("NIfTI.audit.trail")))
+    enableAuditTrail()
+  else
+    options("NIfTI.audit.trail"=FALSE)
 }
+
