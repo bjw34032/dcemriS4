@@ -32,7 +32,8 @@
 ## $Id$
 ##
 
-readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE, call=NULL) {
+readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE,
+                      call=NULL) {
   if (is.null(call)) {
     call <- match.call()
   }
@@ -40,7 +41,8 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE, call=NULL) {
   oldwarn <- options()$warn
   options(warn=warn)
 
-  if (verbose) cat(paste("  fname =", fname), fill=TRUE)
+  if (verbose)
+    cat(paste("  fname =", fname), fill=TRUE)
   ## Strip any extensions
   fname <- sub(".gz", "", fname)
   fname <- sub(".nii", "", fname)
@@ -76,7 +78,8 @@ readNIfTI <- function(fname, verbose=FALSE, warn=-1, reorient=TRUE, call=NULL) {
 ############################################################################
 
 read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
-                               verbose=FALSE, warn=-1, reorient=FALSE, call=NULL) {
+                               verbose=FALSE, warn=-1, reorient=FALSE,
+                               call=NULL) {
   ## Open appropriate file
   if (gzipped) {
     suffix <- ifelse(onefile, "nii.gz", "hdr.gz")
@@ -124,6 +127,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   nim@"slice_start" <- readBin(fid, integer(), size=2, endian=endian)
   nim@"pixdim" <- readBin(fid, numeric(), 8, size=4, endian=endian)
   nim@"vox_offset" <- readBin(fid, numeric(), size=4, endian=endian)
+  if (verbose) cat("  vox_offset =", nim@"vox_offset", fill=TRUE)
   nim@"scl_slope" <- readBin(fid, numeric(), size=4, endian=endian)
   nim@"scl_inter" <- readBin(fid, numeric(), size=4, endian=endian)
   nim@"slice_end" <- readBin(fid, integer(), size=2, endian=endian)
@@ -137,7 +141,6 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   nim@"toffset" <- readBin(fid, numeric(), size=4, endian=endian)
   nim@"glmax" <- readBin(fid, integer(), size=4, endian=endian)
   nim@"glmin" <- readBin(fid, integer(), size=4, endian=endian)
-  ## was data_history substruct in Analyze 7.5
   nim@"descrip" <- rawToChar(readBin(fid, "raw", n=80))
   nim@"aux_file" <- rawToChar(readBin(fid, "raw", n=24))
   nim@"qform_code" <- readBin(fid, integer(), size=2, endian=endian)
@@ -163,7 +166,8 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   ## recall that "the last shall be first" (Matthew 20:16).
   if (!(nim@"magic" %in% c("n+1","ni1")))
     stop(" -- Unrecognized \"magic\" field! --")
-  nim@"extender" <- readBin(fid, integer(), 4, size=1, signed=FALSE, endian=endian)
+  nim@"extender" <- readBin(fid, integer(), 4, size=1, signed=FALSE,
+                            endian=endian)
   ## If extension[0] is nonzero, it indicates that extended header
   ## information is present in the bytes following the extension
   ## array.  In a .nii file, this extended header data is before the
@@ -174,10 +178,11 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
   ## FIXME This doesn't account for two-file
   ##
   if (nim@"extender"[1] > 0 || nim@"vox_offset" > 352) {
-    if (!is(nim, "niftiExtension")) {
+    if (verbose) cat("  niftiExtension detected!", fill=TRUE)
+    if (!is(nim, "niftiExtension"))
       nim <- as(nim, "niftiExtension")
-    }
-    while (seek(fid) < nim@"vox_offset" ) {
+    while (seek(fid) < nim@"vox_offset") {
+      if (verbose) cat("  seek(fid) =", seek(fid), fill=TRUE) 
       nimextsec <- new("niftiExtensionSection")
       nimextsec@esize <- readBin(fid, integer(), size=4, endian=endian)
       nimextsec@ecode <- readBin(fid, integer(), size=4, endian=endian)
@@ -189,6 +194,7 @@ read.nifti.content <- function(fname, onefile=TRUE, gzipped=TRUE,
       stop("-- extension size (esize) has overshot voxel offset --")
   }
 
+  if (verbose) cat("  seek(fid) =", seek(fid), fill=TRUE) 
   n <- prod(nim@"dim_"[2:5])
   if (!onefile) {
     close(fid)

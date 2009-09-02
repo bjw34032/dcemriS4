@@ -48,17 +48,20 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
 
   extensions <- NULL
   if (is(nim, "niftiExtension")) {
+    if (verbose) cat("  niftiExtension detected!", fill=TRUE)
     extensions <- nim@extensions
   }
-  if (getOption("NIfTI.audit.trail") && is(nim,"niftiAuditTrail")) {
+  if (getOption("NIfTI.audit.trail") && is(nim, "niftiAuditTrail")) {
+    if (verbose) cat("  niftiAuditTrail detected!", fill=TRUE)
     sec <- niftiAuditTrailToExtension(nim, getwd(), filename, match.call())
     extensions <- append(extensions, sec)
   }
   if (!is.null(extensions)) {
-    # update the vox_offset  FIXME twofile!
+    ## update the vox_offset  FIXME twofile!
     totalesizes <- sum(unlist(lapply(extensions, function(x) x@esize)))
     nim@"extender"[1] <- 1
     nim@"vox_offset" <- 352 + totalesizes
+    if (verbose) cat("  vox_offset =", nim@"vox_offset", fill=TRUE)
   }
 
   writeBin(as.integer(nim@"sizeof_hdr"), fid, size=4)
@@ -77,7 +80,7 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
   writeBin(as.integer(nim@"bitpix"), fid, size=2)
   writeBin(as.integer(nim@"slice_start"), fid, size=2)
   writeBin(nim@"pixdim", fid, size=4)
-  writeBin(nim@"vox_offset", fid, size=4)
+  writeBin(nim@"vox_offset", fid, size=4) # default offset = 352
   writeBin(nim@"scl_slope", fid, size=4)
   writeBin(nim@"scl_inter", fid, size=4)
   writeBin(as.integer(nim@"slice_end"), fid, size=2)
@@ -104,31 +107,41 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
   writeBin(nim@"srow_z", fid, size=4)
   writeChar(nim@"intent_name", fid, nchar=16, eos=NULL)
   writeChar(nim@"magic", fid, nchar=4, eos=NULL)
-  writeBin(as.integer(nim@"extender"), fid, size=1)
-  ## Offset = 352
+  ## writeBin(as.integer(nim@"extender"), fid, size=1)
+  writeChar(as.character(nim@"extender"), fid, nchar=4, eos=NULL)
   ## Extensions?
   if (nim@"extender"[1] > 0 || nim@"vox_offset" > 352) {
     if (!is.null(extensions)) {
+      if (verbose) cat("  writing niftiExtension(s)", fill=TRUE)
       lapply(extensions,
              function(x) {
-               writeBin(x@esize, fid, size=4)
-               writeBin(x@ecode, fid, size=4)
+               writeBin(as.integer(x@"esize"), fid, size=4)
+               #writeBin(as.integer(x@"ecode"), fid, size=4)
+               writeBin(as.integer(4), fid, size=4)
                ## As we've already checked validity
-               writeBin(charToRaw(x@edata), fid, size=(x@esize-8))
+               #writeBin(charToRaw(x@"edata"), fid, size=x@esize-8)
+               writeChar(x@"edata", fid, nchar=x@esize-8)
+               invisible()
              })
     } else {
-      stop("@extender set but nim has no extensions")
+      stop("@extender set but ", nim, " has no extensions")
     }
   }
-  ## Write image file...
-  ## Shouldn't we seek?
-  #seek(fid, nim@"vox_offset")
+  ## reorient?
   if (nim@"reoriented") {
-    writeBin(as.vector(inverseReorient(nim), verbose), fid,
-             size=nim@"bitpix"/8)
+    data <- as.vector(inverseReorient(nim), verbose)
   } else {
-    writeBin(as.vector(nim@.Data), fid, size=nim@"bitpix"/8)
+    data <- as.vector(nim@.Data)
   }
+  ## Write image file...
+  switch(as.character(nim@"datatype"),
+         "2" = writeBin(as.integer(data), fid, size=nim@"bitpix"/8),
+         "4" = writeBin(as.integer(data), fid, size=nim@"bitpix"/8),
+         "8" = writeBin(as.integer(data), fid, size=nim@"bitpix"/8),
+         "16" = writeBin(as.numeric(data), fid, size=nim@"bitpix"/8),
+         "64" = writeBin(as.double(data), fid, size=nim@"bitpix"/8),
+         "512" = writeBin(as.numeric(data), fid, size=nim@"bitpix"/8)
+         )
   close(fid)
   ## Warnings?
   options(warn=oldwarn)

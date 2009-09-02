@@ -38,52 +38,33 @@ writeNIfTI(nim, filename, gzipped = TRUE, verbose = FALSE, warn = -1)
 norm <- dnorm(seq(-5, 5, length=32), sd=2)
 norm <- (norm-min(norm)) / max(norm-min(norm))
 img <- outer(outer(norm, norm), norm)
-img <- round(255*img)
+img <- round(255 * img)
 img[17:32,,] <- 255 - img[17:32,,]
-X <- nrow(img)
-Y <- ncol(img)
-Z <- nsli(img)
+img.nifti <- nifti(img) # create NIfTI object
 
-## NIfTI
-nim <- nifti(img)
-\dontrun{
-writeNIfTI(nim, "test-image-int16")
+writeNIfTI(img.nifti, "test-image-uint8", verbose=TRUE)
 ## These files should be viewable in, for example, FSLview
 ## Make sure you adjust the min/max values for proper visualization
-data <- read.img("test-image-int16.nii.gz")
-par(mfrow=c(6,6), mar=rep(0,4))
-for (z in 1:32)
-  image(img[,,z], zlim=range(img), col=grey(0:255/255), xlab="",
-        ylab="", axes=FALSE)
-for (z in 1:32)
-  image(data[,,z,1], zlim=range(img), col=grey(0:255/255), xlab="",
-        ylab="", axes=FALSE)
-for (z in 1:32)
-  image(abs(data[,,z,1] - img[,,z]), zlim=range(img),
-        col=grey(0:255/255), xlab="", ylab="", axes=FALSE)
-}
+data <- readNIfTI("test-image-uint8", verbose=TRUE)
+image(img.nifti, z=16, plot.type="single")
+image(data, z=16, zlim=range(data), plot.type="single")
+image(abs(data - img.nifti)[,,16])
 
 ## Loop through all possible data types
-datatypes <- c("uint8", "int16", "int32", "float", "double")
+\dontrun{
+datatypes <- list(code=c(2, 4, 8, 16, 64),
+                  name=c("uint8", "int16", "int32", "float", "double"))
 equal <- vector("list")
-for (x in 1:length(datatypes)) {
-  fname <- paste("test-image-", datatypes[x], sep="")
-  write.nifti.img(fname, nhdr, img, datatypes[x])
-  equal[[x]] <- all(drop(read.img(fname)) == img)
+for (i in 1:length(datatypes$code)) {
+  fname <- paste("test-image-", datatypes$name[i], sep="")
+  rm(img.nifti)
+  img.nifti <- nifti(img, datatype=datatypes$code[i])
+  writeNIfTI(img.nifti, fname)
+  equal[[x]] <- all(readNIfTI(fname) == img)
 }
-names(equal) <- datatypes
-unlist(equal)
-
-## Analyze (datatypes are the same as NIfTI)
-hdr <- make.hdr(X, Y, Z, 1, "int16")
-equal <- vector("list")
-for (x in 1:length(datatypes)) {
-  fname <- paste("test-analyze-image-", datatypes[x], sep="")
-  write.analyze.img(fname, hdr, img, datatypes[x])
-  equal[[x]] <- all(drop(read.img(fname)) == img)
-}
-names(equal) <- datatypes
+names(equal) <- datatypes$name
 unlist(equal)
 }
-\author{Brandon Whitcher and Volker Schmid}
-%\keyword{}
+}
+\author{Brandon Whitcher \email{} and Volker Schmid \email{}}
+\keyword{file}

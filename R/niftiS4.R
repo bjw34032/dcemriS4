@@ -280,7 +280,8 @@ setValidity("niftiExtensionSection", function(object) {
 ## nifti()
 #############################################################################
 
-nifti <- function(img=array(0, dim=rep(1,4)), dim, ...) {
+nifti <- function(img=array(0, dim=rep(1,4)), dim, datatype=2, ...) {
+  ## Set dimensions
   if (missing(dim)) {
     if (is.array(img))
       dim <- base::dim(img)
@@ -290,18 +291,39 @@ nifti <- function(img=array(0, dim=rep(1,4)), dim, ...) {
   ld <- length(dim)
   if (ld < 3)
     stop(sprintf("length(dim) must be at least 3 and is %d.", ld))
-  
-  x <- c(length(dim), dim[1], dim[2], dim[3],
-         ifelse(is.na(dim[4]), 1, dim[4]), rep(1,3))
-  y <- c(0.0, rep(1.0,length(dim)), rep(0.0,3))
-  cal.max <- quantile(img, probs=0.95, na.rm=TRUE)
-  cal.min <- quantile(img, probs=0.05, na.rm=TRUE)
+
+  ## Create "dim" and "pixdim" slots
+  x <- rep(1, 8)
+  x[1] <- length(dim)
+  y <- rep(0.0, 8)
+  for (i in 2:length(x)) {
+    x[i] <- ifelse(is.na(dim(img)[i-1]), 1, dim(img)[i-1])
+    y[i] <- ifelse(is.na(dim(img)[i-1]), 1.0, 1.0)
+  }
+  ## min/max values for visualization
+  cal.max <- as.numeric(quantile(img, probs=0.95, na.rm=TRUE))
+  cal.min <- as.numeric(quantile(img, probs=0.05, na.rm=TRUE))
+  ## Set datatype
+  switch(as.character(datatype),
+         "2" = bitpix <- 8,
+         "4" = bitpix <- 16,
+         "8" = bitpix <- 32,
+         "16" = bitpix <- 32,
+         "64" = bitpix <- 64,
+         "512" = bitpix <- 16,
+         stop(paste("Data type", datatype, "unsupported."))
+         )
+  ## Create the object
   niftiClass <- "nifti"
   if (getOption("NIfTI.audit.trail")) {
     niftiClass <- "niftiAuditTrail"
   }
   obj <- new(niftiClass, .Data=array(img, dim=dim), "dim_"=x, "pixdim"=y,
-             "cal_max"=cal.max, "cal_min"=cal.min, ...)
+             "cal_max"=cal.max, "cal_min"=cal.min, "datatype"=datatype,
+             "bitpix"=bitpix, ...)
+  if (getOption("NIfTI.audit.trail")) {
+    audit.trail(obj) <- niftiAuditTrailCreated(call=match.call())
+  }
   validObject(obj)
   return(obj)
 }
