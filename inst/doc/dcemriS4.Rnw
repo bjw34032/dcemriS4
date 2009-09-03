@@ -1,0 +1,340 @@
+% \VignetteIndexEntry{dcemriS4}
+% \VignetteDepends{dcemriS4}
+% \VignettePackage{dcemriS4}
+% \VignetteKeywords{}
+\documentclass[11pt,a4paper]{article}
+\usepackage{a4wide,amsmath,color,fancyvrb,graphicx,natbib,thumbpdf}
+\definecolor{Red}{rgb}{0.7,0,0}
+\definecolor{Blue}{rgb}{0,0,0.8}
+\usepackage[colorlinks=true,linkcolor=Blue,citecolor=Blue,urlcolor=Blue]{hyperref}
+\usepackage{xspace}
+\usepackage{fancyhdr}
+\usepackage{lscape}
+\usepackage{Sweave}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\let\code=\texttt
+\let\proglang=\textsf
+\newcommand{\pkg}[1]{{\normalfont\fontseries{b}\selectfont #1}}
+\newcommand{\email}[1]{\href{mailto:#1}{\normalfont\texttt{#1}}}
+
+\newcommand{\ktrans}{K^\text{trans}}
+\newcommand{\iaugc}[1]{\text{IAUGC}_{#1}}
+\newcommand{\kep}{k_\text{ep}}
+\newcommand{\vp}{v_\text{p}}
+
+\SweaveOpts{engine=R,eps=FALSE}
+
+\setlength{\parskip}{0.7ex plus0.1ex minus0.1ex}
+\setlength{\parindent}{0em}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{fancy}
+\lhead{B. Whitcher and V.J. Schmid}
+\chead{}
+\rhead{Using the {\tt dcemriS4} Package}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<preliminaries,echo=FALSE,results=hide>>=
+library("dcemriS4")
+options(width=85)
+require("minpack.lm")
+require("bitops")
+@
+
+\title{{\tt dcemriS4}: A Package for Medical Image Analysis}
+\author{Brandon Whitcher \\ \email{bjw34032@users.sourceforge.net} \\ %
+  Volker J. Schmid \\ \email{volkerschmid@users.sourceforge.net}}
+
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\section{Introduction}
+
+Quantitative analysis of perfusion imaging using dynamic
+contrast-enhanced MRI (DCE-MRI) is achieved through a series of
+processing steps, starting with the raw data acquired from the MRI
+scanner, and involves a combination of physics, mathematics,
+engineering and statistics.  The purpose of the \pkg{dcemriS4} package
+is to provide a collection of functions that move the experimental
+data through all steps of the data analysis pipeline using standard
+data formats that may be visualized and manipulated across a wide
+variety of software packages.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Data Input/Output}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Data Formats and Conversion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The \pkg{dcemriS4} package requires incoming data to be in
+the ANALYZE~7.5 or NIfTI formats.  Data conversion (e.g., from DICOM
+to NIfTI) must be performed by the user before \pkg{dcemriS4} may be
+used to summarize the data.  Several software packages allow
+DICOM-to-NIfTI (or ANALYZE) conversion; e.g.,
+\begin{itemize}
+\item FreeSurfer (\url{surfer.nmr.mgh.harvard.edu})
+\item Xmedcon (\url{xmedcon.sourceforge.net})
+\item MRIConvert (\url{lnci.oregon.edu/\~jolinda/MRIConvert})
+\end{itemize}
+This is by no means an exhaustive list of software available for DICOM
+conversion.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{A Note on Axes and Orientation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The NIfTI format contains an implicit generalized spatial
+transformation from the data co-ordinate system $(i,j,k)$ into a
+real-space ``right-handed'' co-ordinate system.  In this real-space
+system, the $(x,y,z)$ axes are \emph{usually} set such that $x$
+increases from left to right, $y$ increases from posterior to anterior
+and $z$ increases from inferior to superior.
+
+At this point in time the \pkg{dcemriS4} package cannot apply an
+arbitrary transform to the imaging data into $(x,y,z)$ space -- such a
+transform may require non-integral indices and interpolation steps.
+The package does accommodate straightforward transformations of imaging
+data; e.g., setting the $x$-axis to increase from right to left
+(neurological).  Future versions of \pkg{dcemriS4} will attempt to
+address more complicated transformations.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Labelled LR Standard (MNI152) Images in NIfTI Format}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The first example of reading in, and displaying, medical imaging data
+in NIfTI format (\texttt{avg152T1\_LR\_nifti.nii.gz}) was obtained
+from the NIfTI website (\url{nifti.nimh.nih.gov/nifti-1/}).  
+Successful execution of the command:
+
+<<avg152T1_LR_nifti>>=
+mni.LR <- readNIfTI(system.file("nifti/avg152T1_LR_nifti.nii.gz", 
+                                package="dcemriS4"))
+mni.LR
+@ 
+<<figure1-png,echo=FALSE,results=hide>>=
+png(filename="avg152T1_LR_nifti.png", width=400, height=400, bg="black")
+@ 
+<<figure1-code>>=
+image(mni.LR)
+@ 
+<<figure1-dev.off,echo=FALSE,results=hide>>=
+dev.off()
+@ 
+
+produces a 4D array of the image data, with the default NIfTI axes,
+and is displayed on a $10{\times}10$ grid of images
+(Figure~\ref{fig:avg152T1_LR_nifti}).
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics{avg152T1_LR_nifti.png}
+  \caption{Axial slices of MNI volume \texttt{avg152T1\_LR\_nifti}
+  stored in radiological convention.}
+  \label{fig:avg152T1_LR_nifti}
+\end{figure}
+
+The second example of reading in, and displaying, medical imaging data
+in NIfTI format (\texttt{avg152T1\_RL\_nifti.nii}) was also obtained
+from the NIfTI website (\url{nifti.nimh.nih.gov/nifti-1/}).
+Successful execution of the command
+
+<<avg152T1_RL_nifti>>=
+mni.RL <- readNIfTI(system.file("nifti/avg152T1_RL_nifti.nii.gz", 
+                                package="dcemriS4"))
+mni.RL
+@ 
+<<figure2-png,echo=FALSE,results=hide>>=
+png(filename="avg152T1_RL_nifti.png", width=400, height=400, bg="black")
+@ 
+<<figure2-code>>=
+image(mni.RL)
+<<figure2-dev.off,echo=FALSE,results=hide>>=
+dev.off()
+@ 
+
+produces a 4D array of the image data that may be displayed in a
+$10{\times}10$ grid of images (Figure~\ref{fig:avg152T1_RL_nifti}).
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics{avg152T1_RL_nifti.png}
+  \caption{Axial slices of MNI volume \texttt{avg152T1\_RL\_nifti}
+  stored in neurological convention.}
+  \label{fig:avg152T1_RL_nifti}
+\end{figure}
+
+The first image (LR) is stored in radiological convention.  The second
+image (RL) is stored in neurological convention.  Any NIfTI-1 compliant
+viewing software should display these images identically.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Simple Time-series or Multi-volume Image}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This is an example of reading in, and displaying, a four-dimensional
+medical imaging data set in NIfTI format
+(\texttt{filtered\_func\_data.nii}) obtained from the NIfTI website
+(\url{nifti.nimh.nih.gov/nifti-1/}).  Successful execution of the
+command
+
+<<filtered_func_data>>=
+ffd <- readNIfTI(system.file("nifti/filtered_func_data.nii.gz", 
+                             package="dcemriS4"))
+ffd
+@ 
+<<figure3-png,echo=FALSE,results=hide>>=
+png(filename="ffd.png", width=400, height=400, bg="black")
+@ 
+<<figure3-code>>=
+image(ffd)
+@ 
+<<figure3-dev.off,echo=FALSE,results=hide>>=
+dev.off()
+@ 
+
+produces a four-dimensional (4D) array of imaging data that may be
+displayed in a $5{\times}5$ grid of images (Figure~\ref{fig:ffd}).
+The first three dimensions are spatial locations of the voxel (volume
+element) and the fourth dimension is time.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics{ffd.png}
+  \caption{Axial slices of the functional MRI ``volume''
+  \texttt{filtered\_func\_data} from the first acquisition.}
+  \label{fig:ffd}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Statistic Image}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This is an example of reading in and displaying a statistical image so
+that it may be overlayed on the EPI (echo planar imaging) data taken
+from the functional MRI experiment.  The original NIfTI files
+(\texttt{filtered\_func\_data.nii} and \texttt{zstat1.nii}) were
+obtained from the NIfTI website (\url{nifti.nimh.nih.gov/nifti-1/}).
+Successful execution of the command
+
+<<zstat1>>=
+zstat1 <- readNIfTI(system.file("nifti/zstat1.nii.gz", package="dcemriS4"))
+zstat1
+@ 
+<<figure4-png,echo=FALSE,results=hide>>=
+png("ffd_zstat1.png", width=400, height=400, bg="black")
+@ 
+<<figure4-code>>=
+overlay(ffd, ifelse(abs(zstat1) > 5, zstat1, NA), zlim.y=range(zstat1))
+<<figure4-dev.off,echo=FALSE,results=hide>>=
+dev.off()
+@ 
+produces a 4D array of parameter estimates (essentially coefficients
+from a linear regression performed at each voxel) that may be
+overlayed on the original data for anatomical reference
+(Figure~\ref{fig:zstat1}).
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics{ffd_zstat1.png}
+  \caption{Axial slices of the functional MRI data with 
+  with the statistical image overlayed.  The test statistics were
+  thresholded at $|Z|\geq{4}$.}
+  \label{fig:zstat1}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Motion Correction and Co-registration}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Basic motion correction within an acquisition, and co-registration
+between acquired series, is available using template matching
+(\url{en.wikipedia.org/wiki/Template_matching}).  A reference volume
+must be pre-specified where a mask has been applied to remove all
+voxels that should not be included in the algorithm.  Note, only
+three-dimensional translations are allowed and no interpolation is
+used (i.e., only whole-voxel translations) at this time.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{T1 Relaxation and Gadolinium Concentration}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Estimation of the tissue T1 relaxation rate is the first step in
+converting signal intensity, obtained in the dynamic acquisition of
+the DCE-MRI protocol, to contrast agent concentration.  The subsequent
+steps provided here focus on pharmacokinetic modeling and assumes one
+has converted the dynamic acquisition to contrast agent concentration.
+Please see \cite{col-pad:ieee} for a discussion on this point.
+
+There are a myriad of techniques to quantify T1 using MRI.  Currently
+curve-fitting methods for two popular acquisition schemes are
+available
+\begin{itemize}
+\item Inversion recovery (\url{www.e-mri.org/mri-sequences/inversion-recovery-stir-flair.html})
+\item Multiple flip angles \citep{par-pad:DCE-MRI}
+\end{itemize}
+Once the tissue T1 relaxation rate has been estimated, the dynamic
+acquisition is then converted to contrast agent concentration.  Note,
+the B1 field is assumed to be constant (and accurate) when using
+multiple flip angles to estimate T1.  At higher fields strengths
+(e.g., 3T) the B1 field should be estimated in order to correct the
+prescribed flip angles.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{B1 Mapping Via the Saturated Double-Angle Method}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+For in vivo MRI at high field ($\geq{3}$Tesla) it is essential to
+consider the homogeneity of the active B1 field (B1+).  The B1+ field
+is the transverse, circularly polarized component of B1 that is
+rotating in the same sense as the magnetization.  When exciting or
+manipulating large collections of spins, non-uniformity in B1+ results
+in nonuniform treatment of spins.  This leads to spatially varying
+image signal and image contrast and to difficulty in image
+interpretation and image-based quantification
+\citep{cun-pau-nay:saturated}.
+
+The proposed method uses an adaptation of the double angle method
+(DAM).  Such methods allow calculation of a flip-angle map, which is
+an indirect measure of the B1+ field.  Two images are acquired:
+$I_1$ with prescribed tip $\alpha_1$ and $I_2$ with prescribed tip
+$\alpha_2=2\alpha_1$.  All other signal-affecting sequence parameters
+are kept constant. For each voxel, the ratio of magnitude images
+satisfies
+\begin{equation*}
+  \frac{I_2(r)}{I_1(r)} =
+  \frac{\sin\alpha_2(r)f_2(T_1,\text{TR})}{\sin\alpha_1(r)f_1(T_1,\text{TR})}
+\end{equation*}
+where $r$ represents spatial position and $alpha_1(r)$ and
+$\alpha_2(r)$ are tip angles that vary with the spatially varying B1+
+field.  If the effects of $T_1$ and $T_2$ relaxation can be neglected,
+then the actual tip angles as a function of spatial position satisfy
+\begin{equation*}
+  \alpha(r) = \text{arccos}\left(\left|\frac{I_2(r)}{2I_1(r)}\right|\right)
+\end{equation*}
+A long repetition time ($\text{TR}\leq{5T_1}$) is typically used with
+the double-angle methods so that there is no $T_1$ dependence in
+either $I_1$ or $I_2$ (i.e.,
+$f_1(T_1,\text{TR})=f_2(T_1,\text{TR})=1.0$.  Instead, the proposed
+method includes a magnetization-reset sequence after each data
+acquisition with the goal of putting the spin population in the same
+state regardless of whether the or $\alpha_2$ excitation was used for
+the preceding acquisition (i.e.,
+$f_1(T_1,\text{TR})=f_2(T_1,\text{TR})\ne{1.0}$.
+
+\end{document}
+
