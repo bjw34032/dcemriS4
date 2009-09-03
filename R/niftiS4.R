@@ -349,7 +349,9 @@ setGeneric("descrip<-", function(x, value) { standardGeneric("descrip<-") })
 setReplaceMethod("descrip", "nifti",
                  function(x, value) { 
 		   x@descrip <- value 
-		   audit.trail(x) <- niftiAuditTrailEvent(x, "modification", match.call(), paste("descrip <-", value))
+		   audit.trail(x) <-
+                     niftiAuditTrailEvent(x, "modification", match.call(),
+                                          paste("descrip <-", value))
 		   x 
 		 })
 
