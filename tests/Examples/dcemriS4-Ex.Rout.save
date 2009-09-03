@@ -1,0 +1,1304 @@
+
+R version 2.9.2 (2009-08-24)
+Copyright (C) 2009 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ### * <HEADER>
+> ###
+> attach(NULL, name = "CheckExEnv")
+> assign("nameEx",
++        local({
++ 	   s <- "__{must remake R-ex/*.R}__"
++            function(new) {
++                if(!missing(new)) s <<- new else s
++            }
++        }),
++        pos = "CheckExEnv")
+> ## Add some hooks to label plot pages for base and grid graphics
+> assign("base_plot_hook",
++        function() {
++            pp <- par(c("mfg","mfcol","oma","mar"))
++            if(all(pp$mfg[1:2] == c(1, pp$mfcol[2]))) {
++                outer <- (oma4 <- pp$oma[4]) > 0; mar4 <- pp$mar[4]
++                mtext(sprintf("help(\"%s\")", nameEx()), side = 4,
++                      line = if(outer)max(1, oma4 - 1) else min(1, mar4 - 1),
++                outer = outer, adj = 1, cex = .8, col = "orchid", las=3)
++            }
++        },
++        pos = "CheckExEnv")
+> assign("grid_plot_hook",
++        function() {
++            grid::pushViewport(grid::viewport(width=grid::unit(1, "npc") -
++                               grid::unit(1, "lines"), x=0, just="left"))
++            grid::grid.text(sprintf("help(\"%s\")", nameEx()),
++                            x=grid::unit(1, "npc") + grid::unit(0.5, "lines"),
++                            y=grid::unit(0.8, "npc"), rot=90,
++                            gp=grid::gpar(col="orchid"))
++        },
++        pos = "CheckExEnv")
+> setHook("plot.new",     get("base_plot_hook", pos = "CheckExEnv"))
+> setHook("persp",        get("base_plot_hook", pos = "CheckExEnv"))
+> setHook("grid.newpage", get("grid_plot_hook", pos = "CheckExEnv"))
+> assign("cleanEx",
++        function(env = .GlobalEnv) {
++ 	   rm(list = ls(envir = env, all.names = TRUE), envir = env)
++            RNGkind("default", "default")
++ 	   set.seed(1)
++    	   options(warn = 1)
++ 	   .CheckExEnv <- as.environment("CheckExEnv")
++ 	   delayedAssign("T", stop("T used instead of TRUE"),
++ 		  assign.env = .CheckExEnv)
++ 	   delayedAssign("F", stop("F used instead of FALSE"),
++ 		  assign.env = .CheckExEnv)
++ 	   sch <- search()
++ 	   newitems <- sch[! sch %in% .oldSearch]
++ 	   for(item in rev(newitems))
++                eval(substitute(detach(item), list(item=item)))
++ 	   missitems <- .oldSearch[! .oldSearch %in% sch]
++ 	   if(length(missitems))
++ 	       warning("items ", paste(missitems, collapse=", "),
++ 		       " have been removed from the search path")
++        },
++        pos = "CheckExEnv")
+> assign("ptime", proc.time(), pos = "CheckExEnv")
+> ## at least one package changes these via ps.options(), so do this
+> ## before loading the package.
+> ## Use postscript as incomplete files may be viewable, unlike PDF.
+> ## Choose a size that is close to on-screen devices, fix paper
+> grDevices::ps.options(width = 7, height = 7, paper = "a4", reset = TRUE)
+> grDevices::postscript("dcemriS4-Ex.ps")
+> 
+> assign("par.postscript", graphics::par(no.readonly = TRUE), pos = "CheckExEnv")
+> options(contrasts = c(unordered = "contr.treatment", ordered = "contr.poly"))
+> options(warn = 1)
+> library('dcemriS4')
+Loading required package: XML
+
+dcemriS4: A Package for Medical Image Analysis (version = 0.20.1)
+
+> 
+> assign(".oldSearch", search(), pos = 'CheckExEnv')
+> assign(".oldNS", loadedNamespaces(), pos = 'CheckExEnv')
+> cleanEx(); nameEx("aif")
+> ### * aif
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: Arterial Input Functions
+> ### Title: Arterial Input Functions
+> ### Aliases: aif.orton.exp model.orton.exp orton.exp.lm
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> data("buckley")
+> ## Generate AIF params using the orton.exp function from Buckley's AIF
+> xi <- seq(5, 300, by=5)
+> time <- buckley$time.min[xi]
+> aif <- buckley$input[xi]
+> aifparams <- orton.exp.lm(time, aif)
+Loading required package: minpack.lm
+
+This product includes software developed by the University of Chicago, as
+Operator of Argonne National Laboratory.
+
+See the LICENSE file distributed with the minpack.lm source code or
+http://www.netlib.org/minpack/disclaimer for the full license.
+
+> aifparams$D <- 1 
+> unlist(aifparams[1:4])
+         AB         muB          AG         muG 
+37.14839724  3.89505419  1.51615437 -0.01066073 
+> 
+> aoe <- aif.orton.exp(time, aifparams$AB, aifparams$muB, aifparams$AG,
++                      aifparams$muG)
+> with(buckley, plot(time.min, input, type="l", lwd=2))
+> lines(time, aoe, lwd=2, col=2)
+> legend("right", c("Buckley's AIF", "Our approximation"), lty=1,
++        lwd=2, col=1:2)
+> cbind(time, aif, aoe)[1:10,]
+            time      aif      aoe
+ [1,] 0.06666667 0.912633 2.257999
+ [2,] 0.15000000 2.807515 3.779938
+ [3,] 0.23333333 4.915784 4.402029
+ [4,] 0.31666667 5.942284 4.506283
+ [5,] 0.40000000 4.981387 4.332075
+ [6,] 0.48333333 4.016821 4.025864
+ [7,] 0.56666667 3.326276 3.674314
+ [8,] 0.65000000 2.873297 3.326189
+ [9,] 0.73333333 2.580520 3.006703
+[10,] 0.81666667 2.383784 2.726830
+> 
+> 
+> 
+> cleanEx(); nameEx("anlz-class")
+> ### * anlz-class
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: anlz-class
+> ### Title: Class "anlz"
+> ### Aliases: anlz-class show,anlz-method
+> ### Keywords: classes
+> 
+> ### ** Examples
+> 
+> showClass("anlz")
+Class “anlz” [package "dcemriS4"]
+
+Slots:
+                                                                            
+Name:          .Data    sizeof_hdr       db_type       db_name       extents
+Class:         array       numeric     character     character       numeric
+                                                                            
+Name:  session_error       regular      hkey_un0          dim_     vox_units
+Class:       numeric     character     character        vector     character
+                                                                            
+Name:      cal_units       unused1      datatype        bitpix       dim_un0
+Class:     character       numeric       numeric       numeric       numeric
+                                                                            
+Name:         pixdim    vox_offset      funused1      funused2      funused3
+Class:        vector       numeric       numeric       numeric       numeric
+                                                                            
+Name:        cal_max       cal_min    compressed      verified         glmax
+Class:       numeric       numeric       numeric       numeric       numeric
+                                                                            
+Name:          glmin       descrip      aux_file        orient    originator
+Class:       numeric     character     character     character     character
+                                                                            
+Name:      generated       scannum    patient_id      exp_date      exp_time
+Class:     character     character     character     character     character
+                                                                            
+Name:       hist_un0         views    vols_added   start_field    field_skip
+Class:     character       numeric       numeric       numeric       numeric
+                                                              
+Name:           omax          omin          smax          smin
+Class:       numeric       numeric       numeric       numeric
+
+Extends: 
+Class "array", from data part
+Class "matrix", by class "array", distance 2, with explicit test and coerce
+Class "structure", by class "array", distance 2
+Class "vector", by class "array", distance 3, with explicit coerce
+Class "vector", by class "array", distance 5, with explicit test and coerce
+> 
+> 
+> 
+> cleanEx(); nameEx("anlz")
+> ### * anlz
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: anlz
+> ### Title: Constructor for Analyze
+> ### Aliases: anlz is.anlz
+> 
+> 
+> ### ** Examples
+> 
+> ##---- Should be DIRECTLY executable !! ----
+> ##-- ==>  Define data, use random,
+> ##--    or do  help(data=index)  for the standard data sets.
+> 
+> ## The function is currently defined as
+> function(img=array(0, dim=rep(1,4)), dim, ...) {
++   if (missing(dim)) {
++     if (is.array(img))
++       dim <- base::dim(img)
++     else
++       dim <- c(1, length(img))
++   }
++   ld <- length(dim)
++   if (ld < 3)
++     stop(sprintf("length(dim) must be at least 3 and is %d.", ld))
++   
++   x <- c(length(dim), dim[1], dim[2], dim[3],
++          ifelse(is.na(dim[4]), 1, dim[4]), rep(1,3))
++   y <- c(0.0, rep(1.0,length(dim)), rep(0.0,3))
++   cal.max <- quantile(img, probs=0.95, na.rm=TRUE)
++   cal.min <- quantile(img, probs=0.05, na.rm=TRUE)
++   obj <- new("anlz", .Data=array(img, dim=dim), "dim_"=x, "pixdim"=y,
++              "cal_max"=cal.max, "cal_min"=cal.min, ...)
++   validObject(obj)
++   return(obj)
++   }
+function (img = array(0, dim = rep(1, 4)), dim, ...) 
+{
+    if (missing(dim)) {
+        if (is.array(img)) 
+            dim <- base::dim(img)
+        else dim <- c(1, length(img))
+    }
+    ld <- length(dim)
+    if (ld < 3) 
+        stop(sprintf("length(dim) must be at least 3 and is %d.", 
+            ld))
+    x <- c(length(dim), dim[1], dim[2], dim[3], ifelse(is.na(dim[4]), 
+        1, dim[4]), rep(1, 3))
+    y <- c(0, rep(1, length(dim)), rep(0, 3))
+    cal.max <- quantile(img, probs = 0.95, na.rm = TRUE)
+    cal.min <- quantile(img, probs = 0.05, na.rm = TRUE)
+    obj <- new("anlz", .Data = array(img, dim = dim), dim_ = x, 
+        pixdim = y, cal_max = cal.max, cal_min = cal.min, ...)
+    validObject(obj)
+    return(obj)
+}
+> 
+> 
+> 
+> cleanEx(); nameEx("audit_trail")
+> ### * audit_trail
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: Audit Trails
+> ### Title: Facilitate the Creation and Modification of Audit Trails
+> ### Aliases: dcemri.info enableAuditTrail newAuditTrail
+> ###   niftiExtensionToAuditTrail niftiAuditTrailToExtension
+> ###   niftiAuditTrailSystemNode niftiAuditTrailSystemNodeEvent
+> ###   niftiAuditTrailCreated niftiAuditTrailEvent getLastCallWithName
+> 
+> 
+> ### ** Examples
+> 
+> ## A good example of the use of these functions is shown by this
+> ## wrapper function which takes a function fun(nim, ...) returning
+> ## lists of arrays which are nifti-ized using as(...)
+> wrapper <- function(functionToWrap, nameOfCallingFunction, nim, ...) {
++   if (!is(nim, "nifti")) 
++     nim <- as(nim, "nifti")
++   
++   if (is(nim, "niftiAuditTrail")) {
++     ## This will force as(...) to set the call which created the
++     ## results to the calling function's call rather than
++     ## as(result, nifti) as it would otherwise do
++     nim@trail <- niftiAuditTrailEvent(nim@trail, "processing",
++                                       nameOfCallingFunction)
++   }
++   
++   result <- functionToWrap(nim, ...)
++   as(result, "nifti") <- nim
++   return(result)
++ }
+> 
+> ## An example of how wrapper is used follows:
+> functionToWrap <- function(ignored, x, y) {
++   return (array(1, dim=c(x,y)))
++ }
+> 
+> ## The niftiized form
+> niftiizedForm <- function(nim,...) {
++   return(wrapper(functionToWrap, "niftiizedForm", nim, ...))
++ }
+> 
+> ## compare the trails
+> if (getOption("NIfTI.audit.trail")) {
++   print((as.nifti(functionToWrap(nifti(), 4, 4), nifti()))@trail)
++   print(niftiizedForm(nifti(), 4, 4)@trail)
++ }
+<audit-trail xmlns="http://www.dcemri.org/namespaces/audit-trail/1.0">
+  <created call="as.nifti(from = functionToWrap(nifti(), 4, 4), value = nifti())" r-version="R version 2.9.2 (2009-08-24)" date="Thu Sep 03 21:44:27 2009 BST" user="bjw34032" dcemri-version="0.10.5">
+    <history>
+      <created call="nifti()" r-version="R version 2.9.2 (2009-08-24)" date="Thu Sep 03 21:44:27 2009 BST" user="bjw34032" dcemri-version="0.10.5"/>
+    </history>
+  </created>
+</audit-trail> 
+<audit-trail xmlns="http://www.dcemri.org/namespaces/audit-trail/1.0">
+  <created call="niftiizedForm(nifti(), 4, 4)" r-version="R version 2.9.2 (2009-08-24)" date="Thu Sep 03 21:44:27 2009 BST" user="bjw34032" dcemri-version="0.10.5">
+    <history>
+      <created call="nifti()" r-version="R version 2.9.2 (2009-08-24)" date="Thu Sep 03 21:44:27 2009 BST" user="bjw34032" dcemri-version="0.10.5"/>
+    </history>
+  </created>
+</audit-trail> 
+> 
+> 
+> 
+> cleanEx(); nameEx("aux_file-methods")
+> ### * aux_file-methods
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: aux.file-methods
+> ### Title: Extract or Replace NIfTI/Analyze Auxiliary File
+> ### Aliases: aux.file-methods aux.file,anlz-method aux.file,nifti-method
+> ###   aux.file aux.file<-,nifti-method aux.file<-,anlz-method aux.file<-
+> ### Keywords: methods
+> 
+> ### ** Examples
+> 
+> mniRL <- readNIfTI(system.file("nifti/avg152T1_RL_nifti.nii.gz",
++                    package="dcemriS4"))
+> aux.file(mniRL)
+[1] "none                   "
+> aux.file(mniRL) <- "avg152T1_RL_nifti"
+> aux.file(mniRL)
+[1] "avg152T1_RL_nifti"
+> 
+> 
+> 
+> cleanEx(); nameEx("conv_fft")
+> ### * conv_fft
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: conv.fft
+> ### Title: Convolution of 3D Arrays using the Fourier Transform
+> ### Aliases: conv.fft
+> 
+> 
+> ### ** Examples
+> 
+> cube <- array(0, c(20,20,1))
+> cube[9:12,9:12,1] <- 1
+> tkernel <- array(0, c(20,20,1))
+> tkernel[,,1] <- c(.5, 1, .5, rep(0,20-3)) 
+> tcenter <- find.center(ifelse(tkernel > 0, TRUE, FALSE))
+> out <- conv.fft(tkernel, cube, tcenter)
+> out[8:13,8:13,1]  ## text output
+     [,1] [,2] [,3] [,4] [,5] [,6]
+[1,]    2    2    2    2    2    2
+[2,]    6    6    6    6    6    6
+[3,]    8    8    8    8    8    8
+[4,]    8    8    8    8    8    8
+[5,]    6    6    6    6    6    6
+[6,]    2    2    2    2    2    2
+> 
+> par(mfrow=c(2,2))  ## graphic output
+> image(drop(tkernel), col=tim.colors(), main="Template")
+Loading required package: splines
+> image(drop(cube), col=tim.colors(), main="Target")
+> image(drop(out), col=tim.colors(), main="Output")
+> 
+> 
+> 
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx(); nameEx("convert_anlz")
+> ### * convert_anlz
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: Convert ANALYZE Codes
+> ### Title: Convert NIfTI Codes
+> ### Aliases: convert.datatype.anlz convert.orient.anlz
+> 
+> 
+> ### ** Examples
+> 
+> ##  4 = SIGNED_SHORT
+> convert.datatype.anlz(4)
+[1] "SIGNED_SHORT"
+> ## 16 = FLOAT
+> convert.datatype.anlz(16)
+[1] "FLOAT"
+> ##  2 = "saggital unflipped"
+> convert.orient.anlz(2)
+[1] "sagittal unflipped"
+> ##  4 = "coronal flipped"
+> convert.orient.anlz(4)
+[1] "coronal flipped"
+> 
+> 
+> 
+> cleanEx(); nameEx("convert_nifti")
+> ### * convert_nifti
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: Convert NIfTI Codes
+> ### Title: Convert NIfTI Codes
+> ### Aliases: convert.datatype convert.bitpix convert.intent convert.form
+> ###   convert.units convert.slice
+> 
+> 
+> ### ** Examples
+> 
+> ## No arguments produces a list structure
+> ## Use the abbreviation to obtain the code
+> convert.datatype()$INT16
+[1] 4
+> ## Use the code directly to obtain the abbreviation
+> convert.datatype(4)
+[1] "INT16"
+> 
+> ## No arguments produces a list structure
+> ## Use the abbreviation to obtain the code
+> convert.bitpix()$INT16
+[1] 16
+> 
+> ## No arguments produces a list structure
+> ## Use the abbreviation to obtain the code
+> convert.intent()$Estimate
+[1] 1001
+> ## Use the code directly to obtain the abbreviation
+> convert.intent(1001)
+[1] "Estimate"
+> 
+> ## 4 = MNI_152
+> convert.form(4)
+[1] "MNI_152"
+> 
+> ## 2 = mm
+> convert.units(2)
+[1] "mm"
+> ## 8 = sec
+> convert.units(8)
+[1] "sec"
+> 
+> ## 0 = Unknown
+> convert.slice(0)
+[1] "Unknown"
+> 
+> 
+> 
+> cleanEx(); nameEx("dce_bayes")
+> ### * dce_bayes
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: dcemri.bayes
+> ### Title: Bayesian Methods for Pharmacokinetic Modeling of Dynamic
+> ###   Contrast-Enhanced MRI Data
+> ### Aliases: dcemri.bayes dcemri.bayes,array-method dcemri.bayes.single
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> data("buckley")
+> xi <- seq(5, 300, by=5)
+> img <- array(t(breast$data)[,xi], c(13,1,1,60))
+> mask <- array(TRUE, dim(img)[1:3])
+> time <- buckley$time.min[xi]
+> 
+> ## Bayesian estimation with Fritz-Hansen default AIF
+> fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen",
++                           nriters=1500)
+> 
+> ## Bayesian estimation with "orton.exp" function fit to Buckley's AIF
+> aif <- buckley$input[xi]
+> aifparams <- orton.exp.lm(time, aif)
+Loading required package: minpack.lm
+
+This product includes software developed by the University of Chicago, as
+Operator of Argonne National Laboratory.
+
+See the LICENSE file distributed with the minpack.lm source code or
+http://www.netlib.org/minpack/disclaimer for the full license.
+
+> aifparams$D <- 1
+> fit.bayes.aif <- dcemri.bayes(img, time, mask, model="orton.exp",
++                               aif="user", user=aifparams, nriters=1500)
+> 
+> plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
++      xlab=expression(paste("True ", K^{trans})),
++      ylab=expression(paste("Estimated ", K^{trans}, " (Bayesian)")))
+> points(breast$ktrans, fit.bayes.aif$ktrans, pch=2)
+> abline(0, 1, lwd=1.5, col=2)
+> legend("right", c("orton.exp", "fritz.hansen"), pch=1:2)
+> 
+> cbind(breast$ktrans, fit.bayes$ktrans[,,1], fit.bayes.aif$ktrans[,,1])
+             [,1]      [,2]       [,3]
+ [1,] 0.145599052 0.3825420 0.55301691
+ [2,] 0.218344559 0.5926812 0.50283293
+ [3,] 0.250521815 0.6937199 0.48814051
+ [4,] 0.268391926 0.7503174 0.48075811
+ [5,] 0.279725126 0.7898344 0.47578505
+ [6,] 0.009912791 0.4444399 0.08879913
+ [7,] 0.146992146 0.4637267 0.47316995
+ [8,] 0.328712966 0.8659768 0.49740757
+ [9,] 0.387767110 0.9748638 0.50357483
+[10,] 0.250521815 0.5505262 0.45806535
+[11,] 0.250521815 0.6171508 0.47258938
+[12,] 0.250521815 0.7666502 0.50664579
+[13,] 0.250521815 0.8382163 0.52444152
+> 
+> ## Not run: 
+> ##D fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
+> ##D fit.lm.aif <- dcemri.lm(img, time, mask, model="orton.exp", aif="user",
+> ##D                         user=aifparams)
+> ##D 
+> ##D plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
+> ##D      xlab=expression(paste("True ", K^{trans})),
+> ##D      ylab=expression(paste("Estimated ", K^{trans})))
+> ##D points(breast$ktrans, fit.bayes.aif$ktrans, pch=2)
+> ##D points(breast$ktrans, fit.lm$ktrans, pch=3)
+> ##D points(breast$ktrans, fit.lm.aif$ktrans, pch=4)
+> ##D abline(0, 1, lwd=1.5, col="red")
+> ##D legend("bottomright", c("Bayesian Estimation (fritz-hansen)",
+> ##D                         "Bayesian Estimation (orton.exp)",
+> ##D                         "Levenburg-Marquardt (fritz.hansen)",
+> ##D                         "Levenburg-Marquardt (orton.exp)"), pch=1:4)
+> ## End(Not run)
+> 
+> 
+> 
+> cleanEx(); nameEx("dce_map")
+> ### * dce_map
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: dcemri.map
+> ### Title: Pharmacokinetic Modeling of Dynamic Contrast-Enhanced MRI Data
+> ### Aliases: dcemri.map dcemri.map,array-method dcemri.map.single
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> data("buckley")
+> xi <- seq(5, 300, by=5)
+> img <- array(t(breast$data)[,xi], c(13,1,1,60))
+> mask <- array(TRUE, dim(img)[1:3])
+> time <- buckley$time.min[xi]
+> 
+> ## MAP estimation with Fritz-Hansen default AIF
+> fit.map <- dcemri.map(img, time, mask, aif="fritz.hansen",
++                       nriters=5000)
+> 
+> plot(breast$ktrans, fit.map$ktrans, xlim=c(0,1), ylim=c(0,1),
++      xlab=expression(paste("True ", K^{trans})),
++      ylab=expression(paste("Estimated ", K^{trans}, " (MAP)")))
+> abline(0, 1, lwd=1.5, col=2)
+> 
+> ## Not run: 
+> ##D fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
+> ##D 
+> ##D plot(breast$ktrans, fit.map$ktrans, xlim=c(0,1), ylim=c(0,1),
+> ##D      xlab=expression(paste("True ", K^{trans})),
+> ##D      ylab=expression(paste("Estimated ", K^{trans})))
+> ##D points(breast$ktrans, fit.lm$ktrans, pch=3)
+> ##D abline(0, 1, lwd=1.5, col="red")
+> ##D legend("bottomright", c("MAP Estimation (fritz-hansen)",
+> ##D                         "Levenburg-Marquardt (fritz.hansen)", pch=c(1,3))
+> ## End(Not run)
+> 
+> 
+> 
+> cleanEx(); nameEx("dce_spline")
+> ### * dce_spline
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: dcemri.spline
+> ### Title: Bayesian P-Splines for Dynamic Contrasat-Enhanced MRI Data
+> ### Aliases: dcemri.spline dcemri.spline,array-method dcemri.spline.single
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> data("buckley")
+> xi <- seq(5, 300, by=5)
+> img <- array(t(breast$data)[,xi], c(13,1,1,60))
+> mask <- array(TRUE, dim(img)[1:3])
+> time <- buckley$time.min[xi]
+> 
+> ## Generate AIF params using the orton.exp function from Buckley's AIF
+> aif <- buckley$input[xi]
+> 
+> fit.spline <- dcemri.spline(img, time, mask, aif="fritz.hansen",
++                             nriters=250, nlr=TRUE)
+Loading required package: splines
+Loading required package: minpack.lm
+
+This product includes software developed by the University of Chicago, as
+Operator of Argonne National Laboratory.
+
+See the LICENSE file distributed with the minpack.lm source code or
+http://www.netlib.org/minpack/disclaimer for the full license.
+
+> fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
++                                 aif.observed=aif, nriters=250,
++                                 nlr=TRUE)
+> 
+> plot(breast$ktrans, fit.spline$ktrans, xlim=c(0,1), ylim=c(0,1),
++      xlab=expression(paste("True ", K^{trans})),
++      ylab=expression(paste("Estimated ", K^{trans})))
+> points(breast$ktrans, fit.spline.aif$ktrans, pch=2)
+> abline(0, 1, lwd=1.5, col="red")
+> legend("right", c("fritz.hansen", "observed"), pch=1:2)
+> 
+> cbind(breast$ktrans, fit.spline$ktrans[,,1], fit.spline.aif$ktrans[,,1])
+             [,1]      [,2]      [,3]
+ [1,] 0.145599052 0.3732351 0.1603747
+ [2,] 0.218344559 0.5735669 0.2590044
+ [3,] 0.250521815 0.6701396 0.3124136
+ [4,] 0.268391926 0.7268552 0.3456465
+ [5,] 0.279725126 0.7641296 0.3697997
+ [6,] 0.009912791 0.4262028 0.4073166
+ [7,] 0.146992146 0.4773769 0.2195387
+ [8,] 0.328712966 0.7977763 0.3770913
+ [9,] 0.387767110 0.8886958 0.4236747
+[10,] 0.250521815 0.5185484 0.2309963
+[11,] 0.250521815 0.5947862 0.2703911
+[12,] 0.250521815 0.7438540 0.3534772
+[13,] 0.250521815 0.8142022 0.3913599
+> 
+> 
+> 
+> cleanEx(); nameEx("dcemri-package")
+> ### * dcemri-package
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: dcemri-package
+> ### Title: dcemri: A Package for Medical Image Analysis
+> ### Aliases: dcemri-package dcemri
+> ### Keywords: package
+> 
+> ### ** Examples
+> 
+> ## Not run: 
+> ##D demo(avg152T1)
+> ##D demo(avg152T1_LR)
+> ##D demo(avg152T1_RL)
+> ##D demo(buckley)
+> ##D demo(filtered_func_data)
+> ##D demo(zstat1)
+> ## End(Not run)
+> 
+> 
+> 
+> cleanEx(); nameEx("dcemri")
+> ### * dcemri
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: dcemri.lm
+> ### Title: Pharmacokinetic Models for Dynamic Contrast-Enhanced MRI Data
+> ### Aliases: dcemri.lm dcemri.lm,array-method
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> data("buckley")
+> 
+> ## Set up breast data for dcemri
+> xi <- seq(5, 300, by=5)
+> img <- array(t(breast$data)[,xi], c(13,1,1,60))
+> time <- buckley$time.min[xi]
+> aif <- buckley$input[xi]
+> mask <- array(TRUE, dim(img)[1:3])
+> 
+> ## Generate AIF params using the orton.exp function from Buckley's AIF
+> aifparams <- orton.exp.lm(time, aif)
+Loading required package: minpack.lm
+
+This product includes software developed by the University of Chicago, as
+Operator of Argonne National Laboratory.
+
+See the LICENSE file distributed with the minpack.lm source code or
+http://www.netlib.org/minpack/disclaimer for the full license.
+
+> fit <- dcemri.lm(img, time, mask, model="orton.exp",
++                  aif="user", user=aifparams)
+> 
+> ## Scatterplot comparing true and estimated Ktrans values
+> plot(breast$ktrans, fit$ktrans, xlim=c(0,0.75), ylim=c(0,0.75),
++      xlab=expression(paste("True ", K^{trans})),
++      ylab=expression(paste("Estimated ", K^{trans})))
+> abline(0, 1, lwd=1.5, col="red")
+> cbind(breast$ktrans, fit$ktrans[,,1])
+             [,1]       [,2]
+ [1,] 0.145599052 0.55271993
+ [2,] 0.218344559 0.50276669
+ [3,] 0.250521815 0.48807358
+ [4,] 0.268391926 0.48022320
+ [5,] 0.279725126 0.47523282
+ [6,] 0.009912791 0.09056846
+ [7,] 0.146992146 0.47381970
+ [8,] 0.328712966 0.49707307
+ [9,] 0.387767110 0.50434946
+[10,] 0.250521815 0.45796930
+[11,] 0.250521815 0.47255539
+[12,] 0.250521815 0.50524265
+[13,] 0.250521815 0.52423611
+> 
+> 
+> 
+> cleanEx(); nameEx("descrip-methods")
+> ### * descrip-methods
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: descrip-methods
+> ### Title: Extract or Replace NIfTI/Analyze Description
+> ### Aliases: descrip-methods descrip,anlz-method descrip,nifti-method
+> ###   descrip<-,anlz-method descrip<-,nifti-method descrip descrip<-
+> ### Keywords: methods
+> 
+> ### ** Examples
+> 
+> mniRL <- readNIfTI(system.file("nifti/avg152T1_RL_nifti.nii.gz",
++                    package="dcemriS4"))
+> descrip(mniRL)
+[1] "FSL3.2beta"
+> descrip(mniRL) <- paste(descrip(mniRL), version$version.string, sep="; ")
+> descrip(mniRL)
+[1] "FSL3.2beta; R version 2.9.2 (2009-08-24)"
+> 
+> 
+> 
+> cleanEx(); nameEx("dwi")
+> ### * dwi
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: Apparent Diffusion Coefficient
+> ### Title: Estimate the Apparent Diffusion Coefficient (ADC)
+> ### Aliases: adc.lm ADC.fast,array-method ADC.fast
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> S0 <- 10
+> b <- c(0,50,400,800)  # units?
+> D <- 0.7e-3           # mm^2 / s (normal white matter)
+> 
+> ## Signal intensities based on the (simplified) Bloch-Torry equation
+> dwi <- function(S0, b, D) {
++   S0 * exp(-b*D)
++ }
+> 
+> set.seed(1234)
+> signal <- array(dwi(S0, b, D) + rnorm(length(b), sd=.15),
++                 c(rep(1,3), length(b)))
+> ADC <- ADC.fast(signal, b, array(TRUE, rep(1,3)))
+Loading required package: minpack.lm
+
+This product includes software developed by the University of Chicago, as
+Operator of Argonne National Laboratory.
+
+See the LICENSE file distributed with the minpack.lm source code or
+http://www.netlib.org/minpack/disclaimer for the full license.
+
+> unlist(ADC) # text output
+          S0            D 
+9.9858999893 0.0007337532 
+> 
+> par(mfrow=c(1,1)) # graphical output
+> plot(b, signal, xlab="b-value", ylab="Signal intensity")
+> lines(seq(0,800,10), dwi(S0, seq(0,800,10), D), lwd=2, col=1)
+> lines(seq(0,800,10), dwi(ADC$S0, seq(0,800,10), ADC$D), lwd=2, col=2)
+> 
+> 
+> 
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx(); nameEx("find_center")
+> ### * find_center
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: find.center
+> ### Title: Find the Center of a Binary Mask
+> ### Aliases: find.center
+> ### Keywords: misc
+> 
+> ### ** Examples
+> 
+> M <- array(FALSE, rep(10,3))
+> M[6:10,6:10,6:10] <- TRUE
+> Mc <- find.center(M)
+> print(Mc)
+[1] 8 8 8
+> 
+> 
+> 
+> cleanEx(); nameEx("flipangle")
+> ### * flipangle
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: Relaxivity
+> ### Title: Estimate Intrinsic Tissue Relaxivity
+> ### Aliases: R10.lm E10.lm R1.fast,array-method CA.fast,array-method
+> ###   CA.fast2,array-method R1.fast CA.fast CA.fast2
+> ### Keywords: misc
+> 
+> ### ** Examples
+> 
+> ## Parameters for simulated data
+> S0 <- 100
+> TR <- 5 / 1000            # seconds
+> T1 <- 1.5                 # seconds
+> alpha <- seq(2,24,by=2)   # degrees
+> 
+> ## Signal intensities for spoiled gradient echo image
+> gre <- function(S0, TR, T1, alpha) {
++   theta <- alpha * pi/180 # radians
++   S0 * (1 - exp(-TR/T1)) * sin(theta) / (1 - cos(theta) * exp(-TR/T1))
++ }
+> set.seed(1234)
+> signal <- array(gre(S0, TR, T1, alpha) + rnorm(length(alpha), sd=.15),
++                 c(rep(1,3), length(alpha)))
+> 
+> out <- R1.fast(signal, array(TRUE, rep(1,3)), alpha, TR)
+Loading required package: minpack.lm
+
+This product includes software developed by the University of Chicago, as
+Operator of Argonne National Laboratory.
+
+See the LICENSE file distributed with the minpack.lm source code or
+http://www.netlib.org/minpack/disclaimer for the full license.
+
+> unlist(out)
+        M0        R10 
+99.5197735  0.6534572 
+> 
+> par(mfrow=c(1,1))
+> plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
+> lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
+> lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
+> 
+> 
+> 
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx(); nameEx("hotmetal")
+> ### * hotmetal
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: hotmetal
+> ### Title: Hot Metal Color Table
+> ### Aliases: hotmetal
+> ### Keywords: aplot
+> 
+> ### ** Examples
+> 
+> hotmetal(10) 
+Loading required package: splines
+ [1] "#010000" "#4C0000" "#960000" "#E00000" "#FF2C00" "#FF7600" "#FFC100"
+ [8] "#FFFF12" "#FFFF81" "#FFFFF1"
+> image(outer(1:20,1:20,"+"), col=hotmetal(75), main="hotmetal")
+> 
+> 
+> 
+> cleanEx(); nameEx("kineticmodel")
+> ### * kineticmodel
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: kineticModel
+> ### Title: Pharmacokinetic Models
+> ### Aliases: kineticModel
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> data(buckley)
+> img <- array(t(breast$data)[,(1:60)*5], c(13,1,1,60))
+> time <- buckley$time.min[(1:60)*5]
+> mask <- array(rep(TRUE, 13), c(13,1,1))
+> fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
+Loading required package: minpack.lm
+
+This product includes software developed by the University of Chicago, as
+Operator of Argonne National Laboratory.
+
+See the LICENSE file distributed with the minpack.lm source code or
+http://www.netlib.org/minpack/disclaimer for the full license.
+
+> curve.lm <- kineticModel(time, list("ktrans"=fit.lm$ktrans[3],
++                          "kep"=fit.lm$kep[3], "vp"=fit.lm$vp[3]))
+> ## Not run: curve.lm
+> 
+> plot(time, img[3,1,1,], xlab="time", ylab="conc")
+> lines(time, curve.lm)
+> 
+> fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen")
+> curve.bayes <- kineticModel(time, list("ktrans"=fit.bayes$ktrans[3],
++                             "kep"=fit.bayes$kep[3], "vp"=fit.bayes$vp[3]))
+> lines(time, curve.bayes, col="blue")
+> cbind(time, img[3,1,1,], curve.lm, curve.bayes)[20:30,]
+          time           curve.lm curve.bayes
+ [1,] 1.650000 0.775142 0.7662219   0.7662279
+ [2,] 1.733333 0.778938 0.7701721   0.7701958
+ [3,] 1.816667 0.782176 0.7737276   0.7737695
+ [4,] 1.900000 0.784939 0.7769461   0.7770065
+ [5,] 1.983333 0.787302 0.7798738   0.7799529
+ [6,] 2.066667 0.789326 0.7825480   0.7826457
+ [7,] 2.150000 0.791067 0.7849987   0.7851148
+ [8,] 2.233333 0.792571 0.7872505   0.7873846
+ [9,] 2.316667 0.793878 0.7893233   0.7894753
+[10,] 2.400000 0.795021 0.7912340   0.7914034
+[11,] 2.483333 0.796029 0.7929963   0.7931827
+> 
+> 
+> 
+> cleanEx(); nameEx("nifti-class")
+> ### * nifti-class
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: nifti-class
+> ### Title: Class "nifti"
+> ### Aliases: nifti-class show,nifti-method
+> ### Keywords: classes
+> 
+> ### ** Examples
+> 
+> showClass("nifti")
+Class “nifti” [package "dcemriS4"]
+
+Slots:
+                                                                  
+Name:           .Data     sizeof_hdr      data_type        db_name
+Class:          array        numeric      character      character
+                                                                  
+Name:         extents  session_error        regular       dim_info
+Class:        numeric        numeric      character        numeric
+                                                                  
+Name:            dim_      intent_p1      intent_p2      intent_p3
+Class:         vector        numeric        numeric        numeric
+                                                                  
+Name:     intent_code       datatype         bitpix    slice_start
+Class:        numeric        numeric        numeric        numeric
+                                                                  
+Name:          pixdim     vox_offset      scl_slope      scl_inter
+Class:         vector        numeric        numeric        numeric
+                                                                  
+Name:       slice_end     slice_code     xyzt_units        cal_max
+Class:        numeric        numeric        numeric        numeric
+                                                                  
+Name:         cal_min slice_duration        toffset          glmax
+Class:        numeric        numeric        numeric        numeric
+                                                                  
+Name:           glmin        descrip       aux_file     qform_code
+Class:        numeric      character      character        numeric
+                                                                  
+Name:      sform_code      quatern_b      quatern_c      quatern_d
+Class:        numeric        numeric        numeric        numeric
+                                                                  
+Name:       qoffset_x      qoffset_y      qoffset_z         srow_x
+Class:        numeric        numeric        numeric         vector
+                                                                  
+Name:          srow_y         srow_z    intent_name          magic
+Class:         vector         vector      character      character
+                                    
+Name:        extender     reoriented
+Class:         vector        logical
+
+Extends: 
+Class "array", from data part
+Class "matrix", by class "array", distance 2, with explicit test and coerce
+Class "structure", by class "array", distance 2
+Class "vector", by class "array", distance 3, with explicit coerce
+Class "vector", by class "array", distance 5, with explicit test and coerce
+
+Known Subclasses: 
+Class "niftiExtension", directly
+Class "niftiAuditTrail", by class "niftiExtension", distance 2
+> 
+> 
+> 
+> cleanEx(); nameEx("nifti")
+> ### * nifti
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: nifti
+> ### Title: Constructor for NIfTI
+> ### Aliases: nifti is.nifti
+> 
+> 
+> ### ** Examples
+> 
+> ##---- Should be DIRECTLY executable !! ----
+> ##-- ==>  Define data, use random,
+> ##--    or do  help(data=index)  for the standard data sets.
+> 
+> 
+> 
+> cleanEx(); nameEx("niftiAuditTrail-class")
+> ### * niftiAuditTrail-class
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: niftiAuditTrail-class
+> ### Title: Class "niftiAuditTrail"
+> ### Aliases: niftiAuditTrail-class
+> ### Keywords: classes
+> 
+> ### ** Examples
+> 
+> showClass("niftiAuditTrail")
+Class “niftiAuditTrail” [package "dcemriS4"]
+
+Slots:
+                                                                      
+Name:            .Data           trail      extensions      sizeof_hdr
+Class:           array XMLAbstractNode            list         numeric
+                                                                      
+Name:        data_type         db_name         extents   session_error
+Class:       character       character         numeric         numeric
+                                                                      
+Name:          regular        dim_info            dim_       intent_p1
+Class:       character         numeric          vector         numeric
+                                                                      
+Name:        intent_p2       intent_p3     intent_code        datatype
+Class:         numeric         numeric         numeric         numeric
+                                                                      
+Name:           bitpix     slice_start          pixdim      vox_offset
+Class:         numeric         numeric          vector         numeric
+                                                                      
+Name:        scl_slope       scl_inter       slice_end      slice_code
+Class:         numeric         numeric         numeric         numeric
+                                                                      
+Name:       xyzt_units         cal_max         cal_min  slice_duration
+Class:         numeric         numeric         numeric         numeric
+                                                                      
+Name:          toffset           glmax           glmin         descrip
+Class:         numeric         numeric         numeric       character
+                                                                      
+Name:         aux_file      qform_code      sform_code       quatern_b
+Class:       character         numeric         numeric         numeric
+                                                                      
+Name:        quatern_c       quatern_d       qoffset_x       qoffset_y
+Class:         numeric         numeric         numeric         numeric
+                                                                      
+Name:        qoffset_z          srow_x          srow_y          srow_z
+Class:         numeric          vector          vector          vector
+                                                                      
+Name:      intent_name           magic        extender      reoriented
+Class:       character       character          vector         logical
+
+Extends: 
+Class "niftiExtension", directly
+Class "nifti", by class "niftiExtension", distance 2
+Class "array", by class "niftiExtension", distance 3
+Class "matrix", by class "niftiExtension", distance 4, with explicit test and coerce
+Class "structure", by class "niftiExtension", distance 4
+Class "vector", by class "niftiExtension", distance 5, with explicit coerce
+Class "vector", by class "niftiExtension", distance 7, with explicit test and coerce
+> 
+> 
+> 
+> cleanEx(); nameEx("niftiExtension-class")
+> ### * niftiExtension-class
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: niftiExtension-class
+> ### Title: Class "niftiExtension"
+> ### Aliases: niftiExtension-class
+> ### Keywords: classes
+> 
+> ### ** Examples
+> 
+> showClass("niftiExtension")
+Class “niftiExtension” [package "dcemriS4"]
+
+Slots:
+                                                                  
+Name:           .Data     extensions     sizeof_hdr      data_type
+Class:          array           list        numeric      character
+                                                                  
+Name:         db_name        extents  session_error        regular
+Class:      character        numeric        numeric      character
+                                                                  
+Name:        dim_info           dim_      intent_p1      intent_p2
+Class:        numeric         vector        numeric        numeric
+                                                                  
+Name:       intent_p3    intent_code       datatype         bitpix
+Class:        numeric        numeric        numeric        numeric
+                                                                  
+Name:     slice_start         pixdim     vox_offset      scl_slope
+Class:        numeric         vector        numeric        numeric
+                                                                  
+Name:       scl_inter      slice_end     slice_code     xyzt_units
+Class:        numeric        numeric        numeric        numeric
+                                                                  
+Name:         cal_max        cal_min slice_duration        toffset
+Class:        numeric        numeric        numeric        numeric
+                                                                  
+Name:           glmax          glmin        descrip       aux_file
+Class:        numeric        numeric      character      character
+                                                                  
+Name:      qform_code     sform_code      quatern_b      quatern_c
+Class:        numeric        numeric        numeric        numeric
+                                                                  
+Name:       quatern_d      qoffset_x      qoffset_y      qoffset_z
+Class:        numeric        numeric        numeric        numeric
+                                                                  
+Name:          srow_x         srow_y         srow_z    intent_name
+Class:         vector         vector         vector      character
+                                                   
+Name:           magic       extender     reoriented
+Class:      character         vector        logical
+
+Extends: 
+Class "nifti", directly
+Class "array", by class "nifti", distance 2
+Class "matrix", by class "nifti", distance 3, with explicit test and coerce
+Class "structure", by class "nifti", distance 3
+Class "vector", by class "nifti", distance 4, with explicit coerce
+Class "vector", by class "nifti", distance 6, with explicit test and coerce
+
+Known Subclasses: "niftiAuditTrail"
+> 
+> 
+> 
+> cleanEx(); nameEx("niftiExtensionSection-class")
+> ### * niftiExtensionSection-class
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: niftiExtensionSection-class
+> ### Title: Class "niftiExtensionSection" ~~~
+> ### Aliases: niftiExtensionSection-class
+> ### Keywords: classes
+> 
+> ### ** Examples
+> 
+> showClass("niftiExtensionSection")
+Class “niftiExtensionSection” [package "dcemriS4"]
+
+Slots:
+                                    
+Name:      esize     ecode     edata
+Class:   numeric   numeric character
+> 
+> 
+> 
+> cleanEx(); nameEx("read_nifti")
+> ### * read_nifti
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: readNIfTI
+> ### Title: readNIfTI
+> ### Aliases: readNIfTI read.nifti.content
+> 
+> 
+> ### ** Examples
+> 
+> nim <- readNIfTI(system.file("nifti/avg152T1_LR_nifti.nii.gz",
++                  package="dcemriS4")[1])
+> image(nim)
+> 
+> 
+> 
+> cleanEx(); nameEx("shift3D")
+> ### * shift3D
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: shift3D
+> ### Title: Shift a 3D Array in One Dimension
+> ### Aliases: shift3D
+> 
+> 
+> ### ** Examples
+> 
+> cube <- array(0, rep(20,3))
+> cube[9:12,9:12,9:12] <- 1
+> cube.shift <- shift3D(cube, 5, type="AP")
+> par(mfrow=c(1,2), mar=rep(0.5,4))
+> image(cube[,,10], xlab="", ylab="", axes=FALSE)
+> image(cube.shift[,,10], xlab="", ylab="", axes=FALSE)
+> 
+> 
+> 
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx(); nameEx("tim_colors")
+> ### * tim_colors
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: tim.colors
+> ### Title: Tim's Useful Color Table
+> ### Aliases: tim.colors
+> ### Keywords: aplot
+> 
+> ### ** Examples
+> 
+> tim.colors(10) 
+Loading required package: splines
+ [1] "#00008F" "#0000FF" "#0070FF" "#00DFFF" "#50FFAF" "#BFFF40" "#FFCF00"
+ [8] "#FF6000" "#EF0000" "#800000"
+> image(outer(1:20, 1:20, "+"), col=tim.colors(75), main="tim.colors")
+> 
+> 
+> 
+> cleanEx(); nameEx("write_nifti")
+> ### * write_nifti
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: writeNIfTI
+> ### Title: writeNIfTI
+> ### Aliases: writeNIfTI
+> ### Keywords: file
+> 
+> ### ** Examples
+> 
+> norm <- dnorm(seq(-5, 5, length=32), sd=2)
+> norm <- (norm-min(norm)) / max(norm-min(norm))
+> img <- outer(outer(norm, norm), norm)
+> img <- round(255 * img)
+> img[17:32,,] <- 255 - img[17:32,,]
+> img.nifti <- nifti(img) # create NIfTI object
+> 
+> writeNIfTI(img.nifti, "test-image-uint8", verbose=TRUE)
+  niftiExtension detected!
+  niftiAuditTrail detected!
+  vox_offset = 928
+  writing niftiExtension(s) at byte = 352
+  writing data at byte = 928
+> ## These files should be viewable in, for example, FSLview
+> ## Make sure you adjust the min/max values for proper visualization
+> data <- readNIfTI("test-image-uint8", verbose=TRUE)
+  fname = test-image-uint8
+  files = test-image-uint8.nii.gz
+  nii   = test-image-uint8.nii.gz
+  vox_offset = 928
+  niftiExtension detected!
+  seek(fid) = 352
+  seek(fid) = 928
+> image(img.nifti) # image(img.nifti, z=16, plot.type="single")
+> image(data)      # image(data, z=16, zlim=range(data), plot.type="single")
+> abs.err <- abs(data - img.nifti)
+> image(as(abs.err, "nifti"), zlim=range(img.nifti))
+> 
+> ## Loop through all possible data types
+> datatypes <- list(code=c(2, 4, 8, 16, 64),
++                   name=c("uint8", "int16", "int32", "float", "double"))
+> equal <- vector("list")
+> for (i in 1:length(datatypes$code)) {
++   fname <- paste("test-image-", datatypes$name[i], sep="")
++   rm(img.nifti)
++   img.nifti <- nifti(img, datatype=datatypes$code[i])
++   writeNIfTI(img.nifti, fname)
++   equal[[i]] <- all(readNIfTI(fname) == img)
++ }
+> names(equal) <- datatypes$name
+> unlist(equal)
+ uint8  int16  int32  float double 
+  TRUE   TRUE   TRUE   TRUE   TRUE 
+> 
+> 
+> 
+> ### * <FOOTER>
+> ###
+> cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  100.699 0.832 103.309 0 0 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')
