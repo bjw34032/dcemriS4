@@ -370,53 +370,79 @@ setReplaceMethod("aux.file", "nifti",
 #############################################################################
 ## audit.trail() accessor function to @"trail"
 #############################################################################
-## These functions will work even if the audit trail functionality is not	     
+## These functions will work even if the audit trail functionality is not
 ## activated. They should help reduce the difference in code paths.
 #############################################################################
 
 setGeneric("audit.trail", function(object) { standardGeneric("audit.trail") })
-setMethod("audit.trail", "nifti", function(object) { 
-      if (getOption("NIfTI.audit.trail") && is(object, "niftiAuditTrail")) {
-	object@"trail" 
-      } else {
-	NULL
-      }
-    })
+setMethod("audit.trail", "nifti",
+          function(object) { 
+            if (getOption("NIfTI.audit.trail") &&
+                is(object, "niftiAuditTrail")) {
+              object@"trail" 
+            } else {
+              NULL
+            }
+          })
 
-setGeneric("audit.trail<-", function(x, value) { standardGeneric("audit.trail<-") })
+setGeneric("audit.trail<-",
+           function(x, value) { standardGeneric("audit.trail<-") })
 setReplaceMethod("audit.trail", "nifti",
-    function(x, value) {
-      if (getOption("NIfTI.audit.trail")) {
-	if (!is(x, "niftiAuditTrail")) {
-	  x <- as(x, "niftiAuditTrail")
-	}
-	x@"trail" <- value
-      } 
-      x
-    })
+                 function(x, value) {
+                   if (getOption("NIfTI.audit.trail")) {
+                     if (!is(x, "niftiAuditTrail")) {
+                       x <- as(x, "niftiAuditTrail")
+                     }
+                     x@"trail" <- value
+                   } 
+                   x
+                 })
 
-setReplaceMethod("[", signature(x="nifti", i="missing", j="missing", value="array"),
-    function(x, value) {
-      x <- as.nifti(value, x)
-      validObject(x)
-      x
-    })  
-setReplaceMethod("[", signature(x="nifti", i="ANY", j="missing",  value="ANY"), 
-    function(x, i, value) {
-      x@.Data[i] <- value
-      if (value > x@cal_max) x@cal_max <- value
-      if (value < x@cal_min) x@cal_min <- value
-      audit.trail(x) <- niftiAuditTrailEvent(x, "modification", match.call(), paste("[", i,  "] <-", value))
-      x
-    })
-setReplaceMethod("[", signature(x="nifti", i="ANY", j="ANY",  value="ANY"),
-    function(x, i, j, ..., value) {
-      x@.Data[i,j,...] <- value
-      if (value > x@cal_max) x@cal_max <- value
-      if (value < x@cal_min) x@cal_min <- value
-      audit.trail(x) <- niftiAuditTrailEvent(x, "modification", match.call(), paste("[", i, j, ..., "] <-", value))
-      x
-    })
+setReplaceMethod("[", signature(x="nifti", i="missing", j="missing",
+                                value="array"),
+                 function(x, value) {
+                   x <- as.nifti(value, x)
+                   validObject(x)
+                   x
+                 })
+
+setReplaceMethod("[", signature(x="nifti", i="ANY", j="missing", value="ANY"), 
+                 function(x, i, value) {
+                   x@.Data[i] <- value
+                   #if (any(is.na(value))) {
+                   if (any(value < x@"cal_min", na.rm=TRUE))
+                     x@"cal_min" <- min(value, na.rm=TRUE)
+                   if (any(value > x@"cal_max", na.rm=TRUE))
+                     x@"cal_max" <- max(value, na.rm=TRUE)
+                   #} else {
+                   #  xr <- range(x, na.rm=TRUE)
+                   #  x@"cal_min" <- xr[1]
+                   #  x@"cal_max" <- xr[2]
+                   #}
+                   audit.trail(x) <-
+                     niftiAuditTrailEvent(x, "modification", match.call(),
+                                          paste("[", i,  "] <-", value))
+                   x
+                 })
+
+setReplaceMethod("[", signature(x="nifti", i="ANY", j="ANY", value="ANY"),
+                 function(x, i, j, ..., value) {
+                   x@.Data[i,j,...] <- value
+                   #if (all(is.na(value))) {
+                   #  xr <- range(x, na.rm=TRUE)
+                   #  x@"cal_min" <- xr[1]
+                   #  x@"cal_max" <- xr[2]
+                   #} else {
+                   if (any(value < x@"cal_min", na.rm=TRUE))
+                     x@"cal_min" <- min(value, na.rm=TRUE)
+                   if (any(value > x@"cal_max", na.rm=TRUE))
+                     x@"cal_max" <- max(value, na.rm=TRUE)
+                   #}
+                   audit.trail(x) <-
+                     niftiAuditTrailEvent(x, "modification", match.call(),
+                                          paste("[", i, j, ..., "] <-", value))
+                   x
+                 })
 
 
 
