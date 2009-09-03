@@ -15,10 +15,12 @@
   Produce images for \code{nifti} objects.
 }
 \usage{
-\S4method{image}{nifti}(x, z=1, w=1, col=gray(0:64/64), plot.type=c("multiple","single"),
-      xlab="", ylab="", axes=FALSE, ...)
-\S4method{image}{anlz}(x, z=1, w=1, col=gray(0:64/64), plot.type=c("multiple","single"),
-      xlab="", ylab="", axes=FALSE, ...)
+\S4method{image}{nifti}(x, z=1, w=1, col=gray(0:64/64),
+      plot.type=c("multiple","single"), xlab="", ylab="",
+      axes=FALSE, ...)
+\S4method{image}{anlz}(x, z=1, w=1, col=gray(0:64/64),
+      plot.type=c("multiple","single"), xlab="", ylab="",
+      axes=FALSE, ...)
 }
 \arguments{
  \item{x}{is an object of class \code{"nifti"}.}
@@ -34,6 +36,11 @@
  \item{\dots}{other arguments to the \code{image} function may be
    provided here.}
 }
+\details{
+  Uses the S3 generic function \code{image}, with medical-image friendly
+  settings, to display \code{nifti} and \code{anlz} class objects.
+}
+%\value{}
 \section{Methods}{
   \describe{
     \item{x = "ANY"}{Generic function: see \code{\link[graphics]{image}}.}
@@ -41,16 +48,12 @@
     \item{x = "anlz"}{Produce images for \code{x}.}
   }
 }
-\details{
-}
-\value{
-}
-\references{
-}
+%\references{}
 \author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \seealso{
   \code{\link{orthographic-methods}}, \code{\link{overlay-methods}}
 }
 \examples{
+
 }
 \keyword{methods}

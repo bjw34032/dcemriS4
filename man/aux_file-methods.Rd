@@ -14,8 +14,8 @@
 \alias{aux.file<-}
 \title{Extract or Replace NIfTI/Analyze Auxiliary File}
 \description{
-  Operators that act on character strings in the NIfTI or Analyze
-  header.
+  Methods that act on the \dQuote{auxiliary file} character string in
+  the NIfTI or Analyze header.
 }
 \usage{
 \S4method{aux.file}{nifti}(x)
@@ -31,6 +31,11 @@
   }
 }
 \author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
-%\examples{}
+\examples{
+mniRL <- readNIfTI(system.file("nifti/avg152T1_RL_nifti.nii.gz",
+                   package="dcemriS4"))
+aux.file(mniRL)
+aux.file(mniRL) <- "avg152T1_RL_nifti"
+aux.file(mniRL)
+}
 \keyword{methods}
-%\keyword{ ~~ other possible keyword(s)}

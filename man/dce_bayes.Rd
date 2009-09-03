@@ -80,7 +80,10 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
 }
 \value{
   Parameter estimates and their standard errors are provided for the
-  masked region of the multidimensional array.  They include
+  masked region of the multidimensional array.  All multi-dimensional
+  arrays are output in \code{nifti} format.
+
+  They include:
   \item{ktrans}{Transfer rate from plasma to the extracellular,
     extravascular space (EES).}
   \item{ktranserror}{Error on \eqn{K^{trans}}{ktrans}.}
@@ -112,7 +115,8 @@ mask <- array(TRUE, dim(img)[1:3])
 time <- buckley$time.min[xi]
 
 ## Bayesian estimation with Fritz-Hansen default AIF
-fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen", nriters=1500)
+fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen",
+                          nriters=1500)
 
 ## Bayesian estimation with "orton.exp" function fit to Buckley's AIF
 aif <- buckley$input[xi]
@@ -148,5 +152,5 @@ legend("bottomright", c("Bayesian Estimation (fritz-hansen)",
                         "Levenburg-Marquardt (orton.exp)"), pch=1:4)
 }
 }
-\author{Volker Schmid}
+\author{Volker Schmid <\email{volkerschmid@users.sourceforge.net}>}
 \keyword{models}

@@ -28,7 +28,7 @@
     minus temporal dimension.}
   \item{model}{is a character string that identifies the type of
     compartmental model to be used.  Acceptable models include:
-    \itemize{
+    \describe{
       \item{\dQuote{weinmann}}{Tofts & Kermode AIF convolved with single
 	compartment model}
       \item{\dQuote{extended}}{Weinmann model extended with additional
@@ -57,7 +57,7 @@
     progress of the optimization is produced.}
   \item{user}{is a list with the following paramters required: D, AB,
     muB, AG, muG.}
-  \item{verbose}{.}
+  \item{verbose}{}
   \item{...}{Additional parameters to the function.}
 }
 \details{
@@ -74,7 +74,10 @@
 }
 \value{
   Parameter estimates and their standard errors are provided for the
-  masked region of the multidimensional array.  They include
+  masked region of the multidimensional array.  All multi-dimensional
+  arrays are provided in \code{nifti} format.
+
+  They include:
   \item{ktrans}{Transfer rate from plasma to the extracellular,
     extravascular space (EES).}
   \item{kep}{Rate parameter for transport from the EES to plasma.}
@@ -93,7 +96,7 @@
   pharmacokinetic modelling of DCE-MRI data, \emph{Physics in Medicine
     and Biology}, \bold{50}, N85-N92.
 
-Fritz-Hansen, T., Rostrup, E., Larsson, H.B.W, Sondergaard, L., Ring,
+  Fritz-Hansen, T., Rostrup, E., Larsson, H.B.W, Sondergaard, L., Ring,
   P. and Henriksen, O. (1993) Measurement of the arterial concentration
   of Gd-DTPA using MRI: A step toward quantitative perfusion imaging,
   \emph{Magnetic Resonance in Medicine}, \bold{36}, 225-231.
@@ -153,5 +156,6 @@ plot(breast$ktrans, fit$ktrans, xlim=c(0,0.75), ylim=c(0,0.75),
 abline(0, 1, lwd=1.5, col="red")
 cbind(breast$ktrans, fit$ktrans[,,1])
 }
-\author{Brandon Whitcher, Volker Schmid}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>,
+  Volker Schmid <\email{volkerschmid@users.sourceforge.net}>}
 \keyword{models}

@@ -14,8 +14,8 @@
 \alias{descrip<-}
 \title{Extract or Replace NIfTI/Analyze Description}
 \description{
- Operators that act on character strings in the NIfTI or Analyze
- header.
+  Methods that act on the \dQuote{description} character string in the
+  NIfTI or Analyze header.
 }
 \usage{
 \S4method{descrip}{nifti}(x)
@@ -25,14 +25,17 @@
   \item{x}{is an object of class \code{nifti} or \code{anlz}.}
 }
 \section{Methods}{
-\describe{
-
+  \describe{
   \item{object = "anlz"}{Extract or replace Analyze description.}
-
   \item{object = "nifti"}{Extract or replace NIfTI description.}
-}}
+  }
+}
 \author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \examples{
+mniRL <- readNIfTI(system.file("nifti/avg152T1_RL_nifti.nii.gz",
+                   package="dcemriS4"))
+descrip(mniRL)
+descrip(mniRL) <- paste(descrip(mniRL), version$version.string, sep="; ")
+descrip(mniRL)
 }
 \keyword{methods}
-%\keyword{ ~~ other possible keyword(s)}

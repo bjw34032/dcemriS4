@@ -27,9 +27,22 @@ convert.orient.anlz(orientation)
   A character string.
 }
 \references{
-  ANALYZE 7.5 \url{}
+  ANALYZE 7.5 \url{http://www.mayo.edu/bir/PDF/ANALYZE75.pdf}
 }
-%\seealso{}
-%\examples{}
-\author{B. Whitcher <\email{bjw34032@users.sourceforge.net}>}
+\seealso{
+  \code{\link{convert.datatype}}, \code{\link{convert.bitpix}},
+  \code{\link{convert.intent}}, \code{\link{convert.form}},
+  \code{\link{convert.units}}, \code{\link{convert.slice}}
+}
+\examples{
+##  4 = SIGNED_SHORT
+convert.datatype.anlz(4)
+## 16 = FLOAT
+convert.datatype.anlz(16)
+##  2 = "saggital unflipped"
+convert.orient.anlz(2)
+##  4 = "coronal flipped"
+convert.orient.anlz(4)
+}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 %\keyword{}

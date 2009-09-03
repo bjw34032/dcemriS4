@@ -39,10 +39,39 @@ convert.slice(slice.code)
   A character string.
 }
 \references{
-  Neuroimaging Informatics Technology Initiative (NIfTI)
+  Neuroimaging Informatics Technology Initiative (NIfTI)\cr
   \url{http://nifti.nimh.nih.gov/}
 }
-%\seealso{}
-%\examples{}
-\author{B. Whitcher <\email{bjw34032@users.sourceforge.net}>}
+\seealso{
+  \code{\link{convert.datatype.anlz}}, \code{\link{convert.orient.anlz}}
+}
+\examples{
+## No arguments produces a list structure
+## Use the abbreviation to obtain the code
+convert.datatype()$INT16
+## Use the code directly to obtain the abbreviation
+convert.datatype(4)
+
+## No arguments produces a list structure
+## Use the abbreviation to obtain the code
+convert.bitpix()$INT16
+
+## No arguments produces a list structure
+## Use the abbreviation to obtain the code
+convert.intent()$Estimate
+## Use the code directly to obtain the abbreviation
+convert.intent(1001)
+
+## 4 = MNI_152
+convert.form(4)
+
+## 2 = mm
+convert.units(2)
+## 8 = sec
+convert.units(8)
+
+## 0 = Unknown
+convert.slice(0)
+}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 %\keyword{}

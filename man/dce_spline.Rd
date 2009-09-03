@@ -34,34 +34,37 @@ dcemri.spline.single(conc, time, D, time.input, p, rw, knots, k,
                      samples=FALSE, B=NULL)
 }
 \arguments{
-  \item{conc}{An array of Gd concentration}
-  \item{time}{Time points of aquisition of Gd concentration}
-  \item{img.mask}{Array of voxels to fit}
-  \item{time.input}{Time points of observed Arterial Gd concentration,
-    defaults to time}
-  \item{model}{The type of compartmental model to be used. Acceptable
+  \item{conc}{is an array of gadolinium (Gd) concentration.}
+  \item{time}{is a vector of time points from the acquisition.}
+  \item{img.mask}{is a logical array of voxels to fit.}
+  \item{time.input}{is a vector of time points of observed arterial
+    gadolinium (Gd) concentration (default = \sQuote{time}).}
+  \item{model}{is the compartmental model to be used.  Acceptable
     models include: \dQuote{AATH} or \dQuote{weinmann} (default).}
-  \item{aif}{Arterial input function to use. Values include:
+  \item{aif}{is the arterial input function.  Values include:
     \dQuote{tofts.kermode}, \dQuote{fritz.hansen} or \dQuote{observed}.
     If \dQuote{observed} you must provide the observed concentrations in
-    aif.observed.}
-  \item{aif.observed}{Arterial concentrations observed at timepoints
-    time.input}
-  \item{multicore}{Use multicore library}
-  \item{verbose}{}
-  \item{nlr}{Return the generated samples}
+    \sQuote{aif.observed}.}
+  \item{aif.observed}{is a user-defined vector of arterial
+    concentrations observed at \sQuote{time.input}.}
+  \item{multicore}{(logical) use the \pkg{multicore} package.}
+  \item{verbose}{(logical) allows text-based feedback during execution
+    of the function (default = \code{FALSE}).}
+  \item{nlr}{(logical) returns the generated samples.}
   \item{user}{}
   \item{ab.hyper}{}
-  \item{ab.tauepsilon}{}
+  \item{ab.tauepsilon}{Hyper-prior parameters for observation error
+    Gamma prior.}
   \item{p}{}
   \item{t0.compute}{}
-  \item{samples}{}
+  \item{samples}{If \code{TRUE} output includes samples drawn from the
+    posterior distribution for all parameters.}
   \item{k}{}
   \item{knots}{}
   \item{rw}{}
-  \item{nriters}{}
-  \item{thin}{}
-  \item{burnin}{}
+  \item{nriters}{Total number of iterations.}
+  \item{thin}{Thining factor.}
+  \item{burnin}{Number of iterations for burn-in.}
   \item{D}{}
   \item{B}{}
   \item{A}{}
@@ -74,7 +77,12 @@ dcemri.spline.single(conc, time, D, time.input, p, rw, knots, k,
   See Schmid \emph{et al.} (2009) for more details.
 }
 \value{
-  To be added.
+  Parameter estimates and their standard errors are provided for the
+  masked region of the multidimensional array.  All multi-dimensional
+  arrays are provided in \code{nifti} format.
+
+  They include:
+  \item{}{}
 }
 \references{
   Schmid, V., Whitcher, B., Padhani, A.R. and G.-Z. Yang (2009) A
@@ -87,7 +95,6 @@ dcemri.spline.single(conc, time, D, time.input, p, rw, knots, k,
   \code{\link{dcemri.map}}
 }
 \examples{
-%\dontrun{
 data("buckley")
 xi <- seq(5, 300, by=5)
 img <- array(t(breast$data)[,xi], c(13,1,1,60))
@@ -111,7 +118,6 @@ abline(0, 1, lwd=1.5, col="red")
 legend("right", c("fritz.hansen", "observed"), pch=1:2)
 
 cbind(breast$ktrans, fit.spline$ktrans[,,1], fit.spline.aif$ktrans[,,1])
-%}
 }
 \author{Volker Schmid <\email{volkerschmid@users.sourceforge.net}>}
 \keyword{models}

@@ -50,12 +50,12 @@
   \item{t.center}{Estimated center of the binary mask.}
 }
 \references{
-  Lewis, J.P. (2003) Fast normalized cross-correlation.
+  Lewis, J.P. (2003) Fast normalized cross-correlation.\cr
   \url{www.idiom.com/~zilla/}
 }
 \author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \seealso{
   \code{\link{conv.fft}}, \code{\link{find.center}}, \code{\link{shift3D}}
 }
-% \examples{}
-% \keyword{}
+%\examples{}
+%\keyword{}

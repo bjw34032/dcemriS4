@@ -16,16 +16,23 @@
 \alias{coerce<-,anlz,nifti-method}
 \title{Force an Object to Belong to the NIfTI Class}
 \description{
- ~~ Methods for function \code{coerce} in Package `methods' ~~
+  Methods for function \code{coerce} in Package \sQuote{methods}.
 }
 \usage{
 \S4method{as}{array,nifti}(object, Class)
 \S4method{as}{array,nifti}(object, Class) <- value
 }
 \arguments{
-  \item{object}{}
-  \item{Class}{}
-  \item{value}{}
+  \item{object}{is an object of class \code{array} or inherits from
+    \code{array}.}
+  \item{Class}{is the name of the class to which \sQuote{object} should
+    be coerced; i.e., \code{nifti}.}
+  \item{value}{is the values used to modify \sQuote{object} (see the
+    discussion below).  You should supply an object with class
+    \code{nifti} in order to pass NIfTI header information.}
+}
+\details{
+  If 
 }
 \section{Methods}{
   \describe{
@@ -36,12 +43,10 @@
       left alone.  The original list structure is retained.}
   }
 }
-\references{
-}
+%\references{}
 \author{Andrew Thornton <\email{zeripath@users.sourceforge.net}>}
 \seealso{
+  \code{\link{as}}
 }
-\examples{
-}
+%\examples{}
 \keyword{methods}
-%\keyword{ ~~ other possible keyword(s)}

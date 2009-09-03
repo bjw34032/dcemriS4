@@ -28,11 +28,11 @@ dim2slice(diminfo)
 \details{
   The functions \code{xyzt2space} and \code{xyzt2time} can be used to
   mask off the undesired bits from the \kbd{xyzt_units} fields, leaving
-  \dQuote{pure} space and time codes.
+  \dQuote{pure} space and time codes.\cr
   \url{http://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/xyzt_units.html}
 
   The functions \code{dim2freq}, \code{dim2phase}, and \code{dim2slice}
-  can be used to extract values from the \kbd{dim_info} byte.
+  can be used to extract values from the \kbd{dim_info} byte.\cr
   \url{http://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/dim_info.html}
 }
 \value{
@@ -43,7 +43,7 @@ dim2slice(diminfo)
   dimension 4 is for time (t).
 }
 \references{
-  Neuroimaging Informatics Technology Initiative (NIfTI)
+  Neuroimaging Informatics Technology Initiative (NIfTI)\cr
   \url{http://nifti.nimh.nih.gov/}
 }
 \seealso{
@@ -51,4 +51,4 @@ dim2slice(diminfo)
 }
 %\examples{}
 \author{B. Whitcher <\email{bjw34032@users.sourceforge.net}>}
-%\keyword{}
+\keyword{misc}

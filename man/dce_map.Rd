@@ -62,7 +62,6 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
   \item{transform}{}
   \item{start}{}
   \item{hyper}{}
-  aif
 }
 \details{
   Implements maximum-a-posteriori (MAP) estimation for the Bayesian
@@ -70,7 +69,10 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
 }
 \value{
   Parameter estimates and their standard errors are provided for the
-  masked region of the multidimensional array.  They include
+  masked region of the multidimensional array.  The multi-dimensional
+  arrays are provided in \code{nifti} format.
+
+  They include:
   \item{ktrans}{Transfer rate from plasma to the extracellular,
     extravascular space (EES).}
   \item{kep}{Rate parameter for transport from the EES to plasma.}
