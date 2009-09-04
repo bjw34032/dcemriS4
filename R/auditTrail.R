@@ -142,7 +142,7 @@ niftiAuditTrailSystemNode <- function(type="system-info",
                             "r-version"=version$version.string,
                             "date"=currentDateTime,
                             "user"=Sys.getenv("LOGNAME"),
-                            "dcemri-version"=packageDescription("dcemri")$Version)
+                            "dcemri-version"=packageDescription("dcemriS4")$Version)
     return(system)
   }
 }
