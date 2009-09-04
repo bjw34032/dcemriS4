@@ -305,25 +305,13 @@ function (img = array(0, dim = rep(1, 4)), dim, ...)
 +   return(wrapper(functionToWrap, "niftiizedForm", nim, ...))
 + }
 > 
-> ## compare the trails
-> if (getOption("NIfTI.audit.trail")) {
-+   print((as.nifti(functionToWrap(nifti(), 4, 4), nifti()))@trail)
-+   print(niftiizedForm(nifti(), 4, 4)@trail)
-+ }
-<audit-trail xmlns="http://www.dcemri.org/namespaces/audit-trail/1.0">
-  <created call="as.nifti(from = functionToWrap(nifti(), 4, 4), value = nifti())" r-version="R version 2.9.2 (2009-08-24)" date="Thu Sep 03 21:44:27 2009 BST" user="bjw34032" dcemri-version="0.10.5">
-    <history>
-      <created call="nifti()" r-version="R version 2.9.2 (2009-08-24)" date="Thu Sep 03 21:44:27 2009 BST" user="bjw34032" dcemri-version="0.10.5"/>
-    </history>
-  </created>
-</audit-trail> 
-<audit-trail xmlns="http://www.dcemri.org/namespaces/audit-trail/1.0">
-  <created call="niftiizedForm(nifti(), 4, 4)" r-version="R version 2.9.2 (2009-08-24)" date="Thu Sep 03 21:44:27 2009 BST" user="bjw34032" dcemri-version="0.10.5">
-    <history>
-      <created call="nifti()" r-version="R version 2.9.2 (2009-08-24)" date="Thu Sep 03 21:44:27 2009 BST" user="bjw34032" dcemri-version="0.10.5"/>
-    </history>
-  </created>
-</audit-trail> 
+> ## Not run: 
+> ##D ## compare the trails
+> ##D if (getOption("NIfTI.audit.trail")) {
+> ##D   print((as.nifti(functionToWrap(nifti(), 4, 4), nifti()))@trail)
+> ##D   print(niftiizedForm(nifti(), 4, 4)@trail)
+> ##D }
+> ## End(Not run)
 > 
 > 
 > 
@@ -1292,7 +1280,7 @@ Loading required package: splines
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  100.699 0.832 103.309 0 0 
+Time elapsed:  100.667 0.814 103.15 0 0 
 > grDevices::dev.off()
 null device 
           1 

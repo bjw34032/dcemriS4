@@ -62,7 +62,7 @@ read.nifti.content(fname, onefile=TRUE, gzipped=TRUE, verbose=FALSE,
 }
 \examples{
 nim <- readNIfTI(system.file("nifti/avg152T1_LR_nifti.nii.gz",
-                 package="dcemriS4")[1])
+                             package="dcemriS4")[1])
 image(nim)
 }
 \author{
