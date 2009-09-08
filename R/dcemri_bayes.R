@@ -276,9 +276,9 @@ setMethod("dcemri.bayes", signature(conc="array"),
     extract.samples <- function(sample, I, J, K, NRI) {
       A <- array(NA, c(I,J,K,NRI))
       count <- -1
-      for (i in 1:I) {
-	for (j in 1:J) {
-	  for (k in 1:K) {
+  	for (k in 1:K) {
+	 for (j in 1:J) {
+          for (i in 1:I) {
 	    if (img.mask[i,j,k]) {
 	      count <- count + 1
 	      A[i,j,k,] <- sample[(1:NRI) + count*NRI]

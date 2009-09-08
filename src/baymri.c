@@ -166,10 +166,12 @@ double log_fc_theta(double theta, double tau_epsilon, double tau_theta, double* 
  {
    double p = 0.0;
    int t;
-   p -= 0.5*tau_theta*(theta+1)*(theta+1);
+   //   p -= 0.5*tau_theta*(theta+1)*(theta+1);
+   p -= 0.5*tau_theta*theta*theta;
    for (t=0; t<T; t++)
      {
-       p -= 0.5*tau_epsilon*pow((conc[t])-extraterm(vp,time[t],settings)-ktrans*convterm(ktrans/exp(theta),time[t],settings),2);
+       //       p -= 0.5*tau_epsilon*pow((conc[t])-extraterm(vp,time[t],settings)-ktrans*convterm(ktrans/exp(theta),time[t],settings),2);
+       p -= 0.5*tau_epsilon*pow((conc[t])-extraterm(vp,time[t],settings)-ktrans*convterm(exp(theta),time[t],settings),2);
      }
    return p;
  }
@@ -276,11 +278,14 @@ void dce_bayes_run_single(int* NRI,
 	  ktrans=exp(temp);
 	}
       
-      temp=update_theta2(log(ktrans/kep), ktrans, vp,  conc, time, tau_epsilon, tau_theta[0], sigmatheta, T[0], aif_settings);
-      if (temp!=log(ktrans/kep))
+    //      temp=update_theta2(log(ktrans/kep), ktrans, vp,  conc, time, tau_epsilon, tau_theta[0], sigmatheta, T[0], aif_settings);
+      temp=update_theta2(log(kep), ktrans, vp,  conc, time, tau_epsilon, tau_theta[0], sigmatheta, T[0], aif_settings);
+      //      if (temp!=log(ktrans/kep))
+      if (temp!=log(kep))
 	{
 	  acc_theta++;
-	  kep=ktrans/exp(temp);
+	  //	  kep=ktrans/exp(temp);
+	  kep=exp(temp);
 	}
       
   
