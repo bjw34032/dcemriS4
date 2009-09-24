@@ -55,7 +55,9 @@ require("bitops")
   Volker J. Schmid \\ \email{volkerschmid@users.sourceforge.net}}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \maketitle
 
@@ -114,7 +116,28 @@ data; e.g., setting the $x$-axis to increase from right to left
 address more complicated transformations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Labelled LR Standard (MNI152) Images in NIfTI Format}
+\subsection{NIfTI and ANALYZE data in S4}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+A major improvement in the \pkg{dcemriS4} package is the fact that
+standard medical imaging formats are stored in unique classes under
+the S4 system.  Essentially, NIfTI and ANALYZE data are stored as
+multi-dimensional arrays with extra slots created that capture the
+format-specific header information.  The NIfTI class also has the
+ability to read and write extensions that conform to the data format
+standard.  Customized printing and validity-checking functions are
+available to the user and every attempt is made to ensure that the
+information from the multi-dimensional array is in agreement with the
+header values.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Examples}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Labelled LR Standard (MNI152) Images in NIfTI Format}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The first example of reading in, and displaying, medical imaging data
@@ -184,7 +207,7 @@ image (RL) is stored in neurological convention.  Any NIfTI-1 compliant
 viewing software should display these images identically.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Simple Time-series or Multi-volume Image}
+\subsubsection{Simple Time-series or Multi-volume Image}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This is an example of reading in, and displaying, a four-dimensional
@@ -222,7 +245,7 @@ element) and the fourth dimension is time.
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Statistic Image}
+\subsubsection{Statistic Image}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This is an example of reading in and displaying a statistical image so
@@ -337,5 +360,87 @@ state regardless of whether the or $\alpha_2$ excitation was used for
 the preceding acquisition (i.e.,
 $f_1(T_1,\text{TR})=f_2(T_1,\text{TR})\ne{1.0}$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Example}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Using data acquired from a T1 phantom at two flip angles,
+$\alpha_1=60^\circ$ and $\alpha_2=120^\circ$, we compute the
+multiplicative factor relative to the low flip angle using the
+saturated double-angle method \citep{cun-pau-nay:saturated}.
+  
+<<doubleanglemethod>>=
+sdam60 <- readNIfTI(system.file("nifti/SDAM_ep2d_60deg_26slc.nii.gz", 
+                                package="dcemriS4"))
+sdam60
+sdam120 <- readNIfTI(system.file("nifti/SDAM_ep2d_120deg_26slc.nii.gz", 
+                                 package="dcemriS4"))
+sdam120
+sdam.image <- rowMeans(dam(sdam60, sdam120, 60), dims=3)
+mask <- nifti(rowSums(sdam60, dims=3) > 500)
+@ 
+<<figure5-png,echo=FALSE,results=hide>>=
+png("sdam.png", width=400, height=400)
+@ 
+<<figure5-code>>=
+## A smooth version of "sdam.image"
+SDAM <- readNIfTI(system.file("nifti/SDAM_smooth.nii.gz", package="dcemriS4"))
+overlay(sdam120, ifelse(mask, SDAM, NA), zlim.x=range(sdam120), 
+        zlim.y=c(0.5,1.5))
+@ 
+<<figure5-dev.off,echo=FALSE,results=hide>>=
+dev.off()
+@ 
+
+Figure~\ref{fig:sdam} is the estimated B1+ field (with isotropic
+Gaussian smoothing) for a gel-based phantom containing a variety of T1
+relaxation times.  The center of the phantom exhibits a flip angle
+$>60^\circ$ while the flip angle rapidly becomes $<60^\circ$ when
+moving away from the center in either the $x$, $y$ or $z$ dimensions.
+Isotropic smoothing should be applied before using this field to
+modify flip angles associated with additional acquisitions (e.g., in
+the \pkg{AnalyzeFMRI} package).
+  
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics*[width=.5\textwidth]{sdam.png}
+  \caption{Estimated B1+ field (with isotropic Gaussian smoothing)
+    using the saturated double-angle method.  The colors correspond to
+    a multiplicative factor relative to the true flip angle
+    ($60^\circ$).}
+  \label{fig:sdam}
+\end{figure}
+
+Assuming the smoothed version of the B1+ field has been computed
+(\code{SDAM}), multiple flip-angle acquisitions can be used to estimate
+the T1 relaxation rate from the subject (or phantom).  The
+multiplicative factor, derived from the saturated double-angle method,
+is used to produce a spatially-varying flip-angle map and input into
+the appropriate function.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Statistical Inference}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+No specific support is provided for hypothesis testing in
+\pkg{dcemri}.  We recommend one uses built-in facilities in
+\proglang{R} to perform ANOVA (analysis of variance) or mixed-effects
+models based on statistical summaries of the kinetic parameters over
+the ROI per subject per visit.  An alternative to this traditional
+approach is to analyze an entire study using a Bayesian hierarchical
+model \citep{sch-etal:hierarchical}, available in the software project
+\pkg{PILFER} (\url{pilfer.sourceforge.net}) .
+
+One may also question the rationale for hypothesis testing in only one
+kinetic parameter.  Preliminary work has been performed in looking at
+the joint response to treatment of both $\ktrans$ and $\kep$ in
+DCE-MRI by \cite{oco-etal:fPCA}.
+
+\bibliography{dcemri}
+\bibliographystyle{chicago}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
