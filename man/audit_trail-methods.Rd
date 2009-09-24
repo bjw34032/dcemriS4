@@ -15,10 +15,10 @@
   Operators that act on the audit trail (XML) in the NIfTI header.
 }
 \usage{
-\S4method{audit.trail}{nifti}(x)
+\S4method{audit.trail}{nifti}(object)
 }
 \arguments{
-  \item{x}{is an object of class \code{nifti}.}
+  \item{object}{is of class \code{nifti}.}
 }
 \section{Methods}{
   \describe{

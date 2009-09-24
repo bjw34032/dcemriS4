@@ -86,7 +86,7 @@
       \dQuote{auxiliary file} field} 
     \item{aux.file}{\code{signature(object = "nifti")}: returns the
       \dQuote{auxiliary file} field}
-    \item{descrip<-}{\code{signature(x = "nifti")}: eplaces the
+    \item{descrip<-}{\code{signature(x = "nifti")}: replaces the
       \dQuote{description} field}
     \item{descrip}{\code{signature(object = "nifti")}: returns the
       \dQuote{description} field}
@@ -99,13 +99,10 @@
   }
 }
 \references{NIfTI-1 \url{http://nifti.nimh.nih.gov/}}
-\author{ B. Whitcher <\email{bjw34032@users.sourceforge.net}> }
-%\note{ ~~further notes~~ }
-
-% ~Make other sections like Warning with \section{Warning }{....} ~
-
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \seealso{
-  \code{\linkS4class{anlz}}, \code{\linkS4class{niftiExtension}}
+  \code{\linkS4class{anlz}}, \code{\linkS4class{niftiExtension}},
+  \code{\linkS4class{niftiAuditTrail}}
 }
 \examples{
 showClass("nifti")

@@ -53,7 +53,5 @@
 \seealso{
   \code{\link{orthographic-methods}}, \code{\link{overlay-methods}}
 }
-\examples{
-
-}
+%\examples{}
 \keyword{methods}

@@ -40,19 +40,14 @@ is.nifti(x)
 \author{
 %%  ~~who you are~~
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\linkS4class{nifti}}, \code{\link{anlz}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+nim <- nifti() # default
+nim
+nim <- nifti(datatype=4) # 2-byte integers
+nim
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
