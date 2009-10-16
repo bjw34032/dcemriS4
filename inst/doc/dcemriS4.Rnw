@@ -1,3 +1,8 @@
+% Part of the dcemri package for R
+% Distributed under the BSD license: see dcemri/COPYING
+%
+% $Id: $
+
 % \VignetteIndexEntry{dcemriS4}
 % \VignetteDepends{dcemriS4}
 % \VignettePackage{dcemriS4}
@@ -377,7 +382,7 @@ sdam120 <- readNIfTI(system.file("nifti/SDAM_ep2d_120deg_26slc.nii.gz",
                                  package="dcemriS4"))
 sdam120
 sdam.image <- rowMeans(dam(sdam60, sdam120, 60), dims=3)
-mask <- nifti(rowSums(sdam60, dims=3) > 500)
+mask <- (rowSums(sdam60, dims=3) > 500)[1:26] # nifti(rowSums(sdam60, dims=3) > 500)
 @ 
 <<figure5-png,echo=FALSE,results=hide>>=
 png("sdam.png", width=400, height=400)
@@ -385,8 +390,8 @@ png("sdam.png", width=400, height=400)
 <<figure5-code>>=
 ## A smooth version of "sdam.image"
 SDAM <- readNIfTI(system.file("nifti/SDAM_smooth.nii.gz", package="dcemriS4"))
-overlay(sdam120, ifelse(mask, SDAM, NA), zlim.x=range(sdam120), 
-        zlim.y=c(0.5,1.5))
+overlay(sdam120, ifelse(mask, SDAM, NA), z=13, zlim.x=range(sdam120), 
+        zlim.y=c(0.5,1.5), plot.type="single")
 @ 
 <<figure5-dev.off,echo=FALSE,results=hide>>=
 dev.off()
@@ -418,6 +423,26 @@ multiplicative factor, derived from the saturated double-angle method,
 is used to produce a spatially-varying flip-angle map and input into
 the appropriate function.
 
+<<t1estimation>>=
+fnames <- c("fl3d_vibe-5deg","fl3d_vibe-10deg","fl3d_vibe-20deg",
+            "fl3d_vibe-25deg","fl3d_vibe-15deg")
+alpha <- c(5, 10, 20, 25, 15)
+nangles <- length(alpha)
+X <- Y <- 64
+Z <- 26
+flip <- fangles <- array(0, c(X,Y,Z,nangles))
+for (w in 1:nangles) {
+  vibe <- readNIfTI(system.file(paste("nifti/", fnames[w], ".nii.gz", sep=""), 
+                                package="dcemriS4"))
+  flip[,,,w] <- vibe
+  fangles[,,,w] <- array(alpha[w], c(X,Y,Z))
+}
+TR <- 4.22 / 1000 # seconds
+fanglesB1 <- fangles * array(SDAM, c(X,Y,Z,nangles))
+zi <- 10:13
+mask[,,(! 1:Z %in% zi)] <- FALSE
+R1 <- R1.fast(flip, mask, fanglesB1, TR, verbose=TRUE)
+@ 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Statistical Inference}
