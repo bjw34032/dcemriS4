@@ -220,7 +220,16 @@ writeANALYZE <- function(aim, filename, gzipped=TRUE, verbose=FALSE,
   dims <- 2:(1+aim@"dim_"[1])
   if (verbose)
     cat("  dims =", aim@"dim_"[dims], fill=TRUE)
-  writeBin(as.vector(aim), fid, size=aim@"bitpix"/8)
+  ## writeBin(as.vector(aim), fid, , size=aim@"bitpix"/8)
+  data <- as.vector(aim@.Data)
+  switch(as.character(aim@"datatype"),
+         "1" = writeBin(as.integer(data), fid, size=aim@"bitpix"/8),
+         "2" = writeBin(as.integer(data), fid, size=aim@"bitpix"/8),
+         "4" = writeBin(as.integer(data), fid, size=aim@"bitpix"/8),
+         "8" = writeBin(as.integer(data), fid, size=aim@"bitpix"/8),
+         "16" = writeBin(as.numeric(data), fid, size=aim@"bitpix"/8),
+         "64" = writeBin(as.double(data), fid, size=aim@"bitpix"/8))
+    
   close(fid)
   invisible()
 }

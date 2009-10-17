@@ -47,7 +47,9 @@
     provided here.}
 }
 \details{
-  
+  The \code{image} command is used multiple times to simultaneously
+  visualize three orthogonal planes in a single multidimensional array
+  of medical imaging data.
 }
 \section{Methods}{
 \describe{

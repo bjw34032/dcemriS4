@@ -10,7 +10,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Constructor for Analyze}
 \description{
-  ...
+  Constructor for Analyze class objects.
 }
 \usage{
 anlz(img = array(0, dim = rep(1, 4)), dim, ...)
@@ -37,7 +37,7 @@ is.anlz(x)
   \code{\linkS4class{anlz}}, \code{\link{nifti}}
 }
 \examples{
-aim <- anlz()
+aim <- anlz() # default
 aim
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

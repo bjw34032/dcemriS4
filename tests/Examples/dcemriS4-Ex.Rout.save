@@ -210,7 +210,7 @@ Class "vector", by class "array", distance 5, with explicit test and coerce
 > 
 > ### ** Examples
 > 
-> aim <- anlz()
+> aim <- anlz() # default
 > aim
 ANALYZE 7.5 format
   Type            : anlz
@@ -1229,6 +1229,57 @@ Loading required package: splines
 > 
 > 
 > 
+> cleanEx(); nameEx("write_anlz")
+> ### * write_anlz
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: writeANALYZE
+> ### Title: writeANALYZE
+> ### Aliases: writeANALYZE
+> ### Keywords: file
+> 
+> ### ** Examples
+> 
+> norm <- dnorm(seq(-5, 5, length=32), sd=2)
+> norm <- (norm-min(norm)) / max(norm-min(norm))
+> img <- outer(outer(norm, norm), norm)
+> img <- round(255*img)
+> img[17:32,,] <- 255 - img[17:32,,]
+> img.anlz <- anlz(img) # create Analyze object
+> 
+> writeANALYZE(img.anlz, "test-anlz-image-uint8", verbose=TRUE)
+  dims = 32 32 32
+> ## These files should be viewable in, for example, FSLview
+> ## Make sure you adjust the min/max values for proper visualization
+> data <- readANALYZE("test-anlz-image-uint8", verbose=TRUE)
+  fname = test-anlz-image-uint8
+  files = test-anlz-image-uint8.{hdr.gz,img.gz}
+  hdr   = test-anlz-image-uint8.hdr.gz
+  img   = test-anlz-image-uint8.img.gz
+> image(img.anlz) # image(img.anlz, z=16, plot.type="single")
+> image(data)     # image(data, z=16, zlim=range(data), plot.type="single")
+> abs.err <- abs(data - img.anlz)
+> image(as(abs.err, "anlz"), zlim=range(img.anlz))
+> 
+> ## Not run: 
+> ##D ## Loop through all possible data types
+> ##D datatypes <- list(code=c(2, 4, 8, 16, 64),
+> ##D                   name=c("uint8", "int16", "int32", "float", "double"))
+> ##D equal <- vector("list")
+> ##D for (i in 1:length(datatypes$code)) {
+> ##D   fname <- paste("test-anlz-image-", datatypes$name[i], sep="")
+> ##D   rm(img.anlz)
+> ##D   img.anlz <- anlz(img, datatype=datatypes$code[i])
+> ##D   writeANALYZE(img.anlz, fname)
+> ##D   equal[[i]] <- all(readANALYZE(fname) == img)
+> ##D }
+> ##D names(equal) <- datatypes$name
+> ##D unlist(equal)
+> ## End(Not run)
+> 
+> 
+> 
 > cleanEx(); nameEx("write_nifti")
 > ### * write_nifti
 > 
@@ -1248,7 +1299,7 @@ Loading required package: splines
 > img[17:32,,] <- 255 - img[17:32,,]
 > img.nifti <- nifti(img) # create NIfTI object
 > 
-> writeNIfTI(img.nifti, "test-image-uint8", verbose=TRUE)
+> writeNIfTI(img.nifti, "test-nifti-image-uint8", verbose=TRUE)
   niftiExtension detected!
   niftiAuditTrail detected!
   vox_offset = 928
@@ -1256,10 +1307,10 @@ Loading required package: splines
   writing data at byte = 928
 > ## These files should be viewable in, for example, FSLview
 > ## Make sure you adjust the min/max values for proper visualization
-> data <- readNIfTI("test-image-uint8", verbose=TRUE)
-  fname = test-image-uint8
-  files = test-image-uint8.nii.gz
-  nii   = test-image-uint8.nii.gz
+> data <- readNIfTI("test-nifti-image-uint8", verbose=TRUE)
+  fname = test-nifti-image-uint8
+  files = test-nifti-image-uint8.nii.gz
+  nii   = test-nifti-image-uint8.nii.gz
   vox_offset = 928
   niftiExtension detected!
   seek(fid) = 352
@@ -1269,28 +1320,28 @@ Loading required package: splines
 > abs.err <- abs(data - img.nifti)
 > image(as(abs.err, "nifti"), zlim=range(img.nifti))
 > 
-> ## Loop through all possible data types
-> datatypes <- list(code=c(2, 4, 8, 16, 64),
-+                   name=c("uint8", "int16", "int32", "float", "double"))
-> equal <- vector("list")
-> for (i in 1:length(datatypes$code)) {
-+   fname <- paste("test-image-", datatypes$name[i], sep="")
-+   rm(img.nifti)
-+   img.nifti <- nifti(img, datatype=datatypes$code[i])
-+   writeNIfTI(img.nifti, fname)
-+   equal[[i]] <- all(readNIfTI(fname) == img)
-+ }
-> names(equal) <- datatypes$name
-> unlist(equal)
- uint8  int16  int32  float double 
-  TRUE   TRUE   TRUE   TRUE   TRUE 
+> ## Not run: 
+> ##D ## Loop through all possible data types
+> ##D datatypes <- list(code=c(2, 4, 8, 16, 64),
+> ##D                   name=c("uint8", "int16", "int32", "float", "double"))
+> ##D equal <- vector("list")
+> ##D for (i in 1:length(datatypes$code)) {
+> ##D   fname <- paste("test-nifti-image-", datatypes$name[i], sep="")
+> ##D   rm(img.nifti)
+> ##D   img.nifti <- nifti(img, datatype=datatypes$code[i])
+> ##D   writeNIfTI(img.nifti, fname, verbose=TRUE)
+> ##D   equal[[i]] <- all(readNIfTI(fname) == img)
+> ##D }
+> ##D names(equal) <- datatypes$name
+> ##D unlist(equal)
+> ## End(Not run)
 > 
 > 
 > 
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  104.867 1.205 107.697 0 0 
+Time elapsed:  104.302 0.611 106.286 0 0 
 > grDevices::dev.off()
 null device 
           1 
