@@ -29,7 +29,8 @@ is.nifti(x)
   An object of class \code{nifti}.
 }
 \references{
-
+  NIfTI-1\cr
+  \url{http://nifti.nimh.nih.gov/}
 }
 \author{
   Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>

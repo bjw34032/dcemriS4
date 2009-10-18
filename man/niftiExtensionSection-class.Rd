@@ -7,30 +7,37 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{niftiExtensionSection-class}
-\title{Class "niftiExtensionSection" ~~~ }
+\title{Class "niftiExtensionSection"}
 \description{
-  ~~ A concise (1-5 lines) description of what the class is.  ~~
+  ...
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("niftiExtensionSection", data, dim, dimnames, ...)}.
-	 ~~ describe objects here ~~ 
+  Objects can be created by calls of the form
+  \code{new("niftiExtensionSection", data, dim, dimnames, ...)}. 
 }
 \section{Slots}{
   \describe{
-    \item{\code{esize}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{ecode}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{edata}:}{Object of class \code{"character"} ~~ }
+    \item{\code{esize}:}{Object of class \code{"numeric"}; the number of
+      bytes that form the extended header data.}
+    \item{\code{ecode}:}{Object of class \code{"numeric"}; a
+      non-negative integer that indicates the format of the extended
+      header data that follows (default = 1002).} 
+    \item{\code{edata}:}{Object of class \code{"character"}; Note that
+      the other contents of the extended header data section are totally
+      unspecified by the NIfTI-1 standard.}
   }
 }
 \section{Methods}{
-No methods defined with class "niftiExtensionSection" in the signature.
+  No methods defined with class "niftiExtensionSection" in the signature.
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
-%\note{ ~~further notes~~ }
-
-% ~Make other sections like Warning with \section{Warning }{....} ~
-
+\references{
+  NIfTI-1\cr
+  \url{http://nifti.nimh.nih.gov/}
+}
+\author{
+  Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>,
+  Andrew Thornton <\email{zeripath@users.sourcefore.net}>
+}
 \seealso{
   \code{\linkS4class{niftiExtension}}, \code{\linkS4class{nifti}}
 }

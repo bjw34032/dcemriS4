@@ -19,7 +19,8 @@ writeANALYZE(aim, filename, gzipped = TRUE, verbose = FALSE, warn = -1)
     pair (.hdr,img) \bold{without} the suffixes.}
   \item{gzipped}{is a character string that enables exportation of
     compressed (.gz) files (default = \code{TRUE}).}
-  \item{verbose}{}
+  \item{verbose}{is a logical variable (default = \code{FALSE}) that
+    allows text-based feedback during execution of the function.}
   \item{warn}{is a number to regulate the display of warnings (default =
     -1).  See \code{\link{options}} for more details.}
 

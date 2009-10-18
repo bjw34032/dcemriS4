@@ -74,10 +74,10 @@
   }
 }
 \section{Extends}{
-  Class \code{"\linkS4class{array}"}, from data part.
-  Class \code{"\linkS4class{matrix}"}, by class "array", distance 2, with explicit test and coerce.
-  Class \code{"\linkS4class{structure}"}, by class "array", distance 2.
-  Class \code{"\linkS4class{vector}"}, by class "array", distance 3, with explicit coerce.
+  Class \code{"\linkS4class{array}"}, from data part.\cr
+  Class \code{"\linkS4class{matrix}"}, by class "array", distance 2, with explicit test and coerce.\cr
+  Class \code{"\linkS4class{structure}"}, by class "array", distance 2.\cr
+  Class \code{"\linkS4class{vector}"}, by class "array", distance 3, with explicit coerce.\cr
   Class \code{"\linkS4class{vector}"}, by class "array", distance 5, with explicit test and coerce.
 }
 \section{Methods}{
@@ -98,7 +98,10 @@
       of the imaging data}
   }
 }
-\references{NIfTI-1 \url{http://nifti.nimh.nih.gov/}}
+\references{
+  NIfTI-1\cr
+  \url{http://nifti.nimh.nih.gov/}
+}
 \author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \seealso{
   \code{\linkS4class{anlz}}, \code{\linkS4class{niftiExtension}},
