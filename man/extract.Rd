@@ -1,6 +1,6 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
-% Time-stamp: <2009-07-14 17:21:02 (bjw34032)>
+% 
 % $Id: extract.Rd 191 2009-08-25 15:12:31Z bjw34032 $
 
 \name{Seed Growing for a 4D Array}
@@ -27,13 +27,19 @@ extract.aif(img, x, y, z, thresh = 0.9)
   included.
 }
 \value{
-  \item{coord}{}
-  \item{conc}{}
-  \item{mask}{}
-  \item{cor}{}
+  \item{coord}{is a matrix of the three-dimesional coordinates
+    \eqn{(x,y,z)} for all voxels found by the algorithm.}
+  \item{conc}{is a matrix whose rows correspond to the voxels found by
+    the algorithm and whose columns are the fourth dimension from the
+    input array (e.g., contrast agent concentration time curve).}
+  \item{mask}{is an array of boolean values, where only voxels included
+    by the algorithm are given a value greater than zero.}
+  \item{cor}{is an array that mimics the \code{mask}, but contains the
+    estimated correlation coefficients for all voxels included by the
+    algorithm.}
 }
 %\references{}
 %\seealso{}
 %\examples{}
-\author{Volker Schmid}
-%\keyword{}
+\author{Volker Schmid <\email{volker.schmid@users.sourceforge.net}>}
+\keyword{misc}
