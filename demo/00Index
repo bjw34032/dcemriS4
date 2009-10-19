@@ -1,0 +1,9 @@
+% Part of the dcemri package for R
+% Distributed under the BSD license: see dcemri/COPYING
+%
+% $Id: $
+
+avg152T1        MNI152 data in Analyze 7.5 format
+avg152T1_LR     MNI152 data in NIfTI-1 format (left-right)
+avg152T1_RL     MNI152 data in NIfTI-1 format (right-left)
+filtered_func_data      4D array of functional MRI data in NIfTI-1 format
