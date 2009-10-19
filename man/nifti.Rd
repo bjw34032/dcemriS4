@@ -13,7 +13,8 @@
   Constructor for NIfTI class objects.
 }
 \usage{
-nifti(img = array(0, dim = rep(1, 4)), dim, datatype = 2, ...)
+nifti(img = array(0, dim = rep(1, 4)), dim, datatype = 2, cal.min = NULL,
+      cal.max = NULL, ...)
 is.nifti(x)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,6 +22,10 @@ is.nifti(x)
   \item{img}{is a multidimensional array of data.}
   \item{dim}{is the dimension of the data (default = \code{missing}).}
   \item{datatype}{...}
+  \item{cal.min}{allows user-specified minimum value in the array
+    (visualization purposes only).}
+  \item{cal.max}{allows user-specified minimum value in the array
+    (visualization purposes only).}
   \item{\dots}{allows for additional \sQuote{slots} to be specified.}
   \item{x}{is an object to be checked.}
 }

@@ -1132,7 +1132,7 @@ Known Subclasses: "niftiAuditTrail"
 > flush(stderr()); flush(stdout())
 > 
 > ### Name: niftiExtensionSection-class
-> ### Title: Class "niftiExtensionSection" ~~~
+> ### Title: Class "niftiExtensionSection"
 > ### Aliases: niftiExtensionSection-class
 > ### Keywords: classes
 > 
@@ -1145,6 +1145,29 @@ Slots:
                                     
 Name:      esize     ecode     edata
 Class:   numeric   numeric character
+> 
+> 
+> 
+> cleanEx(); nameEx("q2R")
+> ### * q2R
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: quaternion2rotation
+> ### Title: Convert Quaternion into a Rotation Matrix
+> ### Aliases: quaternion2rotation
+> 
+> 
+> ### ** Examples
+> 
+> R <- quaternion2rotation(1, 0, 0)
+> ## This R matrix is represented by quaternion [a,b,c,d] = [0,1,0,0]
+> ## (which encodes a 180 degree rotation about the x-axis).
+> R
+     [,1] [,2] [,3]
+[1,]    1    0    0
+[2,]    0   -1    0
+[3,]    0    0   -1
 > 
 > 
 > 
@@ -1341,7 +1364,7 @@ Loading required package: splines
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  104.302 0.611 106.286 0 0 
+Time elapsed:  104.263 0.876 106.528 0 0 
 > grDevices::dev.off()
 null device 
           1 

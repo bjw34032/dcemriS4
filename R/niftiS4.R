@@ -280,7 +280,8 @@ setValidity("niftiExtensionSection", function(object) {
 ## nifti()
 #############################################################################
 
-nifti <- function(img=array(0, dim=rep(1,4)), dim, datatype=2, ...) {
+nifti <- function(img=array(0, dim=rep(1,4)), dim, datatype=2, cal.min=NULL,
+                  cal.max=NULL, ...) {
   ## Set dimensions
   if (missing(dim)) {
     if (is.array(img))
@@ -301,8 +302,10 @@ nifti <- function(img=array(0, dim=rep(1,4)), dim, datatype=2, ...) {
     y[i] <- ifelse(is.na(dim(img)[i-1]), 1.0, 1.0)
   }
   ## min/max values for visualization
-  cal.max <- as.numeric(quantile(img, probs=0.95, na.rm=TRUE))
-  cal.min <- as.numeric(quantile(img, probs=0.05, na.rm=TRUE))
+  if (is.null(cal.max))
+    cal.max <- as.numeric(max(img, na.rm=TRUE))
+  if (is.null(cal.min))
+    cal.min <- as.numeric(min(img, na.rm=TRUE))
   ## Set datatype
   switch(as.character(datatype),
          "2" = bitpix <- 8,

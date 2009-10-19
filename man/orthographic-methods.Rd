@@ -28,6 +28,7 @@
     all three orthogonal planes (default = TRUE).}
   \item{col.crosshairs}{is the color of the crosshairs (default = red).}
   \item{w}{is the time point to be displayed (4D arrays only).}
+  \item{zlim}{}
   \item{col}{is grayscale (by default).}
   \item{xlab}{is set to "" since all margins are set to zero.}
   \item{ylab}{is set to "" since all margins are set to zero.}
@@ -47,5 +48,5 @@
   \code{\link{image-methods}}, \code{\link{overlay-methods}}
 }
 %\examples{}
-\\keyword{methods}
+\keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}
