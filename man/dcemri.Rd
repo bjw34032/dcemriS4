@@ -57,7 +57,8 @@
     progress of the optimization is produced.}
   \item{user}{is a list with the following paramters required: D, AB,
     muB, AG, muG.}
-  \item{verbose}{}
+  \item{verbose}{is a logical variable (default = \code{FALSE}) that
+    allows text-based feedback during execution of the function.}
   \item{...}{Additional parameters to the function.}
 }
 \details{

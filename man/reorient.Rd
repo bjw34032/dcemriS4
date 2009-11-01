@@ -8,22 +8,30 @@
 \alias{inverseReorient}
 \title{reorient}
 \description{
-  Reorient takes nim and data; a nifti header and a single dimensional array representing the nifti data; and some other options and will attempt to return a nifti object with the data reoriented into neuroradiological convention. It will parse the transforms in the nifti header and apply a normalized version of these transforms. It will not update the transforms in the header.
+  Transforms in the NIfTI header are parsed and normalized versions of
+  these transforms are applied.
 }
 \usage{
 reorient(nim, data, verbose=FALSE, invert=FALSE)
 inverseReorient(nim, verbose=FALSE)
 }
 \arguments{
-  \item{nim}{A nifti header}
-  \item{data}{The data array associated with nim}
-  \item{verbose}{Be verbose}
-  \item{invert}{Invert our reorientation for saving}
+  \item{nim}{is an object of class \code{nifti}.}
+  \item{data}{is an array associated with \code{nim}.}
+  \item{verbose}{is a logical variable (default = \code{FALSE}) that
+    allows text-based feedback during execution of the function.}
+    \code{FALSE}).}
+  \item{invert}{stores the inverse transform.}
 }
-\details{This function will use the performPermutation function internally.}
+\details{
+  This function utilizes the \code{performPermutation} function
+  internally.
+}
 %\value{}
 %\references{}
-\seealso{\code{\link{performPermutation}}}
+\seealso{
+  \code{\link{performPermutation}}
+}
 %\examples{}
 \author{Andrew Thornton <\email{zeripath@users.sourceforge.net}>}
 %\keyword{}
