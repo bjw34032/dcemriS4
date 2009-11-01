@@ -19,7 +19,7 @@ inverseReorient(nim, verbose=FALSE)
   \item{nim}{is an object of class \code{nifti}.}
   \item{data}{is an array associated with \code{nim}.}
   \item{verbose}{is a logical variable (default = \code{FALSE}) that
-    allows text-based feedback during execution of the function.}
+    allows text-based feedback during execution of the function.
     \code{FALSE}).}
   \item{invert}{stores the inverse transform.}
 }
