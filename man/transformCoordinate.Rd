@@ -13,16 +13,16 @@
 translateCoordinate(i, nim, verbose=FALSE)
 }
 \arguments{
-  \item{i}{}
-  \item{nim}{}
-  \item{verbose}{}
+  \item{i}{An index vector in nim}
+  \item{nim}{A NIfTI object}
+  \item{verbose}{Be verbose}
 }
 \details{
-  ...
+  translateCoordinate takes a NIfTI object and an index vector in to the voxel space of the object and translates that voxel index into the continuous co-ordinate space defined by the objects qform and sform.
 }
-\value{
-  ...
-}
+%\value{
+%  ...
+%}
 %\references{}
 %\seealso{}
 %\examples{}
