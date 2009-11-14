@@ -413,6 +413,7 @@ setReplaceMethod("[", signature(x="nifti", i="missing", j="missing",
 
 setReplaceMethod("[", signature(x="nifti", i="ANY", j="missing", value="ANY"), 
                  function(x, i, value) {
+                   # For some reason this line is slow; I don't understand it
                    x@.Data[i] <- value
                    #if (any(is.na(value))) {
                    if (any(value < x@"cal_min", na.rm=TRUE))
@@ -425,13 +426,14 @@ setReplaceMethod("[", signature(x="nifti", i="ANY", j="missing", value="ANY"),
                    #  x@"cal_max" <- xr[2]
                    #}
                    audit.trail(x) <-
-                     niftiAuditTrailEvent(x, "modification", match.call(),
-                                          paste("[", i,  "] <-", value))
+                     niftiAuditTrailEvent(x, "modification", 
+                                          comment=paste("[", i,  "] <- ", value, sep=""))
                    x
                  })
 
 setReplaceMethod("[", signature(x="nifti", i="ANY", j="ANY", value="ANY"),
                  function(x, i, j, ..., value) {
+                   # For some reason this line is slow; I don't understand it
                    x@.Data[i,j,...] <- value
                    #if (all(is.na(value))) {
                    #  xr <- range(x, na.rm=TRUE)
@@ -444,8 +446,8 @@ setReplaceMethod("[", signature(x="nifti", i="ANY", j="ANY", value="ANY"),
                      x@"cal_max" <- max(value, na.rm=TRUE)
                    #}
                    audit.trail(x) <-
-                     niftiAuditTrailEvent(x, "modification", match.call(),
-                                          paste("[", i, j, ..., "] <-", value))
+                     niftiAuditTrailEvent(x, "modification", 
+                                          comment=paste("[", paste(i, j, ..., sep=", "), "] <- ", value, sep=""))
                    x
                  })
 
