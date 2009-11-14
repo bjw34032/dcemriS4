@@ -194,9 +194,9 @@ niftiAuditTrailCreated <- function(history=NULL, call=NULL,
 
 	lastEvent <- historyChildren[[length(historyChildren)]]
 	
-	if (xmlName(lastEvent) == "event" && xmlAttrs(lastEvent)[["type"]] == "processing") {
+	if (xmlName(lastEvent) == "event" && xmlValue(lastEvent[["type"]]) == "processing") {
 	  # We are in some processing history; the given call is not the correct call
-	  call <- xmlAttrs(lastEvent)[["call"]]
+	  call <- xmlValue(lastEvent[["call"]])
 	  historyChildren <- historyChildren[1:(length(historyChildren) - 1)]
 	} 
 
