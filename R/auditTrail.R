@@ -71,6 +71,10 @@ newAuditTrail <- function() {
   }
 }
 
+.listToNodes <- function(thelist) {
+  return(lapply(names(thelist), function(x) { newXMLNode(x, thelist[x]) }))
+}
+
 niftiExtensionToAuditTrail <- function(nim, workingDirectory=NULL,
                                        filename=NULL, call=NULL) {
   if (getOption("NIfTI.audit.trail")) {
@@ -135,14 +139,18 @@ niftiAuditTrailSystemNode <- function(type="system-info",
     if (is(call, "call"))
       call <- as.character(as.expression(call))
     currentDateTime <- format(Sys.time(), "%a %b %d %X %Y %Z")
-    system <- newXMLNode(type, attrs=c("workingDirectory"=workingDirectory,
-                                 "filename"=filename, "call"=call),
-                         namespace="")
-    system <- addAttributes(system,
-                            "r-version"=version$version.string,
-                            "date"=currentDateTime,
-                            "user"=Sys.getenv("LOGNAME"),
-                            "dcemri-version"=packageDescription("dcemriS4")$Version)
+    children <- .listToNodes(c("workingDirectory"=workingDirectory,
+                                 "filename"=filename, "call"=call))
+    sysinfo <- .listToNodes(c("r-version"=version$version.string,
+                 "date"=currentDateTime,
+                 "user"=Sys.getenv("LOGNAME"),
+                 "dcemri-version"=packageDescription("dcemriS4")$Version))
+    if(is.null(children)) {
+      children <- sysinfo
+    } else {
+      children <- c(children, newXMLNode("system", sysinfo))
+    }
+    system <- newXMLNode(type, children)
     return(system)
   }
 }
@@ -222,10 +230,8 @@ niftiAuditTrailEvent <- function(trail, type=NULL, call=NULL, comment=NULL) {
     if (is(call, "call"))
       call <- as.character(as.expression(call))
     currentDateTime <- format(Sys.time(), "%a %b %d %X %Y %Z")
-    eventNode <- newXMLNode("event", attrs=c("type"=type, "call"=call,
-                                       "date"=currentDateTime))
-    if (!is.null(comment))
-      eventNode <- addChildren(eventNode, newXMLTextNode(comment))
+    eventNode <- newXMLNode("event", .listToNodes(c("type"=type, "call"=call,
+                                       "date"=currentDateTime,"comment"=comment)))
     trail <- addChildren(trail, eventNode)
     return(trail)
   }
