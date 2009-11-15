@@ -118,8 +118,11 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
              function(x) {
                writeBin(as.integer(x@"esize"), fid, size=4)
                writeBin(as.integer(x@"ecode"), fid, size=4)
-               ## writeBin(charToRaw(x@"edata"), fid, size=x@esize-8)
-               writeChar(x@"edata", fid, nchar=x@"esize"-8-1)
+               ## Write out all the characters in the data section
+	       writeChar(x@"edata", fid, nchars=nchar(x@"edata"))
+	       ## add margin to write \0 till 0 mod 16
+	       margin <- (-(nchar(x@"edata", type="bytes") + 8) %% 16) -1
+	       writeBin(rep("\0",margin), fid, size=margin)
                invisible()
              })
     } else {
