@@ -122,7 +122,9 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
 	       writeChar(x@"edata", fid, nchars=nchar(x@"edata"))
 	       ## add margin to write \0 till 0 mod 16
 	       margin <- (-(nchar(x@"edata", type="bytes") + 8) %% 16) -1
-	       writeBin(rep("\0",margin), fid, size=margin)
+	       if (margin > 0) {
+		 writeBin(rep("\0",margin), fid, size=margin)
+	       }
                invisible()
              })
     } else {
