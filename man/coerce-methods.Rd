@@ -36,6 +36,8 @@
 }
 \section{Methods}{
   \describe{
+    \item{from = "anlz", to = "nifti"}{An object of class \code{anlz}
+      is coerced into a NIfTI object.}
     \item{from = "array", to = "nifti"}{An object of class \code{array}
       is coerced into a NIfTI object.}
     \item{from = "list", to = "nifti"}{All objects of class \code{array}

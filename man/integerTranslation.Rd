@@ -11,13 +11,14 @@
   ...
 }
 \usage{
-integerTranslation(nim, data, verbose=FALSE)
-invertIntegerTranslation(nim, verbose=FALSE)
+integerTranslation(nim, data, verbose = FALSE)
+invertIntegerTranslation(nim, verbose = FALSE)
 }
 \arguments{
-  \item{nim}{}
-  \item{data}{}
-  \item{verbose}{}
+  \item{nim}{is an object of class \code{nifti}.}
+  \item{data}{is ...}
+  \item{verbose}{is a logical variable (default = \code{FALSE}) that
+    allows text-based feedback during execution of the function.}
 }
 \details{
   ...
