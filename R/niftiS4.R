@@ -427,7 +427,7 @@ setReplaceMethod("[", signature(x="nifti", i="ANY", j="missing", value="ANY"),
                    #}
                    audit.trail(x) <-
                      niftiAuditTrailEvent(x, "modification", 
-                                          call=sys.call())
+                                          call=match.call())
                    x
                  })
 
