@@ -435,6 +435,16 @@ setReplaceMethod("[", signature(x="nifti", i="ANY", j="ANY", value="ANY"),
                  function(x, i, j, ..., value) {
                    # For some reason this line is slow; I don't understand it
                    x@.Data[i,j,...] <- value
+                   audit.trail(x) <-
+                     niftiAuditTrailEvent(x, "modification", call=match.call(),
+                                          comment=paste("Non-numeric replace ["))
+					  
+                   x
+                 })
+setReplaceMethod("[", signature(x="nifti", i="numeric", j="numeric", value="ANY"),
+                 function(x, i, j, ..., value) {
+                   # For some reason this line is slow; I don't understand it
+                   x@.Data[i,j,...] <- value
                    #if (all(is.na(value))) {
                    #  xr <- range(x, na.rm=TRUE)
                    #  x@"cal_min" <- xr[1]
