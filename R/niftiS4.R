@@ -396,7 +396,17 @@ setMethod("audit.trail", "nifti",
 
 setGeneric("audit.trail<-",
            function(x, value) { standardGeneric("audit.trail<-") })
-setReplaceMethod("audit.trail", "nifti",
+setReplaceMethod("audit.trail", signature(x="nifti", value="character"),
+                 function(x, value) {
+                   if (getOption("NIfTI.audit.trail")) {
+                     if (!is(x, "niftiAuditTrail")) {
+                       x <- as(x, "niftiAuditTrail")
+                     }
+                     x@"trail" <- value
+                   } 
+                   x
+                 })
+setReplaceMethod("audit.trail", signature(x="nifti", value="XMLAbstractNode"),
                  function(x, value) {
                    if (getOption("NIfTI.audit.trail")) {
                      if (!is(x, "niftiAuditTrail")) {
