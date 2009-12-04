@@ -427,7 +427,27 @@ setReplaceMethod("[", signature(x="nifti", i="ANY", j="missing", value="ANY"),
                    #}
                    audit.trail(x) <-
                      niftiAuditTrailEvent(x, "modification", 
-                                          call=match.call())
+                                          call=sys.call(-3),
+                                          comment=paste("Non-numeric replace ["))
+                   x
+                 })
+setReplaceMethod("[", signature(x="nifti", i="numeric", j="missing", value="ANY"), 
+                 function(x, i, value) {
+                   # For some reason this line is slow; I don't understand it
+                   x@.Data[i] <- value
+                   #if (any(is.na(value))) {
+                   if (any(value < x@"cal_min", na.rm=TRUE))
+                     x@"cal_min" <- min(value, na.rm=TRUE)
+                   if (any(value > x@"cal_max", na.rm=TRUE))
+                     x@"cal_max" <- max(value, na.rm=TRUE)
+                   #} else {
+                   #  xr <- range(x, na.rm=TRUE)
+                   #  x@"cal_min" <- xr[1]
+                   #  x@"cal_max" <- xr[2]
+                   #}
+                   audit.trail(x) <-
+                     niftiAuditTrailEvent(x, "modification", 
+                                          call=sys.call(-3))
                    x
                  })
 
@@ -436,7 +456,7 @@ setReplaceMethod("[", signature(x="nifti", i="ANY", j="ANY", value="ANY"),
                    # For some reason this line is slow; I don't understand it
                    x@.Data[i,j,...] <- value
                    audit.trail(x) <-
-                     niftiAuditTrailEvent(x, "modification", call=match.call(),
+                     niftiAuditTrailEvent(x, "modification", call=sys.call(-3),
                                           comment=paste("Non-numeric replace ["))
 					  
                    x
