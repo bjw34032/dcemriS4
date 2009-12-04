@@ -73,7 +73,10 @@ newAuditTrail <- function() {
 }
 
 .listToNodes <- function(thelist) {
-  return(lapply(names(thelist), function(x) { newXMLNode(x, thelist[x]) }))
+  return(lapply(names(thelist), function(x) { if(!is.null(thelist[x])) { 
+	    newXMLNode(x, thelist[x]) 
+	  }
+	}))
 }
 
 niftiExtensionToAuditTrail <- function(nim, workingDirectory=NULL,
