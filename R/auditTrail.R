@@ -231,7 +231,9 @@ niftiAuditTrailEvent <- function(trail, type=NULL, call=NULL, comment=NULL) {
       call <- as.character(as.expression(call))
     currentDateTime <- format(Sys.time(), "%a %b %d %X %Y %Z")
     eventNode <- newXMLNode("event", .listToNodes(c("type"=type, "call"=call,
-                                       "date"=currentDateTime,"comment"=comment)))
+                                       "date"=currentDateTime, 
+				       "comment"=comment, 
+				       "user"=Sys.getenv("LOGNAME"))))
     trail <- addChildren(trail, eventNode)
     return(trail)
   }
