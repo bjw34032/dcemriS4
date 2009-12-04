@@ -384,7 +384,7 @@ setMethod("audit.trail", "nifti",
           function(object) { 
             if (getOption("NIfTI.audit.trail") &&
                 is(object, "niftiAuditTrail")) {
-              object@"trail" 
+              xmlRoot(xmlParse(object@"trail", asText=TRUE))
             } else {
               NULL
             }
@@ -398,7 +398,7 @@ setReplaceMethod("audit.trail", "nifti",
                      if (!is(x, "niftiAuditTrail")) {
                        x <- as(x, "niftiAuditTrail")
                      }
-                     x@"trail" <- value
+                     x@"trail" <- saveXML(value)
                    } 
                    x
                  })

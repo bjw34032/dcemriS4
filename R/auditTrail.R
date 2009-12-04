@@ -43,8 +43,9 @@ enableAuditTrail <- function() {
     if (!isClass("niftiAuditTrail")) {
       options("NIfTI.audit.trail"=TRUE)
       setClass("niftiAuditTrail",
-               representation(trail="XMLAbstractNode"),
-               prototype(trail=newAuditTrail()),
+	  #representation(trail="XMLAbstractNode"),
+	       representation(trail="character"),
+               prototype(trail=saveXML(newAuditTrail())),
                contains="niftiExtension")
     }
   }
@@ -119,7 +120,7 @@ niftiAuditTrailToExtension <- function(nim, workingDirectory=NULL,
                                      workingDirectory=workingDirectory,
                                      filename=filename, call=call)
     ## Serialize the XML to sec@edata
-    sec@edata <- saveXML(audit.trail(nim))
+    sec@edata <- nim@trail#saveXML(audit.trail(nim))
 
     ## Fix the esize to be congruent to 0 mod 16
     sec@esize <- nchar(sec@edata, type="bytes") + 8
@@ -206,9 +207,9 @@ niftiAuditTrailCreated <- function(history=NULL, call=NULL,
                                     "filename"=filename, "call"=call)
 	historyNode <- newXMLNode("history")
 	## OK, serialize and reParse the history
-	historyChildren <-
-          lapply(historyChildren,
-                 function(x) xmlRoot(xmlParse(saveXML(x), asText=TRUE)))
+	#historyChildren <-
+	#  lapply(historyChildren,
+	#         function(x) xmlRoot(xmlParse(saveXML(x), asText=TRUE)))
 	historyNode <- addChildren(historyNode, historyChildren)
 	created <- addChildren(created, historyNode)
       }
