@@ -384,7 +384,11 @@ setMethod("audit.trail", "nifti",
           function(object) { 
             if (getOption("NIfTI.audit.trail") &&
                 is(object, "niftiAuditTrail")) {
-	      return(object@"trail")
+	      if (is.null(object@"trail")) {
+		newAuditTrail()
+	      } else {
+		xmlRoot(xmlParse(object@"trail", asText=TRUE))
+	      }
             } else {
               NULL
             }

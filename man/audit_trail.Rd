@@ -7,7 +7,7 @@
 \Rdversion{1.1}
 \alias{dcemri.info}
 \alias{enableAuditTrail}
-\alias{newAuditTrailNode}
+\alias{newAuditTrail}
 \alias{niftiExtensionToAuditTrail}
 \alias{niftiAuditTrailToExtension}
 \alias{niftiAuditTrailSystemNode}
@@ -23,7 +23,7 @@
 \usage{
 dcemri.info(type)
 enableAuditTrail()
-newAuditTrailNode()
+newAuditTrail()
 niftiExtensionToAuditTrail(nim, workingDirectory = NULL,
                            filename = NULL, call = NULL)
 niftiAuditTrailToExtension(nim, workingDirectory = NULL,
@@ -69,7 +69,7 @@ getLastCallWithName(functionName)
   function \code{enableAuditTrail} will override this setting and switch
   on the functionality.
 
-  The function \code{newAuditTrailNode} returns an \code{XMLAbstractNode} 
+  The function \code{newAuditTrail} returns an \code{XMLAbstractNode} 
   representing the root node of an audit trail.  This is mostly intended
   as an internal function.
 

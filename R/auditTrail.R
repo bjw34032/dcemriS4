@@ -31,9 +31,6 @@
 ## 
 ## $Id$
 ##
-.toXMLNode <- function(trail) {
-  return(xmlRoot(xmlParse(trail, asText=TRUE)))
-}
 
 dcemri.info <- function(type) {
   switch(type,
@@ -48,7 +45,7 @@ enableAuditTrail <- function() {
       setClass("niftiAuditTrail",
 	  #representation(trail="XMLAbstractNode"),
 	       representation(trail="character"),
-               prototype(trail=saveXML(newAuditTrailNode())),
+               prototype(trail=saveXML(newAuditTrail())),
                contains="niftiExtension")
     }
   }
@@ -66,7 +63,7 @@ getLastCallWithName <- function(functionName) {
   return(theCalls[[max(correctCalls)]])
 }
 
-newAuditTrailNode <- function() {
+newAuditTrail <- function() {
   if (getOption("NIfTI.audit.trail")) {
     require("XML")
     trail <- newXMLNode("audit-trail",
@@ -106,7 +103,7 @@ niftiExtensionToAuditTrail <- function(nim, workingDirectory=NULL,
       oe <- nim@extensions[[oei]]@edata
       nim@extensions[[oei]] <- NULL
       audit.trail(nim) <-
-        niftiAuditTrailSystemNodeEvent(oe,
+        niftiAuditTrailSystemNodeEvent(xmlRoot(xmlParse(oe, asText=TRUE)),
                                        type="read",
                                        workingDirectory=workingDirectory,
                                        filename=filename, call=call)
@@ -177,7 +174,7 @@ niftiAuditTrailSystemNodeEvent <- function(trail, type=NULL, call=NULL,
                                            filename=filename)
     if (!is.null(comment))
       eventNode <- addChildren(eventNode, newXMLTextNode(comment))
-    trail <- addChildren(.toXMLNode(trail), eventNode)
+    trail <- addChildren(trail, eventNode)
     return(saveXML(trail))
   }
 }
@@ -190,10 +187,7 @@ niftiAuditTrailCreated <- function(history=NULL, call=NULL,
                                     workingDirectory, filename))
     } else {
       require("XML")
-      trail <- newAuditTrailNode()
-      if(!is.null(history)) {
-	history <- .toXMLNode(history)
-      }
+      trail <- newAuditTrail()
       if (is.null(history) || length(xmlChildren(history)) == 0) {
 	created <-
           niftiAuditTrailSystemNode("created",
@@ -244,7 +238,7 @@ niftiAuditTrailEvent <- function(trail, type=NULL, call=NULL, comment=NULL) {
                                        "date"=currentDateTime, 
 				       "comment"=comment, 
 				       "user"=Sys.getenv("LOGNAME"))))
-    trail <- addChildren(.toXMLNode(trail), eventNode)
+    trail <- addChildren(trail, eventNode)
     return(saveXML(trail))
   }
 }
