@@ -172,7 +172,7 @@ niftiAuditTrailSystemNodeEvent <- function(trail, type=NULL, call=NULL,
     if (!is.null(comment))
       eventNode <- addChildren(eventNode, newXMLTextNode(comment))
     trail <- addChildren(trail, eventNode)
-    return(saveXML(trail))
+    return(trail)
   }
 }
 
@@ -214,7 +214,7 @@ niftiAuditTrailCreated <- function(history=NULL, call=NULL,
 	created <- addChildren(created, historyNode)
       }
       trail <- addChildren(trail, created) 
-      return(saveXML(trail))
+      return(trail)
     }
   }
 }
@@ -236,7 +236,7 @@ niftiAuditTrailEvent <- function(trail, type=NULL, call=NULL, comment=NULL) {
 				       "comment"=comment, 
 				       "user"=Sys.getenv("LOGNAME"))))
     trail <- addChildren(trail, eventNode)
-    return(saveXML(trail))
+    return(trail)
   }
 }
 
