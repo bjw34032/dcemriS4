@@ -133,7 +133,7 @@ writeNIfTI <- function(nim, filename, gzipped=TRUE, verbose=FALSE, warn=-1) {
   }
   ## reorient?
   if (nim@"reoriented") {
-    data <- as.vector(inverseReorient(nim), verbose)
+    data <- as.vector(inverseReorient(nim))
   } else {
     data <- as.vector(nim@.Data)
   }
