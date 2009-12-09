@@ -120,7 +120,7 @@ niftiAuditTrailToExtension <- function(nim, workingDirectory=NULL,
                                      workingDirectory=workingDirectory,
                                      filename=filename, call=call)
     ## Serialize the XML to sec@edata
-    sec@edata <- nim@"trail"#saveXML(audit.trail(nim))
+    sec@edata <- nim@trail#saveXML(audit.trail(nim))
 
     ## Fix the esize to be congruent to 0 mod 16
     sec@esize <- nchar(sec@edata, type="bytes") + 8
