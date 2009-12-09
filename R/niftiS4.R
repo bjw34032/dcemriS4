@@ -192,8 +192,8 @@ setValidity("nifti", function(object) {
   if (length(indices) != length(dim(object@.Data)))
     retval <- c(retval, "dim[1]/img mismatch")
   ## 
-  if (object@"cal_min" != min(object@.Data) ||
-      object@"cal_max" != max(object@.Data))
+  if (object@"cal_min" != min(object@.Data, na.rm=TRUE) ||
+      object@"cal_max" != max(object@.Data, na.rm=TRUE))
     retval <- c(retval, "range(img) != c(cal_min,cal_max)")
   ## pixdim[0] is required when qform_code != 0
   if (object@"qform_code" != 0 && object@pixdim[1] == 0)
