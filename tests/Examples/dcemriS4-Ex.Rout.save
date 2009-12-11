@@ -112,13 +112,6 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.20.1)
 > aif <- buckley$input[xi]
 > aifparams <- orton.exp.lm(time, aif)
 Loading required package: minpack.lm
-
-This product includes software developed by the University of Chicago, as
-Operator of Argonne National Laboratory.
-
-See the LICENSE file distributed with the minpack.lm source code or
-http://www.netlib.org/minpack/disclaimer for the full license.
-
 > aifparams$D <- 1 
 > unlist(aifparams[1:4])
          AB         muB          AG         muG 
@@ -442,13 +435,6 @@ Loading required package: splines
 > aif <- buckley$input[xi]
 > aifparams <- orton.exp.lm(time, aif)
 Loading required package: minpack.lm
-
-This product includes software developed by the University of Chicago, as
-Operator of Argonne National Laboratory.
-
-See the LICENSE file distributed with the minpack.lm source code or
-http://www.netlib.org/minpack/disclaimer for the full license.
-
 > aifparams$D <- 1
 > fit.bayes.aif <- dcemri.bayes(img, time, mask, model="orton.exp",
 +                               aif="user", user=aifparams, nriters=1500)
@@ -562,13 +548,6 @@ http://www.netlib.org/minpack/disclaimer for the full license.
 +                             nriters=250, nlr=TRUE)
 Loading required package: splines
 Loading required package: minpack.lm
-
-This product includes software developed by the University of Chicago, as
-Operator of Argonne National Laboratory.
-
-See the LICENSE file distributed with the minpack.lm source code or
-http://www.netlib.org/minpack/disclaimer for the full license.
-
 > fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
 +                                 aif.observed=aif, nriters=250,
 +                                 nlr=TRUE)
@@ -622,13 +601,6 @@ http://www.netlib.org/minpack/disclaimer for the full license.
 > ## Generate AIF params using the orton.exp function from Buckley's AIF
 > aifparams <- orton.exp.lm(time, aif)
 Loading required package: minpack.lm
-
-This product includes software developed by the University of Chicago, as
-Operator of Argonne National Laboratory.
-
-See the LICENSE file distributed with the minpack.lm source code or
-http://www.netlib.org/minpack/disclaimer for the full license.
-
 > fit <- dcemri.lm(img, time, mask, model="orton.exp",
 +                  aif="user", user=aifparams)
 > 
@@ -727,13 +699,6 @@ http://www.netlib.org/minpack/disclaimer for the full license.
 +                 c(rep(1,3), length(b)))
 > ADC <- ADC.fast(signal, b, array(TRUE, rep(1,3)))
 Loading required package: minpack.lm
-
-This product includes software developed by the University of Chicago, as
-Operator of Argonne National Laboratory.
-
-See the LICENSE file distributed with the minpack.lm source code or
-http://www.netlib.org/minpack/disclaimer for the full license.
-
 > unlist(ADC) # text output
           S0            D 
 9.9858999893 0.0007337532 
@@ -796,13 +761,6 @@ http://www.netlib.org/minpack/disclaimer for the full license.
 > 
 > out <- R1.fast(signal, array(TRUE, rep(1,3)), alpha, TR)
 Loading required package: minpack.lm
-
-This product includes software developed by the University of Chicago, as
-Operator of Argonne National Laboratory.
-
-See the LICENSE file distributed with the minpack.lm source code or
-http://www.netlib.org/minpack/disclaimer for the full license.
-
 > unlist(out)
         M0        R10 
 99.5197735  0.6534572 
@@ -853,13 +811,6 @@ Loading required package: splines
 > mask <- array(rep(TRUE, 13), c(13,1,1))
 > fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
 Loading required package: minpack.lm
-
-This product includes software developed by the University of Chicago, as
-Operator of Argonne National Laboratory.
-
-See the LICENSE file distributed with the minpack.lm source code or
-http://www.netlib.org/minpack/disclaimer for the full license.
-
 > curve.lm <- kineticModel(time, list("ktrans"=fit.lm$ktrans[3],
 +                          "kep"=fit.lm$kep[3], "vp"=fit.lm$vp[3]))
 > ## Not run: curve.lm
@@ -1325,19 +1276,19 @@ Loading required package: splines
 > writeNIfTI(img.nifti, "test-nifti-image-uint8", verbose=TRUE)
   niftiExtension detected!
   niftiAuditTrail detected!
-  vox_offset = 928
+  vox_offset = 1216
   writing niftiExtension(s) at byte = 352
-  writing data at byte = 928
+  writing data at byte = 1216
 > ## These files should be viewable in, for example, FSLview
 > ## Make sure you adjust the min/max values for proper visualization
 > data <- readNIfTI("test-nifti-image-uint8", verbose=TRUE)
   fname = test-nifti-image-uint8
   files = test-nifti-image-uint8.nii.gz
   nii   = test-nifti-image-uint8.nii.gz
-  vox_offset = 928
+  vox_offset = 1216
   niftiExtension detected!
   seek(fid) = 352
-  seek(fid) = 928
+  seek(fid) = 1216
 > image(img.nifti) # image(img.nifti, z=16, plot.type="single")
 > image(data)      # image(data, z=16, zlim=range(data), plot.type="single")
 > abs.err <- abs(data - img.nifti)
@@ -1364,7 +1315,7 @@ Loading required package: splines
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  104.263 0.876 106.528 0 0 
+Time elapsed:  103.924 1.112 108.375 0 0 
 > grDevices::dev.off()
 null device 
           1 

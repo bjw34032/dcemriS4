@@ -277,8 +277,8 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
     nim@"data_type" <- datatypeString
     nim@"datatype" <- convert.datatype()[[datatypeString]]
     nim@"bitpix" <- convert.bitpix()[[datatypeString]]
-    nim@"cal_min" <- min(from)
-    nim@"cal_max" <- max(from)
+    nim@"cal_min" <- min(from, na.rm=TRUE)
+    nim@"cal_max" <- max(from, na.rm=TRUE)
     nim@"dim_" <- c(length(dim(from)), dim(from))
     if (length(nim@"dim_") < 8)
       nim@"dim_" <- c(nim@"dim_", rep(1, 8 - length(nim@"dim_")))
