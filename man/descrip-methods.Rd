@@ -18,11 +18,11 @@
   NIfTI or Analyze header.
 }
 \usage{
-\S4method{descrip}{nifti}(x)
-\S4method{descrip}{anlz}(x)
+\S4method{descrip}{nifti}(object)
+\S4method{descrip}{anlz}(object)
 }
 \arguments{
-  \item{x}{is an object of class \code{nifti} or \code{anlz}.}
+  \item{object}{is an object of class \code{nifti} or \code{anlz}.}
 }
 \section{Methods}{
   \describe{

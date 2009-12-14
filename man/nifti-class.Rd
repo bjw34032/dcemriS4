@@ -71,6 +71,7 @@
     \item{\code{intent_name}:}{Object of class \code{"character"}}
     \item{\code{magic}:}{Object of class \code{"character"}}
     \item{\code{extender}:}{Object of class \code{"vector"}}
+    \item{\code{reoriented}:}{Object of class \code{"logical"}}
   }
 }
 \section{Extends}{

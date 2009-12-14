@@ -16,11 +16,11 @@
 }
 \usage{
 \S4method{image}{nifti}(x, z=1, w=1, col=gray(0:64/64),
-      plot.type=c("multiple","single"), xlab="", ylab="",
-      axes=FALSE, ...)
+      plot.type=c("multiple","single"), zlim=NULL, xlab="",
+      ylab="", axes=FALSE, ...)
 \S4method{image}{anlz}(x, z=1, w=1, col=gray(0:64/64),
-      plot.type=c("multiple","single"), xlab="", ylab="",
-      axes=FALSE, ...)
+      plot.type=c("multiple","single"), zlim=NULL, xlab="",
+      ylab="", axes=FALSE, ...)
 }
 \arguments{
  \item{x}{is an object of class \code{"nifti"}.}
@@ -30,6 +30,8 @@
  \item{col}{is grayscale (by default).}
  \item{plot.type}{allows the choice between all slices being displayed,
    in a matrix (left-to-right, top-to-bottom), or a single slice.}
+ \item{zlim}{is set to \code{NULL} by default and utilizes the internal
+   image range.}
  \item{xlab}{is set to "" since all margins are set to zero.}
  \item{ylab}{is set to "" since all margins are set to zero.}
  \item{axes}{is set to \code{FALSE} since all margins are set to zero.}

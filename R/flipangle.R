@@ -116,7 +116,7 @@ setMethod("R1.fast", signature(flip="array"),
     cat("  Calculating R10 and M0...", fill=TRUE)
   for (k in 1:nvoxels) {
     fit <- E10.lm(flip.mat[k,], fangles.mat[k,],
-                  guess=c(1, mean(flip.mat[k,])))
+                  guess=c(1000, mean(flip.mat[k,])))
     if (fit$info == 1 || fit$info == 2 || fit$info == 3) {
       R10[k] <- log(fit$E10) / -TR
       M0[k] <- fit$m0
@@ -162,11 +162,11 @@ setMethod("CA.fast", signature(dynamic="array"),
   if (verbose)
     cat("  Calculating concentration...", fill=TRUE)
   theta <- dangle * pi/180
-  B <- (1 - exp(-TR * R1est$R10)) / (1 - cos(theta) * exp(-TR * R1est$R10))
   A <- sweep(sweep(dynamic, 1:3, dynamic[,,,1], "-"),
              1:3, R1est$M0, "/") / sin(theta)
-  R1t <- -(1/TR) * log((1 - sweep(A, 1:3, B, "+")) /
-                       (1 - cos(theta) * sweep(A, 1:3, B, "+")))
+  B <- (1 - exp(-TR * R1est$R10)) / (1 - cos(theta) * exp(-TR * R1est$R10))
+  AB <- sweep(A, 1:3, B, "+")
+  R1t <- -(1/TR) * log((1 - AB) / (1 - cos(theta) * AB))
   conc <- sweep(R1t, 1:3, R1est$R10, "-") / r1
 
   list(M0 = R1est$M0, R10 = R1est$R10, R1t = R1t, conc = conc)

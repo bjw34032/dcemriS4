@@ -14,19 +14,19 @@
   the FFT.
 }
 \usage{
-\S4method{ftm}{array}(input, mask, template, plot=FALSE, ...)
+\S4method{ftm}{array}(input, ...)
 }
 \arguments{
   \item{input}{is a four-dimensional array of signal intensities.}
-  \item{mask}{is a three-dimensional array of logical values (voxels
-    to be included are \code{TRUE}, and voxels to be excluded are
-    \code{FALSE}).}
-  \item{template}{is a three dimensional array (the same structure as
-    \code{mask}) that contains the signal intensities associated with
-    the reference data.}
-  \item{plot}{is a flag that determines if a plot of the motion
-    correction as a function of the fourth dimension (default =
-    \code{FALSE}).}
+%  \item{mask}{is a three-dimensional array of logical values (voxels
+%    to be included are \code{TRUE}, and voxels to be excluded are
+%    \code{FALSE}).}
+%  \item{template}{is a three dimensional array (the same structure as
+%    \code{mask}) that contains the signal intensities associated with
+%    the reference data.}
+%  \item{plot}{is a flag that determines if a plot of the motion
+%    correction as a function of the fourth dimension (default =
+%    \code{FALSE}).}
   \item{...}{Additional variables passed to the \code{plot} function.}
 }
 \details{
