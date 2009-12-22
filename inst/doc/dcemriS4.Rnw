@@ -149,9 +149,9 @@ operations that are performed on a NIfTI object will generate what we
 call an \emph{audit trail} that consists of an XML-based log.  Each
 log entry contains information not only about the function applied to
 the NIfTI object, but also various system-level information; e.g.,
-version of R, user name, date, time, etc.  When writing NIfTI-class
-objects to disk, the XML-based NIfTI extension is converted into plain
-text and saved appropriately.
+version of \proglang{R}, user name, date, time, etc.  When writing
+NIfTI-class objects to disk, the XML-based NIfTI extension is
+converted into plain text and saved appropriately.
 
 It should be noted that at this time objects that are written out in
 NIfTI format with extensions created by \pkg{decmriS4} will not be
@@ -159,7 +159,7 @@ properly read into FSLView
 (\url{http://www.fmrib.ox.ac.uk/fsl/fslview/}).  If you prefer to
 visualize multidimensional arrays in FSLView, please use the command
 
-<<NIfTI.audit.trail>>=
+<<NIfTI.audit.trail,eval=FALSE>>=
 options(NIfTI.audit.trail=FALSE)
 @
 
@@ -186,6 +186,8 @@ Successful execution of the command:
 mni.LR <- readNIfTI(system.file("nifti/avg152T1_LR_nifti.nii.gz", 
                                 package="dcemriS4"))
 mni.LR
+audit.trail(mni.LR)
+descrip(mni.LR)
 @ 
 <<figure1-png,echo=FALSE,results=hide>>=
 png(filename="avg152T1_LR_nifti.png", width=400, height=400, bg="black")
@@ -199,7 +201,13 @@ dev.off()
 
 produces a 4D array of the image data, with the default NIfTI axes,
 and is displayed on a $10{\times}10$ grid of images
-(Figure~\ref{fig:avg152T1_LR_nifti}).
+(Figure~\ref{fig:avg152T1_LR_nifti}).  Note, the \code{image} function
+has been modified to accept \code{nifti} and \code{anlz} objects and
+display them with minimal user input.  Two accessor functions are also
+shown here: \code{audit.trail} and \code{descrip}.  The former is used
+to access the XML-based audit trail that is stored as a NIfTI header
+extension and the latter is the name of a valid NIfTI header field
+(allowed to store up to 80 characters).
 
 \begin{figure}[!htbp]
   \centering
@@ -281,6 +289,28 @@ element) and the fourth dimension is time.
   \label{fig:ffd}
 \end{figure}
 
+An additional graphical display function has been added for
+\code{nifti} and \code{anlz} objects that allows orthographic displays.
+
+<<figure3b-png,echo=FALSE,results=hide>>=
+png(filename="ffd_orthographic.png", width=400, height=400, bg="black")
+@ 
+<<figure3b-code>>=
+orthographic(ffd)
+@ 
+<<figure3b-dev.off,echo=FALSE,results=hide>>=
+dev.off()
+@ 
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics{ffd_orthographic.png}
+  \caption{Orthographic display of the first volume from the
+  functional MRI dataset \texttt{filtered\_func\_data}.  By default
+  the mid-axial, mid-saggittal and mid-coronal planes are chosen.}
+  \label{fig:ffd-orthographic}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Statistic Image}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -307,14 +337,16 @@ dev.off()
 produces a 4D array of parameter estimates (essentially coefficients
 from a linear regression performed at each voxel) that may be
 overlayed on the original data for anatomical reference
-(Figure~\ref{fig:zstat1}).
+(Figure~\ref{fig:zstat1}).  The function \code{overlay} extends the
+capabilities of displaying ``images'' by allowing one to add a
+statistical image to an underlying structural image.
 
 \begin{figure}[!htbp]
   \centering
   \includegraphics{ffd_zstat1.png}
   \caption{Axial slices of the functional MRI data with 
   with the statistical image overlayed.  The test statistics were
-  thresholded at $|Z|\geq{4}$.}
+  thresholded at $|Z|\geq{5}$.}
   \label{fig:zstat1}
 \end{figure}
 
@@ -698,7 +730,7 @@ models based on statistical summaries of the kinetic parameters over
 the ROI per subject per visit.  An alternative to this traditional
 approach is to analyze an entire study using a Bayesian hierarchical
 model \citep{sch-etal:hierarchical}, available in the software project
-\pkg{PILFER} (\url{pilfer.sourceforge.net}) .
+\pkg{PILFER} (\url{pilfer.sourceforge.net}).
 
 One may also question the rationale for hypothesis testing in only one
 kinetic parameter.  Preliminary work has been performed in looking at
@@ -727,7 +759,10 @@ diffusion coefficient} (ADC) $D$.  For completeness, $S_0$ is the
 signal intensity without the diffusion weighting, $S$ is the signal
 with the gradient applied, $\gamma$ is the gyromagnetic ratio, $G$ is
 the strength of the gradient pulse, $\delta$ is the duration of the
-gradient pulse and $\Delta$ is the time between the two pulses.
+gradient pulse and $\Delta$ is the time between the two pulses.  The
+functions \code{ADC.fast} and \code{adc.lm} perform parameter
+estimation using a similar interface to kinetic parameter estimation
+previously introduced for DCE-MRI.
 
 DWI is under rapid development as an oncology imaging biomarker
 \citep{che-etal:diffusion,koh-col:DW-MRI}.  The diffusion of water
