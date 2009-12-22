@@ -116,7 +116,7 @@ setMethod("R1.fast", signature(flip="array"),
     cat("  Calculating R10 and M0...", fill=TRUE)
   for (k in 1:nvoxels) {
     fit <- E10.lm(flip.mat[k,], fangles.mat[k,],
-                  guess=c(1000, mean(flip.mat[k,])))
+                  guess=c(1, mean(flip.mat[k,])))
     if (fit$info == 1 || fit$info == 2 || fit$info == 3) {
       R10[k] <- log(fit$E10) / -TR
       M0[k] <- fit$m0

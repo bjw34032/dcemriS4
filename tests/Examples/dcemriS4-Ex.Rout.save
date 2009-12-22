@@ -707,14 +707,9 @@ Loading required package: minpack.lm
 > 
 > out <- R1.fast(signal, array(TRUE, rep(1,3)), alpha, TR)
 Loading required package: minpack.lm
-Warning in log(fit$E10) : NaNs produced
-Warning in min(from, na.rm = TRUE) :
-  no non-missing arguments to min; returning Inf
-Warning in max(from, na.rm = TRUE) :
-  no non-missing arguments to max; returning -Inf
 > unlist(out)
-      M0      R10 
-7.095137      NaN 
+        M0        R10 
+99.5197735  0.6534572 
 > 
 > par(mfrow=c(1,1))
 > plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
@@ -1276,7 +1271,7 @@ Loading required package: splines
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  105.465 0.517 107.775 0 0 
+Time elapsed:  105.382 0.53 107.843 0 0 
 > grDevices::dev.off()
 null device 
           1 

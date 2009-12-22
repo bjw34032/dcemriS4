@@ -6,7 +6,7 @@
 % \VignetteIndexEntry{dcemriS4}
 % \VignetteDepends{dcemriS4}
 % \VignettePackage{dcemriS4}
-% \VignetteKeywords{contrast,dynamic,ehanced,imaging,magnetic,resonance,S4}
+% \VignetteKeywords{contrast,diffusion,dynamic,ehanced,imaging,magnetic,resonance,S4}
 \documentclass[11pt,a4paper]{article}
 \usepackage{a4wide,amsmath,color,fancyvrb,graphicx,natbib,thumbpdf}
 \definecolor{Red}{rgb}{0.7,0,0}
@@ -135,7 +135,39 @@ available to the user and every attempt is made to ensure that the
 information from the multi-dimensional array is in agreement with the
 header values.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Audit Trail}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Following on from the S4 implementation of both the NIfTI and Analyze
+data formats, the ability to extend the NIfTI data format header is
+utilized in the \pkg{dcemriS4} package.  First, extensions are
+properly handled when reading and writing NIfTI data.  Second, users
+are allowed to add extensions to newly-created NIfTI objects using
+various functions and the \pkg{XML} package.  Third, by default all
+operations that are performed on a NIfTI object will generate what we
+call an \emph{audit trail} that consists of an XML-based log.  Each
+log entry contains information not only about the function applied to
+the NIfTI object, but also various system-level information; e.g.,
+version of R, user name, date, time, etc.  When writing NIfTI-class
+objects to disk, the XML-based NIfTI extension is converted into plain
+text and saved appropriately.
+
+It should be noted that at this time objects that are written out in
+NIfTI format with extensions created by \pkg{decmriS4} will not be
+properly read into FSLView
+(\url{http://www.fmrib.ox.ac.uk/fsl/fslview/}).  If you prefer to
+visualize multidimensional arrays in FSLView, please use the command
+
+<<NIfTI.audit.trail>>=
+options(NIfTI.audit.trail=FALSE)
+@
+
+to turn off the ``audit trail'' option in \pkg{dcemriS4}.  We are
+actively working to better understand how FSLView interprets NIfTI
+header extensions with the goal of full integration.  An alternative
+viewing platform is available via MRIcroN
+(\url{http://www.sph.sc.edu/comd/rorden/MRicron/}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Examples}
@@ -673,14 +705,49 @@ kinetic parameter.  Preliminary work has been performed in looking at
 the joint response to treatment of both $\ktrans$ and $\kep$ in
 DCE-MRI by \cite{oco-etal:fPCA}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Diffusion Weighted Imaging}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Diffusion weighted imaging (DWI), also known as diffusion-weighted MRI
+(DW-MRI), is a technique that measures the Brownian motion of water
+molecules to estimate the diffusion characteristics of tissue \emph{in
+vivo} \citep{mos-etal:diffusion,bux:introduction}.  Contrast is
+generated when the diffusion of molecules in tissue prefer a specific
+direction in three-dimenisonal space (anisotropic diffusion) relative
+to any particular direction (isotropic diffusion).  Using the
+Stejskal--Tanner equation
+\begin{equation*}
+  \frac{S}{S_0} =
+  \exp\left(-\gamma^2G^2\delta^2(\Delta-\delta/3)D\right) =
+  \exp\left(-bD\right),
+\end{equation*}
+one may solve for the unknown diffusion to obtain the \emph{apparent
+diffusion coefficient} (ADC) $D$.  For completeness, $S_0$ is the
+signal intensity without the diffusion weighting, $S$ is the signal
+with the gradient applied, $\gamma$ is the gyromagnetic ratio, $G$ is
+the strength of the gradient pulse, $\delta$ is the duration of the
+gradient pulse and $\Delta$ is the time between the two pulses.
+
+DWI is under rapid development as an oncology imaging biomarker
+\citep{che-etal:diffusion,koh-col:DW-MRI}.  The diffusion of water
+without restrictions is about
+$3.0{\times}10^{-3}\;\text{mm}^2/\text{s}$.  Once the ADC is estimated
+in the tumor of interest at baseline, treatment response may be
+assessed at subsequent time points.  The most appropriate timings
+depend on both the type of tumor and treatment regime.  Observing an
+decrease in diffusivity, via a decrease in the ADC values
+post-treatment, may be a result of cell swelling after ititial
+chemotherapy or radiotherapy followed by an increase in diffusivity,
+via an increase in the ADC values, from cell necrosis and lysis.  A
+decrease in ADC values may be observed directly through tumor
+apoptosis after treatment.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \bibliography{dcemriS4}
 \bibliographystyle{chicago}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
