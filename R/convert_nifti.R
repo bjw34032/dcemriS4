@@ -264,7 +264,7 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
     nim <- value
   }
   if (is(from, "anlz")) {
-    nim <- anlz.as.nifti(from,value)
+    nim <- anlz.as.nifti(from, value)
   } else if (is.array(from)) {
     ## Determine a sensible datatype
     dataClass <- class(from[1])
@@ -309,26 +309,3 @@ as.nifti <- function(from, value=NULL, verbose=FALSE) {
   return(nim)
 }
 
-############################################################################
-## as("anlz", "nifti")
-############################################################################
-
-setAs("anlz", "nifti",
-      function(from) { as.nifti(from) },
-      function(from, value) { as.nifti(from, value) } )
-
-############################################################################
-## as("array", "nifti")
-############################################################################
-
-setAs("array", "nifti",
-      function(from) { as.nifti(from) },
-      function(from, value) { as.nifti(from, value) } )
-
-############################################################################
-## as("list", "nifti")
-############################################################################
-
-setAs("list", "nifti",
-      function(from) { as.nifti(from) },
-      function(from, value) { as.nifti(from, value) } )

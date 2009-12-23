@@ -496,3 +496,26 @@ quaternion2rotation <- function(b, c, d) {
   return(R)
 }
 
+############################################################################
+## as("anlz", "nifti")
+############################################################################
+
+setAs("anlz", "nifti",
+      function(from) { as.nifti(from) },
+      function(from, value) { as.nifti(from, value) } )
+
+############################################################################
+## as("array", "nifti")
+############################################################################
+
+setAs("array", "nifti",
+      function(from) { as.nifti(from) },
+      function(from, value) { as.nifti(from, value) } )
+
+############################################################################
+## as("list", "nifti")
+############################################################################
+
+setAs("list", "nifti",
+      function(from) { as.nifti(from) },
+      function(from, value) { as.nifti(from, value) } )

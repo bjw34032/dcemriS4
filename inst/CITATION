@@ -1,11 +1,11 @@
-citHeader("To cite package 'dcemri' in publications use:")
+citHeader("To cite package 'dcemriS4' in publications use:")
 
-desc <- packageDescription("dcemri")
+desc <- packageDescription("dcemriS4")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
 vers <- paste("R package version", desc$Version)
 
 citEntry(entry="Manual",
-         title = "dcemri: A Package for Medical Image Analysis",
+         title = "dcemriS4: A Package for Medical Image Analysis",
          author = personList(as.person("Brandon Whitcher"),
                              as.person("Volker J. Schmid")),
          year = year,
@@ -14,5 +14,5 @@ citEntry(entry="Manual",
          textVersion =
          paste("Brandon Whitcher and Volker J. Schmid (",
                year,
-               "). dcemri: A Package for Medical Image Analysis. ",
+               "). dcemriS4: A Package for Medical Image Analysis. ",
                vers, ".", sep=""))

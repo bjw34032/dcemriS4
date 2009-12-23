@@ -5,7 +5,7 @@
 
 \name{coerce-methods}
 \docType{methods}
-%\alias{coerce-methods}
+\alias{coerce-methods}
 \alias{coerce,array,nifti-method}
 \alias{as,array,nifti-method}
 \alias{coerce,list,nifti-method}
