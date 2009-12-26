@@ -45,9 +45,7 @@ read.analyze.content(fname, gzipped = TRUE, verbose = FALSE, warn = -1)
 avg152T1 <- readANALYZE(system.file("nifti/avg152T1.img.gz",
                                     package="dcemriS4"))
 image(avg152T1)
-\dontrun{
 orthographic(avg152T1)
-}
 }
 \author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>,
   Volker Schmid <\email{volkerschmid@users.sourceforge.net}>}

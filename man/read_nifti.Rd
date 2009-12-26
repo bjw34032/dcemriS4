@@ -64,6 +64,7 @@ read.nifti.content(fname, onefile=TRUE, gzipped=TRUE, verbose=FALSE,
 nim <- readNIfTI(system.file("nifti/avg152T1_LR_nifti.nii.gz",
                              package="dcemriS4")[1])
 image(nim)
+orthographic(nim)
 }
 \author{
   Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>,
