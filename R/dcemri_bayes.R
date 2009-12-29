@@ -29,7 +29,7 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $Id$
+## $Id: $
 ##
 #############################################################################
 ## setGeneric("dcemri.bayes")
@@ -106,6 +106,22 @@ setMethod("dcemri.bayes", signature(conc="array"),
   ## output: list with ktrans, kep, ve, std.error of ktrans and kep
   ##         (ktranserror and keperror), samples if samples=TRUE
   ##
+
+  extract.samples <- function(sample, I, J, K, NRI) {
+    A <- array(NA, c(I,J,K,NRI))
+    count <- -1
+    for (k in 1:K) {
+      for (j in 1:J) {
+        for (i in 1:I) {
+          if (img.mask[i,j,k]) {
+            count <- count + 1
+            A[i,j,k,] <- sample[(1:NRI) + count*NRI]
+          }
+        }
+      }
+    }
+    return(A)
+  }
 
   if (nriters < thin)
     stop("Please check settings for nriters")
@@ -273,21 +289,6 @@ setMethod("dcemri.bayes", signature(conc="array"),
   sigma2.out <- A
 
   if (samples) {
-    extract.samples <- function(sample, I, J, K, NRI) {
-      A <- array(NA, c(I,J,K,NRI))
-      count <- -1
-  	for (k in 1:K) {
-	 for (j in 1:J) {
-          for (i in 1:I) {
-	    if (img.mask[i,j,k]) {
-	      count <- count + 1
-	      A[i,j,k,] <- sample[(1:NRI) + count*NRI]
-	    }
-	  }
-	}
-      }
-      return(A)
-    }
     NRI <- length(ktrans.samples) / length(ktrans$par)
     ktrans.out <- list(par=ktrans.out$par,
                        error=ktrans.out$error,

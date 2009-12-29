@@ -23,7 +23,7 @@ Type 'q()' to quit R.
 > library('dcemriS4')
 Loading required package: XML
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.20.1)
+dcemriS4: A Package for Medical Image Analysis (version = 0.20.2)
 
 > 
 > assign(".oldSearch", search(), pos = 'CheckExEnv')
@@ -381,8 +381,8 @@ Loading required package: minpack.lm
 +      xlab=expression(paste("True ", K^{trans})),
 +      ylab=expression(paste("Estimated ", K^{trans}, " (Bayesian)")))
 > points(breast$ktrans, fit.bayes.aif$ktrans, pch=2)
-> abline(0, 1, lwd=1.5, col=2)
-> legend("right", c("orton.exp", "fritz.hansen"), pch=1:2)
+> abline(0, 1, lwd=1.5, col="red")
+> legend("right", c("extended/fritz.hansen","orton.exp/user"), pch=1:2)
 > 
 > cbind(breast$ktrans, fit.bayes$ktrans[,,1], fit.bayes.aif$ktrans[,,1])
              [,1]      [,2]       [,3]
@@ -414,8 +414,8 @@ Loading required package: minpack.lm
 > ##D abline(0, 1, lwd=1.5, col="red")
 > ##D legend("bottomright", c("Bayesian Estimation (fritz-hansen)",
 > ##D                         "Bayesian Estimation (orton.exp)",
-> ##D                         "Levenburg-Marquardt (fritz.hansen)",
-> ##D                         "Levenburg-Marquardt (orton.exp)"), pch=1:4)
+> ##D                         "Levenburg-Marquardt (weinmann/fritz.hansen)",
+> ##D                         "Levenburg-Marquardt (orton.exp/user)"), pch=1:4)
 > ## End(Not run)
 > 
 > 
@@ -532,39 +532,78 @@ Loading required package: minpack.lm
 > 
 > data("buckley")
 > 
+> ## Empirical arterial input function
+> img <- array(t(breast$data), c(13,1,1,301))
+> time <- buckley$time.min
+> aif <- buckley$input
+> mask <- array(TRUE, dim(img)[1:3])
+> 
+> ## Estimate kinetic parameters directly from Buckley's empirical AIF
+> fit1 <- dcemri.lm(img, time, mask, model="weinmann", aif="empirical",
++                   user=aif)
+Loading required package: minpack.lm
+> fit2 <- dcemri.lm(img, time, mask, model="extended", aif="empirical",
++                   user=aif)
+> 
 > ## Set up breast data for dcemri
-> xi <- seq(5, 300, by=5)
-> img <- array(t(breast$data)[,xi], c(13,1,1,60))
+> xi <- seq(5, 300, by=3)
+> img <- array(t(breast$data)[,xi], c(13,1,1,length(xi)))
 > time <- buckley$time.min[xi]
 > aif <- buckley$input[xi]
-> mask <- array(TRUE, dim(img)[1:3])
 > 
 > ## Generate AIF params using the orton.exp function from Buckley's AIF
 > aifparams <- orton.exp.lm(time, aif)
-Loading required package: minpack.lm
-> fit <- dcemri.lm(img, time, mask, model="orton.exp",
+> fit3 <- dcemri.lm(img, time, mask, model="orton.exp",
 +                  aif="user", user=aifparams)
 > 
 > ## Scatterplot comparing true and estimated Ktrans values
-> plot(breast$ktrans, fit$ktrans, xlim=c(0,0.75), ylim=c(0,0.75),
+> plot(breast$ktrans, fit1$ktrans, xlim=c(0,0.75), ylim=c(0,0.75),
 +      xlab=expression(paste("True ", K^{trans})),
 +      ylab=expression(paste("Estimated ", K^{trans})))
-> abline(0, 1, lwd=1.5, col="red")
-> cbind(breast$ktrans, fit$ktrans[,,1])
-             [,1]       [,2]
- [1,] 0.145599052 0.55271993
- [2,] 0.218344559 0.50276669
- [3,] 0.250521815 0.48807358
- [4,] 0.268391926 0.48022320
- [5,] 0.279725126 0.47523282
- [6,] 0.009912791 0.09056846
- [7,] 0.146992146 0.47381970
- [8,] 0.328712966 0.49707307
- [9,] 0.387767110 0.50434946
-[10,] 0.250521815 0.45796930
-[11,] 0.250521815 0.47255539
-[12,] 0.250521815 0.50524265
-[13,] 0.250521815 0.52423611
+> points(breast$ktrans, fit2$ktrans, pch=2)
+> points(breast$ktrans, fit3$ktrans, pch=3)
+> abline(0, 1, lwd=1.5, col=2)
+> legend("bottomright", c("weinmann/empirical", "extended/empirical",
++                         "orton.exp/user"), pch=1:3)
+> cbind(breast$ktrans, fit1$ktrans[,,1], fit2$ktrans[,,1], fit3$ktrans[,,1])
+             [,1]      [,2]       [,3]       [,4]
+ [1,] 0.145599052 0.1678452 0.16592766 0.55254858
+ [2,] 0.218344559 0.2658135 0.24219283 0.50264592
+ [3,] 0.250521815 0.3129246 0.27084876 0.48798630
+ [4,] 0.268391926 0.3403434 0.28533489 0.48014078
+ [5,] 0.279725126 0.3582436 0.29400920 0.47516096
+ [6,] 0.009912791 0.7331343 0.01475741 0.09028425
+ [7,] 0.146992146 0.2043299 0.15691601 0.47338408
+ [8,] 0.328712966 0.3961534 0.36284044 0.49722427
+ [9,] 0.387767110 0.4608153 0.43840557 0.50468088
+[10,] 0.250521815 0.2491542 0.24915417 0.45785055
+[11,] 0.250521815 0.2801024 0.25820501 0.47252748
+[12,] 0.250521815 0.3476502 0.28871480 0.50510378
+[13,] 0.250521815 0.3833836 0.31198212 0.52406087
+> 
+> ## Scatterplot comparing true and estimated Ktrans values
+> plot(breast$vp, fit1$vp, type="n", xlim=c(0,0.15), ylim=c(0,0.15),
++      xlab=expression(paste("True ", v[p])),
++      ylab=expression(paste("Estimated ", v[p])))
+> points(breast$vp, fit2$vp, pch=2)
+> points(breast$vp, fit3$vp, pch=3)
+> abline(0, 1, lwd=1.5, col=2)
+> legend("bottomright", c("extended/empirical","orton.exp/user"), pch=2:3)
+> cbind(breast$vp, fit2$vp[,,1], fit3$vp[,,1])
+        [,1]         [,2]         [,3]
+ [1,] 0.0600 1.840406e-03 1.371433e-03
+ [2,] 0.0600 1.754635e-02 1.710094e-02
+ [3,] 0.0600 2.818906e-02 2.771867e-02
+ [4,] 0.0600 3.486796e-02 3.447377e-02
+ [5,] 0.0600 3.933510e-02 3.905023e-02
+ [6,] 0.0600 5.451223e-02 5.395206e-02
+ [7,] 0.0600 3.971423e-02 3.895470e-02
+ [8,] 0.0600 1.899215e-02 1.873555e-02
+ [9,] 0.0600 1.138390e-02 1.112874e-02
+[10,] 0.0001 1.367816e-14 4.060747e-18
+[11,] 0.0300 1.521879e-02 1.482672e-02
+[12,] 0.0900 3.789188e-02 3.776701e-02
+[13,] 0.1200 4.396546e-02 4.480795e-02
 > 
 > 
 > 
@@ -1090,9 +1129,7 @@ Class:   numeric   numeric character
 > avg152T1 <- readANALYZE(system.file("nifti/avg152T1.img.gz",
 +                                     package="dcemriS4"))
 > image(avg152T1)
-> ## Not run: 
-> ##D orthographic(avg152T1)
-> ## End(Not run)
+> orthographic(avg152T1)
 > 
 > 
 > 
@@ -1111,6 +1148,7 @@ Class:   numeric   numeric character
 > nim <- readNIfTI(system.file("nifti/avg152T1_LR_nifti.nii.gz",
 +                              package="dcemriS4")[1])
 > image(nim)
+> orthographic(nim)
 > 
 > 
 > 
@@ -1271,7 +1309,7 @@ Loading required package: splines
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  105.382 0.53 107.843 0 0 
+Time elapsed:  110.285 0.547 113.464 0 0 
 > grDevices::dev.off()
 null device 
           1 

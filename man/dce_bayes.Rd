@@ -129,8 +129,8 @@ plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
      xlab=expression(paste("True ", K^{trans})),
      ylab=expression(paste("Estimated ", K^{trans}, " (Bayesian)")))
 points(breast$ktrans, fit.bayes.aif$ktrans, pch=2)
-abline(0, 1, lwd=1.5, col=2)
-legend("right", c("orton.exp", "fritz.hansen"), pch=1:2)
+abline(0, 1, lwd=1.5, col="red")
+legend("right", c("extended/fritz.hansen","orton.exp/user"), pch=1:2)
 
 cbind(breast$ktrans, fit.bayes$ktrans[,,1], fit.bayes.aif$ktrans[,,1])
 
@@ -148,8 +148,8 @@ points(breast$ktrans, fit.lm.aif$ktrans, pch=4)
 abline(0, 1, lwd=1.5, col="red")
 legend("bottomright", c("Bayesian Estimation (fritz-hansen)",
                         "Bayesian Estimation (orton.exp)",
-                        "Levenburg-Marquardt (fritz.hansen)",
-                        "Levenburg-Marquardt (orton.exp)"), pch=1:4)
+                        "Levenburg-Marquardt (weinmann/fritz.hansen)",
+                        "Levenburg-Marquardt (orton.exp/user)"), pch=1:4)
 }
 }
 \author{Volker Schmid <\email{volkerschmid@users.sourceforge.net}>}

@@ -41,13 +41,20 @@
   }
   \item{aif}{is a character string that identifies the parameters of the
     type of arterial input function (AIF) used with the above model.
-    Acceptable values are: \code{tofts.kermode} (default) or
-    \code{fritz.hansen} for the \code{weinmann} and \code{extended}
-    models; \code{orton.exp} (default) and \code{user} for the
-    \code{orton.exp} model; \code{orton.cos} (default) and \code{user}
-    for the \code{orton.cos} model.  All AIF models set the parametric
-    form and parameter values -- except \code{user} where a set of
-    user-defined parameter values are allowed.
+    Acceptable values are:
+    \itemize{
+      \item{\code{tofts.kermode} (default), \code{fritz.hansen} or
+	\dQuote{empirical} for the \code{weinmann} and \code{extended}
+	models}
+      \item{\code{orton.exp} (default) and \code{user} for the
+	\code{orton.exp} model}
+      \item{\code{orton.cos} (default) and \code{user} for the
+	\code{orton.cos} model.}
+    }
+    All AIF models set the parametric form and parameter values --
+    except \code{user}, where a set of user-defined parameter values are
+    allowed, and \code{empirical}, where a vector of values that fully
+    characterize the empirical AIF.
   }
   \item{nprint}{is an integer, that enables controlled printing of
     iterates if it is positive.  In this case, estimates of \code{par}
@@ -138,24 +145,49 @@
 \examples{
 data("buckley")
 
+## Empirical arterial input function
+img <- array(t(breast$data), c(13,1,1,301))
+time <- buckley$time.min
+aif <- buckley$input
+mask <- array(TRUE, dim(img)[1:3])
+
+## Estimate kinetic parameters directly from Buckley's empirical AIF
+fit1 <- dcemri.lm(img, time, mask, model="weinmann", aif="empirical",
+                  user=aif)
+fit2 <- dcemri.lm(img, time, mask, model="extended", aif="empirical",
+                  user=aif)
+
 ## Set up breast data for dcemri
-xi <- seq(5, 300, by=5)
-img <- array(t(breast$data)[,xi], c(13,1,1,60))
+xi <- seq(5, 300, by=3)
+img <- array(t(breast$data)[,xi], c(13,1,1,length(xi)))
 time <- buckley$time.min[xi]
 aif <- buckley$input[xi]
-mask <- array(TRUE, dim(img)[1:3])
 
 ## Generate AIF params using the orton.exp function from Buckley's AIF
 aifparams <- orton.exp.lm(time, aif)
-fit <- dcemri.lm(img, time, mask, model="orton.exp",
+fit3 <- dcemri.lm(img, time, mask, model="orton.exp",
                  aif="user", user=aifparams)
 
 ## Scatterplot comparing true and estimated Ktrans values
-plot(breast$ktrans, fit$ktrans, xlim=c(0,0.75), ylim=c(0,0.75),
+plot(breast$ktrans, fit1$ktrans, xlim=c(0,0.75), ylim=c(0,0.75),
      xlab=expression(paste("True ", K^{trans})),
      ylab=expression(paste("Estimated ", K^{trans})))
-abline(0, 1, lwd=1.5, col="red")
-cbind(breast$ktrans, fit$ktrans[,,1])
+points(breast$ktrans, fit2$ktrans, pch=2)
+points(breast$ktrans, fit3$ktrans, pch=3)
+abline(0, 1, lwd=1.5, col=2)
+legend("bottomright", c("weinmann/empirical", "extended/empirical",
+                        "orton.exp/user"), pch=1:3)
+cbind(breast$ktrans, fit1$ktrans[,,1], fit2$ktrans[,,1], fit3$ktrans[,,1])
+
+## Scatterplot comparing true and estimated Ktrans values
+plot(breast$vp, fit1$vp, type="n", xlim=c(0,0.15), ylim=c(0,0.15),
+     xlab=expression(paste("True ", v[p])),
+     ylab=expression(paste("Estimated ", v[p])))
+points(breast$vp, fit2$vp, pch=2)
+points(breast$vp, fit3$vp, pch=3)
+abline(0, 1, lwd=1.5, col=2)
+legend("bottomright", c("extended/empirical","orton.exp/user"), pch=2:3)
+cbind(breast$vp, fit2$vp[,,1], fit3$vp[,,1])
 }
 \author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>,
   Volker Schmid <\email{volkerschmid@users.sourceforge.net}>}
