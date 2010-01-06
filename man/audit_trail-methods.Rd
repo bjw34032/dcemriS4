@@ -26,6 +26,17 @@
   }
 }
 \author{Andrew Thornton \email{zeripath@users.sourceforge.net}}
-%\examples{}
+\examples{
+\dontrun{
+## Sternberg Item Recognition Paradigm (SIRP) fMRI Study + XML Extension Data
+URL <- "http://nifti.nimh.nih.gov/nifti-1/data/sirp_fmri_study_ver4.tar.gz"
+download.file(URL, dest="sirp.tar.gz", method="wget", quiet=FALSE,
+              mode="wb", cacheOK=FALSE)
+fnames <- system("tar zxvf sirp.tar.gz", intern=TRUE)
+sirp <- readNIfTI(fnames[1]) # newsirp_final_XML.nii
+sirp.xml <- xmlTreeParse(sirp@"extensions"[[1]]@"edata", asText=TRUE)
+sirp.xml
+}
+}
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}
