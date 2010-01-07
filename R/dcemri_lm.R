@@ -30,7 +30,7 @@
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
 ##
-## $Id: $
+## $Id$
 ##
 
 #############################################################################
@@ -150,7 +150,7 @@ setMethod("dcemri.lm", signature(conc="array"),
   }
 
   model.weinmann.empirical <- function(time, th1, th3, aif) {
-    tsec <- seq(0, ceiling(max(time*60)), by=1)
+    tsec <- seq(min(time*60), ceiling(max(time*60)), by=1)
     aif.new <- approx(time*60, aif, tsec)$y
     erg <- approx(tsec,
                   exp.conv(aif.new, exp(th1)/60, exp(th3)/60), time*60)$y
@@ -159,7 +159,7 @@ setMethod("dcemri.lm", signature(conc="array"),
   }
 
   model.extended.empirical <- function(time, th0, th1, th3, aif) {
-    tsec <- seq(0, ceiling(max(time*60)), by=1)
+    tsec <- seq(min(time*60), ceiling(max(time*60)), by=1)
     aif.new <- approx(time*60, aif, tsec)$y
     erg <- approx(tsec, exp(th0) * aif.new +
                   exp.conv(aif.new, exp(th1)/60, exp(th3)/60), time*60)$y
@@ -235,44 +235,44 @@ setMethod("dcemri.lm", signature(conc="array"),
          stop("AIF parameters must be specified!"))
   
   nvoxels <- sum(img.mask)
-  mod <- model
-  switch(mod,
+  ## mod <- model
+  switch(model,
          weinmann = {
            if (aif != "empirical") {
-             model <- model.weinmann
+             ## model <- model.weinmann
              func <- function(theta, signal, time, ...)
-               signal - model(time, theta[1], theta[2])
+               signal - model.weinmann(time, theta[1], theta[2])
            } else {
-             model <- model.weinmann.empirical
+             ## model <- model.weinmann.empirical
              func <- function(theta, signal, time, ...)
-               signal - model(time, theta[1], theta[2], Cp)
+               signal - model.weinmann.empirical(time, theta[1], theta[2], Cp)
            }
            guess <- c("th1"=0, "th3"=0.1)
          },
          extended = {
            if (aif != "empirical") {
-             model <- model.extended
+             ## model <- model.extended
              func <- function(theta, signal, time, ...)
-               signal - model(time, theta[1], theta[2], theta[3])
+               signal - model.extended(time, theta[1], theta[2], theta[3])
            } else {
-             model <- model.extended.empirical
+             ##model <- model.extended.empirical
              func <- function(theta, signal, time, ...)
-               signal - model(time, theta[1], theta[2], theta[3], Cp)
+               signal - model.extended.empirical(time, theta[1], theta[2], theta[3], Cp)
            }
            guess <- c("th0"=-1, "th1"=0, "th3"=0.1)
            Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
         },
          orton.exp = {
-           model <- model.orton.exp
+           ## model <- model.orton.exp
            func <- function(theta, signal, time, ...)
-             signal - model(time, theta[1], theta[2], theta[3], ...)
+             signal - model.orton.exp(time, theta[1], theta[2], theta[3], ...)
            guess <- c("th0"=-1, "th1"=0, "th3"=0.1)
            Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
          },
          orton.cos = {
-           model <- model.orton.cos
+           ## model <- model.orton.cos
            func <- function(theta, signal, time, ...)
-             signal - model(time, theta[1], theta[2], theta[3], ...)
+             signal - model.orton.cos(time, theta[1], theta[2], theta[3], ...)
            guess <- c("th0"=-1, "th1"=0, "th3"=0.1)
            Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
          },
@@ -307,7 +307,7 @@ setMethod("dcemri.lm", signature(conc="array"),
       ktrans$error[k] <- sqrt(fit$hessian["th1","th1"])
       kep$error[k] <- sqrt(fit$hessian["th3","th3"])
       sse[k] <- fit$deviance
-      if (mod %in% c("extended","orton.exp","orton.cos")) {
+      if (model %in% c("extended","orton.exp","orton.cos")) {
         Vp$par[k] <- exp(fit$par["th0"])
         Vp$error[k] <- sqrt(fit$hessian["th0","th0"])
       }
@@ -323,7 +323,7 @@ setMethod("dcemri.lm", signature(conc="array"),
   A[img.mask] <- kep$par
   B[img.mask] <- kep$error
   kep.out <- list(par=A, error=B)
-  if (mod %in% c("extended","orton.exp","orton.cos")) {
+  if (model %in% c("extended","orton.exp","orton.cos")) {
     A <- B <- array(NA, c(I,J,K))
     A[img.mask] <- Vp$par
     B[img.mask] <- Vp$error
@@ -333,7 +333,7 @@ setMethod("dcemri.lm", signature(conc="array"),
   A[img.mask] <- sse
   sse.out <- A
   
-  if (mod %in% c("extended","orton.exp","orton.cos"))
+  if (model %in% c("extended","orton.exp","orton.cos"))
     list(ktrans=ktrans.out$par, kep=kep.out$par, ktranserror=ktrans.out$error,
          keperror=kep.out$error, ve=ktrans.out$par/kep.out$par, vp=Vp.out$par,
          vperror=Vp.out$error, sse=sse.out, time=time)
