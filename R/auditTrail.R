@@ -34,7 +34,7 @@
 
 dcemri.info <- function(type) {
   switch(type,
-         ecode = 1002,
+         ecode = 6,
          namespace = "http://www.dcemri.org/namespaces/audit-trail/1.0")
 }
 
