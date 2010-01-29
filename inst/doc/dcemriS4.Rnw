@@ -1,7 +1,7 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
 %
-% $Id: $
+% $Id$
 
 % \VignetteIndexEntry{dcemriS4}
 % \VignetteDepends{dcemriS4}
@@ -151,23 +151,23 @@ log entry contains information not only about the function applied to
 the NIfTI object, but also various system-level information; e.g.,
 version of \proglang{R}, user name, date, time, etc.  When writing
 NIfTI-class objects to disk, the XML-based NIfTI extension is
-converted into plain text and saved appropriately.
-
-It should be noted that at this time objects that are written out in
-NIfTI format with extensions created by \pkg{decmriS4} will not be
-properly read into FSLView
-(\url{http://www.fmrib.ox.ac.uk/fsl/fslview/}).  If you prefer to
-visualize multidimensional arrays in FSLView, please use the command
+converted into plain text and saved appropriately (ecode = 6).  The
+user may control the tracking of data manipulation via the audit trail
+using a global option.  For example please use the command
 
 <<NIfTI.audit.trail,eval=FALSE>>=
 options(NIfTI.audit.trail=FALSE)
 @
 
-to turn off the ``audit trail'' option in \pkg{dcemriS4}.  We are
-actively working to better understand how FSLView interprets NIfTI
-header extensions with the goal of full integration.  An alternative
-viewing platform is available via MRIcroN
-(\url{http://www.sph.sc.edu/comd/rorden/MRicron/}).
+to turn off the ``audit trail'' option in \pkg{dcemriS4}.
+
+Interactive visualization of multidimensional arrays, stored in NIfTI
+or Analyze format, is best performed outside of \proglang{R} at this
+point in time.  Popular viewers, especially for brain imaging, are
+\begin{itemize}
+\item FSLView (\url{http://www.fmrib.ox.ac.uk/fsl/fslview/})
+\item MRIcroN (\url{http://www.sph.sc.edu/comd/rorden/MRicron/})
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Examples}
@@ -512,7 +512,7 @@ R1 <- R1.fast(flip, maskzi, fanglesB1, TR, verbose=TRUE)
 png("t1_phantom.png", width=400, height=400)
 @ 
 <<figure6-code>>=
-overlay(vibe, 1/R1$R10[,,1:nsli(vibe),], z=13, zlim.x=c(0,1024), 
+overlay(vibe, 1/R1$R10[,,1:nsli(vibe)], z=13, zlim.x=c(0,1024), 
         zlim.y=c(0,2.5), plot.type="single")
 @ 
 <<figure6-dev.off,echo=FALSE,results=hide>>=

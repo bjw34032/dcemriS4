@@ -1,7 +1,7 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
 %
-% $Id: $
+% $Id$
 
 avg152T1		MNI152 data in Analyze 7.5 format
 avg152T1LR		MNI152 data in NIfTI-1 format (left-right)

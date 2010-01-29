@@ -1,7 +1,7 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
 %
-% $Id: miscellaneous.Rd 191 2009-08-25 15:12:31Z bjw34032 $
+% $Id$
 
 \name{Dimension Accessor Functions}
 \alias{nsli}

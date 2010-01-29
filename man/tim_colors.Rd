@@ -1,7 +1,7 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
 % Time-stamp: <2009-07-14 17:51:42 (bjw34032)>
-% $Id: tim_colors.Rd 191 2009-08-25 15:12:31Z bjw34032 $
+% $Id$
 
 \name{tim.colors}
 \alias{tim.colors}

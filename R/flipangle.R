@@ -156,6 +156,8 @@ setMethod("CA.fast", signature(dynamic="array"),
     stop("Flip-angle data must be a 4D array.")
   if (!is.logical(dyn.mask))  # Check dyn.mask is logical
     stop("Mask must be logical.")
+  if (length(fangles) != ntim(flip))  # Check that #(flip angles) are equal
+    stop("Number of flip angles must be equal.")
   
   R1est <- R1.fast(flip, dyn.mask, fangles, TR, verbose)
   

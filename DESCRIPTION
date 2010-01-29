@@ -1,6 +1,6 @@
 Package: dcemriS4
 Version: 0.20.3
-Date: 2010-01-07
+Date: 2010-01-22
 Title: A Package for Medical Image Analysis (S4 implementation)
 Author: Brandon Whitcher and Volker Schmid, with contributions from
   Andrew Thornton
@@ -12,4 +12,5 @@ Description: A collection of routines and documentation that allows one to
   diffusion-weighted MRI data.  Medical imaging data should be organized 
   using either the Analyze or NIfTI data formats.
 License: BSD
-URL: http://www.dcemri.org/, http://dcemri.sourceforge.net/
+URL: http://www.dcemri.org/, http://dcemri.sourceforge.net/, 
+  http://dcemri.blogspot.com/

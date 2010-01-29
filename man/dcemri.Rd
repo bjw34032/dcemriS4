@@ -1,7 +1,7 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
 %
-% $Id: dcemri.Rd 205 2009-08-26 13:57:14Z bjw34032 $
+% $Id$
 
 \name{dcemri.lm}
 \alias{dcemri.lm}

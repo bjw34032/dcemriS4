@@ -1,7 +1,7 @@
 % Part of the dcemri package for R
 % Distributed under the BSD license: see dcemri/COPYING
 %
-% $Id: nifti-class.Rd 191 2009-08-25 15:12:31Z bjw34032 $
+% $Id$
 
 \name{Audit Trails}
 \Rdversion{1.1}
