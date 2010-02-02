@@ -6,6 +6,7 @@
 \name{Bitwise Conversion Subroutines}
 \alias{xyzt2space}
 \alias{xyzt2time}
+\alias{space.time2xyzt}
 \alias{dim2freq}
 \alias{dim2phase}
 \alias{dim2slice}
@@ -17,13 +18,20 @@
 \usage{
 xyzt2space(xyzt)
 xyzt2time(xyzt)
-dim2freq(diminfo)
-dim2phase(diminfo)
-dim2slice(diminfo)
+space.time2xyzt(ss, tt)
+dim2freq(di)
+dim2phase(di)
+dim2slice(di)
 }
 \arguments{
   \item{xyzt}{represents the units of pixdim[1..4] in the NIfTI header.}
-  \item{diminfo}{represents MRI slice ordering in the NIfTI header.}
+  \item{ss}{is the character string of spatial units.  Valid strings
+    are: \dQuote{Unknown}, \dQuote{meter}, \dQuote{mm} and
+    \dQuote{micron}.}
+  \item{tt}{is the character string of temporal units.  Valid strings
+    are: \dQuote{sec}, \dQuote{msec}, \dQuote{usec}, \dQuote{Hz},
+    \dQuote{ppm} and \dQuote{rads}.}
+  \item{di}{represents MRI slice ordering in the NIfTI header.}
 }
 \details{
   The functions \code{xyzt2space} and \code{xyzt2time} can be used to

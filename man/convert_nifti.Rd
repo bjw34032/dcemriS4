@@ -20,7 +20,7 @@ convert.datatype(datatype.code = NULL)
 convert.bitpix(bitpix = NULL)
 convert.intent(intent.code = NULL)
 convert.form(form.code)
-convert.units(units)
+convert.units(units, inverse = FALSE)
 convert.slice(slice.code)
 }
 \arguments{
@@ -29,6 +29,8 @@ convert.slice(slice.code)
   \item{intent.code}{is the NIfTI intent code.}
   \item{form.code}{is the x,y,z coordinate system.}
   \item{units}{is the units of pixdim[1..4].}
+  \item{inverse}{is a logical value that denotes the direction of unit
+    conversion.}
   \item{slice.code}{is the slice timing order.}
 }
 \details{

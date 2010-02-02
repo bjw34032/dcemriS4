@@ -23,7 +23,7 @@ Type 'q()' to quit R.
 > library('dcemriS4')
 Loading required package: XML
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.20.2)
+dcemriS4: A Package for Medical Image Analysis (version = 0.20.3)
 
 > 
 > assign(".oldSearch", search(), pos = 'CheckExEnv')
@@ -149,6 +149,33 @@ ANALYZE 7.5 format
   Dimension       : 1 x 1 x 1 x 1
   Pixel Dimension : 1 x 1 x 1 x 1
   Voxel Units     : mm
+> 
+> 
+> 
+> cleanEx()
+> nameEx("audit_trail-methods")
+> ### * audit_trail-methods
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: audit.trail-methods
+> ### Title: Extract or Replace NIfTI Audit Trail
+> ### Aliases: audit.trail-methods audit.trail,nifti-method audit.trail
+> ###   audit.trail<-,nifti-method audit.trail<-
+> ### Keywords: methods
+> 
+> ### ** Examples
+> 
+> ## Not run: 
+> ##D ## Sternberg Item Recognition Paradigm (SIRP) fMRI Study + XML Extension Data
+> ##D URL <- "http://nifti.nimh.nih.gov/nifti-1/data/sirp_fmri_study_ver4.tar.gz"
+> ##D download.file(URL, dest="sirp.tar.gz", method="wget", quiet=FALSE,
+> ##D               mode="wb", cacheOK=FALSE)
+> ##D fnames <- system("tar zxvf sirp.tar.gz", intern=TRUE)
+> ##D sirp <- readNIfTI(fnames[1]) # newsirp_final_XML.nii
+> ##D sirp.xml <- xmlTreeParse(sirp@"extensions"[[1]]@"edata", asText=TRUE)
+> ##D sirp.xml
+> ## End(Not run)
 > 
 > 
 > 
@@ -1309,7 +1336,7 @@ Loading required package: splines
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  110.285 0.547 113.464 0 0 
+Time elapsed:  110.028 0.628 112.9 0 0 
 > grDevices::dev.off()
 null device 
           1 
