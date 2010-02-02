@@ -136,18 +136,32 @@ convert.form <- function(form.code) {
          "4" = "MNI_152")       # MNI 152 normalized coordinates
 }
 
-convert.units <- function(units) {
-  switch(as.character(units),
-         "0" = "Unknown",       # unspecified units
-         "1" = "meter",         # meters
-         "2" = "mm",            # millimeters
-         "3" = "micron",        # micrometers
-         "8" = "sec",           # seconds
-         "16" = "msec",         # milliseconds
-         "24" = "usec",         # microseconds
-         "32" = "Hz",           # Hertz
-         "40" = "ppm",          # parts per million
-         "48" = "rads")         # radians per second
+convert.units <- function(units, inverse=FALSE) {
+  if (inverse) {
+    switch(units,
+           Unknown = 0,           # unspecified units
+           meter = 1,             # meters
+           mm = 2,                # millimeters
+           micron = 3,            # micrometers
+           sec = 8,               # seconds
+           msec = 16,             # milliseconds
+           usec = 24,             # microseconds
+           Hz = 32,               # Hertz
+           ppm = 40,              # parts per million
+           rads = 48)             # radians per second
+  } else {
+    switch(as.character(units),
+           "0" = "Unknown",       # unspecified units
+           "1" = "meter",         # meters
+           "2" = "mm",            # millimeters
+           "3" = "micron",        # micrometers
+           "8" = "sec",           # seconds
+           "16" = "msec",         # milliseconds
+           "24" = "usec",         # microseconds
+           "32" = "Hz",           # Hertz
+           "40" = "ppm",          # parts per million
+           "48" = "rads")         # radians per second
+  }
 }
 
 convert.slice <- function(slice.code) {
@@ -165,34 +179,42 @@ convert.slice <- function(slice.code) {
 ## Bitwise conversion subroutines
 ############################################################################
 
-xyzt2space <- function (xyzt) {
+xyzt2space <- function(xyzt) {
   ## define XYZT_TO_SPACE(xyzt) ( (xyzt) & 0x07 )
   require("bitops")
   bitAnd(xyzt, 7)
 }
 
-xyzt2time <- function (xyzt) {
+xyzt2time <- function(xyzt) {
   ## define XYZT_TO_TIME(xyzt) ( (xyzt) & 0x38 )
   require("bitops")
   bitAnd(xyzt, 56)
 }
 
-dim2freq <- function(diminfo) {
+space.time2xyzt <- function(ss, tt) {
+  ## define SPACE_TIME_TO_XYZT(ss,tt) (  (((char)(ss)) & 0x07)   \
+  ##                                   | (((char)(tt)) & 0x38) )
+  require("bitops")
+  bitAnd(convert.units(ss, inverse=TRUE), 7) +
+    bitAnd(convert.units(tt, inverse=TRUE), 56)
+}
+
+dim2freq <- function(di) {
   ## define DIM_INFO_TO_FREQ_DIM(di) ( ((di)     ) & 0x03 )
   require("bitops")
-  bitAnd(diminfo, 3)
+  bitAnd(di, 3)
 }
 
-dim2phase <- function(diminfo) {
+dim2phase <- function(di) {
   ## define DIM_INFO_TO_PHASE_DIM(di) ( ((di) >> 2) & 0x03 )
   require("bitops")
-  bitAnd(bitShiftR(diminfo, 2), 3)
+  bitAnd(bitShiftR(di, 2), 3)
 }
 
-dim2slice <- function(diminfo) {
+dim2slice <- function(di) {
   ## define DIM_INFO_TO_SLICE_DIM(di) ( ((di) >> 4) & 0x03 )
   require("bitops")
-  bitAnd(bitShiftR(diminfo, 4), 3)
+  bitAnd(bitShiftR(di, 4), 3)
 }
 
 ############################################################################
