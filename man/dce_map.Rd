@@ -117,7 +117,7 @@ plot(breast$ktrans, fit.map$ktrans, xlim=c(0,1), ylim=c(0,1),
 points(breast$ktrans, fit.lm$ktrans, pch=3)
 abline(0, 1, lwd=1.5, col="red")
 legend("bottomright", c("MAP Estimation (fritz-hansen)",
-                        "Levenburg-Marquardt (fritz.hansen)", pch=c(1,3))
+                        "Levenburg-Marquardt (fritz.hansen)", pch=c(1,3)))
 }
 }
 \author{Volker Schmid <\email{volkerschmid@users.sourceforge.net}>}
