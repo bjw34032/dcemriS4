@@ -1,0 +1,18 @@
+citHeader("To cite package 'dcemriS4' in publications use:")
+
+desc <- packageDescription("dcemriS4noNifti")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
+vers <- paste("R package version", desc$Version)
+
+citEntry(entry="Manual",
+         title = "dcemriS4: A Package for Medical Image Analysis",
+         author = personList(as.person("Brandon Whitcher"),
+                             as.person("Volker J. Schmid")),
+         year = year,
+         note = vers,
+
+         textVersion =
+         paste("Brandon Whitcher and Volker J. Schmid (",
+               year,
+               "). dcemriS4: A Package for Medical Image Analysis. ",
+               vers, ".", sep=""))

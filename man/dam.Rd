@@ -1,0 +1,69 @@
+% Part of the dcemri package for R
+% Distributed under the BSD license: see dcemri/COPYING
+% 
+% $Id: dam.Rd 332 2010-01-29 16:54:07Z bjw34032 $
+
+\name{dam}
+\alias{dam}
+\title{Double-Angle Method for B1+ Mapping}
+\description{
+  For in vivo MRI at high field (\eqn{\geq3}{>=3} T) it is essential to
+  consider the homogeneity of the active B1 field (B1+).  The B1+ field
+  is the transverse, circularly polarized component of B1 that is
+  rotating in the same sense as the magnetization.  When exciting or
+  manipulating large collections of spins, nonuniformity in B1+ results
+  in nonuniform treatment of spins.  This leads to spatially varying
+  image signal and image contrast and to difficulty in image
+  interpretation and image-based quantification.
+}
+\usage{
+dam(low, high, low.deg)
+}
+\arguments{
+  \item{low}{is the (3D) array of signal intensities at the low flip angle.}
+  \item{high}{is the (3D) array of signal intensities at the high flip
+    angle (note, 2*low = high).}
+  \item{low.deg}{is the low flip angle (in degrees).}
+}
+\details{
+  The proposed method uses an adaptation of the double angle method
+  (DAM). Such methods allow calculation of a flip-angle map, which is an
+  indirect measure of the B1+ field.  Two images are acquired:
+  \eqn{I_1}{I1} with prescribed tip \eqn{\alpha_1}{alpha1} and
+  \eqn{I_2}{I2} with prescribed tip \eqn{\alpha_2=2\alpha_1}{alpha2 =
+    2*alpha1}.  All other  signal-affecting sequence parameters are kept
+  constant. For each voxel, the ratio of magnitude images satisfies
+  \deqn{\frac{I_2(r)}{I_1(r)}=\frac{\sin\alpha_2(r)f_2(T_1,\mbox{TR})}{\sin\alpha_1(r)f_1(T_1,\mbox{TR})}}{}
+  where \eqn{r} represents spatial position and
+  \eqn{alpha_1(r)}{alpha1(r)} and \eqn{\alpha_2(r)}{alpha2(r)} are tip
+  angles that vary with the spatially varying B1+ field.  If the effects
+  of \eqn{T_1}{T1} and \eqn{T_2}{T2} relaxation can be neglected, then
+  the actual tip angles as a function of spatial position satisfy
+  \deqn{\alpha(r)=\mbox{arccos}\left(\left|\frac{I_2(r)}{2I_1(r)}\right|\right)}{}
+  A long repetition time (\eqn{TR\leq{5T_1}}{TR <= 5*T1}) is typically
+  used with the double-angle methods so that there is no \eqn{T_1}{T1}
+  dependence in either \eqn{I_1}{I1} or \eqn{I_2}{I2} (i.e.,
+  \eqn{f_1(T_1,TR)=f_2(T_1,TR)=1.0}{f1(T1,TR) = f2(T1,TR) = 1.0}).  Instead,
+  the proposed method includes a magnetization-reset sequence after each
+  data acquisition with the goal of putting the spin population in the
+  same state regardless of whether the or \eqn{\alpha_2}{alpha2}
+  excitation was used for the preceding acquisition (i.e.,
+  \eqn{f_1(T_1,TR)=f_2(T_1,TR)\ne1.0}{f1(T1,TR) = f2(T1,TR) != 1.0}).
+}
+\value{
+  An array, the same dimension as the acquired signal intensities, is
+  returned containing the multiplicative factor associated with the low
+  flip angle acquisition.  That is, if no B1+ inhomogeneity was present
+  then the array would only contain ones.  Numbers other than one
+  indicate the extent of the inhomogeneity as a function of spatial
+  location.  
+}
+\references{
+  Cunningham, C.H., Pauly, J.M. and Nayak, K.S. (2006) Saturated
+  Double-Angle Method for Rapid B1+ Mapping, \emph{Magnetic Resonance in
+    Medicine}, \bold{55}, 1326-1333.
+}
+%\seealso{}
+%\examples{}
+\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
+\keyword{models}

@@ -1,0 +1,15 @@
+useDynLib("dcemriS4noNifti")
+
+import("grDevices", "graphics", "methods", "utils")
+
+exportPattern("^[^\\.]")
+
+exportMethods("ADC.fast",
+              "CA.fast",
+              "CA.fast2",
+              "dcemri.bayes",
+              "dcemri.lm",
+              "dcemri.map",
+              "dcemri.spline",
+              "ftm",
+              "R1.fast")
