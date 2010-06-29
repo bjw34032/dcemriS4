@@ -1,6 +1,6 @@
 citHeader("To cite package 'dcemriS4' in publications use:")
 
-desc <- packageDescription("dcemriS4noNifti")
+desc <- packageDescription("dcemriS4")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
 vers <- paste("R package version", desc$Version)
 

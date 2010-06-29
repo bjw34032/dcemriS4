@@ -1,0 +1,529 @@
+% Part of the dcemri package for R
+% Distributed under the BSD license: see dcemri/COPYING
+%
+% $Id: dcemriS4.Rnw 332 2010-01-29 16:54:07Z bjw34032 $
+
+% \VignetteIndexEntry{dcemriS4}
+% \VignetteDepends{dcemriS4}
+% \VignettePackage{dcemriS4}
+% \VignetteKeywords{contrast,diffusion,dynamic,enhanced,imaging,magnetic,resonance,S4}
+\documentclass[11pt,a4paper]{article}
+\usepackage{a4wide,amsmath,color,fancyvrb,graphicx,thumbpdf}
+\definecolor{Red}{rgb}{0.7,0,0}
+\definecolor{Blue}{rgb}{0,0,0.8}
+\usepackage[colorlinks=true,linkcolor=Blue,citecolor=Blue,urlcolor=Blue]{hyperref}
+\usepackage[authoryear,round,longnamesfirst]{natbib}
+\usepackage{xspace}
+\usepackage{fancyhdr}
+\usepackage{lscape}
+\usepackage{Sweave}
+\bibliographystyle{abbrvnat}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\let\code=\texttt
+\let\proglang=\textsf
+\newcommand{\pkg}[1]{{\normalfont\fontseries{b}\selectfont #1}}
+\newcommand{\email}[1]{\href{mailto:#1}{\normalfont\texttt{#1}}}
+
+\newcommand{\ktrans}{K^\text{trans}}
+\newcommand{\iaugc}[1]{\text{IAUGC}_{#1}}
+\newcommand{\kep}{k_\text{ep}}
+\newcommand{\vp}{v_\text{p}}
+
+\SweaveOpts{engine=R,eps=FALSE}
+
+\setlength{\parskip}{0.7ex plus0.1ex minus0.1ex}
+\setlength{\parindent}{0em}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{fancy}
+\lhead{B. Whitcher and V.J. Schmid}
+\chead{}
+\rhead{Using the {\tt dcemriS4} Package}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<preliminaries,echo=FALSE,results=hide>>=
+library("dcemriS4")
+## options(niftiAuditTrail=FALSE)
+options(width=85)
+require("oro.nifti")
+require("minpack.lm")
+require("bitops")
+@
+
+\title{{\tt dcemriS4}: A Package for Medical Image Analysis}
+\author{Brandon Whitcher \\ \email{bjw34032@users.sourceforge.net} \\ %
+  Volker J. Schmid \\ \email{volkerschmid@users.sourceforge.net}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\maketitle
+
+\thispagestyle{empty}
+
+\section{Introduction}
+
+Quantitative analysis of perfusion imaging using dynamic
+contrast-enhanced MRI (DCE-MRI) is achieved through a series of
+processing steps, starting with the raw data acquired from the MRI
+scanner, and involves a combination of physics, mathematics,
+engineering and statistics.  The purpose of the \pkg{dcemriS4} package
+is to provide a collection of functions that move the experimental
+data through all steps of the data analysis pipeline using standard
+data formats that may be visualized and manipulated across a wide
+variety of software packages.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Data Input/Output}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The \pkg{dcemriS4} package requires incoming data to be in the
+ANALYZE~7.5 or NIfTI formats.  All read-write operations are provided
+by \pkg{oro.nifti} and the user is encoruaged to use the resources
+provided by that package for more details.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Motion Correction and Co-registration}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Basic motion correction within an acquisition, and co-registration
+between acquired series, is available using template matching
+(\url{en.wikipedia.org/wiki/Template_matching}).  A reference volume
+must be pre-specified where a mask has been applied to remove all
+voxels that should not be included in the algorithm.  Note, only
+three-dimensional translations are allowed and no interpolation is
+used (i.e., only whole-voxel translations) at this time.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{T1 Relaxation and Gadolinium Concentration}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Estimation of the tissue T1 relaxation rate is the first step in
+converting signal intensity, obtained in the dynamic acquisition of
+the DCE-MRI protocol, to contrast agent concentration.  The subsequent
+steps provided here focus on pharmacokinetic modeling and assumes one
+has converted the dynamic acquisition to contrast agent concentration.
+Please see \cite{col-pad:ieee} for a discussion on this point.
+
+There are a myriad of techniques to quantify T1 using MRI.  Currently
+curve-fitting methods for two popular acquisition schemes are
+available
+\begin{itemize}
+\item Inversion recovery (\url{www.e-mri.org/mri-sequences/inversion-recovery-stir-flair.html})
+\item Multiple flip angles \citep{par-pad:DCE-MRI}
+\end{itemize}
+Once the tissue T1 relaxation rate has been estimated, the dynamic
+acquisition is then converted to contrast agent concentration.  Note,
+the B1 field is assumed to be constant (and accurate) when using
+multiple flip angles to estimate T1.  At higher fields strengths
+(e.g., 3T) the B1 field should be estimated in order to correct the
+prescribed flip angles.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{B1 Mapping Via the Saturated Double-Angle Method}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+For in vivo MRI at high field ($\geq{3}$Tesla) it is essential to
+consider the homogeneity of the active B1 field (B1+).  The B1+ field
+is the transverse, circularly polarized component of B1 that is
+rotating in the same sense as the magnetization.  When exciting or
+manipulating large collections of spins, non-uniformity in B1+ results
+in nonuniform treatment of spins.  This leads to spatially varying
+image signal and image contrast and to difficulty in image
+interpretation and image-based quantification
+\citep{cun-pau-nay:saturated}.
+
+The proposed method uses an adaptation of the double angle method
+(DAM).  Such methods allow calculation of a flip-angle map, which is
+an indirect measure of the B1+ field.  Two images are acquired:
+$I_1$ with prescribed tip $\alpha_1$ and $I_2$ with prescribed tip
+$\alpha_2=2\alpha_1$.  All other signal-affecting sequence parameters
+are kept constant. For each voxel, the ratio of magnitude images
+satisfies
+\begin{equation*}
+  \frac{I_2(r)}{I_1(r)} =
+  \frac{\sin\alpha_2(r)f_2(T_1,\text{TR})}{\sin\alpha_1(r)f_1(T_1,\text{TR})}
+\end{equation*}
+where $r$ represents spatial position and $alpha_1(r)$ and
+$\alpha_2(r)$ are tip angles that vary with the spatially varying B1+
+field.  If the effects of $T_1$ and $T_2$ relaxation can be neglected,
+then the actual tip angles as a function of spatial position satisfy
+\begin{equation*}
+  \alpha(r) = \text{arccos}\left(\left|\frac{I_2(r)}{2I_1(r)}\right|\right)
+\end{equation*}
+A long repetition time ($\text{TR}\leq{5T_1}$) is typically used with
+the double-angle methods so that there is no $T_1$ dependence in
+either $I_1$ or $I_2$ (i.e.,
+$f_1(T_1,\text{TR})=f_2(T_1,\text{TR})=1.0$.  Instead, the proposed
+method includes a magnetization-reset sequence after each data
+acquisition with the goal of putting the spin population in the same
+state regardless of whether the or $\alpha_2$ excitation was used for
+the preceding acquisition (i.e.,
+$f_1(T_1,\text{TR})=f_2(T_1,\text{TR})\ne{1.0}$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Example}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Using data acquired from a T1 phantom at two flip angles,
+$\alpha_1=60^\circ$ and $\alpha_2=120^\circ$, we compute the
+multiplicative factor relative to the low flip angle using the
+saturated double-angle method \citep{cun-pau-nay:saturated}.
+  
+<<doubleanglemethod>>=
+sdam60 <- readNIfTI(system.file("nifti/SDAM_ep2d_60deg_26slc.nii.gz", 
+                                package="dcemriS4"))
+sdam60
+sdam120 <- readNIfTI(system.file("nifti/SDAM_ep2d_120deg_26slc.nii.gz", 
+                                 package="dcemriS4"))
+sdam120
+sdam.image <- rowMeans(dam(sdam60, sdam120, 60), dims=3)
+mask <- (rowSums(sdam60, dims=3) > 500) # nifti(rowSums(sdam60, dims=3) > 500)
+@ 
+<<figure5-png,echo=FALSE,results=hide>>=
+png("sdam.png", width=400, height=400)
+@ 
+<<figure5-code>>=
+# A smooth version of "sdam.image"
+SDAM <- readNIfTI(system.file("nifti/SDAM_smooth.nii.gz", package="dcemriS4"))
+overlay(sdam120, ifelse(mask, SDAM, NA), z=13, zlim.x=range(sdam120), 
+        zlim.y=c(0.5,1.5), plot.type="single")
+@ 
+<<figure5-dev.off,echo=FALSE,results=hide>>=
+dev.off()
+@ 
+
+Figure~\ref{fig:sdam} is the estimated B1+ field (with isotropic
+Gaussian smoothing) for a gel-based phantom containing a variety of T1
+relaxation times.  The center of the phantom exhibits a flip angle
+$>60^\circ$ while the flip angle rapidly becomes $<60^\circ$ when
+moving away from the center in either the $x$, $y$ or $z$ dimensions.
+Isotropic smoothing should be applied before using this field to
+modify flip angles associated with additional acquisitions (e.g., in
+the \pkg{AnalyzeFMRI} package).
+  
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics*[width=.5\textwidth]{sdam.png}
+  \caption{Estimated B1+ field (with isotropic Gaussian smoothing)
+    using the saturated double-angle method.  The colors correspond to
+    a multiplicative factor relative to the true flip angle
+    ($60^\circ$).}
+  \label{fig:sdam}
+\end{figure}
+
+Assuming the smoothed version of the B1+ field has been computed
+(\code{SDAM}), multiple flip-angle acquisitions can be used to estimate
+the T1 relaxation rate from the subject (or phantom).  The
+multiplicative factor, derived from the saturated double-angle method,
+is used to produce a spatially-varying flip-angle map and input into
+the appropriate function.
+
+<<t1estimation>>=
+fnames <- c("fl3d_vibe-5deg","fl3d_vibe-10deg","fl3d_vibe-20deg",
+            "fl3d_vibe-25deg","fl3d_vibe-15deg")
+alpha <- c(5, 10, 20, 25, 15)
+nangles <- length(alpha)
+X <- Y <- 64
+Z <- 36
+flip <- fangles <- array(0, c(X,Y,Z,nangles))
+for (w in 1:nangles) {
+  vibe <- readNIfTI(system.file(paste("nifti/", fnames[w], ".nii.gz", sep=""), 
+                                package="dcemriS4"))
+  flip[,,1:nsli(vibe),w] <- vibe
+  fangles[,,,w] <- array(alpha[w], c(X,Y,Z))
+}
+TR <- 4.22 / 1000 # seconds
+fanglesB1 <- fangles * array(SDAM, c(X,Y,Z,nangles))
+zi <- 10:13
+maskzi <- mask
+maskzi[,,(! 1:Z %in% zi)] <- FALSE
+R1 <- R1.fast(flip, maskzi, fanglesB1, TR, verbose=TRUE)
+@ 
+<<figure6-png,echo=FALSE,results=hide>>=
+png("t1_phantom.png", width=400, height=400)
+@ 
+<<figure6-code>>=
+overlay(vibe, 1/R1$R10[,,1:nsli(vibe)], z=13, zlim.x=c(0,1024), 
+        zlim.y=c(0,2.5), plot.type="single")
+@ 
+<<figure6-dev.off,echo=FALSE,results=hide>>=
+dev.off()
+@
+
+Figure~\ref{fig:t1-phantom} displays the quantitative T1 map for a
+gel-based phantom using information from the estimated B1+ field.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics*[width=.5\textwidth]{t1_phantom.png}
+  \caption{Estimated T1 relaxation rates for the phantom data
+  acquisition.  The colors range from 0-2.5 seconds.}
+  \label{fig:t1-phantom}
+\end{figure}
+
+By defining regions of interest (ROIs) in 
+
+<<FSLmask>>=
+t1pmask <- readNIfTI(system.file("nifti/t1_phantom_mask.nii.gz", 
+                                 package="dcemriS4"))
+pmask <- nifti(array(t1pmask[,,25], dim(t1pmask))) # repeat slice #25
+pmask
+@ 
+
+\begin{figure}[!htbp]
+\begin{center}
+<<figure7,fig=TRUE,echo=TRUE>>=
+T1 <- c(.484,.350,1.07,.648,.456,1.07,.660,1.543,1.543,.353)
+par(mfrow=c(1,1), mar=c(5,4,4,2)+.1)
+boxplot(split(1/drop(R1$R10), as.factor(drop(pmask)))[-1], 
+        ylim=c(0,2.5), xlab="Region of Interest", ylab="T1 (seconds)")
+points(1:10, T1, col=rainbow(10), pch=16, cex=2)
+@ 
+\end{center}
+\caption{Boxplots of the estimated T1 values for the gel-based
+  phantom, grouped by user-specified regions of interest.  True T1
+  values are plotted as colored circles for each distinct ROI.}
+\label{fig:t1-phantom-boxplot}
+\end{figure}
+
+We may compare the ``true'' T1 values for each ROI with those obtained
+from acquiring multiple flip angles with the application of B1
+mapping.  Figure~\ref{fig:t1-phantom-boxplot} compares T1 estimates in
+the 10 ROIs, defined by \code{pmask}, with the true T1 values (large
+circles).  The first seven ROIs correspond to the cylinders that run
+around the phantom, clockwise starting from approximately one o'clock.
+The eighth and ninth ROIs are taken from the main compartment in the
+phantom; ROI eight is drawn in the middle of the phantom while ROI
+nine is drawn from the outside of the phantom.  The final ROI is taken
+from the central cylinder embedded in the phantom.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Contrast Agent Concentration}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The \code{CA.fast} function rearranges the assumed multidimensional
+(2D or 3D) structure of the multiple flip-angle data into a single
+matrix to take advantage of internal R functions instead of loops, and
+called \code{E10.lm}.  Conversion of the dynamic signal intensities to
+contrast agent concentration is performed via
+\begin{equation*}
+  [\text{Gd}] = \frac{1}{r_1}\left(\frac{1}{T_1} - \frac{1}{T_{10}}\right),
+\end{equation*}
+where $r_1$ is the spin-lattice relaxivity constant and $T_{10}$ is
+the spin-lattice relaxation time in the absence of contrast media
+\citep{buc-par:measuring}.  For computational reasons, we follow the
+method of \cite{li-etal:improved}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Arterial Input Function}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Whereas quantitative PET studies routinely perform arterial
+cannulation on the subject in order to characterize the arterial input
+function (AIF), it has been common to use literature-based AIFs in the
+DCE-MRI literature.  Examples include
+\begin{equation*}
+  C_p(t) = D \left( a_1 e^{-m_1t} + a_2 e^{-m_2t} \right),
+\end{equation*}
+where $D=0.1\,\text{mmol/kg}$, $a_1=3.99\,\text{kg/l}$,
+$a_2=4.78\,\text{kg/l}$, $m_1=0.144\,\text{min}^{-1}$ and
+$m_2=0.0111\,\text{min}^{-1}$
+\citep{wei-lan-mut:pharmacokinetics,tof-ker:measurement}; or
+$D=1.0\,\text{mmol/kg}$, $a_1=2.4\,\text{kg/l}$,
+$a_2=0.62\,\text{kg/l}$, $m_1=3.0$ and $m_2=0.016$
+\citep{fri-etal:measurement}.  There has been progress in measuring
+the AIF using the dynamic acquisition and fitting a parametric model
+to the observed data.  Recent models include \cite{par-etal:derived}
+and \cite{ort-etal:efficient}.  \pkg{dcemri} has incorporated one of
+these parametric models from \cite{ort-etal:efficient}
+\begin{eqnarray*}
+  C_p(t) &=& A_B t e^{-\mu_Bt} + A_G \left( e^{-\mu_Gt} +
+  e^{-\mu_Bt}\right)%\\
+  %C_p(t) &=& \left\{\begin{array}{ll}
+  %a_B \left( 1 - \cos(\mu_Bt)\right) + a_B a_G f(t,\mu_G) &
+  %0\leq{t}\leq{t_B}\\
+  %a_B a_G f(t,\mu_G) e^{-\mu_G(t - t_B)} & t > t_B
+  %\end{array}\right.
+\end{eqnarray*}
+which can be fitted to the observed data using nonlinear regression.
+Using the AIF defined in \cite{buc:uncertainty}, we illustrate fitting
+a parametric model to characterize observed data.  The
+\code{orton.exp.lm} function provides this capability using a common
+double-exponential parametric form.
+
+<<buckley.aif>>=
+data("buckley")
+aifparams <- with(buckley, orton.exp.lm(time.min, input))
+fit.aif <- with(aifparams, aif.orton.exp(buckley$time.min, AB, muB, AG, muG))
+@
+\begin{figure}[!htbp]
+\begin{center}
+<<figure8,fig=TRUE,echo=TRUE>>=
+with(buckley, plot(time.min, input, type="l", lwd=2, xlab="Time (minutes)", 
+                   ylab=""))
+with(buckley, lines(time.min, fit.aif, lwd=2, col=2))
+legend("topright", c("Simulated AIF", "Estimated AIF"), lwd=2, col=1:2)
+@ 
+\end{center}
+\caption{Arterial input function (AIF) from \cite{buc:uncertainty} and
+  the best parametric fit, using the exponential model from
+  \cite{ort-etal:efficient}.}
+\label{fig:fitted-aif}
+\end{figure}
+
+Figure~\ref{fig:fitted-aif} shows both the true AIF and the best
+parametric description using a least-squares fitting criterion.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Kinetic Parameter Estimation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The standard Kety model \citep{ket:blood-tissue}, a single-compartment
+model, or the extended Kety model, the standard Kety model with an
+extra ``vascular'' term, form the collection of basic parametric
+models one can apply using \pkg{dcemri}.  Regardless of which
+parametric model is chosen for the biological system, the contrast
+agent concentration curve at each voxel in the region of interest
+(ROI) is approximated using the convolution of an arterial input
+function (AIF) and the compartmental model; e.g.,
+\begin{eqnarray*}
+  C_t(t) & = & \ktrans \left[ C_p(t) \otimes e^{-\kep t} \right],\\
+  C_t(t) & = & \vp C_P(t) + \ktrans \left[ C_p(t) \otimes e^{-\kep t}
+    \right].
+\end{eqnarray*}
+
+Parameter estimation is achieved using one of two options in the
+current version of this software:
+\begin{itemize}
+\item Non-linear regression using non-linear least squares
+  (Levenburg-Marquardt optimization)
+\item Bayesian estimation using Markov chain Monte Carlo (MCMC)
+  \citep{sch-etal:TMI}
+\end{itemize}
+Least-square estimates of the kinetic parameters $\ktrans$ and $\kep$
+(also $\vp$ for the extended Kety model) are provided in
+\code{dcemri.lm} while the posterior median is provided in
+\code{dcemri.bayes}.  When using Bayesian estimation all samples from
+the joint posterior distribution are also provided, allowing one to
+interrogate the empirical probability density function (PDF) of the
+parameter estimates.
+
+Using the simulated breast data from \cite{buc:uncertainty}, we
+illustrate fitting the ``extended Kety'' model to the contrast agent
+concentration curves using the exponential model for the AIF.  We use
+non-linear regression to fit the data on an under-sampled subset (in
+time) of
+the simulated curves.
+
+<<buckley.kinetic>>=
+xi <- seq(5, 300, by=5)
+img <- array(t(breast$data)[,xi], c(13,1,1,60))
+time <- buckley$time.min[xi]
+aif <- buckley$input[xi]
+mask <- array(TRUE, dim(img)[1:3])
+aifparams <- orton.exp.lm(time, aif)
+fit <- dcemri.lm(img, time, mask, model="orton.exp",
+                 aif="user", user=aifparams)
+@ 
+\begin{figure}[!htbp]
+\begin{center}
+<<figure9,fig=TRUE,echo=TRUE>>=
+par(mfrow=c(4,4), mar=c(5,4,4,2)/1.25, mex=0.8)
+for (x in 1:nrow(img)) {
+  plot(time, img[x,1,1,], ylim=range(img), xlab="Time (minutes)",
+       ylab="", main=paste("Series", x))
+  kinparams <- with(fit, c(vp[x,1,1], ktrans[x,1,1], kep[x,1,1]))
+  lines(time, model.orton.exp(time, aifparams[1:4], kinparams), 
+        lwd=1.5, col=2)
+}
+@ 
+\end{center}
+\caption{Simulated signal intensity curves from Buckley (2002), for
+  breast tissue, with the best parametric fit using an exponential
+  model for the AIF and the ``extended Kety'' model.}
+\label{fig:fitted-kinetic}
+\end{figure}
+
+Figure~\ref{fig:fitted-kinetic} displays the 13 unique simulated
+curves along with the fitted curves from the compartmental model.
+There is decent agreement between the observed and fitted values,
+except for Series~6 which changes too rapidly in the beginning and
+cannot be explained by the parametric model.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Statistical Inference}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+No specific support is provided for hypothesis testing in
+\pkg{dcemri}.  We recommend one uses built-in facilities in
+\proglang{R} to perform ANOVA (analysis of variance) or mixed-effects
+models based on statistical summaries of the kinetic parameters over
+the ROI per subject per visit.  An alternative to this traditional
+approach is to analyze an entire study using a Bayesian hierarchical
+model \citep{sch-etal:hierarchical}, available in the software project
+\pkg{PILFER} (\url{pilfer.sourceforge.net}).
+
+One may also question the rationale for hypothesis testing in only one
+kinetic parameter.  Preliminary work has been performed in looking at
+the joint response to treatment of both $\ktrans$ and $\kep$ in
+DCE-MRI by \cite{oco-etal:fPCA}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Diffusion Weighted Imaging}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Diffusion weighted imaging (DWI), also known as diffusion-weighted MRI
+(DW-MRI), is a technique that measures the Brownian motion of water
+molecules to estimate the diffusion characteristics of tissue \emph{in
+vivo} \citep{mos-etal:diffusion,bux:introduction}.  Contrast is
+generated when the diffusion of molecules in tissue prefer a specific
+direction in three-dimenisonal space (anisotropic diffusion) relative
+to any particular direction (isotropic diffusion).  Using the
+Stejskal--Tanner equation
+\begin{equation*}
+  \frac{S}{S_0} =
+  \exp\left(-\gamma^2G^2\delta^2(\Delta-\delta/3)D\right) =
+  \exp\left(-bD\right),
+\end{equation*}
+one may solve for the unknown diffusion to obtain the \emph{apparent
+diffusion coefficient} (ADC) $D$.  For completeness, $S_0$ is the
+signal intensity without the diffusion weighting, $S$ is the signal
+with the gradient applied, $\gamma$ is the gyromagnetic ratio, $G$ is
+the strength of the gradient pulse, $\delta$ is the duration of the
+gradient pulse and $\Delta$ is the time between the two pulses.  The
+functions \code{ADC.fast} and \code{adc.lm} perform parameter
+estimation using a similar interface to kinetic parameter estimation
+previously introduced for DCE-MRI.
+
+DWI is under rapid development as an oncology imaging biomarker
+\citep{che-etal:diffusion,koh-col:DW-MRI}.  The diffusion of water
+without restrictions is about
+$3.0{\times}10^{-3}\;\text{mm}^2/\text{s}$.  Once the ADC is estimated
+in the tumor of interest at baseline, treatment response may be
+assessed at subsequent time points.  The most appropriate timings
+depend on both the type of tumor and treatment regime.  Observing an
+decrease in diffusivity, via a decrease in the ADC values
+post-treatment, may be a result of cell swelling after ititial
+chemotherapy or radiotherapy followed by an increase in diffusivity,
+via an increase in the ADC values, from cell necrosis and lysis.  A
+decrease in ADC values may be observed directly through tumor
+apoptosis after treatment.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliography{dcemriS4}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -78,7 +78,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
                     as.double(rep(0,n)),
                     as.double(rep(0,n)),
                     as.double(rep(0,n)), 
-                    PACKAGE="dcemriS4noNifti")    
+                    PACKAGE="dcemriS4")    
     return(list("ktrans"= singlerun[[11]], "kep"= singlerun[[12]],
                 "vp"= singlerun[[13]], "sigma2"= 1/singlerun[[14]]))
   }
