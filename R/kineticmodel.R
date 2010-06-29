@@ -34,17 +34,14 @@
 
 kineticModel <- function(time, par, model="extended", aif="fritz.hansen") {
 
+  d=dim(par$ktrans)
+  if(!is.numeric(d))d=length(par$ktrans)
+  T=length(time)
+  dd=prod(d)
+  
+
   if (!(is.numeric(par$kep)))
     par$kep <- par$ktrans/par$ve
-
-  switch(aif,
-         tofts.kermode = {
-           D <- 0.1; a1 <- 3.99; a2 <- 4.78; m1 <- 0.144; m2 <- 0.0111
-         },
-         fritz.hansen = {
-           D <- 1; a1 <- 2.4; a2 <- 0.62; m1 <- 3.0; m2 <- 0.016
-         },
-         stop("ERROR: AIF parameters must be specified!"))
   
   model.weinmann <- function(time, ktrans, kep, ...) {
     ## Convolution of Tofts & Kermode AIF with single-compartment model
@@ -82,12 +79,17 @@ kineticModel <- function(time, par, model="extended", aif="fritz.hansen") {
   
   switch(model,
          weinmann = {
-           result <- model.weinmann(time, par$ktrans, par$kep)
+           result <- model.weinmann(rep(time,dd), rep(par$ktrans,each=T), rep(par$kep,each=T))
          },
          extended = {
-           result <- model.extended(time, par$vp, par$ktrans, par$kep)
+           result <- model.extended(rep(time,dd), rep(par$vp,each=T), rep(par$ktrans,each=T), rep(par$kep,each=T))
          })
   
+
+	result<-array(result,c(T,dd))
+	result<-aperm(result,c(2:length(dim(result)),1))
+	result<-drop(result)
+
   return(result)
 }
 
