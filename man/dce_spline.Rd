@@ -7,7 +7,7 @@
 \alias{dcemri.spline}
 \alias{dcemri.spline,array-method}
 \alias{dcemri.spline.single}
-\title{Bayesian P-Splines for Dynamic Contrasat-Enhanced MRI Data}
+\title{Bayesian P-Splines for Dynamic Contrast-Enhanced MRI Data}
 \description{
   Quantitative analysis of DCE-MRI typically involves the convolution of
   an arterial input function (AIF) with a nonlinear pharmacokinetic

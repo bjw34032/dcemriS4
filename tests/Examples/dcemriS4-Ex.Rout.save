@@ -1,6 +1,6 @@
 
-R version 2.10.1 (2009-12-14)
-Copyright (C) 2009 The R Foundation for Statistical Computing
+R version 2.11.1 (2010-05-31)
+Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -21,9 +21,10 @@ Type 'q()' to quit R.
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
 > library('dcemriS4')
+Loading required package: oro.nifti
 Loading required package: XML
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.20.3)
+oro.nifti: Rigorous - NIfTI Input / Output (version = 0.2.0)
 
 > 
 > assign(".oldSearch", search(), pos = 'CheckExEnv')
@@ -74,191 +75,9 @@ Loading required package: minpack.lm
 > 
 > 
 > cleanEx()
-> nameEx("anlz-class")
-> ### * anlz-class
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: anlz-class
-> ### Title: Class "anlz"
-> ### Aliases: anlz-class show,anlz-method
-> ### Keywords: classes
-> 
-> ### ** Examples
-> 
-> showClass("anlz")
-Class “anlz” [package "dcemriS4"]
 
-Slots:
-                                                                            
-Name:          .Data    sizeof_hdr       db_type       db_name       extents
-Class:         array       numeric     character     character       numeric
-                                                                            
-Name:  session_error       regular      hkey_un0          dim_     vox_units
-Class:       numeric     character     character        vector     character
-                                                                            
-Name:      cal_units       unused1      datatype        bitpix       dim_un0
-Class:     character       numeric       numeric       numeric       numeric
-                                                                            
-Name:         pixdim    vox_offset      funused1      funused2      funused3
-Class:        vector       numeric       numeric       numeric       numeric
-                                                                            
-Name:        cal_max       cal_min    compressed      verified         glmax
-Class:       numeric       numeric       numeric       numeric       numeric
-                                                                            
-Name:          glmin       descrip      aux_file        orient    originator
-Class:       numeric     character     character     character     character
-                                                                            
-Name:      generated       scannum    patient_id      exp_date      exp_time
-Class:     character     character     character     character     character
-                                                                            
-Name:       hist_un0         views    vols_added   start_field    field_skip
-Class:     character       numeric       numeric       numeric       numeric
-                                                              
-Name:           omax          omin          smax          smin
-Class:       numeric       numeric       numeric       numeric
+detaching ‘package:minpack.lm’
 
-Extends: 
-Class "array", from data part
-Class "matrix", by class "array", distance 2, with explicit test and coerce
-Class "structure", by class "array", distance 2
-Class "vector", by class "array", distance 3, with explicit coerce
-Class "vector", by class "array", distance 5, with explicit test and coerce
-> 
-> 
-> 
-> cleanEx()
-> nameEx("anlz")
-> ### * anlz
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: anlz
-> ### Title: Constructor for Analyze
-> ### Aliases: anlz is.anlz
-> 
-> ### ** Examples
-> 
-> aim <- anlz() # default
-> aim
-ANALYZE 7.5 format
-  Type            : anlz
-  Data Type       : 2 (UNSIGNED_CHAR)
-  Bits per Pixel  : 8
-  Orient          : 0 (transverse unflipped)
-  Dimension       : 1 x 1 x 1 x 1
-  Pixel Dimension : 1 x 1 x 1 x 1
-  Voxel Units     : mm
-> 
-> 
-> 
-> cleanEx()
-> nameEx("audit_trail-methods")
-> ### * audit_trail-methods
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: audit.trail-methods
-> ### Title: Extract or Replace NIfTI Audit Trail
-> ### Aliases: audit.trail-methods audit.trail,nifti-method audit.trail
-> ###   audit.trail<-,nifti-method audit.trail<-
-> ### Keywords: methods
-> 
-> ### ** Examples
-> 
-> ## Not run: 
-> ##D ## Sternberg Item Recognition Paradigm (SIRP) fMRI Study + XML Extension Data
-> ##D URL <- "http://nifti.nimh.nih.gov/nifti-1/data/sirp_fmri_study_ver4.tar.gz"
-> ##D download.file(URL, dest="sirp.tar.gz", method="wget", quiet=FALSE,
-> ##D               mode="wb", cacheOK=FALSE)
-> ##D fnames <- system("tar zxvf sirp.tar.gz", intern=TRUE)
-> ##D sirp <- readNIfTI(fnames[1]) # newsirp_final_XML.nii
-> ##D sirp.xml <- xmlTreeParse(sirp@"extensions"[[1]]@"edata", asText=TRUE)
-> ##D sirp.xml
-> ## End(Not run)
-> 
-> 
-> 
-> cleanEx()
-> nameEx("audit_trail")
-> ### * audit_trail
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: Audit Trails
-> ### Title: Facilitate the Creation and Modification of Audit Trails
-> ### Aliases: dcemri.info enableAuditTrail newAuditTrail
-> ###   niftiExtensionToAuditTrail niftiAuditTrailToExtension
-> ###   niftiAuditTrailSystemNode niftiAuditTrailSystemNodeEvent
-> ###   niftiAuditTrailCreated niftiAuditTrailEvent getLastCallWithName
-> 
-> ### ** Examples
-> 
-> ## A good example of the use of these functions is shown by this
-> ## wrapper function which takes a function fun(nim, ...) returning
-> ## lists of arrays which are nifti-ized using as(...)
-> wrapper <- function(functionToWrap, nameOfCallingFunction, nim, ...) {
-+   if (!is(nim, "nifti")) 
-+     nim <- as(nim, "nifti")
-+   
-+   if (is(nim, "niftiAuditTrail")) {
-+     ## This will force as(...) to set the call which created the
-+     ## results to the calling function's call rather than
-+     ## as(result, nifti) as it would otherwise do
-+     nim@trail <- niftiAuditTrailEvent(nim@trail, "processing",
-+                                       nameOfCallingFunction)
-+   }
-+   
-+   result <- functionToWrap(nim, ...)
-+   as(result, "nifti") <- nim
-+   return(result)
-+ }
-> 
-> ## An example of how wrapper is used follows:
-> functionToWrap <- function(ignored, x, y) {
-+   return (array(1, dim=c(x,y)))
-+ }
-> 
-> ## The niftiized form
-> niftiizedForm <- function(nim,...) {
-+   return(wrapper(functionToWrap, "niftiizedForm", nim, ...))
-+ }
-> 
-> ## Not run: 
-> ##D ## compare the trails
-> ##D if (getOption("NIfTI.audit.trail")) {
-> ##D   print((as.nifti(functionToWrap(nifti(), 4, 4), nifti()))@trail)
-> ##D   print(niftiizedForm(nifti(), 4, 4)@trail)
-> ##D }
-> ## End(Not run)
-> 
-> 
-> 
-> cleanEx()
-> nameEx("aux_file-methods")
-> ### * aux_file-methods
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: aux.file-methods
-> ### Title: Extract or Replace NIfTI/Analyze Auxiliary File
-> ### Aliases: aux.file-methods aux.file,anlz-method aux.file,nifti-method
-> ###   aux.file aux.file<-,nifti-method aux.file<-,anlz-method aux.file<-
-> ### Keywords: methods
-> 
-> ### ** Examples
-> 
-> mniRL <- readNIfTI(system.file("nifti/avg152T1_RL_nifti.nii.gz",
-+                    package="dcemriS4"))
-> aux.file(mniRL)
-[1] "none                   "
-> aux.file(mniRL) <- "avg152T1_RL_nifti"
-> aux.file(mniRL)
-[1] "avg152T1_RL_nifti"
-> 
-> 
-> 
-> cleanEx()
 > nameEx("conv_fft")
 > ### * conv_fft
 > 
@@ -295,84 +114,9 @@ Loading required package: splines
 > 
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
-> nameEx("convert_anlz")
-> ### * convert_anlz
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: Convert ANALYZE Codes
-> ### Title: Convert NIfTI Codes
-> ### Aliases: convert.datatype.anlz convert.orient.anlz
-> 
-> ### ** Examples
-> 
-> ##  4 = SIGNED_SHORT
-> convert.datatype.anlz(4)
-[1] "SIGNED_SHORT"
-> ## 16 = FLOAT
-> convert.datatype.anlz(16)
-[1] "FLOAT"
-> ##  2 = "saggital unflipped"
-> convert.orient.anlz(2)
-[1] "sagittal unflipped"
-> ##  4 = "coronal flipped"
-> convert.orient.anlz(4)
-[1] "coronal flipped"
-> 
-> 
-> 
-> cleanEx()
-> nameEx("convert_nifti")
-> ### * convert_nifti
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: Convert NIfTI Codes
-> ### Title: Convert NIfTI Codes
-> ### Aliases: convert.datatype convert.bitpix convert.intent convert.form
-> ###   convert.units convert.slice
-> 
-> ### ** Examples
-> 
-> ## No arguments produces a list structure
-> ## Use the abbreviation to obtain the code
-> convert.datatype()$INT16
-[1] 4
-> ## Use the code directly to obtain the abbreviation
-> convert.datatype(4)
-[1] "INT16"
-> 
-> ## No arguments produces a list structure
-> ## Use the abbreviation to obtain the code
-> convert.bitpix()$INT16
-[1] 16
-> 
-> ## No arguments produces a list structure
-> ## Use the abbreviation to obtain the code
-> convert.intent()$Estimate
-[1] 1001
-> ## Use the code directly to obtain the abbreviation
-> convert.intent(1001)
-[1] "Estimate"
-> 
-> ## 4 = MNI_152
-> convert.form(4)
-[1] "MNI_152"
-> 
-> ## 2 = mm
-> convert.units(2)
-[1] "mm"
-> ## 8 = sec
-> convert.units(8)
-[1] "sec"
-> 
-> ## 0 = Unknown
-> convert.slice(0)
-[1] "Unknown"
-> 
-> 
-> 
-> cleanEx()
+
+detaching ‘package:splines’
+
 > nameEx("dce_bayes")
 > ### * dce_bayes
 > 
@@ -448,6 +192,9 @@ Loading required package: minpack.lm
 > 
 > 
 > cleanEx()
+
+detaching ‘package:minpack.lm’
+
 > nameEx("dce_map")
 > ### * dce_map
 > 
@@ -484,7 +231,7 @@ Loading required package: minpack.lm
 > ##D points(breast$ktrans, fit.lm$ktrans, pch=3)
 > ##D abline(0, 1, lwd=1.5, col="red")
 > ##D legend("bottomright", c("MAP Estimation (fritz-hansen)",
-> ##D                         "Levenburg-Marquardt (fritz.hansen)", pch=c(1,3))
+> ##D                         "Levenburg-Marquardt (fritz.hansen)", pch=c(1,3)))
 > ## End(Not run)
 > 
 > 
@@ -538,13 +285,16 @@ Loading required package: minpack.lm
  [8,] 0.328712966 0.7977763 0.3770913
  [9,] 0.387767110 0.8886958 0.4236747
 [10,] 0.250521815 0.5185484 0.2309963
-[11,] 0.250521815 0.5947862 0.2703911
+[11,] 0.250521815 0.5947863 0.2703911
 [12,] 0.250521815 0.7438540 0.3534772
 [13,] 0.250521815 0.8142022 0.3913599
 > 
 > 
 > 
 > cleanEx()
+
+detaching ‘package:minpack.lm’, ‘package:splines’
+
 > nameEx("dcemri")
 > ### * dcemri
 > 
@@ -595,18 +345,18 @@ Loading required package: minpack.lm
 > cbind(breast$ktrans, fit1$ktrans[,,1], fit2$ktrans[,,1], fit3$ktrans[,,1])
              [,1]      [,2]       [,3]       [,4]
  [1,] 0.145599052 0.1678452 0.16592766 0.55254858
- [2,] 0.218344559 0.2658135 0.24219283 0.50264592
- [3,] 0.250521815 0.3129246 0.27084876 0.48798630
- [4,] 0.268391926 0.3403434 0.28533489 0.48014078
- [5,] 0.279725126 0.3582436 0.29400920 0.47516096
- [6,] 0.009912791 0.7331343 0.01475741 0.09028425
- [7,] 0.146992146 0.2043299 0.15691601 0.47338408
- [8,] 0.328712966 0.3961534 0.36284044 0.49722427
+ [2,] 0.218344559 0.2658134 0.24219283 0.50264592
+ [3,] 0.250521815 0.3129245 0.27084876 0.48798630
+ [4,] 0.268391926 0.3403433 0.28533489 0.48014078
+ [5,] 0.279725126 0.3582433 0.29400920 0.47516096
+ [6,] 0.009912791 0.7331255 0.01475737 0.09028425
+ [7,] 0.146992146 0.2043296 0.15691601 0.47338408
+ [8,] 0.328712966 0.3961533 0.36284044 0.49722427
  [9,] 0.387767110 0.4608153 0.43840557 0.50468088
 [10,] 0.250521815 0.2491542 0.24915417 0.45785055
-[11,] 0.250521815 0.2801024 0.25820501 0.47252748
-[12,] 0.250521815 0.3476502 0.28871480 0.50510378
-[13,] 0.250521815 0.3833836 0.31198212 0.52406087
+[11,] 0.250521815 0.2801023 0.25820501 0.47252748
+[12,] 0.250521815 0.3476498 0.28871480 0.50510378
+[13,] 0.250521815 0.3833826 0.31198210 0.52406087
 > 
 > ## Scatterplot comparing true and estimated Ktrans values
 > plot(breast$vp, fit1$vp, type="n", xlim=c(0,0.15), ylim=c(0,0.15),
@@ -618,23 +368,26 @@ Loading required package: minpack.lm
 > legend("bottomright", c("extended/empirical","orton.exp/user"), pch=2:3)
 > cbind(breast$vp, fit2$vp[,,1], fit3$vp[,,1])
         [,1]         [,2]         [,3]
- [1,] 0.0600 1.840406e-03 1.371433e-03
+ [1,] 0.0600 1.840405e-03 1.371433e-03
  [2,] 0.0600 1.754635e-02 1.710094e-02
  [3,] 0.0600 2.818906e-02 2.771867e-02
  [4,] 0.0600 3.486796e-02 3.447377e-02
  [5,] 0.0600 3.933510e-02 3.905023e-02
- [6,] 0.0600 5.451223e-02 5.395206e-02
+ [6,] 0.0600 5.451225e-02 5.395206e-02
  [7,] 0.0600 3.971423e-02 3.895470e-02
  [8,] 0.0600 1.899215e-02 1.873555e-02
  [9,] 0.0600 1.138390e-02 1.112874e-02
-[10,] 0.0001 1.367816e-14 4.060747e-18
+[10,] 0.0001 1.187740e-12 4.060747e-18
 [11,] 0.0300 1.521879e-02 1.482672e-02
 [12,] 0.0900 3.789188e-02 3.776701e-02
-[13,] 0.1200 4.396546e-02 4.480795e-02
+[13,] 0.1200 4.396547e-02 4.480795e-02
 > 
 > 
 > 
 > cleanEx()
+
+detaching ‘package:minpack.lm’
+
 > nameEx("dcemriS4-package")
 > ### * dcemriS4-package
 > 
@@ -655,30 +408,6 @@ Loading required package: minpack.lm
 > ##D demo("filtered_func_data")
 > ##D demo(zstat1)
 > ## End(Not run)
-> 
-> 
-> 
-> cleanEx()
-> nameEx("descrip-methods")
-> ### * descrip-methods
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: descrip-methods
-> ### Title: Extract or Replace NIfTI/Analyze Description
-> ### Aliases: descrip-methods descrip,anlz-method descrip,nifti-method
-> ###   descrip<-,anlz-method descrip<-,nifti-method descrip descrip<-
-> ### Keywords: methods
-> 
-> ### ** Examples
-> 
-> mniRL <- readNIfTI(system.file("nifti/avg152T1_RL_nifti.nii.gz",
-+                    package="dcemriS4"))
-> descrip(mniRL)
-[1] "FSL3.2beta"
-> descrip(mniRL) <- paste(descrip(mniRL), version$version.string, sep="; ")
-> descrip(mniRL)
-[1] "FSL3.2beta; R version 2.10.1 (2009-12-14)"
 > 
 > 
 > 
@@ -722,6 +451,9 @@ Loading required package: minpack.lm
 > 
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
+
+detaching ‘package:minpack.lm’
+
 > nameEx("find_center")
 > ### * find_center
 > 
@@ -786,27 +518,9 @@ Loading required package: minpack.lm
 > 
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
-> nameEx("hotmetal")
-> ### * hotmetal
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: hotmetal
-> ### Title: Hot Metal Color Table
-> ### Aliases: hotmetal
-> ### Keywords: aplot
-> 
-> ### ** Examples
-> 
-> hotmetal(10) 
-Loading required package: splines
- [1] "#010000" "#4C0000" "#960000" "#E00000" "#FF2C00" "#FF7600" "#FFC100"
- [8] "#FFFF12" "#FFFF81" "#FFFFF1"
-> image(outer(1:20,1:20,"+"), col=hotmetal(75), main="hotmetal")
-> 
-> 
-> 
-> cleanEx()
+
+detaching ‘package:minpack.lm’
+
 > nameEx("kineticmodel")
 > ### * kineticmodel
 > 
@@ -853,333 +567,9 @@ Loading required package: minpack.lm
 > 
 > 
 > cleanEx()
-> nameEx("nifti-class")
-> ### * nifti-class
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: nifti-class
-> ### Title: Class "nifti"
-> ### Aliases: nifti-class show,nifti-method
-> ### Keywords: classes
-> 
-> ### ** Examples
-> 
-> showClass("nifti")
-Class “nifti” [package "dcemriS4"]
 
-Slots:
-                                                                  
-Name:           .Data     sizeof_hdr      data_type        db_name
-Class:          array        numeric      character      character
-                                                                  
-Name:         extents  session_error        regular       dim_info
-Class:        numeric        numeric      character        numeric
-                                                                  
-Name:            dim_      intent_p1      intent_p2      intent_p3
-Class:         vector        numeric        numeric        numeric
-                                                                  
-Name:     intent_code       datatype         bitpix    slice_start
-Class:        numeric        numeric        numeric        numeric
-                                                                  
-Name:          pixdim     vox_offset      scl_slope      scl_inter
-Class:         vector        numeric        numeric        numeric
-                                                                  
-Name:       slice_end     slice_code     xyzt_units        cal_max
-Class:        numeric        numeric        numeric        numeric
-                                                                  
-Name:         cal_min slice_duration        toffset          glmax
-Class:        numeric        numeric        numeric        numeric
-                                                                  
-Name:           glmin        descrip       aux_file     qform_code
-Class:        numeric      character      character        numeric
-                                                                  
-Name:      sform_code      quatern_b      quatern_c      quatern_d
-Class:        numeric        numeric        numeric        numeric
-                                                                  
-Name:       qoffset_x      qoffset_y      qoffset_z         srow_x
-Class:        numeric        numeric        numeric         vector
-                                                                  
-Name:          srow_y         srow_z    intent_name          magic
-Class:         vector         vector      character      character
-                                    
-Name:        extender     reoriented
-Class:         vector        logical
+detaching ‘package:minpack.lm’
 
-Extends: 
-Class "array", from data part
-Class "matrix", by class "array", distance 2, with explicit test and coerce
-Class "structure", by class "array", distance 2
-Class "vector", by class "array", distance 3, with explicit coerce
-Class "vector", by class "array", distance 5, with explicit test and coerce
-
-Known Subclasses: 
-Class "niftiExtension", directly
-Class "niftiAuditTrail", by class "niftiExtension", distance 2
-> 
-> 
-> 
-> cleanEx()
-> nameEx("nifti")
-> ### * nifti
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: nifti
-> ### Title: Constructor for NIfTI
-> ### Aliases: nifti is.nifti
-> 
-> ### ** Examples
-> 
-> nim <- nifti() # default
-> nim
-NIfTI-1 format
-  Type            : niftiAuditTrail
-  Data Type       : 2 (UINT8)
-  Bits per Pixel  : 8
-  Slice Code      : 0 (Unknown)
-  Intent Code     : 0 (None)
-  Qform Code      : 0 (Unknown)
-  Sform Code      : 0 (Unknown)
-  Dimension       : 1 x 1 x 1 x 1
-  Pixel Dimension : 1 x 1 x 1 x 1
-Loading required package: bitops
-  Voxel Units     : Unknown
-  Time Units      : Unknown
-> nim <- nifti(datatype=4) # 2-byte integers
-> nim
-NIfTI-1 format
-  Type            : niftiAuditTrail
-  Data Type       : 4 (INT16)
-  Bits per Pixel  : 16
-  Slice Code      : 0 (Unknown)
-  Intent Code     : 0 (None)
-  Qform Code      : 0 (Unknown)
-  Sform Code      : 0 (Unknown)
-  Dimension       : 1 x 1 x 1 x 1
-  Pixel Dimension : 1 x 1 x 1 x 1
-  Voxel Units     : Unknown
-  Time Units      : Unknown
-> 
-> 
-> 
-> cleanEx()
-> nameEx("niftiAuditTrail-class")
-> ### * niftiAuditTrail-class
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: niftiAuditTrail-class
-> ### Title: Class "niftiAuditTrail"
-> ### Aliases: niftiAuditTrail-class
-> ### Keywords: classes
-> 
-> ### ** Examples
-> 
-> showClass("niftiAuditTrail")
-Class “niftiAuditTrail” [package "dcemriS4"]
-
-Slots:
-                                                                      
-Name:            .Data           trail      extensions      sizeof_hdr
-Class:           array XMLAbstractNode            list         numeric
-                                                                      
-Name:        data_type         db_name         extents   session_error
-Class:       character       character         numeric         numeric
-                                                                      
-Name:          regular        dim_info            dim_       intent_p1
-Class:       character         numeric          vector         numeric
-                                                                      
-Name:        intent_p2       intent_p3     intent_code        datatype
-Class:         numeric         numeric         numeric         numeric
-                                                                      
-Name:           bitpix     slice_start          pixdim      vox_offset
-Class:         numeric         numeric          vector         numeric
-                                                                      
-Name:        scl_slope       scl_inter       slice_end      slice_code
-Class:         numeric         numeric         numeric         numeric
-                                                                      
-Name:       xyzt_units         cal_max         cal_min  slice_duration
-Class:         numeric         numeric         numeric         numeric
-                                                                      
-Name:          toffset           glmax           glmin         descrip
-Class:         numeric         numeric         numeric       character
-                                                                      
-Name:         aux_file      qform_code      sform_code       quatern_b
-Class:       character         numeric         numeric         numeric
-                                                                      
-Name:        quatern_c       quatern_d       qoffset_x       qoffset_y
-Class:         numeric         numeric         numeric         numeric
-                                                                      
-Name:        qoffset_z          srow_x          srow_y          srow_z
-Class:         numeric          vector          vector          vector
-                                                                      
-Name:      intent_name           magic        extender      reoriented
-Class:       character       character          vector         logical
-
-Extends: 
-Class "niftiExtension", directly
-Class "nifti", by class "niftiExtension", distance 2
-Class "array", by class "niftiExtension", distance 3
-Class "matrix", by class "niftiExtension", distance 4, with explicit test and coerce
-Class "structure", by class "niftiExtension", distance 4
-Class "vector", by class "niftiExtension", distance 5, with explicit coerce
-Class "vector", by class "niftiExtension", distance 7, with explicit test and coerce
-> 
-> 
-> 
-> cleanEx()
-> nameEx("niftiExtension-class")
-> ### * niftiExtension-class
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: niftiExtension-class
-> ### Title: Class "niftiExtension"
-> ### Aliases: niftiExtension-class
-> ### Keywords: classes
-> 
-> ### ** Examples
-> 
-> showClass("niftiExtension")
-Class “niftiExtension” [package "dcemriS4"]
-
-Slots:
-                                                                  
-Name:           .Data     extensions     sizeof_hdr      data_type
-Class:          array           list        numeric      character
-                                                                  
-Name:         db_name        extents  session_error        regular
-Class:      character        numeric        numeric      character
-                                                                  
-Name:        dim_info           dim_      intent_p1      intent_p2
-Class:        numeric         vector        numeric        numeric
-                                                                  
-Name:       intent_p3    intent_code       datatype         bitpix
-Class:        numeric        numeric        numeric        numeric
-                                                                  
-Name:     slice_start         pixdim     vox_offset      scl_slope
-Class:        numeric         vector        numeric        numeric
-                                                                  
-Name:       scl_inter      slice_end     slice_code     xyzt_units
-Class:        numeric        numeric        numeric        numeric
-                                                                  
-Name:         cal_max        cal_min slice_duration        toffset
-Class:        numeric        numeric        numeric        numeric
-                                                                  
-Name:           glmax          glmin        descrip       aux_file
-Class:        numeric        numeric      character      character
-                                                                  
-Name:      qform_code     sform_code      quatern_b      quatern_c
-Class:        numeric        numeric        numeric        numeric
-                                                                  
-Name:       quatern_d      qoffset_x      qoffset_y      qoffset_z
-Class:        numeric        numeric        numeric        numeric
-                                                                  
-Name:          srow_x         srow_y         srow_z    intent_name
-Class:         vector         vector         vector      character
-                                                   
-Name:           magic       extender     reoriented
-Class:      character         vector        logical
-
-Extends: 
-Class "nifti", directly
-Class "array", by class "nifti", distance 2
-Class "matrix", by class "nifti", distance 3, with explicit test and coerce
-Class "structure", by class "nifti", distance 3
-Class "vector", by class "nifti", distance 4, with explicit coerce
-Class "vector", by class "nifti", distance 6, with explicit test and coerce
-
-Known Subclasses: "niftiAuditTrail"
-> 
-> 
-> 
-> cleanEx()
-> nameEx("niftiExtensionSection-class")
-> ### * niftiExtensionSection-class
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: niftiExtensionSection-class
-> ### Title: Class "niftiExtensionSection"
-> ### Aliases: niftiExtensionSection-class
-> ### Keywords: classes
-> 
-> ### ** Examples
-> 
-> showClass("niftiExtensionSection")
-Class “niftiExtensionSection” [package "dcemriS4"]
-
-Slots:
-                                    
-Name:      esize     ecode     edata
-Class:   numeric   numeric character
-> 
-> 
-> 
-> cleanEx()
-> nameEx("q2R")
-> ### * q2R
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: quaternion2rotation
-> ### Title: Convert Quaternion into a Rotation Matrix
-> ### Aliases: quaternion2rotation
-> 
-> ### ** Examples
-> 
-> R <- quaternion2rotation(1, 0, 0)
-> ## This R matrix is represented by quaternion [a,b,c,d] = [0,1,0,0]
-> ## (which encodes a 180 degree rotation about the x-axis).
-> R
-     [,1] [,2] [,3]
-[1,]    1    0    0
-[2,]    0   -1    0
-[3,]    0    0   -1
-> 
-> 
-> 
-> cleanEx()
-> nameEx("read_anlz")
-> ### * read_anlz
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: readANALYZE
-> ### Title: readANALYZE
-> ### Aliases: readANALYZE read.analyze.content
-> ### Keywords: file
-> 
-> ### ** Examples
-> 
-> avg152T1 <- readANALYZE(system.file("nifti/avg152T1.img.gz",
-+                                     package="dcemriS4"))
-> image(avg152T1)
-> orthographic(avg152T1)
-> 
-> 
-> 
-> cleanEx()
-> nameEx("read_nifti")
-> ### * read_nifti
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: readNIfTI
-> ### Title: readNIfTI
-> ### Aliases: readNIfTI read.nifti.content
-> 
-> ### ** Examples
-> 
-> nim <- readNIfTI(system.file("nifti/avg152T1_LR_nifti.nii.gz",
-+                              package="dcemriS4")[1])
-> image(nim)
-> orthographic(nim)
-> 
-> 
-> 
-> cleanEx()
 > nameEx("shift3D")
 > ### * shift3D
 > 
@@ -1201,142 +591,10 @@ Class:   numeric   numeric character
 > 
 > 
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
-> cleanEx()
-> nameEx("tim_colors")
-> ### * tim_colors
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: tim.colors
-> ### Title: Tim's Useful Color Table
-> ### Aliases: tim.colors
-> ### Keywords: aplot
-> 
-> ### ** Examples
-> 
-> tim.colors(10) 
-Loading required package: splines
- [1] "#00008F" "#0000FF" "#0070FF" "#00DFFF" "#50FFAF" "#BFFF40" "#FFCF00"
- [8] "#FF6000" "#EF0000" "#800000"
-> image(outer(1:20, 1:20, "+"), col=tim.colors(75), main="tim.colors")
-> 
-> 
-> 
-> cleanEx()
-> nameEx("write_anlz")
-> ### * write_anlz
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: writeANALYZE
-> ### Title: writeANALYZE
-> ### Aliases: writeANALYZE
-> ### Keywords: file
-> 
-> ### ** Examples
-> 
-> norm <- dnorm(seq(-5, 5, length=32), sd=2)
-> norm <- (norm-min(norm)) / max(norm-min(norm))
-> img <- outer(outer(norm, norm), norm)
-> img <- round(255*img)
-> img[17:32,,] <- 255 - img[17:32,,]
-> img.anlz <- anlz(img) # create Analyze object
-> 
-> writeANALYZE(img.anlz, "test-anlz-image-uint8", verbose=TRUE)
-  dims = 32 32 32
-> ## These files should be viewable in, for example, FSLview
-> ## Make sure you adjust the min/max values for proper visualization
-> data <- readANALYZE("test-anlz-image-uint8", verbose=TRUE)
-  fname = test-anlz-image-uint8
-  files = test-anlz-image-uint8.{hdr.gz,img.gz}
-  hdr   = test-anlz-image-uint8.hdr.gz
-  img   = test-anlz-image-uint8.img.gz
-> image(img.anlz) # image(img.anlz, z=16, plot.type="single")
-> image(data)     # image(data, z=16, zlim=range(data), plot.type="single")
-> abs.err <- abs(data - img.anlz)
-> image(as(abs.err, "anlz"), zlim=range(img.anlz))
-> 
-> ## Not run: 
-> ##D ## Loop through all possible data types
-> ##D datatypes <- list(code=c(2, 4, 8, 16, 64),
-> ##D                   name=c("uint8", "int16", "int32", "float", "double"))
-> ##D equal <- vector("list")
-> ##D for (i in 1:length(datatypes$code)) {
-> ##D   fname <- paste("test-anlz-image-", datatypes$name[i], sep="")
-> ##D   rm(img.anlz)
-> ##D   img.anlz <- anlz(img, datatype=datatypes$code[i])
-> ##D   writeANALYZE(img.anlz, fname)
-> ##D   equal[[i]] <- all(readANALYZE(fname) == img)
-> ##D }
-> ##D names(equal) <- datatypes$name
-> ##D unlist(equal)
-> ## End(Not run)
-> 
-> 
-> 
-> cleanEx()
-> nameEx("write_nifti")
-> ### * write_nifti
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: writeNIfTI
-> ### Title: writeNIfTI
-> ### Aliases: writeNIfTI
-> ### Keywords: file
-> 
-> ### ** Examples
-> 
-> norm <- dnorm(seq(-5, 5, length=32), sd=2)
-> norm <- (norm-min(norm)) / max(norm-min(norm))
-> img <- outer(outer(norm, norm), norm)
-> img <- round(255 * img)
-> img[17:32,,] <- 255 - img[17:32,,]
-> img.nifti <- nifti(img) # create NIfTI object
-> 
-> writeNIfTI(img.nifti, "test-nifti-image-uint8", verbose=TRUE)
-  niftiExtension detected!
-  niftiAuditTrail detected!
-  vox_offset = 1216
-  writing niftiExtension(s) at byte = 352
-  writing data at byte = 1216
-> ## These files should be viewable in, for example, FSLview
-> ## Make sure you adjust the min/max values for proper visualization
-> data <- readNIfTI("test-nifti-image-uint8", verbose=TRUE)
-  fname = test-nifti-image-uint8
-  files = test-nifti-image-uint8.nii.gz
-  nii   = test-nifti-image-uint8.nii.gz
-  vox_offset = 1216
-  niftiExtension detected!
-  seek(fid) = 352
-  seek(fid) = 1216
-> image(img.nifti) # image(img.nifti, z=16, plot.type="single")
-> image(data)      # image(data, z=16, zlim=range(data), plot.type="single")
-> abs.err <- abs(data - img.nifti)
-> image(as(abs.err, "nifti"), zlim=range(img.nifti))
-> 
-> ## Not run: 
-> ##D ## Loop through all possible data types
-> ##D datatypes <- list(code=c(2, 4, 8, 16, 64),
-> ##D                   name=c("uint8", "int16", "int32", "float", "double"))
-> ##D equal <- vector("list")
-> ##D for (i in 1:length(datatypes$code)) {
-> ##D   fname <- paste("test-nifti-image-", datatypes$name[i], sep="")
-> ##D   rm(img.nifti)
-> ##D   img.nifti <- nifti(img, datatype=datatypes$code[i])
-> ##D   writeNIfTI(img.nifti, fname, verbose=TRUE)
-> ##D   equal[[i]] <- all(readNIfTI(fname) == img)
-> ##D }
-> ##D names(equal) <- datatypes$name
-> ##D unlist(equal)
-> ## End(Not run)
-> 
-> 
-> 
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  110.028 0.628 112.9 0 0 
+Time elapsed:  38.19 0.06 38.413 0 0 
 > grDevices::dev.off()
 null device 
           1 

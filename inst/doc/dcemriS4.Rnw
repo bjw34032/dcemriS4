@@ -4,8 +4,8 @@
 % $Id: dcemriS4.Rnw 332 2010-01-29 16:54:07Z bjw34032 $
 
 % \VignetteIndexEntry{dcemriS4}
-% \VignetteDepends{dcemriS4noNifti}
-% \VignettePackage{dcemriS4noNifti}
+% \VignetteDepends{dcemriS4}
+% \VignettePackage{dcemriS4}
 % \VignetteKeywords{contrast,diffusion,dynamic,enhanced,imaging,magnetic,resonance,S4}
 \documentclass[11pt,a4paper]{article}
 \usepackage{a4wide,amsmath,color,fancyvrb,graphicx,thumbpdf}
@@ -50,7 +50,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 <<preliminaries,echo=FALSE,results=hide>>=
-library("dcemriS4noNifti")
+library("dcemriS4")
 ## options(niftiAuditTrail=FALSE)
 options(width=85)
 require("oro.nifti")
@@ -58,7 +58,7 @@ require("minpack.lm")
 require("bitops")
 @
 
-\title{{\tt dcemriS4noNifti}: A Package for Medical Image Analysis}
+\title{{\tt dcemriS4}: A Package for Medical Image Analysis}
 \author{Brandon Whitcher \\ \email{bjw34032@users.sourceforge.net} \\ %
   Volker J. Schmid \\ \email{volkerschmid@users.sourceforge.net}}
 
@@ -77,7 +77,7 @@ Quantitative analysis of perfusion imaging using dynamic
 contrast-enhanced MRI (DCE-MRI) is achieved through a series of
 processing steps, starting with the raw data acquired from the MRI
 scanner, and involves a combination of physics, mathematics,
-engineering and statistics.  The purpose of the \pkg{dcemriS4noNifti} package
+engineering and statistics.  The purpose of the \pkg{dcemriS4} package
 is to provide a collection of functions that move the experimental
 data through all steps of the data analysis pipeline using standard
 data formats that may be visualized and manipulated across a wide
@@ -87,7 +87,7 @@ variety of software packages.
 \section{Data Input/Output}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The \pkg{dcemriS4noNifti} package requires incoming data to be in the
+The \pkg{dcemriS4} package requires incoming data to be in the
 ANALYZE~7.5 or NIfTI formats.  All read-write operations are provided
 by \pkg{oro.nifti} and the user is encoruaged to use the resources
 provided by that package for more details.
@@ -182,10 +182,10 @@ saturated double-angle method \citep{cun-pau-nay:saturated}.
   
 <<doubleanglemethod>>=
 sdam60 <- readNIfTI(system.file("nifti/SDAM_ep2d_60deg_26slc.nii.gz", 
-                                package="dcemriS4noNifti"))
+                                package="dcemriS4"))
 sdam60
 sdam120 <- readNIfTI(system.file("nifti/SDAM_ep2d_120deg_26slc.nii.gz", 
-                                 package="dcemriS4noNifti"))
+                                 package="dcemriS4"))
 sdam120
 sdam.image <- rowMeans(dam(sdam60, sdam120, 60), dims=3)
 mask <- (rowSums(sdam60, dims=3) > 500) # nifti(rowSums(sdam60, dims=3) > 500)
@@ -195,7 +195,7 @@ png("sdam.png", width=400, height=400)
 @ 
 <<figure5-code>>=
 # A smooth version of "sdam.image"
-SDAM <- readNIfTI(system.file("nifti/SDAM_smooth.nii.gz", package="dcemriS4noNifti"))
+SDAM <- readNIfTI(system.file("nifti/SDAM_smooth.nii.gz", package="dcemriS4"))
 overlay(sdam120, ifelse(mask, SDAM, NA), z=13, zlim.x=range(sdam120), 
         zlim.y=c(0.5,1.5), plot.type="single")
 @ 
@@ -239,7 +239,7 @@ Z <- 36
 flip <- fangles <- array(0, c(X,Y,Z,nangles))
 for (w in 1:nangles) {
   vibe <- readNIfTI(system.file(paste("nifti/", fnames[w], ".nii.gz", sep=""), 
-                                package="dcemriS4noNifti"))
+                                package="dcemriS4"))
   flip[,,1:nsli(vibe),w] <- vibe
   fangles[,,,w] <- array(alpha[w], c(X,Y,Z))
 }
@@ -276,7 +276,7 @@ By defining regions of interest (ROIs) in
 
 <<FSLmask>>=
 t1pmask <- readNIfTI(system.file("nifti/t1_phantom_mask.nii.gz", 
-                                 package="dcemriS4noNifti"))
+                                 package="dcemriS4"))
 pmask <- nifti(array(t1pmask[,,25], dim(t1pmask))) # repeat slice #25
 pmask
 @ 
