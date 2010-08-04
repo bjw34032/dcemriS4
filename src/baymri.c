@@ -131,6 +131,17 @@ double convterm(double kep, double t, double* settings)
   return bla;
 }
 
+double deviance(double tau_epsilon, double* conc, double* time, double ktrans, double kep, double vp, int T, double* settings)
+ {
+   int t;
+   double p = 0.5*T*log(tau_epsilon);
+   for (t=0; t<T; t++)
+     {
+       p -= 0.5*tau_epsilon*pow((conc[t])-extraterm(vp,time[t],settings)-ktrans*convterm(kep,time[t],settings),2);
+     }
+   return -2*p;
+ }
+
  
 double log_fc_gamma(double gamma, double tau_epsilon, double tau_gamma, double* conc, double* time, double kep, double vp, int T, double* settings)
  {
@@ -246,7 +257,8 @@ void dce_bayes_run_single(int* NRI,
 	 double* ab_vp,
 	 double* ab_epsilon, 
 	 double* aif_settings, int* settings, double* time, int* T,
-	 double *ktrans_trace, double* kep_trace, double* vp_trace, double* tau_epsilon_trace)
+         double *ktrans_trace, double* kep_trace, double* vp_trace, double* tau_epsilon_trace,
+         double* deviance_trace)
 	 
 {
   GetRNGstate();
@@ -266,6 +278,7 @@ void dce_bayes_run_single(int* NRI,
   int acc_theta=0;
   int acc_eta=0;
   iter=0;
+  int dev;
 
   while (iter<NRI[0])
     { 
@@ -346,6 +359,7 @@ void dce_bayes_run_single(int* NRI,
 	 kep_trace[sample]=kep;
 	 vp_trace[sample]=vp;
 	 tau_epsilon_trace[sample]=tau_epsilon;
+         deviance_trace[sample]=deviance(tau_epsilon, conc, time, ktrans, kep, vp, T[0], aif_settings);
 	 sample++;
        }
 

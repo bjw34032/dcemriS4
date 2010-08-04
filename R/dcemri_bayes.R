@@ -43,12 +43,12 @@ setMethod("dcemri.bayes", signature(conc="array"),
                          burnin=500, tune=267, tau.ktrans=1,
                          tau.kep=tau.ktrans, ab.vp=c(1,19),
                          ab.tauepsilon=c(1,1/1000), samples=FALSE,
-                         multicore=FALSE, verbose=FALSE, ...) .dcemriWrapper("dcemri.bayes", conc, time, img.mask, model,
+                         multicore=FALSE, verbose=FALSE, dic=FALSE, ...) .dcemriWrapper("dcemri.bayes", conc, time, img.mask, model,
                          aif, user, nriters, thin,
                          burnin, tune, tau.ktrans,
                          tau.kep, ab.vp,
                          ab.tauepsilon, samples,
-                         multicore, verbose, ...))
+                         multicore, verbose, dic, ...))
 
 
 .dcemri.bayes.single <- function(conc, time, nriters=3500, thin=3,
@@ -78,18 +78,21 @@ setMethod("dcemri.bayes", signature(conc="array"),
                     as.double(rep(0,n)),
                     as.double(rep(0,n)),
                     as.double(rep(0,n)), 
+                    as.double(rep(0,n)), 
                     PACKAGE="dcemriS4")    
     return(list("ktrans"= singlerun[[11]], "kep"= singlerun[[12]],
-                "vp"= singlerun[[13]], "sigma2"= 1/singlerun[[14]]))
+                "vp"= singlerun[[13]], "sigma2"= 1/singlerun[[14]], "deviance" = singlerun[[15]]))
   }
 }
+
+.square <- function(x)x*x
 
 .dcemri.bayes <- function(conc, time, img.mask, model="extended",
                          aif=NULL, user=NULL, nriters=3500, thin=3,
                          burnin=500, tune=267, tau.ktrans=1,
                          tau.kep=tau.ktrans, ab.vp=c(1,19),
                          ab.tauepsilon=c(1,1/1000), samples=FALSE,
-                         multicore=FALSE, verbose=FALSE, ...) {
+                         multicore=FALSE, verbose=FALSE, dic=FALSE...) {
 
   ## dcemri.bayes - a function for fitting 1-compartment PK models to
   ## DCE-MRI images using Bayes inference
@@ -120,10 +123,10 @@ setMethod("dcemri.bayes", signature(conc="array"),
         }
       }
     }
-    return(A)
+    return(drop(A))
   }
 
-  if (nriters < thin)
+  if (nriters < thin) 
     stop("Please check settings for nriters")
   if (burnin < 0)
     stop("Please check settings for burnin")
@@ -168,13 +171,20 @@ setMethod("dcemri.bayes", signature(conc="array"),
   I <- nrow(conc)
   J <- ncol(conc)
   K <- nsli(conc)
-  
+  DIM <- 3
   if (!is.numeric(dim(conc))) {
     I <- J <- K <- 1
+    DIM <- 0
   } else {
     if (length(dim(conc)) == 2) {
       J <- K <- 1
+      DIM <- 1
     }
+    if (length(dim(conc)) == 3) {
+      K <- 1
+      DIM <- 2
+    }
+
   }
 
   img.mask <- array(img.mask,c(I,J,K))
@@ -223,8 +233,9 @@ setMethod("dcemri.bayes", signature(conc="array"),
   ktrans <- kep <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
   sigma2 <- rep(NA, nvoxels)
   Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
+  med.deviance=rep(NA,nvoxels)
   if (samples) {
-    sigma2.samples <- ktrans.samples <- kep.samples <- c()
+    deviance.samples <- sigma2.samples <- ktrans.samples <- kep.samples <- c()
     if (mod %in% c("extended", "orton.exp", "orton.cos"))
       Vp.samples <- c()
   }
@@ -236,14 +247,14 @@ setMethod("dcemri.bayes", signature(conc="array"),
     conc.list[[i]] <- conc.mat[i,]
 
   if (!multicore) {
-    fit <- lapply(conc.list, FUN=.dcemri.bayes.single,
+    conc.list <- lapply(conc.list, FUN=.dcemri.bayes.single,
                   time=time, nriters=nriters, thin=thin, burnin=burnin,
                   tune=tune, ab.vp=ab.vp, ab.tauepsilon=ab.tauepsilon,
                   aif.model=aif.model, aif.parameter=aif.parameter,
 		  vp=vp.do)
   } else {
     require("multicore")
-    fit <- mclapply(conc.list, FUN=.dcemri.bayes.single,
+    conc.list <- mclapply(conc.list, FUN=.dcemri.bayes.single,
                   time=time, nriters=nriters, thin=thin, burnin=burnin,
                   tune=tune, ab.vp=ab.vp, ab.tauepsilon=ab.tauepsilon,
                   aif.model=aif.model, aif.parameter=aif.parameter, 
@@ -253,21 +264,23 @@ setMethod("dcemri.bayes", signature(conc="array"),
   if (verbose) cat("  Reconstructing results...", fill=TRUE)
 
   for (k in 1:nvoxels) {
-    ktrans$par[k] <- median(fit[[k]]$ktrans)
-    kep$par[k] <- median(fit[[k]]$kep)
-    ktrans$error[k] <- sqrt(var(fit[[k]]$ktrans))
-    kep$error[k] <- sqrt(var(fit[[k]]$kep))
+    ktrans$par[k] <- median(conc.list[[k]]$ktrans)
+    kep$par[k] <- median(conc.list[[k]]$kep)
+    ktrans$error[k] <- sqrt(var(conc.list[[k]]$ktrans))
+    kep$error[k] <- sqrt(var(conc.list[[k]]$kep))
     if (mod %in% c("extended", "orton.exp", "orton.cos")) {
-      Vp$par[k] <- median(fit[[k]]$vp)
-      Vp$error[k] <- sqrt(var(fit[[k]]$vp))
+      Vp$par[k] <- median(conc.list[[k]]$vp)
+      Vp$error[k] <- sqrt(var(conc.list[[k]]$vp))
       if (samples)
-	Vp.samples <- c(Vp.samples,fit[[k]]$v)
+	Vp.samples <- c(Vp.samples,conc.list[[k]]$v)
     }
-    sigma2[k] <- median(fit[[k]]$sigma2)
+    if(dic)med.deviance[k] <- median(conc.list[[k]]$deviance)
+    sigma2[k] <- median(conc.list[[k]]$sigma2)
     if (samples) {
-      ktrans.samples <- c(ktrans.samples,fit[[k]]$ktrans)
-      kep.samples <- c(kep.samples,fit[[k]]$kep)
-      sigma2.samples <- c(sigma2.samples,fit[[k]]$sigma2)
+      ktrans.samples <- c(ktrans.samples,conc.list[[k]]$ktrans)
+      kep.samples <- c(kep.samples,conc.list[[k]]$kep)
+      sigma2.samples <- c(sigma2.samples,conc.list[[k]]$sigma2)
+      if(dic)deviance.samples <- c(deviance.samples,conc.list[[k]]$deviance)
     }
   }
 
@@ -291,6 +304,13 @@ setMethod("dcemri.bayes", signature(conc="array"),
   A[img.mask] <- sigma2
   sigma2.out <- A
 
+  if(dic)
+	{
+	A <- B <- array(NA, c(I,J,K))
+  	A[img.mask] <- med.deviance
+  	med.deviance <- A
+	}
+
   if (samples) {
     NRI <- length(ktrans.samples) / length(ktrans$par)
     ktrans.out <- list(par=ktrans.out$par,
@@ -304,6 +324,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
                      error=Vp.out$error,
                      samples=extract.samples(Vp.samples, I, J, K, NRI))
     sigma2.samples <- extract.samples(sigma2.samples, I, J, K, NRI)
+    if(dic)deviance.samples <- extract.samples(deviance.samples, I, J, K, NRI)
   }
 
   returnable <- list(ktrans=ktrans.out$par, kep=kep.out$par,
@@ -318,11 +339,57 @@ setMethod("dcemri.bayes", signature(conc="array"),
       returnable[["vp.samples"]] <- Vp.out$samples
     } 
   } 
+
   if (samples) {
     returnable[["ktrans.samples"]] <- ktrans.out$samples
     returnable[["kep.samples"]] <- kep.out$samples
     returnable[["sigma2.samples"]] <- sigma2.samples
   }
+
+
+  # DIC
+
+  if (dic)
+  {
+  if (verbose) cat("  Computing DIC...", fill=TRUE)
+
+  fitted <- array(NA,c(I,J,K,length(time)))
+  for (i in 1:I)
+  for (j in 1:J)
+  for (k in 1:K)
+  if(img.mask[i,j,k])
+  {
+  par=list("ktrans"=ktrans.out$par[i,j,k],"kep"=kep.out$par[i,j,k])
+  if(vp.do)par["vp"]=Vp.out$par[i,j,k]
+  fitted[i,j,k,]<-kineticModel(time,par,model=model,aif=aif)
+  }
+  fitted <- fitted - conc
+  fitted <- fitted*fitted
+  fitted <- apply(fitted,1:3,sum)
+
+  deviance.med <- length(time)*log(sigma2.out)+fitted/sigma2.out
+  pD=med.deviance-deviance.med
+print(1)
+  DIC = med.deviance+pD
+print(1)
+   returnable[["DIC"]] <- sum(DIC,na.rm=TRUE)
+print(1)
+   returnable[["pD"]] <- sum(pD,na.rm=TRUE)
+print(1)
+   returnable[["DIC.map"]] <- DIC
+print(1)
+   returnable[["pD.map"]] <- pD 
+print(1)
+   returnable[["deviance.med"]] <- deviance.med
+print(1)
+   returnable[["med.deviance"]] <- med.deviance
+print(1)
+   if(samples)returnable[["deviance.samples"]] <- deviance.samples
+print(1)
+
+ 
+  }
+
   return(returnable)
 }
 
