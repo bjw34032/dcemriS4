@@ -114,19 +114,19 @@ setMethod("dcemri.map", signature(conc="array"),
            D <- 1; a1 <- 323; m1 <- 20.2; a2 <- 1.07; m2 <- 0.172
            aif.parameter <- c(D*a1, m1, D*a2, m2)
          },
-         ## FIXME orton.cos does not seem to be implemented
-         ##orton.cos = {
-         ##  D <- 1; a1 <- 2.84; m1 <- 22.8; a2 <- 1.36; m2 <- 0.171
-         ##  aif.parameter=c(D*a1, m1, D*a2, m2)
-         ##},
+         orton.cos = {
+           D <- 1; a1 <- 2.84; m1 <- 22.8; a2 <- 1.36; m2 <- 0.171
+           aif.parameter=c(D*a1, m1, D*a2, m2)
+         },
          user = {
            if (verbose) cat("  User-specified AIF parameters...", fill=TRUE);
+	   D <- 1
            D <- try(user$D); AB <- try(user$AB) 
            muB <- try(user$muB); AG <- try(user$AG)
            muG <- try(user$muG)
-           aif.parameter <- c(D * AB, muB, D * AG, muG)
            ## aG, aB are probably related to orton.cos which isn't implemented
-           ## aG <- try(user$aG); aB <- try(user$aB);
+           aG <- try(user$aG); aB <- try(user$aB);
+           aif.parameter <- c(D * AB, muB, D * AG, muG)
          },
          print("WARNING: AIF parameters must be specified!"))
 
@@ -136,6 +136,22 @@ setMethod("dcemri.map", signature(conc="array"),
 	}
 	extraterm <- function(t, aif) {
 	  aif[1] * (exp(-aif[2]*t)) + aif[3] * (exp(-aif[4]*t))
+	}
+
+  if (aif=="orton.cos")
+	{
+	orton.f <- function(t,a)
+	{
+	((1-exp(-a*t))/a)-(a*cos(mb*t)+mb*sin(mb*t)-a*exp(-a*t))/(a*a+mb*mb)
+	}
+	convterm <- function(kep, t, aif) {
+	  tb=2*pi/aif[2]
+          tt=t[t>tb]
+	  res <- (orton.f(t,aif[4],aif[2])+( (kep-aif[4])/aif[3]-1 )*orton.f(t,kep,aif[2]))*aif[1]*aif[3]/(kep-aif[4])
+	  res[t>tb] <- (orton.f(tb,aif[4],aif[2])*exp(-aif[4]*(tt-tb))
+		+( (kep-aif[4])/aif[3]-1 )*orton.f(t,kep,aif[2])*exp(-kep*(tt-tb)))*aif[1]*aif[3]/(kep-aif[4])
+          return(res)
+          }
 	}
 
   ## translate "model" to "aif.model" and "vp.do"
