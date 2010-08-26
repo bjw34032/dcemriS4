@@ -1,6 +1,6 @@
 ##
 ##
-## Copyright (c) 2009, Brandon Whitcher and Volker Schmid
+## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
 ## 
 ## Redistribution and use in source and binary forms, with or without
@@ -29,72 +29,79 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
-## $Id: dwi.R 332 2010-01-29 16:54:07Z bjw34032 $
-## 
+## $Id:$
+##
 
 #############################################################################
-## adc.lm() = estimate ADC using Levenburg-Marquardt
+## T2.lm() = estimate exp(-TE/T2) using Levenburg-Marquardt
 #############################################################################
 
-adc.lm <- function(signal, b, guess, nprint=0) {
+T2.lm <- function(signal, TE, guess, nprint=0) {
   func <- function(x, y) {
-    S0 <- x[1]
-    D <- x[2]
+    rho <- x[1]
+    T2 <- x[2]
     signal <- y[[1]]
-    b <- y[[2]]
-    signal - S0 * exp(-b*D)
+    TE <- y[[2]]
+    signal - rho * exp(-TE/T2)
   }
   require("minpack.lm") # Levenberg-Marquart fitting
-  out <- nls.lm(par=guess, fn=func, control=list(nprint=nprint),
-                y=list(signal, b))
-  list(S0=out$par[1], D=out$par[2], info=out$info, message=out$message)
+  out <- nls.lm(par=guess, fn=func, control=list(nprint=nprint, maxiter=150),
+               y=list(signal, TE))
+  list(rho=out$par[1], T2=out$par[2], info=out$info, message=out$message)
 }
 
 #############################################################################
-## setGeneric("ADC.fast")
+## setGeneric("T2.fast")
 #############################################################################
 
-setGeneric("ADC.fast", function(dwi, ...) standardGeneric("ADC.fast"))
-setMethod("ADC.fast", signature(dwi="array"),
-          function(dwi, bvalues, dwi.mask, verbose=FALSE)
-          .dcemriWrapper("ADC.fast", dwi, bvalues, dwi.mask, verbose))
+setGeneric("T2.fast", function(cpmg, ...) standardGeneric("T2.fast"))
+setMethod("T2.fast", signature(cpmg="array"),
+          function(cpmg, cpmg.mask, TE, verbose=FALSE) 
+	    .dcemriWrapper("T2.fast", cpmg, cpmg.mask, TE, verbose))
 
-.ADC.fast <- function(dwi, bvalues, dwi.mask, verbose=FALSE) {
-  if (length(dim(dwi)) != 4) { # Check dwi is a 4D array
-    stop("Diffusion-weighted data must be a 4D array.")
+#############################################################################
+## T2.fast()
+#############################################################################
+
+.T2.fast <- function(cpmg, cpmg.mask, TE, verbose=FALSE) {
+
+  if (length(dim(cpmg)) != 4) { # Check cpmg is a 4D array
+    stop("CPMG data must be a 4D array.")
   }
-  if (!is.logical(dwi.mask)) { # Check dyn.mask is logical
+  if (!is.logical(cpmg.mask)) { # Check cpmg.mask is logical
     stop("Mask must be logical.")
   }
-
-  nvalues <- length(bvalues)
-  nvoxels <- sum(dwi.mask)
+    
+  X <- nrow(cpmg)
+  Y <- ncol(cpmg)
+  Z <- nsli(cpmg)
+  nvoxels <- sum(cpmg.mask)
   
   if (verbose) {
     cat("  Deconstructing data...", fill=TRUE)
   }
-  dwi.mat <- matrix(dwi[dwi.mask], nvoxels)
-  S0 <- D <- numeric(nvoxels)
-
+  cpmg.mat <- matrix(cpmg[cpmg.mask], nrow=nvoxels)
+  T2 <- rho <- numeric(nvoxels)
   if (verbose) {
-    cat("  Calculating S0 and D...", fill=TRUE)
+    cat("  Calculating T2 and rho...", fill=TRUE)
   }
-  for(i in 1:nvoxels) {
-    fit <- adc.lm(dwi.mat[i,], bvalues, guess=c(0.75*dwi.mat[i,1], 0.05))
+  for (k in 1:nvoxels) {
+    fit <- T2.lm(cpmg.mat[k,], TE, guess=c(0.75*cpmg.mat[k,1], 0.05))
     if (fit$info < 4) {
-      S0[i] <- fit$S0
-      D[i] <- fit$D
+      T2[k] <- fit$T2
+      rho[k] <- fit$rho
     } else {
-      S0[i] <- D[i] <- NA
+      T2[k] <- rho[k] <- NA
     }
   }
 
   if (verbose) {
     cat("  Reconstructing results...", fill=TRUE)
   }
-  S0.array <- D.array <- array(NA, dim(dwi)[1:3])
-  S0.array[dwi.mask] <- S0
-  D.array[dwi.mask] <- D
-  
-  list(S0 = S0.array, D = D.array)
+  T2.array <- rho.array <- array(NA, dim(cpmg)[1:3])
+  T2.array[cpmg.mask] <- T2
+  rho.array[cpmg.mask] <- rho
+
+  list(rho = rho.array, T2 = T2.array)
 }
+

@@ -80,7 +80,7 @@ setMethod("dcemri.map", signature(conc="array"),
                            stop("Only aif=\"tofts.kermode\" or aif=\"fritz.hansen\" acceptable AIFs for model=\"weinmann\" or model=\"extended\"", call.=FALSE))
                   }
                 },
-                stop("Unknown model: " + model, call.=FALSE))
+                stop(paste("Unknown model: ", model), call.=FALSE))
 
   mod <- model
   nvoxels <- sum(img.mask)

@@ -266,14 +266,14 @@ setMethod("dcemri.lm", signature(conc="array"),
            ## model <- model.orton.exp
            func <- function(theta, signal, time, ...)
              signal - model.orton.exp(time, theta[1], theta[2], theta[3], ...)
-           guess <- c("th0"=-1, "th1"=0, "th3"=0.1)
+           guess <- c("th0"=-1, "th1"=-1, "th3"=-1)
            Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
          },
          orton.cos = {
            ## model <- model.orton.cos
            func <- function(theta, signal, time, ...)
              signal - model.orton.cos(time, theta[1], theta[2], theta[3], ...)
-           guess <- c("th0"=-1, "th1"=0, "th3"=0.1)
+           guess <- c("th0"=-1, "th1"=-1, "th3"=-1)
            Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
          },
          stop("Model/AIF is not supported."))

@@ -94,26 +94,32 @@ setMethod("R1.fast", signature(flip="array"),
 
 .R1.fast <- function(flip, flip.mask, fangles, TR, verbose=FALSE) {
 
-  if (length(dim(flip)) != 4)  # Check flip is a 4D array
+  if (length(dim(flip)) != 4) { # Check flip is a 4D array
     stop("Flip-angle data must be a 4D array.")
-  if (!is.logical(flip.mask))  # Check flip.mask is logical
+  }
+  if (!is.logical(flip.mask)) { # Check flip.mask is logical
     stop("Mask must be logical.")
+  }
     
-  X <- nrow(flip) ; Y <- ncol(flip) ; Z <- nsli(flip)
+  X <- nrow(flip)
+  Y <- ncol(flip)
+  Z <- nsli(flip)
   nvoxels <- sum(flip.mask)
   
-  if (verbose)
+  if (verbose) {
     cat("  Deconstructing data...", fill=TRUE)
+  }
   flip.mat <- matrix(flip[flip.mask], nrow=nvoxels)
   R10 <- M0 <- numeric(nvoxels)
-  if (is.array(fangles))
+  if (is.array(fangles)) {
     fangles.mat <- matrix(fangles[flip.mask], nrow=nvoxels)
-  else
+  } else {
     fangles.mat <- matrix(fangles, nrow=nvoxels, ncol=length(fangles),
                           byrow=TRUE)
-
-  if (verbose)
+  }
+  if (verbose) {
     cat("  Calculating R10 and M0...", fill=TRUE)
+  }
   for (k in 1:nvoxels) {
     fit <- E10.lm(flip.mat[k,], fangles.mat[k,],
                   guess=c(1, mean(flip.mat[k,])))
@@ -125,8 +131,9 @@ setMethod("R1.fast", signature(flip="array"),
     }
   }
 
-  if (verbose)
+  if (verbose) {
     cat("  Reconstructing results...", fill=TRUE)
+  }
   R10.array <- M0.array <- array(NA, c(X,Y,Z))
   R10.array[flip.mask] <- R10
   M0.array[flip.mask] <- M0
@@ -152,12 +159,17 @@ setMethod("CA.fast", signature(dynamic="array"),
 .CA.fast <- function(dynamic, dyn.mask, dangle, flip, fangles, TR,
                      r1=4, verbose=FALSE) {
 
-  if (length(dim(flip)) != 4)  # Check flip is a 4D array
+  if (length(dim(flip)) != 4) { # Check flip is a 4D array
     stop("Flip-angle data must be a 4D array.")
-  if (!is.logical(dyn.mask))  # Check dyn.mask is logical
+  }
+  if (!is.logical(dyn.mask)) { # Check dyn.mask is logical
     stop("Mask must be logical.")
-  if (length(fangles) != ntim(flip))  # Check that #(flip angles) are equal
-    stop("Number of flip angles must be equal.")
+  }
+  if (! identical(length(fangles), ntim(flip)) &&
+      ! isTRUE(all.equal(dim(flip), dim(fangles)))) {
+    ## Check that #(flip angles) are equal
+    stop("Number of flip angles must agree with dimension of flip-angle data.")
+  }
   
   R1est <- R1.fast(flip, dyn.mask, fangles, TR, verbose)
   
