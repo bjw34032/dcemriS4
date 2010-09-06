@@ -16,12 +16,12 @@
 \usage{
 \S4method{dcemri.bayes}{array}(conc, time, img.mask, model="extended", aif=NULL,
              user=NULL, nriters=3500, thin=3, burnin=500,
-             tune=267, tau.ktrans=1, tau.kep=tau.ktrans,
+             tune=267, ab.ktrans=c(0,1), ab.kep=ab.ktrans,
              ab.vp=c(1,19), ab.tauepsilon=c(1,1/1000),
              samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
 dcemri.bayes.single(conc, time, nriters=3500, thin=3,
-                    burnin=500, tune=267, tau.gamma=1,
-                    tau.theta=1, ab.vp=c(1,19),
+                    burnin=500, tune=267, ab.gamma=c(0,1),
+                    ab.theta=c(0,1), ab.vp=c(1,19),
                     ab.tauepsilon=c(1,1/1000), aif.model=0,
                     aif.parameter=c(2.4,0.62,3,0.016), vp=1)
 }
@@ -56,9 +56,9 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
   \item{burnin}{Number of iterations for burn-in.}
   \item{tune}{Number for iterations for tuning.  The algorithm will be 
     tuned to an acceptance rate between 0.3 and 0.6.}
-  \item{tau.ktrans}{Variance parameter for prior on
+  \item{ab.ktrans}{Mean and variance parameter for Gaussian prior on
     \eqn{\log(K^{trans})}.}
-  \item{tau.kep}{Variance parameter for prior on \eqn{\log(k_{ep})}.}
+  \item{ab.kep}{Mean and variance parameter for Gaussian prior on \eqn{\log(k_{ep})}.}
   \item{ab.vp}{Hyper-prior parameters for the Beta prior on
     \eqn{v_p}{vp}.}
   \item{ab.tauepsilon}{Hyper-prior parameters for observation error

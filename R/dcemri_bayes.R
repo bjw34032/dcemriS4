@@ -40,20 +40,20 @@ setGeneric("dcemri.bayes",
 setMethod("dcemri.bayes", signature(conc="array"), 
           function(conc, time, img.mask, model="extended",
                          aif=NULL, user=NULL, nriters=3500, thin=3,
-                         burnin=500, tune=267, tau.ktrans=1,
-                         tau.kep=tau.ktrans, ab.vp=c(1,19),
+                         burnin=500, tune=267, ab.ktrans=c(0,1),
+                         ab.kep=ab.ktrans, ab.vp=c(1,19),
                          ab.tauepsilon=c(1,1/1000), samples=FALSE,
                          multicore=FALSE, verbose=FALSE, dic=FALSE, ...) .dcemriWrapper("dcemri.bayes", conc, time, img.mask, model,
                          aif, user, nriters, thin,
-                         burnin, tune, tau.ktrans,
-                         tau.kep, ab.vp,
+                         burnin, tune, ab.ktrans,
+                         ab.kep, ab.vp,
                          ab.tauepsilon, samples,
                          multicore, verbose, dic, ...))
 
 
 .dcemri.bayes.single <- function(conc, time, nriters=3500, thin=3,
-                                burnin=500, tune=267, tau.gamma=1,
-                                tau.theta=1, ab.vp=c(1,19),
+                                burnin=500, tune=267, ab.gamma=c(0,1),
+                                ab.theta=c(0,1), ab.vp=c(1,19),
                                 ab.tauepsilon=c(1,1/1000), aif.model=0,
                                 aif.parameter=c(2.4,0.62,3,0.016), vp=1) {
 
@@ -66,8 +66,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
     singlerun <- .C("dce_bayes_run_single",
                     as.integer(c(nriters, thin, burnin, tune)),
                     as.double(conc),
-                    as.double(tau.gamma),
-                    as.double(tau.theta),
+                    as.double(ab.gamma),
+                    as.double(ab.theta),
                     as.double(ab.vp),
                     as.double(ab.tauepsilon),
                     as.double(c(aif.model, aif.parameter)),
@@ -89,8 +89,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
 
 .dcemri.bayes <- function(conc, time, img.mask, model="extended",
                          aif=NULL, user=NULL, nriters=3500, thin=3,
-                         burnin=500, tune=267, tau.ktrans=1,
-                         tau.kep=tau.ktrans, ab.vp=c(1,19),
+                         burnin=500, tune=267, ab.ktrans=c(0,1),
+                         ab.kep=ab.ktrans, ab.vp=c(1,19),
                          ab.tauepsilon=c(1,1/1000), samples=FALSE,
                          multicore=FALSE, verbose=FALSE, dic=FALSE...) {
 
@@ -249,14 +249,14 @@ setMethod("dcemri.bayes", signature(conc="array"),
   if (!multicore) {
     conc.list <- lapply(conc.list, FUN=.dcemri.bayes.single,
                   time=time, nriters=nriters, thin=thin, burnin=burnin,
-                  tune=tune, ab.vp=ab.vp, ab.tauepsilon=ab.tauepsilon,
+                  tune=tune, ab.gamma=ab.ktrans, ab.theta=ab.kep, ab.vp=ab.vp, ab.tauepsilon=ab.tauepsilon,
                   aif.model=aif.model, aif.parameter=aif.parameter,
 		  vp=vp.do)
   } else {
     require("multicore")
     conc.list <- mclapply(conc.list, FUN=.dcemri.bayes.single,
                   time=time, nriters=nriters, thin=thin, burnin=burnin,
-                  tune=tune, ab.vp=ab.vp, ab.tauepsilon=ab.tauepsilon,
+                  tune=tune, ab.gamma=ab.ktrans, ab.theta=ab.kep, ab.vp=ab.vp, ab.tauepsilon=ab.tauepsilon,
                   aif.model=aif.model, aif.parameter=aif.parameter, 
                   vp=vp.do)
   }

@@ -15,7 +15,7 @@
 }
 \usage{
 \S4method{dcemri.map}{array}(conc, time, img.mask, model="extended", aif=NULL,
-             user=NULL, tau.ktrans=1, tau.kep=tau.ktrans,
+             user=NULL, ab.ktrans=1, ab.kep=ab.ktrans,
              ab.vp=c(1,19), ab.tauepsilon=c(1,1/1000),
              samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
 dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif)
@@ -33,6 +33,10 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
 	compartment model}
       \item{\dQuote{extended}}{Weinmann model extended with additional
 	vascular compartment (default)}
+      \item{\dQuote{orton.exp}}{Extended model using Orton's exponential
+	AIF} 
+      \item{\dQuote{orton.cos}}{Extended model using Orton's raised
+	cosine AIF}
     }
   }
   \item{aif}{is a character string that identifies the parameters of the
@@ -40,13 +44,14 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
     Acceptable values are: \code{tofts.kermode} (default) or
     \code{fritz.hansen} for the \code{weinmann} and \code{extended}
     models; \code{orton.exp} (default) or \code{user} for the
-    \code{orton.exp} model.}
+    \code{orton.exp} model; \code{user} for the
+    \code{orton.cos} model.}
   \item{user}{Vector of AIF parameters.  For Tofts and Kermode:
     \eqn{a_1}, \eqn{m_1}, \eqn{a_2}, \eqn{m_2}; for Orton \emph{et al.}:
     \eqn{A_b}, \eqn{\mu_b}, \eqn{A_g}, \eqn{\mu_g}.}
-  \item{tau.ktrans}{Variance parameter for prior on
+  \item{ab.ktrans}{Mean and variance parameter for Gaussian prior on
     \eqn{\log(K^{trans})}.}
-  \item{tau.kep}{Variance parameter for prior on \eqn{\log(k_{ep})}.}
+  \item{ab.kep}{Mean and variance parameter for Gaussian prior on \eqn{\log(k_{ep})}.}
   \item{ab.vp}{Hyper-prior parameters for the Beta prior on
     \eqn{v_p}{vp}.}
   \item{ab.tauepsilon}{Hyper-prior parameters for observation error

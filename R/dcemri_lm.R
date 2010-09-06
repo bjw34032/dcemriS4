@@ -130,7 +130,7 @@ setMethod("dcemri.lm", signature(conc="array"),
   
   model.orton.cos <- function(time, th0, th1, th3, ...) {
     ## Extended model using the raised cosine AIF from Matthew Orton (ICR)
-    A2 <- function(t, alpha, ...) {
+    A2 <- function(time, alpha, ...) {
       (1 - exp(-alpha*time)) / alpha - (alpha*cos(muB*time) + muB*sin(muB*time) - alpha*exp(-alpha*time)) / (alpha^2 + muB^2)
     }
 
