@@ -66,12 +66,15 @@ setMethod("dcemri.spline", signature(conc="array"),
     stop("Concentration time curves must not contain missing values.")
   }
 
+  samplesize=floor(nriters/thin)
+
   T <- length(time)
-  tau <- array(1000, c(p-rw,nriters))
-  beta <- array(0, c(p,nriters))
-  MAX <- array(0, c(nriters))
-  tauepsilon <- array(1000, c(nriters))
-  burnin <- min(burnin, nriters)
+  tau <- array(1000, c(p-rw,samplesize))
+  beta <- array(0, c(p,samplesize))
+  MAX <- array(0, c(samplesize))
+  tauepsilon <- array(1000, c(samplesize))
+  burnin <- min(burnin, samplesize)
+  
   result <- .C("dce_spline_run",
                as.integer(1),
                as.integer(burnin),
@@ -96,12 +99,12 @@ setMethod("dcemri.spline", signature(conc="array"),
                as.integer(silent),
                PACKAGE="dcemriS4")
 
-  tau <- array(result[[5]], c(p-rw,nriters))
-  beta <- array(result[[9]], c(p,nriters))
-  tauepsilon <- array(result[[6]], c(nriters))
+  tau <- array(result[[5]], c(p-rw,samplesize))
+  beta <- array(result[[9]], c(p,samplesize))
+  tauepsilon <- array(result[[6]], c(samplesize))
 
   result <- .C("dce_spline_run",
-               as.integer(nriters),
+               as.integer(samplesize),
                as.integer(thin),
                as.integer(c(1,1,1,T)),
                as.double(conc),
@@ -124,14 +127,14 @@ setMethod("dcemri.spline", signature(conc="array"),
                as.integer(silent),
                PACKAGE="dcemriS4")
 
-  tau <- array(result[[5]], c(p-rw,nriters))
-  beta <- array(result[[9]], c(p,nriters))
-  tauepsilon <- array(result[[6]], c(nriters))
+  tau <- array(result[[5]], c(p-rw,samplesize))
+  beta <- array(result[[9]], c(p,samplesize))
+  tauepsilon <- array(result[[6]], c(samplesize))
 
-  t0 <- time[1]
+  t0 <- 0
   if(t0.compute) {
-    d <- array(NA, c(T, nriters))
-    for (j in 1:nriters)
+    d <- array(NA, c(T, samplesize))
+    for (j in 1:samplesize)
       d[,j] <- D %*% beta[,j]
 
     q05 <- function(x) {
@@ -149,7 +152,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     B2 <- splineDesign(knots, time.input, k-2)
     B2 <- B2[,(1:p)+1]
 
-    for (j in 1:nriters) {
+    for (j in 1:samplesize) {
       beta.abl <- 1:p
       for (q in 1:(p - 1))
 	beta.abl[q] <- (beta[q+1, j] - beta[q, j]) * k / (knots[q+k+1] - knots[q+1])
@@ -158,16 +161,22 @@ setMethod("dcemri.spline", signature(conc="array"),
       du2 <- time[du] - d2[du] / ABL2[du]  
       t0[j] <- du2
     }
-    if (t0 < 0)
+    if (sum(!is.na(t0))==0)
+      t0 <- 0
+    else
+      t0 <- median(t0,na.rm=TRUE)
+    if (t0 < min(time))
       t0 <- 0
     if (t0 > max(time))
       t0 <- 0
   }
 
   fitted <- list()
-  for (i in 1:nriters) {
+  for (i in 1:samplesize) {
     fitted[[i]] <- B%*% beta[,i]
   }
+
+
   if (multicore) {
     ## require("multicore")
     require("multicore")
@@ -176,7 +185,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     MAX0 <- lapply(fitted, max)
   }
   MAX <- NULL
-  for (i in 1:nriters) {
+  for (i in 1:samplesize) {
     MAX <- c(MAX, MAX0[[i]])
   }
   parameters <- list()
@@ -215,7 +224,7 @@ setMethod("dcemri.spline", signature(conc="array"),
 
     if (model=="AATH") {
       E <- F <- TC <- ve <- NULL
-      for (i in 1:nriters) {
+      for (i in 1:samplesize) {
 	E <- c(E, response[[i]]$par$E)
 	F <- c(F, response[[i]]$par$F)
 	TC <- c(TC, response[[i]]$par$TC)
@@ -230,7 +239,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
     if (model == "weinmann") {
       ktrans <- kep <- NULL
-      for (i in 1:nriters) {
+      for (i in 1:samplesize) {
 	ktrans <- c(ktrans,response[[i]]$par$logktrans)
 	kep <- c(kep,response[[i]]$par$logkep)
       }
@@ -330,7 +339,11 @@ setMethod("dcemri.spline", signature(conc="array"),
   } else {
     if (length(dim(conc)) ==2) {
       J <- K <- 1
+    } else {
+    if (length(dim(conc)) ==3) {
+      K <- 1
     }
+  }
   }
 
   if (verbose) cat("  Deconstructing data...", fill=TRUE)
@@ -421,7 +434,7 @@ setMethod("dcemri.spline", signature(conc="array"),
   A[is.na(A)] <- 0
   D <- A%*%B
   T <- length(time)
-
+  
   if (verbose) cat("  Estimating the parameters...", fill=TRUE)
 
   if (!multicore) {
@@ -446,6 +459,8 @@ setMethod("dcemri.spline", signature(conc="array"),
 
   if (verbose) cat("  Reconstructing results...", fill=TRUE)
 
+  samplesize=floor(nriters/thin)
+  
   t0 <- NULL
   for (k in 1:nvoxels) {
     t0 <- c(t0, fit[[k]]$t0)
@@ -454,19 +469,20 @@ setMethod("dcemri.spline", signature(conc="array"),
   t0.img[img.mask] <- t0
   t0 <- t0.img
 
+
   Fp <- NULL
   for (k in 1:nvoxels) {
     Fp <- c(Fp, fit[[k]]$Fp)
   }
   Fp.img <- array(NA, c(I,J,K))
   Fp.img[img.mask] <- Fp
-  Fp.samples <- array(NA, c(nvoxels, nriters))
+  Fp.samples <- array(NA, c(nvoxels, samplesize))
   for (i in 1:nvoxels) {
     Fp.samples[i,] <- fit[[k]]$Fp.samples
   }
   if (samples) {
-    Fp <- array(NA, c(I,J,K,nriters))
-    for (j in 1:nriters) {
+    Fp <- array(NA, c(I,J,K,samplesize))
+    for (j in 1:samplesize) {
       Fp[,,,j][img.mask] <- Fp.samples[,j]
     }
   }
@@ -476,7 +492,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     if (model=="weinmann") {
       kep <- NULL
       if (samples) {
-	ktrans.samples <- array(NA, c(nvoxels,nriters))
+	ktrans.samples <- array(NA, c(nvoxels,samplesize))
       }
       for (k in 1:nvoxels) {
 	ktrans <- c(ktrans, fit[[k]]$par$ktrans)
@@ -485,7 +501,7 @@ setMethod("dcemri.spline", signature(conc="array"),
         }
       }
       if (samples) {
-	kep.samples <- array(NA, c(nvoxels,nriters))
+	kep.samples <- array(NA, c(nvoxels,samplesize))
       }
       for (k in 1:nvoxels) {
 	kep <- c(kep, fit[[k]]$par$kep)
@@ -501,7 +517,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     if (model=="AATH") {
       E <- F <- TC <- NULL
       if (samples) {
-	E.samples <- array(NA,c(nvoxels,nriters))
+	E.samples <- array(NA,c(nvoxels,samplesize))
       }
       for (k in 1:nvoxels) {
 	E <- c(E, fit[[k]]$par$E)
@@ -510,7 +526,7 @@ setMethod("dcemri.spline", signature(conc="array"),
         }
       }
       if (samples) {
-	F.sample <- array(NA,c(nvoxels,nriters))
+	F.sample <- array(NA,c(nvoxels,samplesize))
       }
       for (k in 1:nvoxels) {
 	F <- c(F, fit[[k]]$par$F)
@@ -519,7 +535,7 @@ setMethod("dcemri.spline", signature(conc="array"),
         }
       }
       if (samples) {
-	TC.samples <- array(NA,c(nvoxels,nriters))
+	TC.samples <- array(NA,c(nvoxels,samplesize))
       }
       for (k in 1:nvoxels) {
 	TC <- c(TC, fit[[k]]$par$TC)
@@ -528,7 +544,7 @@ setMethod("dcemri.spline", signature(conc="array"),
         }
       }
       if (samples) {
-	ve.samples <- array(NA,c(nvoxels,nriters))
+	ve.samples <- array(NA,c(nvoxels,samplesize))
       }
       for (k in 1:nvoxels) {
 	ve <- c(ve, fit[[k]]$par$ve)
@@ -543,31 +559,32 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
   }
 
-  beta.sample <- array(NA,c(nvoxels,p,nriters))
+  beta.sample <- array(NA,c(nvoxels,p,samplesize))
   for(k in 1:nvoxels) {
     beta.sample[k,,] <- fit[[k]]$beta
   }
 
   T2 <- length(time.input)
-  response.sample <- array(NA,c(nvoxels,T2,nriters))
+  response.sample <- array(NA,c(nvoxels,T2,samplesize))
   for(k in 1:nvoxels) {
-    for(j in 1:nriters) {
+    for(j in 1:samplesize) {
       response.sample[k,,j] <- fit[[k]]$fitted[[j]]
     }
   }
 
-  fitted.sample <- array(NA,c(nvoxels,T,nriters))
+
+  fitted.sample <- array(NA,c(nvoxels,T,samplesize))
   for (i in 1:nvoxels) {
-    for (j in 1:nriters) {
+    for (j in 1:samplesize) {
       fitted.sample[i,,j] <- D%*%beta.sample[i,,j]
     }
   }
 
-  beta <- array(NA, c(I,J,K,p,nriters))
+  beta <- array(NA, c(I,J,K,p,samplesize))
   beta.med <- array(NA, c(I,J,K,p))
-  fitted <- array(NA, c(I,J,K,T,nriters))
+  fitted <- array(NA, c(I,J,K,T,samplesize))
   fitted.med <- array(NA, c(I,J,K,T))
-  response <- array(NA, c(I,J,K,T,nriters))
+  response <- array(NA, c(I,J,K,T,samplesize))
   response.med <- array(NA, c(I,J,K,T))
 
   if (nlr) {
@@ -585,20 +602,20 @@ setMethod("dcemri.spline", signature(conc="array"),
       TC.med[img.mask] <- TC
     } 
     if (samples) {
-      ktrans <- ve <- array(NA, c(I,J,K,nriters))
-      for (i in 1:nriters) {
+      ktrans <- ve <- array(NA, c(I,J,K,samplesize))
+      for (i in 1:samplesize) {
 	ktrans[,,,i][img.mask] <- ktrans.samples[,i]
 	ve[,,,i][img.mask] <- ve.samples[,i]
       }
       if (model=="weinmann") {
-	kep <- array(NA,c(I,J,K,nriters))
-	for (i in 1:nriters) {
+	kep <- array(NA,c(I,J,K,samplesize))
+	for (i in 1:samplesize) {
 	  kep[,,,i][img.mask] <- kep.samples[,i]
 	}
       }
       if (model=="AATH") {
-	E <- F <- TC <- array(NA, c(I,J,K,nriters))
-	for (i in 1:nriters) {
+	E <- F <- TC <- array(NA, c(I,J,K,samplesize))
+	for (i in 1:samplesize) {
 	  E[,,,i][img.mask] <- E.samples[,i]
 	  F[,,,i][img.mask] <- F.samples[,i]
 	  TC[,,,i][img.mask] <- TC.samples[,i]
@@ -607,17 +624,18 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
   }
 
+
   if (I > 1) {
     for (j in 1:p) {
       beta.med[,,,j][img.mask] <- apply(beta.sample[,j,], 1, median)
-      for (i in 1:nriters) {
+      for (i in 1:samplesize) {
         beta[,,,j,i][img.mask] <- beta.sample[,j,i]
       }
     }
   } else {
     for (j in 1:p) {
       beta.med[,,,j][img.mask] <- median(beta.sample[,j,])
-      for (i in 1:nriters) {
+      for (i in 1:samplesize) {
         beta[,,,j,i][img.mask] <- beta.sample[,j,i]
       }
     }
@@ -632,14 +650,14 @@ setMethod("dcemri.spline", signature(conc="array"),
       response.med[,,,j][img.mask] <- apply(response.sample[,j,], 1, median)
       fitted.med[,,,j][img.mask] <- apply(fitted.sample[,j,], 1, median)
     }
-    for (i in 1:nriters) {
+    for (i in 1:samplesize) {
       response[,,,j,i][img.mask] <- response.sample[,j,i]
       fitted[,,,j,i][img.mask] <- fitted.sample[,j,i]
     }
   }
 
   return.list <- list("beta"=beta.med, "beta.sample"=beta,
-                      "beta.test"=beta.sample, "fit"=fitted.med,
+                      "fit"=fitted.med,
                       "fit.sample"=fitted, "response"=response.med,
                       "response.sample"=response, "Fp"=Fp.img, "A"=A,
                       "B"=B, "D"=D, "t0"=t0) #, "ourfit"=fit) 
