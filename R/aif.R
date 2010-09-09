@@ -40,7 +40,7 @@ aif.orton.exp <- function(tt, AB, muB, AG, muG) {
   return(out)
 }
 
-orton.exp.lm <- function(tt, aif, guess=c(100, 10, 1, 0.1), nprint=0) {
+orton.exp.lm <- function(tt, aif, guess=c(log(100), log(10), log(1),log( 0.1)), nprint=0) {
   func <- function(x, aparams, aif) {
     AB <- aparams[1]
     muB <- aparams[2]

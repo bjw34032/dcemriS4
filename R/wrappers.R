@@ -47,7 +47,7 @@
   audit.trail(nim) <- niftiAuditTrailEvent(nim, "processing", name)
   
   result <- fun(nim, ...)
-  as(result, "nifti") <- nim
+  try(as(result, "nifti") <- nim)
   audit.trail(nim) <- niftiAuditTrailEvent(nim, "completed", name)
 
   return(result)

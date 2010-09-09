@@ -171,19 +171,15 @@ setMethod("dcemri.bayes", signature(conc="array"),
   I <- nrow(conc)
   J <- ncol(conc)
   K <- nsli(conc)
-  DIM <- 3
   if (!is.numeric(dim(conc))) {
     I <- J <- K <- 1
-    DIM <- 0
   } else {
     if (length(dim(conc)) == 2) {
       J <- K <- 1
-      DIM <- 1
     }
     if (length(dim(conc)) == 3) {
       K <- 1
-      DIM <- 2
-    }
+     }
 
   }
 

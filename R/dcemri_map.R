@@ -55,7 +55,7 @@ setMethod("dcemri.map", signature(conc="array"),
     return(NA)
   else {    
     map <- optim(par=start, fn=posterior, conc=conc, time=time,
-                 hyper=hyper, aif=aif, control=list("maxit"=25000,"trace"=verbose))
+                 hyper=hyper, aif=aif, control=list("maxit"=25000))
     return.list <- list()
     for (i in 1:length(parameter))
       return.list[[parameter[i]]] <- transform[[i]](map$par[i])
@@ -98,6 +98,9 @@ setMethod("dcemri.map", signature(conc="array"),
   } else {
     if (length(dim(conc)) == 2) {
       J <- K <- 1
+    }
+    if (length(dim(conc)) == 3) {
+      K <- 1
     }
   }
 
@@ -191,7 +194,7 @@ setMethod("dcemri.map", signature(conc="array"),
            inverse <- function(x) 1/x
            parameter <- c("ktrans", "kep", "sigma2")
            transform <- c(exp, exp, inverse)
-           start <- c(exp(ab.ktrans[1]), exp(ab.kep[1]), ab.tauepsilon[1]/ab.tauepsilon[2])
+           start <- c(exp(ab.ktrans[1]), exp(ab.kep[1]), 0.01)
            hyper <- c(ab.ktrans, ab.kep, ab.tauepsilon)
            posterior <- function(par, conc, time, hyper, aif) {
              gamma <- par[1]
@@ -201,7 +204,7 @@ setMethod("dcemri.map", signature(conc="array"),
              p <- log(dnorm(gamma, hyper[1], hyper[2]))
              p <- p + log(dnorm(theta, hyper[3], hyper[4]))
              p <- p + log(dgamma(tauepsilon, hyper[5], rate=hyper[6]))
-             conc.hat <- exp(gamma) * convterm(exp(theta), time, aif)
+             conc.hat <- ifelse(time>0,exp(gamma) * convterm(exp(theta), time, aif),0)           
              p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
              if (is.na(p))
                p <- -1e-6
@@ -213,7 +216,7 @@ setMethod("dcemri.map", signature(conc="array"),
            ident <- function(x){return(x)}
            parameter <- c("ktrans","kep","vp","sigma2")
            transform <- c(exp, exp, ident, inverse)
-           start <- c(exp(ab.ktrans[1]), exp(ab.kep[1]), ab.vp[1]/(ab.vp[1]+ab.vp[2]), ab.tauepsilon[1]/ab.tauepsilon[2])
+           start <- c(exp(ab.ktrans[1]), exp(ab.kep[1]), ab.vp[1]/(ab.vp[1]+ab.vp[2]), 0.01)
            hyper <- c(ab.ktrans, ab.kep, ab.vp, ab.tauepsilon)
            posterior <- function(par, conc, time, hyper, aif) {
              gamma <- par[1]
@@ -225,8 +228,8 @@ setMethod("dcemri.map", signature(conc="array"),
              p <- p + log(dnorm(theta, hyper[3], hyper[4]))
              p <- p + log(dgamma(tauepsilon, hyper[7], rate=hyper[8]))
              p <- p + log(dbeta(vp,hyper[5], hyper[6]))
-             conc.hat <- (vp * extraterm(time, aif) +
-                          exp(gamma) * convterm(exp(theta), time, aif))
+             conc.hat <- ifelse(time>0,(vp * extraterm(time, aif) +
+                          exp(gamma) * convterm(exp(theta), time, aif)),0)
              p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
              if (is.na(p))
                p <- -1e-6
@@ -238,7 +241,7 @@ setMethod("dcemri.map", signature(conc="array"),
            ident <- function(x){return(x)}
            parameter <- c("ktrans","kep","vp","sigma2")
            transform <- c(exp, exp, ident, inverse)
-           start <- c(-1, -1, -1, ab.tauepsilon[2]/ab.tauepsilon[1])
+           start <- c(-1, -1, -1, 1/100)
            hyper <- c(ab.ktrans, ab.kep, ab.vp, ab.tauepsilon)
            posterior <- function(par, conc, time, hyper, aif) {
              gamma <- par[1]
@@ -262,7 +265,7 @@ setMethod("dcemri.map", signature(conc="array"),
            ident <- function(x){return(x)}
            parameter <- c("ktrans","kep","vp","sigma2")
            transform <- c(exp, exp, exp, inverse)
-           start <- c(-1,-1, -1, ab.tauepsilon[2]/ab.tauepsilon[1])
+           start <- c(-1,-1, -1, 1/100)
            hyper <- c(ab.ktrans, ab.kep, ab.vp, ab.tauepsilon)
            posterior <- function(par, conc, time, hyper, aif) {
              gamma <- par[1]
@@ -286,12 +289,6 @@ setMethod("dcemri.map", signature(conc="array"),
   ktrans <- kep <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
   sigma2 <- rep(NA, nvoxels)
   Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
-  if (samples) {
-    sigma2.samples <- ktrans.samples <- kep.samples <- c()
-    if (mod %in% c("extended", "orton.exp", "orton.cos")) {
-      Vp.samples <- c()
-    }
-  }
 
   if (verbose) cat("  Estimating the kinetic parameters...", fill=TRUE)
 
@@ -315,12 +312,12 @@ setMethod("dcemri.map", signature(conc="array"),
   if (verbose) cat("  Reconstructing results...", fill=TRUE)
 
   for (k in 1:nvoxels) {
-    ktrans$par[k] <- fit[[k]]$ktrans
-    kep$par[k] <- fit[[k]]$kep
+    try(ktrans$par[k] <- fit[[k]]$ktrans,silent=TRUE)
+    try(kep$par[k] <- fit[[k]]$kep,silent=TRUE)
     if (mod %in% c("extended", "orton.exp", "orton.cos")) {
-      Vp$par[k] <- exp(fit[[k]]$vp)
+      try(Vp$par[k] <- exp(fit[[k]]$vp),silent=TRUE)
     }
-    sigma2[k] <- fit[[k]]$sigma2
+    try(sigma2[k] <- fit[[k]]$sigma2,silent=TRUE)
   }
 
   A <- array(NA, c(I,J,K))
@@ -332,7 +329,7 @@ setMethod("dcemri.map", signature(conc="array"),
 
   if (mod %in% c("extended", "orton.exp", "orton.cos")) {
     A <- array(NA, c(I,J,K))
-    A[img.mask] <- Vp$par 
+    A[img.mask] <- Vp$par
     Vp.out <- list(par=A)
   }
 
@@ -347,7 +344,6 @@ setMethod("dcemri.map", signature(conc="array"),
   if (mod %in% c("extended", "orton.exp", "orton.cos")) {
     returnable[["vp"]] <- Vp.out$par
   } 
-
   return(returnable)
 }
 
