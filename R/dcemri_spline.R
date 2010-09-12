@@ -197,6 +197,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       (x - do.call("fcall", c(list(time=time), as.list(p))))
 
     nls.lm.single <- function(fitted, par, fn, fcall, model, time) {
+   
       fcall2 <- fcall
       if (length(fcall) > 1)
 	fcall2 <- fcall[[1]]
@@ -225,10 +226,10 @@ setMethod("dcemri.spline", signature(conc="array"),
     if (model=="AATH") {
       E <- F <- TC <- ve <- NULL
       for (i in 1:samplesize) {
-	E <- c(E, response[[i]]$par$E)
-	F <- c(F, response[[i]]$par$F)
+	E <- c(E, exp(response[[i]]$par$logE))
+	F <- c(F, exp(response[[i]]$par$logF))
 	TC <- c(TC, response[[i]]$par$TC)
-	ve <- c(ve, response[[i]]$par$ve)
+	ve <- c(ve, exp(response[[i]]$par$logve))
       }
       parameters <- list("E"=median(E), "F"=median(F), "TC"=median(TC),
                          "ve"=median(ve))
@@ -240,12 +241,12 @@ setMethod("dcemri.spline", signature(conc="array"),
     if (model == "weinmann") {
       ktrans <- kep <- NULL
       for (i in 1:samplesize) {
-	ktrans <- c(ktrans,response[[i]]$par$logktrans)
-	kep <- c(kep,response[[i]]$par$logkep)
+	ktrans <- c(ktrans,exp(response[[i]]$par$logktrans))
+	kep <- c(kep,exp(response[[i]]$par$logkep))
       }
-      parameters <- list("ktrans"=median(exp(ktrans)), "kep"=median(exp(kep)))
+      parameters <- list("ktrans"=median(ktrans), "kep"=median(kep))
       if (samples) {
-	parameters <- list("ktrans.sample"=exp(ktrans), "kep.sample"=exp(kep))
+	parameters <- list("ktrans.sample"=ktrans, "kep.sample"=kep)
       }
     }
 
@@ -371,6 +372,8 @@ setMethod("dcemri.spline", signature(conc="array"),
 
   model.func <- model.guess <- NULL
 
+  if ((nlr)&(model!="weinmann")&(model!="AATH")) {stop("Only model=\"weinmann\" or model=\"AATH\" acceptable AIFs for nlr=TRUE")}
+
   if (model=="weinmann") {
     ktrans <- kep <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
     sigma2 <- rep(NA, nvoxels)
@@ -388,10 +391,13 @@ setMethod("dcemri.spline", signature(conc="array"),
     sigma2 <- rep(NA, nvoxels)
 
     model.func <- list()
-    model.func[[1]] <- function(time, F, E, TC, ve) {
+    model.func[[1]] <- function(time, logF, logE, TC, logve) {
       TC2 <- 2*TC
       if (TC < 0)
         TC2 <- 0
+      E<-exp(logE)
+      F<-exp(logF)
+      ve<-exp(logve)      
       kep <- E*F/ve
       erg <- E*exp(-kep*(time-TC))
       erg[time<TC] <- 1 # - time[time<TC2]*(1-E) / TC
@@ -400,14 +406,17 @@ setMethod("dcemri.spline", signature(conc="array"),
 	erg <- rep(-10^16, length(time))
       eval(erg)
     }
-    model.func[[2]] <- function(time, F, E, ve) {
+    model.func[[2]] <- function(time, logF, logE, logve) {
+      E<-exp(logE)
+      F<-exp(logF)
+      ve<-exp(logve)      
       kep <- E*F/ve
       erg <- E*exp(-kep*(time))
       erg <- erg*F
       eval(erg)
     }
 
-    model.guess <- list("E"=.6,"F"=2,"TC"=0,"ve"=.05)
+    model.guess <- list("logE"=log(.6),"logF"=log(2),"TC"=0,"logve"=log(.05))
   }
 
   ## define B and A
@@ -460,7 +469,7 @@ setMethod("dcemri.spline", signature(conc="array"),
   if (verbose) cat("  Reconstructing results...", fill=TRUE)
 
   samplesize=floor(nriters/thin)
-  
+
   t0 <- NULL
   for (k in 1:nvoxels) {
     t0 <- c(t0, fit[[k]]$t0)
@@ -496,10 +505,11 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
       for (k in 1:nvoxels) {
 	ktrans <- c(ktrans, fit[[k]]$par$ktrans)
-	if (samples) {
+      	if (samples) {
 	  ktrans.samples[k,] <- fit[[k]]$par$ktrans.samples
         }
       }
+      
       if (samples) {
 	kep.samples <- array(NA, c(nvoxels,samplesize))
       }

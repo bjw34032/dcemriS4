@@ -137,12 +137,12 @@ setMethod("dcemri.map", signature(conc="array"),
          print("WARNING: AIF parameters must be specified!"))
 
 
-	convterm <- function(kep, t, aif) {
-	  aif[1] * (exp(-aif[2]*t) - exp(-kep*t)) / (kep-aif[2]) + aif[3] * (exp(-aif[4]*t) - exp(-kep*t)) / (kep-aif[4])
-	}
-	extraterm <- function(t, aif) {
-	  aif[1] * (exp(-aif[2]*t)) + aif[3] * (exp(-aif[4]*t))
-	}
+  convterm <- function(kep, t, aif) {
+    aif[1] * (exp(-aif[2]*t) - exp(-kep*t)) / (kep-aif[2]) + aif[3] * (exp(-aif[4]*t) - exp(-kep*t)) / (kep-aif[4])
+  }
+  extraterm <- function(t, aif) {
+    aif[1] * (exp(-aif[2]*t)) + aif[3] * (exp(-aif[4]*t))
+  }
 
   model.orton.exp <- function(time, vp, th1, th3, AB, muB, AG, muG) {
     ## Extended model using the exponential AIF from Matthew Orton (ICR)
@@ -194,8 +194,8 @@ setMethod("dcemri.map", signature(conc="array"),
            inverse <- function(x) 1/x
            parameter <- c("ktrans", "kep", "sigma2")
            transform <- c(exp, exp, inverse)
-           start <- c(exp(ab.ktrans[1]), exp(ab.kep[1]), 0.01)
            hyper <- c(ab.ktrans, ab.kep, ab.tauepsilon)
+           start <- c(exp(hyper[1]), exp(hyper[3]), hyper[5]*hyper[6])
            posterior <- function(par, conc, time, hyper, aif) {
              gamma <- par[1]
              theta <- par[2]
@@ -207,7 +207,7 @@ setMethod("dcemri.map", signature(conc="array"),
              conc.hat <- ifelse(time>0,exp(gamma) * convterm(exp(theta), time, aif),0)           
              p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
              if (is.na(p))
-               p <- -1e-6
+               p <- 1e-6
              return(-p)
            }
 	 },		
@@ -216,8 +216,8 @@ setMethod("dcemri.map", signature(conc="array"),
            ident <- function(x){return(x)}
            parameter <- c("ktrans","kep","vp","sigma2")
            transform <- c(exp, exp, ident, inverse)
-           start <- c(exp(ab.ktrans[1]), exp(ab.kep[1]), ab.vp[1]/(ab.vp[1]+ab.vp[2]), 0.01)
            hyper <- c(ab.ktrans, ab.kep, ab.vp, ab.tauepsilon)
+           start <- c(exp(hyper[1]), exp(hyper[3]), hyper[5]/(hyper[5]+hyper[6]), hyper[7]*hyper[8])
            posterior <- function(par, conc, time, hyper, aif) {
              gamma <- par[1]
              theta <- par[2]
@@ -256,7 +256,7 @@ setMethod("dcemri.map", signature(conc="array"),
              conc.hat <- model.orton.exp(time,vp,gamma,theta,AB=aif[1],muB=aif[2],AG=aif[3],muG=aif[4])
              p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
              if (is.na(p))
-               p <- -1e-6
+               p <- 1e-6
              return(-p)
            }
 	 },		
@@ -295,7 +295,7 @@ setMethod("dcemri.map", signature(conc="array"),
   conc.list <- list()
   for (i in 1:nvoxels)
     conc.list[[i]] <- conc.mat[i,]
-
+  
   if (!multicore) {
     fit <- lapply(conc.list, FUN=.dcemri.map.single, time=time,
                   posterior=posterior, parameter=parameter,
@@ -315,7 +315,7 @@ setMethod("dcemri.map", signature(conc="array"),
     try(ktrans$par[k] <- fit[[k]]$ktrans,silent=TRUE)
     try(kep$par[k] <- fit[[k]]$kep,silent=TRUE)
     if (mod %in% c("extended", "orton.exp", "orton.cos")) {
-      try(Vp$par[k] <- exp(fit[[k]]$vp),silent=TRUE)
+      try(Vp$par[k] <- fit[[k]]$vp,silent=TRUE)
     }
     try(sigma2[k] <- fit[[k]]$sigma2,silent=TRUE)
   }
