@@ -14,11 +14,12 @@
   DCE-MRI.
 }
 \usage{
-\S4method{dcemri.bayes}{array}(conc, time, img.mask, model="extended", aif=NULL,
-             user=NULL, nriters=3500, thin=3, burnin=500,
+\S4method{dcemri.bayes}{array}(conc, time, img.mask, model="extended",
+             aif=NULL, user=NULL, nriters=3500, thin=3, burnin=500,
              tune=267, ab.ktrans=c(0,1), ab.kep=ab.ktrans,
              ab.vp=c(1,19), ab.tauepsilon=c(1,1/1000),
-             samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
+             samples=FALSE, multicore=FALSE, verbose=FALSE, dic=FALSE,
+             ...)
 dcemri.bayes.single(conc, time, nriters=3500, thin=3,
                     burnin=500, tune=267, ab.gamma=c(0,1),
                     ab.theta=c(0,1), ab.vp=c(1,19),
@@ -62,18 +63,19 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
   \item{ab.vp}{Hyper-prior parameters for the Beta prior on
     \eqn{v_p}{vp}.}
   \item{ab.tauepsilon}{Hyper-prior parameters for observation error
-    Gamma prior.} 
+    Gamma prior.}
   \item{samples}{If \code{TRUE} output includes samples drawn
     from the posterior distribution for all parameters.}
   \item{multicore}{If \code{TRUE} algorithm is parallelized using
     \pkg{multicore}.}
   \item{verbose}{Logical variable (default = \code{FALSE}) that
     allows text-based feedback during execution of the function.}
-  \item{tau.gamma}{...}
-  \item{tau.theta}{...}
+  \item{ab.gamma}{...}
+  \item{ab.theta}{...}
   \item{aif.model}{...}
   \item{aif.parameter}{...}
   \item{vp}{...}
+  \item{dic}{...}
   \item{...}{Additional parameters to the function.}
 }
 \details{

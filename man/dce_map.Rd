@@ -1,4 +1,4 @@
-% Part of the dcemri package for R
+% Part of the dcemriS4 package for R
 % Distributed under the BSD license: see dcemri/COPYING
 %
 % $Id: dce_map.Rd 337 2010-02-25 13:33:32Z volkerschmid $
@@ -15,7 +15,7 @@
 }
 \usage{
 \S4method{dcemri.map}{array}(conc, time, img.mask, model="extended", aif=NULL,
-             user=NULL, ab.ktrans=1, ab.kep=ab.ktrans,
+             user=NULL, ab.ktrans=c(0,1), ab.kep=ab.ktrans,
              ab.vp=c(1,19), ab.tauepsilon=c(1,1/1000),
              samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
 dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif)
