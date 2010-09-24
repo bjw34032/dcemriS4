@@ -273,7 +273,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
     cat("  Estimating the kinetic parameters...", fill=TRUE)
   }
 
-  conc.list <- vector(nvoxels, "list") # list()
+print
+  conc.list <- vector(length=nvoxels, mode="list") # list()
   for (i in 1:nvoxels) {
     conc.list[[i]] <- conc.mat[i,]
   }
@@ -294,9 +295,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
                           vp=vp.do)
   }
 
-  if (verbose) {
-    cat("  Reconstructing results...", fill=TRUE)
-  }
+  if (verbose) cat("  Reconstructing results...", fill=TRUE)
 
   for (k in 1:nvoxels) {
     ktrans$par[k] <- median(conc.list[[k]]$ktrans)
@@ -324,6 +323,9 @@ setMethod("dcemri.bayes", signature(conc="array"),
     }
   }
 
+  remove(conc.list)
+  gc(verbose=FALSE)
+
   A <- B <- array(NA, c(I,J,K))
   A[img.mask] <- ktrans$par
   B[img.mask] <- ktrans$error
@@ -350,6 +352,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
     med.deviance <- A
   }
 
+  if (verbose) cat("  Reconstructing samples...", fill=TRUE)
+
   if (samples) {
     NRI <- length(ktrans.samples) / length(ktrans$par) # nriters # (?)
     ktrans.out <- list(par=ktrans.out$par,
@@ -368,10 +372,13 @@ setMethod("dcemri.bayes", signature(conc="array"),
     }
   }
 
-  returnable <- list(ktrans=ktrans.out$par, kep=kep.out$par,
-                     ktranserror=ktrans.out$error, keperror=kep.out$error, 
-                     ve=ktrans.out$par/kep.out$par, sigma2=sigma2.out,
-                     time=time)
+  returnable <- list(ktrans=ktrans.out$par)
+  returnable[["kep"]] <- kep.out$par
+  returnable[["ktranserror"]] <- ktrans.out$error
+  returnable[["keperror"]] <- kep.out$error 
+  returnable[["ve"]] <- ktrans.out$par/kep.out$par
+  returnable[["sigma2"]] <- sigma2.out
+  returnable[["time"]] <- time
 
   if (mod %in% c("extended", "orton.exp", "orton.cos")) {
     returnable[["vp"]] <- Vp.out$par
@@ -380,12 +387,6 @@ setMethod("dcemri.bayes", signature(conc="array"),
       returnable[["vp.samples"]] <- Vp.out$samples
     } 
   } 
-
-  if (samples) {
-    returnable[["ktrans.samples"]] <- ktrans.out$samples
-    returnable[["kep.samples"]] <- kep.out$samples
-    returnable[["sigma2.samples"]] <- sigma2.samples
-  }
 
   # DIC
 
@@ -411,23 +412,33 @@ setMethod("dcemri.bayes", signature(conc="array"),
 
     deviance.med <- length(time)*log(sigma2.out)+fitted/sigma2.out
     pD <- med.deviance - deviance.med
-    print(1)
     DIC <- med.deviance + pD
-    print(1)
     returnable[["DIC"]] <- sum(DIC,na.rm=TRUE)
-    print(1)
     returnable[["pD"]] <- sum(pD,na.rm=TRUE)
-    print(1)
     returnable[["DIC.map"]] <- DIC
-    print(1)
     returnable[["pD.map"]] <- pD 
-    print(1)
     returnable[["deviance.med"]] <- deviance.med
-    print(1)
     returnable[["med.deviance"]] <- med.deviance
-    print(1)
     if(samples)returnable[["deviance.samples"]] <- deviance.samples
-    print(1)
+    remove(DIC)
+    remove(pD)
+    remove(deviance.med)
+    remove(med.deviance)
+    remove(deviance.samples)
+    gc(verbose=FALSE)
+  }
+
+  remove(Vp.out)
+  gc(verbose=FALSE)
+
+  if (samples) {
+    temp <- ktrans.out$samples
+    remove(ktrans.out)
+    returnable[["ktrans.samples"]] <- temp
+    temp <- kep.out$samples
+    remove(kep.out)
+    returnable[["kep.samples"]] <- temp
+    returnable[["sigma2.samples"]] <- sigma2.samples
   }
 
   return(returnable)
