@@ -72,12 +72,8 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
     \pkg{multicore}.}
   \item{verbose}{Logical variable (default = \code{FALSE}) that
     allows text-based feedback during execution of the function.}
-  \item{ab.gamma}{...}
-  \item{ab.theta}{...}
-  \item{aif.model}{...}
-  \item{aif.parameter}{...}
-  \item{vp}{...}
-  \item{dic}{...}
+  \item{dic}{If \code{TRUE} DIC and pD will be computed. If \dQuote(samples} is \code{TRUE},
+    samples of DIC and pD will be given.}
   \item{...}{Additional parameters to the function.}
 }
 \details{
@@ -100,6 +96,10 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
   \item{vp}{Fractional occupancy by plasma.}
   \item{sigma2}{The residual sum-of-squares from the model fit.}
   \item{time}{Acquisition times (for plotting purposes).}
+  \item{DIC}{Deviance information criterion.}
+  \item{DIC.map}{Contribution to DIC per voxel.}
+  \item{pD}{Effective number of parameters.}
+  \item{pD.map}{Constribution to pD per voxel.}
   Note, not all parameters are available under all models choices.
 }
 \references{

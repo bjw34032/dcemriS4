@@ -45,12 +45,13 @@ setMethod("dcemri.spline", signature(conc="array"),
                    thin=5, burnin=100, ab.hyper=c(1e-5,1e-5),
                    ab.tauepsilon=c(1,1/1000), k=4, p=25, rw=2,
                    knots=NULL, nlr=FALSE, t0.compute=FALSE,
-                   samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
+                   samples=FALSE, multicore=FALSE, verbose=FALSE, 
+		   response=FALSE, fitted=FALSE, ...)
           .dcemriWrapper("dcemri.spline", conc, time, img.mask, time.input,
                          model, aif, user, aif.observed, nriters,
                          thin, burnin, ab.hyper, ab.tauepsilon, k, p, rw,
                          knots, nlr, t0.compute, samples, multicore,
-                         verbose, ...))
+                         verbose, response, fitted, ...))
 
 .dcemri.spline.single <- function(conc, time, D, time.input, p, rw, knots,
                                   k, A, t0.compute=FALSE, nlr=FALSE,
@@ -267,7 +268,7 @@ setMethod("dcemri.spline", signature(conc="array"),
                           ab.tauepsilon=c(1,1/1000), k=4, p=25, rw=2,
                           knots=NULL, nlr=FALSE, t0.compute=FALSE,
                           samples=FALSE, multicore=FALSE, verbose=FALSE,
-                          ...) {
+                          response=FALSE, fitted=FALSE, ...) {
 
   ## dcemri.spline - a function for fitting Bayesian Penalty Splines to 
   ## DCE-MRI images and computing kinetic parameters
@@ -606,12 +607,12 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
   }
 
-  beta <- array(NA, c(I,J,K,p,samplesize))     # a 5-dimensional array!!!
-  beta.med <- array(NA, c(I,J,K,p))            
-  fitted <- array(NA, c(I,J,K,T,samplesize))   # a 5-dimensional array!!!
-  fitted.med <- array(NA, c(I,J,K,T))
-  response <- array(NA, c(I,J,K,T,samplesize)) # a 5-dimensional array!!!
-  response.med <- array(NA, c(I,J,K,T))
+  if ((reponse|fitted)&samples) beta <- array(NA, c(I,J,K,p,samplesize))     # a 5-dimensional array!!!
+  if (reponse|fitted) beta.med <- array(NA, c(I,J,K,p))            
+  if (fitted&samples) fitted <- array(NA, c(I,J,K,T,samplesize))   # a 5-dimensional array!!!
+  if (fitted) fitted.med <- array(NA, c(I,J,K,T))
+  if (reponse&samples) response <- array(NA, c(I,J,K,T,samplesize)) # a 5-dimensional array!!!
+  if (reponse) response.med <- array(NA, c(I,J,K,T))
 
   if (nlr) {
     ktrans.med <- ve.med <- array(NA, c(I,J,K))
@@ -650,9 +651,12 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
   }
 
+  if (fitted|response)
+  {
   if (I > 1) {
     for (j in 1:p) {
       beta.med[,,,j][img.mask] <- apply(beta.sample[,j,], 1, median)
+      if (samples)
       for (i in 1:samplesize) {
         beta[,,,j,i][img.mask] <- beta.sample[,j,i]
       }
@@ -665,53 +669,53 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
     }
   }
-  
-  for (j in 1:T) {
-    if (I == 1) {
-      response.med[,,,j][img.mask] <- median(response.sample[,j,])
-      fitted.med[,,,j][img.mask] <- median(fitted.sample[,j,])
-    }
-    if (I > 1) {
-      response.med[,,,j][img.mask] <- apply(response.sample[,j,], 1, median)
-      fitted.med[,,,j][img.mask] <- apply(fitted.sample[,j,], 1, median)
-    }
-    for (i in 1:samplesize) {
-      response[,,,j,i][img.mask] <- response.sample[,j,i]
-      fitted[,,,j,i][img.mask] <- fitted.sample[,j,i]
-    }
   }
 
-  return.list <- list("beta"=beta.med,
-                      "beta.sample"=beta,
-                      "fit"=fitted.med,
-                      "fit.sample"=fitted,
-                      "response"=response.med,
-                      "response.sample"=response,
-                      "Fp"=Fp.img,
-                      "A"=A,
-                      "B"=B,
-                      "D"=D,
-                      "t0"=t0) #, "ourfit"=fit) 
+  if (fitted|response) {
+    if (I == 1)
+    for (j in 1:T) {
+      if (response) response.med[,,,j][img.mask] <- median(response.sample[,j,])
+      if (fitted) fitted.med[,,,j][img.mask] <- median(fitted.sample[,j,])
+      }
+    if (I > 1) 
+    for (j in 1:T) {
+      if (response) response.med[,,,j][img.mask] <- apply(response.sample[,j,], 1, median)
+      if (fitted) fitted.med[,,,j][img.mask] <- apply(fitted.sample[,j,], 1, median)
+      }
+    if (samples)
+    for (i in 1:samplesize) 
+    for (j in 1:T) {
+      if (response) response[,,,j,i][img.mask] <- response.sample[,j,i]
+      if (fitted) fitted[,,,j,i][img.mask] <- fitted.sample[,j,i]
+      }
+  }
+
+  return.list <- list()
+  if (response|fitted) return.list[["beta"]]=beta.med
+  if ((response|fitted)&sample) return.list[["beta.sample"]]=beta
+  if (fitted) return.list[["fit"]]=fitted.med
+  if (fitted&sample) return.list[["fit.sample"]]=fitted
+  if (response) return.list[["response"]]=response.med
+  if (response&sample) return.list[["response.sample"]]=response
+  return.list[["Fp"]]=Fp.img
+  return.list[["A"]]=A
+  return.list[["B"]]=B
+  return.list[["D"]]=D
+  if (t0.compute) return.list[["t0"]]=t0
   if (nlr) {
-    switch(model,
-           weinmann = { return.list$kep <- kep.med }, 
-           AATH = { return.list <- c(return.list,
-                                     list(E=E.med, F=F.med, TC=TC.med)) })
-    return.list$ktrans <- ktrans.med
-    return.list$ve <- ve.med
+    if (model=="weinmann") return.list[["kep"]] <- kep.med  
+    if (model=="AATH") return.list[["E"]]=E.med; return.list[["F"]]=F.med; return.list[["TC"]]=TC.med
+
+    return.list[["ktrans"]] <- ktrans.med
+    return.list[["ve"]] <- ve.med
     if (samples) {
-      return.list$ktrans.sample <- ktrans
-      return.list$ve.sample <- ve
-      switch (model,
-              weinmann = { return.list$kep.samples <- kep },
-              AATH = { return.list <-
-                         c(return.list,
-                           list(E.samples=E, F.samples=F, TC.samples=TC)) })
+      return.list[["ktrans.sample"]] <- ktrans
+      return.list[["ve.sample"]] <- ve
+      if (model=="weinmann") return.list[["kep.samples"]] <- kep
+      if (model=="AATH") return.list[["E.samples"]]=E; return.list[["F.samples"]]=F; return.list[["TC.samples"=TC]]
     }
   } 
-  if (samples) {
-    return.list$Fp.samples <- Fp
-  }
+  if (samples) return.list[["Fp.samples"]] <- Fp
 
   return(return.list)
 }
