@@ -168,6 +168,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
                            stop("Only aif=\"tofts.kermode\" or aif=\"fritz.hansen\" acceptable AIFs for model=\"weinmann\" or model=\"extended\"", call.=FALSE))
                   }
                 },
+                kety.orton.exp = ,
                 orton.exp = {
                   if (is.null(aif)) {
                     "orton.exp"
@@ -246,6 +247,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
          weinmann = { aif.model <- 0 ; vp.do <- 0 },
          extended = { aif.model <- 0 ; vp.do <- 1 },
          orton.exp = { aif.model <- 1 ; vp.do <- 1 },
+         kety.orton.exp = { aif.model <- 1 ; vp.do <- 0 },
          stop("Model is not supported."))
 
   img.mask <- array(img.mask,c(I,J,K)) # why?

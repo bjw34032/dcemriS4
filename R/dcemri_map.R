@@ -76,15 +76,17 @@ setMethod("dcemri.map", signature(conc="array"),
            if (! aif %in% c("tofts.kermode","fritz.hansen"))
              stop("Only aif=\"tofts.kermode\" or aif=\"fritz.hansen\" are acceptable AIFs for model=\"weinmann\" or model=\"extended\"", call.=FALSE)
          },
-         orton.exp = {
+         orton.exp = ,
+         kety.orton.exp = {
            aif <- ifelse(is.null(aif), "orton.exp", aif)
            if (! aif %in% c("orton.exp","user"))
-             stop("Only aif=\"orton.exp\" or aif=\"user\" are acceptable AIFs for model=\"orton.exp\"", call.=FALSE)
+             stop("Only aif=\"orton.exp\" or aif=\"user\" are acceptable AIFs for model=\"orton.exp\" or model=\"kety.orton.exp\"", call.=FALSE)
          },
-         orton.cos = {
+         orton.cos = ,
+         kety.orton.cos = {
            aif <- ifelse(is.null(aif), "orton.cos", aif)
            if (! aif %in% c("orton.cos","user"))
-             stop("Only aif=\"orton.cos\" or aif=\"user\" are acceptable AIFs for model=\"orton.cos\"", call.=FALSE)
+             stop("Only aif=\"orton.cos\" or aif=\"user\" are acceptable AIFs for  model=\"orton.cos\" or model=\"kety.orton.cos\"", call.=FALSE)
          },
          stop("Unknown model: " + model, call.=FALSE))
 
@@ -167,6 +169,24 @@ setMethod("dcemri.map", signature(conc="array"),
     erg[time <= 0] <- 0
     return(erg)
   }
+  
+  model.kety.orton.exp <- function(time, vp, th1, th3, AB, muB, AG, muG) {
+    ## Kety model using the exponential AIF from Matthew Orton (ICR)
+
+    ktrans <- exp(th1)
+    kep <- exp(th3)
+
+    T1 <- AB * kep / (kep - muB)
+    T2 <- time * exp(-muB * time) -
+      (exp(-muB * time) - exp(-kep * time)) / (kep - muB)
+    T3 <- AG * kep
+    T4 <- (exp(-muG * time) - exp(-kep * time)) / (kep - muG) -
+      (exp(-muB * time) - exp(-kep * time)) / (kep - muB)
+
+    erg <- ktrans * (T1 * T2 + T3 * T4)
+    erg[time <= 0] <- 0
+    return(erg)
+  }
 
   model.orton.cos <- function(time, vp, th1, th3, aB, muB, aG, muG) {
     ## Extended model using the raised cosine AIF from Matthew Orton (ICR)
@@ -186,6 +206,26 @@ setMethod("dcemri.map", signature(conc="array"),
                   vp * cp + aB * aG * ktrans / (kep - muG) * ((A2(time,muG) + (kep - muG) / aG - 1)
                                                               * A2(time,kep)),
                   vp * cp + aB * aG * ktrans / (kep - muG) * (A2(tB,muG) * exp(-muB * (time - tB))
+                                   + ((kep - muG) / aG - 1) * A2(tB,kep) * exp(-kep * (time - tB))))
+    erg[time <= 0] <- 0
+    return(erg)
+  }
+
+    model.kety.orton.cos <- function(time, vp, th1, th3, aB, muB, aG, muG) {
+    ## Extended model using the raised cosine AIF from Matthew Orton (ICR)
+    A2 <- function(time, alpha, muB) {
+      (1 - exp(-alpha*time)) / alpha - (alpha*cos(muB*time) + muB*sin(muB*time)
+                                        - alpha*exp(-alpha*time)) / (alpha^2 + muB^2)
+    }
+
+    ktrans <- exp(th1)
+    kep <- exp(th3)
+    tB <- 2*pi/muB
+
+    erg <- ifelse(time <= tB,
+                  aB * aG * ktrans / (kep - muG) * ((A2(time,muG) + (kep - muG) / aG - 1)
+                                                              * A2(time,kep)),
+                  aB * aG * ktrans / (kep - muG) * (A2(tB,muG) * exp(-muB * (time - tB))
                                    + ((kep - muG) / aG - 1) * A2(tB,kep) * exp(-kep * (time - tB))))
     erg[time <= 0] <- 0
     return(erg)
@@ -264,6 +304,28 @@ setMethod("dcemri.map", signature(conc="array"),
              return(-p)
            }
 	 },		
+         kety.orton.exp = {
+           inverse <- function(x){return(1/x)}
+           ident <- function(x){return(x)}
+           parameter <- c("ktrans","kep","sigma2")
+           transform <- c(exp, exp, inverse)
+           start <- c(-1, -1, 1/100)
+           hyper <- c(ab.ktrans, ab.kep, ab.tauepsilon)
+           posterior <- function(par, conc, time, hyper, aif) {
+             gamma <- par[1]
+             theta <- par[2]
+             tauepsilon <- par[3]
+             T <- length(time)
+             p <- log(dnorm(gamma, hyper[1], hyper[2]))
+             p <- p + log(dnorm(theta, hyper[3], hyper[4]))
+             p <- p + log(dgamma(tauepsilon, hyper[5], rate=hyper[6]))
+              conc.hat <- model.orton.exp(time,vp,gamma,theta,AB=aif[1],muB=aif[2],AG=aif[3],muG=aif[4])
+             p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
+             if (is.na(p))
+               p <- 1e-6
+             return(-p)
+           }
+	 },		
         orton.cos = {
            inverse <- function(x){return(1/x)}
            ident <- function(x){return(x)}
@@ -283,6 +345,29 @@ setMethod("dcemri.map", signature(conc="array"),
              p <- p + log(dbeta(vp,hyper[5], hyper[6]))
              conc.hat <- model.orton.cos(time, vp, gamma, theta, aB=aif[1],
                                          muB=aif[2], aG=aif[3], muG=aif[4])
+             p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
+             if (is.na(p))
+               p <- -1e-6
+             return(-p)
+           }
+         },
+        kety.orton.cos = {
+           inverse <- function(x){return(1/x)}
+           ident <- function(x){return(x)}
+           parameter <- c("ktrans","kep","sigma2")
+           transform <- c(exp, exp, inverse)
+           start <- c(-1,-1, 1/100)
+           hyper <- c(ab.ktrans, ab.kep, ab.tauepsilon)
+           posterior <- function(par, conc, time, hyper, aif) {
+             gamma <- par[1]
+             theta <- par[2]
+             theta0 <- par[3]
+             tauepsilon <- par[4]
+             T <- length(time)
+             p <- log(dnorm(gamma, hyper[1], hyper[2]))
+             p <- p + log(dnorm(theta, hyper[3], hyper[4]))
+             p <- p + log(dgamma(tauepsilon, hyper[5], rate=hyper[6]))
+             conc.hat <- model.orton.cos(time,vp,gamma,theta,aB=aif[1],muB=aif[2],aG=aif[3],muG=aif[4])
              p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
              if (is.na(p))
                p <- -1e-6
