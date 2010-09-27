@@ -41,6 +41,8 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
 	vascular compartment (default)}
       \item{\dQuote{orton.exp}}{Extended model using Orton's exponential
 	AIF}
+      \item{\dQuote{kety.orton.exp}}{Kety model using Orton's exponential
+	AIF}
     }
   }
   \item{aif}{is a character string that identifies the parameters of the
@@ -48,7 +50,7 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
     Acceptable values are: \code{tofts.kermode} (default) or
     \code{fritz.hansen} for the \code{weinmann} and \code{extended}
     models; \code{orton.exp} (default) or \code{user} for the
-    \code{orton.exp} model.}
+     \code{orton.exp} and \code{kety.orton.exp} model.}
   \item{user}{Vector of AIF parameters.  For Tofts and Kermode:
     \eqn{a_1}, \eqn{m_1}, \eqn{a_2}, \eqn{m_2}; for Orton \emph{et al.}:
     \eqn{A_b}, \eqn{\mu_b}, \eqn{A_g}, \eqn{\mu_g}.}

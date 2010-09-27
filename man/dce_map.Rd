@@ -35,7 +35,11 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
 	vascular compartment (default)}
       \item{\dQuote{orton.exp}}{Extended model using Orton's exponential
 	AIF} 
+      \item{\dQuote{kety.orton.exp}}{Kety model using Orton's exponential
+	AIF} 
       \item{\dQuote{orton.cos}}{Extended model using Orton's raised
+	cosine AIF}
+      \item{\dQuote{kety.orton.cos}}{Kety model using Orton's raised
 	cosine AIF}
     }
   }
@@ -44,8 +48,8 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
     Acceptable values are: \code{tofts.kermode} (default) or
     \code{fritz.hansen} for the \code{weinmann} and \code{extended}
     models; \code{orton.exp} (default) or \code{user} for the
-    \code{orton.exp} model; \code{user} for the
-    \code{orton.cos} model.}
+    \code{orton.exp} model and \code{orton.exp} model; \code{user} for the
+    \code{orton.cos} model and \code{orton.cos} model.}
   \item{user}{Vector of AIF parameters.  For Tofts and Kermode:
     \eqn{a_1}, \eqn{m_1}, \eqn{a_2}, \eqn{m_2}; for Orton \emph{et al.}:
     \eqn{A_b}, \eqn{\mu_b}, \eqn{A_g}, \eqn{\mu_g}.}

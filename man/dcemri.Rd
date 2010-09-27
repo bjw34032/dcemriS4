@@ -35,7 +35,9 @@
 	vascular compartment (default)}
       \item{\dQuote{orton.exp}}{Extended model using Orton's exponential
 	AIF} 
-      \item{\dQuote{orton.cos}}{Extended model using Orton's raised
+      \item{\dQuote{orton.cos}}{Extended model using Orton's raised cosine AIF}
+      \item{\dQuote{kety.orton.exp}}{Kety model using Orton's exponential AIF} 
+      \item{\dQuote{kety.orton.cos}}{Kety model using Orton's raised
 	cosine AIF}
     }
   }
@@ -49,8 +51,8 @@
 	models}
       \item{\dQuote{empirical}}{for the \code{weinmann} and \code{extended}
 	models}
-      \item{\code{orton.exp}}{(default) for the \code{orton.exp} model}
-      \item{\code{orton.cos}}{(default) for the	\code{orton.cos} model.}
+      \item{\code{orton.exp}}{(default) for the \code{orton.exp} and \code{kety.orton.exp} model}
+      \item{\code{orton.cos}}{(default) for the	\code{orton.cos} and \code{kety.orton.cos} model.}
       \item{\code{user}}{for the \code{orton.exp} and \code{orton.cos} model.}
     }
     All AIF models set the parametric form and parameter values --
