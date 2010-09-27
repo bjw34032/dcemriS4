@@ -6,6 +6,9 @@
 \name{CPMG}
 \alias{T2.lm}
 \alias{T2.fast}
+\alias{T2.fast,array-method}
+\alias{T2.fast,anlz-method}
+\alias{T2.fast,nifti-method}
 \title{Quantitative T2}
 \description{
   ...

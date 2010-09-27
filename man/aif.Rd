@@ -16,7 +16,7 @@
 \usage{
 aif.orton.exp(tt, AB, muB, AG, muG)
 model.orton.exp(tt, aparams, kparams)
-orton.exp.lm(tt, aif, guess=c(100,10,1,0.1), nprint=0)
+orton.exp.lm(tt, aif, guess=c(log(100),log(10),log(1),log(0.1)), nprint=0)
 }
 \arguments{
   \item{tt}{is a vector of acquisition times (in minutes) relative to

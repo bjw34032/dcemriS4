@@ -42,23 +42,24 @@ setMethod("dcemri.map", signature(conc="array"),
                          aif=NULL, user=NULL, ab.ktrans=c(0,1),
                          ab.kep=ab.ktrans, ab.vp=c(1,19),
                          ab.tauepsilon=c(1,1/1000), samples=FALSE,
-                         multicore=FALSE, verbose=FALSE, ...) .dcemriWrapper("dcemri.map", conc, time, img.mask, model,
-                         aif, user, ab.ktrans,
-                         ab.kep, ab.vp,
-                         ab.tauepsilon, samples,
-                         multicore, verbose, ...))
+                         multicore=FALSE, verbose=FALSE, ...)
+          .dcemriWrapper("dcemri.map", conc, time, img.mask, model,
+                         aif, user, ab.ktrans, ab.kep, ab.vp,
+                         ab.tauepsilon, samples, multicore, verbose, ...))
 
 
 .dcemri.map.single <- function(conc, time, posterior, parameter,
-                              transform, start, hyper, aif, verbose=FALSE) {
-  if (any(is.na(conc)))
+                               transform, start, hyper, aif, verbose=FALSE) {
+  if (any(is.na(conc))) {
     return(NA)
-  else {    
+  } else {    
     map <- optim(par=start, fn=posterior, conc=conc, time=time,
                  hyper=hyper, aif=aif, control=list("maxit"=25000))
-    return.list <- list()
-    for (i in 1:length(parameter))
+    p <- length(parameter)
+    return.list <- vector("list", p) # list()
+    for (i in 1:p) {
       return.list[[parameter[i]]] <- transform[[i]](map$par[i])
+    }
     return(return.list)
   }
 }
@@ -104,7 +105,9 @@ setMethod("dcemri.map", signature(conc="array"),
     }
   }
 
-  if (verbose) cat("  Deconstructing data...", fill=TRUE)
+  if (verbose) {
+    cat("  Deconstructing data...", fill=TRUE)
+  }
   img.mask <- ifelse(img.mask > 0, TRUE, FALSE)
   conc.mat <- matrix(conc[img.mask], nvoxels)
   conc.mat[is.na(conc.mat)] <- 0
@@ -129,13 +132,14 @@ setMethod("dcemri.map", signature(conc="array"),
          user = {
            if (verbose) cat("  User-specified AIF parameters...", fill=TRUE);
 	   D <- 1
-           D <- try(user$D); AB <- try(c(user$AB,user$aB)[1]) #allow AB or aB
-           muB <- try(user$muB); AG <- try(c(user$AG,user$aG)[1]) #allow AB or aB
+           D <- try(user$D)
+           AB <- try(c(user$AB,user$aB)[1]) #allow AB or aB
+           muB <- try(user$muB)
+           AG <- try(c(user$AG,user$aG)[1]) #allow AB or aB
            muG <- try(user$muG)
            aif.parameter <- c(D * AB, muB, D * AG, muG)
          },
          print("WARNING: AIF parameters must be specified!"))
-
 
   convterm <- function(kep, t, aif) {
     aif[1] * (exp(-aif[2]*t) - exp(-kep*t)) / (kep-aif[2]) + aif[3] * (exp(-aif[4]*t) - exp(-kep*t)) / (kep-aif[4])
@@ -146,9 +150,9 @@ setMethod("dcemri.map", signature(conc="array"),
 
   model.orton.exp <- function(time, vp, th1, th3, AB, muB, AG, muG) {
     ## Extended model using the exponential AIF from Matthew Orton (ICR)
-    Cp <- function(tt, AB, muB, AG, muG) 
+    Cp <- function(tt, AB, muB, AG, muG) {
       AB * tt * exp(-muB * tt) + AG * (exp(-muG * tt) - exp(-muB * tt))
-
+    }
     ktrans <- exp(th1)
     kep <- exp(th3)
 
@@ -277,7 +281,8 @@ setMethod("dcemri.map", signature(conc="array"),
              p <- p + log(dnorm(theta, hyper[3], hyper[4]))
              p <- p + log(dgamma(tauepsilon, hyper[7], rate=hyper[8]))
              p <- p + log(dbeta(vp,hyper[5], hyper[6]))
-             conc.hat <- model.orton.cos(time,vp,gamma,theta,aB=aif[1],muB=aif[2],aG=aif[3],muG=aif[4])
+             conc.hat <- model.orton.cos(time, vp, gamma, theta, aB=aif[1],
+                                         muB=aif[2], aG=aif[3], muG=aif[4])
              p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
              if (is.na(p))
                p <- -1e-6
@@ -290,26 +295,29 @@ setMethod("dcemri.map", signature(conc="array"),
   sigma2 <- rep(NA, nvoxels)
   Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
 
-  if (verbose) cat("  Estimating the kinetic parameters...", fill=TRUE)
+  if (verbose) {
+    cat("  Estimating the kinetic parameters...", fill=TRUE)
+  }
 
   conc.list <- list()
   for (i in 1:nvoxels)
     conc.list[[i]] <- conc.mat[i,]
   
-  if (!multicore) {
-    fit <- lapply(conc.list, FUN=.dcemri.map.single, time=time,
-                  posterior=posterior, parameter=parameter,
-		  transform=transform, start=start, hyper=hyper,
-                  aif=aif.parameter,verbose=verbose)
-  } else {
-    require("multicore")
+  if (multicore && require("multicore")) {
     fit <- mclapply(conc.list, FUN=.dcemri.map.single, time=time,
                     posterior=posterior, parameter=parameter,
                     transform=transform, start=start, hyper=hyper,
                     aif=aif.parameter,verbose=verbose)
+  } else {
+    fit <- lapply(conc.list, FUN=.dcemri.map.single, time=time,
+                  posterior=posterior, parameter=parameter,
+		  transform=transform, start=start, hyper=hyper,
+                  aif=aif.parameter,verbose=verbose)
   }
 
-  if (verbose) cat("  Reconstructing results...", fill=TRUE)
+  if (verbose) {
+    cat("  Reconstructing results...", fill=TRUE)
+  }
 
   for (k in 1:nvoxels) {
     try(ktrans$par[k] <- fit[[k]]$ktrans,silent=TRUE)
@@ -333,7 +341,7 @@ setMethod("dcemri.map", signature(conc="array"),
     Vp.out <- list(par=A)
   }
 
-  A <- B <- array(NA, c(I,J,K))
+  A <- array(NA, c(I,J,K))
   A[img.mask] <- sigma2
   sigma2.out <- A
 

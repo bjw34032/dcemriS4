@@ -291,12 +291,16 @@ setMethod("dcemri.lm", signature(conc="array"),
       J <- K <- 1
   }
 
-  if (verbose) cat("  Deconstructing data...", fill=TRUE)
+  if (verbose) {
+    cat("  Deconstructing data...", fill=TRUE)
+  }
   img.mask <- ifelse(img.mask > 0, TRUE, FALSE)
   conc.mat <- matrix(conc[img.mask], nvoxels)
   conc.mat[is.na(conc.mat)] <- 0
 
-  if (verbose) cat("  Estimating the kinetic parameters...", fill=TRUE)
+  if (verbose) {
+    cat("  Estimating the kinetic parameters...", fill=TRUE)
+  }
   ktrans <- kep <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
   sse <- rep(NA, nvoxels)
   for (k in 1:nvoxels) {
@@ -315,33 +319,48 @@ setMethod("dcemri.lm", signature(conc="array"),
     }
   }
 
-  if (verbose) cat("  Reconstructing results...", fill=TRUE)
+  if (verbose) {
+    cat("  Reconstructing results...", fill=TRUE)
+  }
   A <- B <- array(NA, c(I,J,K))
   A[img.mask] <- ktrans$par
   B[img.mask] <- ktrans$error
-  ktrans.out <- list(par=A, error=B)
+  ##ktrans.out <- list(par=A, error=B)
+  R <- list(ktrans=A, ktranserror=B, time=time)
+  rm(A,B)
   A <- B <- array(NA, c(I,J,K))
   A[img.mask] <- kep$par
   B[img.mask] <- kep$error
-  kep.out <- list(par=A, error=B)
+  ##kep.out <- list(par=A, error=B)
+  R$kep <- A
+  R$keperror <- B
+  R$ve <- R$ktrans / R$kep
+  rm(A,B)
   if (model %in% c("extended","orton.exp","orton.cos")) {
     A <- B <- array(NA, c(I,J,K))
     A[img.mask] <- Vp$par
     B[img.mask] <- Vp$error
-    Vp.out <- list(par=A, error=B)
+    ##Vp.out <- list(par=A, error=B)
+    R$vp <- A
+    R$vperror <- B
+    rm(A,B)
   }
-  A <- B <- array(NA, c(I,J,K))
+  A <- array(NA, c(I,J,K))
   A[img.mask] <- sse
-  sse.out <- A
+  ##sse.out <- A
+  R$sse <- A
+  rm(A)
   
-  if (model %in% c("extended","orton.exp","orton.cos"))
-    list(ktrans=ktrans.out$par, kep=kep.out$par, ktranserror=ktrans.out$error,
-         keperror=kep.out$error, ve=ktrans.out$par/kep.out$par, vp=Vp.out$par,
-         vperror=Vp.out$error, sse=sse.out, time=time)
-  else
-    list(ktrans=ktrans.out$par, kep=kep.out$par, ktranserror=ktrans.out$error,
-         keperror=kep.out$error, ve=ktrans.out$par/kep.out$par, sse=sse.out,
-         time=time)
+##  if (model %in% c("extended","orton.exp","orton.cos")) {
+##    list(ktrans=ktrans.out$par, kep=kep.out$par, ktranserror=ktrans.out$error,
+##         keperror=kep.out$error, ve=ktrans.out$par/kep.out$par, vp=Vp.out$par,
+##         vperror=Vp.out$error, sse=sse.out, time=time)
+##  } else {
+##    list(ktrans=ktrans.out$par, kep=kep.out$par, ktranserror=ktrans.out$error,
+##         keperror=kep.out$error, ve=ktrans.out$par/kep.out$par, sse=sse.out,
+##         time=time)
+##  }
+  return(R)
 }
 
 

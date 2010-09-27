@@ -179,8 +179,10 @@ setMethod("CA.fast", signature(dynamic="array"),
   A <- sweep(sweep(dynamic, 1:3, dynamic[,,,1], "-"),
              1:3, R1est$M0, "/") / sin(theta)
   B <- (1 - exp(-TR * R1est$R10)) / (1 - cos(theta) * exp(-TR * R1est$R10))
+  rm(A,B)
   AB <- sweep(A, 1:3, B, "+")
   R1t <- -(1/TR) * log((1 - AB) / (1 - cos(theta) * AB))
+  rm(AB)
   conc <- sweep(R1t, 1:3, R1est$R10, "-") / r1
 
   list(M0 = R1est$M0, R10 = R1est$R10, R1t = R1t, conc = conc)
@@ -193,9 +195,9 @@ setMethod("CA.fast", signature(dynamic="array"),
 setGeneric("CA.fast2", function(dynamic, ...) standardGeneric("CA.fast2"))
 setMethod("CA.fast2", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
-	      verbose=FALSE) 
-	    .dcemriWrapper("CA.fast2", dynamic, dyn.mask, dangle, flip, fangles,
-		TR, r1, verbose))
+                   verbose=FALSE) 
+          .dcemriWrapper("CA.fast2", dynamic, dyn.mask, dangle, flip,
+                         fangles, TR, r1, verbose))
 
 #############################################################################
 ## CA.fast2()
