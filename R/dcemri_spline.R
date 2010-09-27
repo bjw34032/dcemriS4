@@ -40,25 +40,26 @@ setGeneric("dcemri.spline",
            function(conc, ...) standardGeneric("dcemri.spline"))
 setMethod("dcemri.spline", signature(conc="array"),
           function(conc, time, img.mask, time.input=time,
-	  model="weinmann", aif="tofts.kermode",
-	  user=NULL, aif.observed=NULL, nriters=500,
-	  thin=5, burnin=100, ab.hyper=c(1e-5,1e-5),
-	  ab.tauepsilon=c(1,1/1000), k=4, p=25, rw=2,
-	  knots=NULL, nlr=FALSE, t0.compute=FALSE,
-	  samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
+                   model="weinmann", aif="tofts.kermode",
+                   user=NULL, aif.observed=NULL, nriters=500,
+                   thin=5, burnin=100, ab.hyper=c(1e-5,1e-5),
+                   ab.tauepsilon=c(1,1/1000), k=4, p=25, rw=2,
+                   knots=NULL, nlr=FALSE, t0.compute=FALSE,
+                   samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
           .dcemriWrapper("dcemri.spline", conc, time, img.mask, time.input,
-                        model, aif, user, aif.observed, nriters,
-                        thin, burnin, ab.hyper, ab.tauepsilon, k, p, rw,
-                        knots, nlr, t0.compute, samples, multicore,
-                        verbose, ...))
+                         model, aif, user, aif.observed, nriters,
+                         thin, burnin, ab.hyper, ab.tauepsilon, k, p, rw,
+                         knots, nlr, t0.compute, samples, multicore,
+                         verbose, ...))
 
 .dcemri.spline.single <- function(conc, time, D, time.input, p, rw, knots,
                                   k, A, t0.compute=FALSE, nlr=FALSE,
                                   nriters=500, thin=5, burnin=100,
                                   ab.hyper=c(1e-5,1e-5),
                                   ab.tauepsilon=c(1,1/1000), silent=0,
-                                  multicore=FALSE, model=NULL, model.func=NULL,
-                                  model.guess=NULL, samples=FALSE, B=NULL) {
+                                  multicore=FALSE, model=NULL,
+                                  model.func=NULL, model.guess=NULL,
+                                  samples=FALSE, B=NULL) {
 
   require("minpack.lm")
   ## Sanity check: conc must not contain any missing values
@@ -66,13 +67,14 @@ setMethod("dcemri.spline", signature(conc="array"),
     stop("Concentration time curves must not contain missing values.")
   }
 
-  samplesize=floor(nriters/thin)
+  samplesize <- floor(nriters/thin)
 
   T <- length(time)
-  tau <- array(1000, c(p-rw,samplesize))
-  beta <- array(0, c(p,samplesize))
-  MAX <- array(0, c(samplesize))
-  tauepsilon <- array(1000, c(samplesize))
+  TT <- T*T
+  tau <- matrix(1000, p-rw, samplesize) # array(1000, c(p-rw,samplesize))
+  beta <- matrix(0, p, samplesize) # array(0, c(p,samplesize))
+  ##MAX <- array(0, c(samplesize))
+  tauepsilon <- rep(1000, samplesize) # array(1000, c(samplesize))
   burnin <- min(burnin, samplesize)
   
   result <- .C("dce_spline_run",
@@ -91,18 +93,22 @@ setMethod("dcemri.spline", signature(conc="array"),
                as.double(1:T),
                as.double(1:T),
                as.double(1:T),
-               as.double(1:(T^2)),
-               as.double(1:(T^2)),
-               as.double(1:(T^2)),
-               as.double(1:(T^2)),
+               as.double(1:TT),
+               as.double(1:TT),
+               as.double(1:TT),
+               as.double(1:TT),
                as.double(t(D)),
                as.integer(silent),
                PACKAGE="dcemriS4")
 
-  tau <- array(result[[5]], c(p-rw,samplesize))
-  beta <- array(result[[9]], c(p,samplesize))
-  tauepsilon <- array(result[[6]], c(samplesize))
+  tau <- matrix(result[[5]], p-rw, samplesize) # array(result[[5]], c(p-rw,samplesize))
+  tauepsilon <- rep(result[[6]], samplesize) # array(result[[6]], c(samplesize))
+  beta <- matrix(result[[9]], p, samplesize) # array(result[[9]], c(p,samplesize))
 
+  ##
+  ## Why is this run twice?!?
+  ##
+  
   result <- .C("dce_spline_run",
                as.integer(samplesize),
                as.integer(thin),
@@ -119,88 +125,81 @@ setMethod("dcemri.spline", signature(conc="array"),
                as.double(1:T),
                as.double(1:T),
                as.double(1:T),
-               as.double(1:(T^2)),
-               as.double(1:(T^2)),
-               as.double(1:(T^2)),
-               as.double(1:(T^2)),
+               as.double(1:TT),
+               as.double(1:TT),
+               as.double(1:TT),
+               as.double(1:TT),
                as.double(t(D)),
                as.integer(silent),
                PACKAGE="dcemriS4")
 
-  tau <- array(result[[5]], c(p-rw,samplesize))
-  beta <- array(result[[9]], c(p,samplesize))
-  tauepsilon <- array(result[[6]], c(samplesize))
+  tau <- matrix(result[[5]], p-rw, samplesize) # array(result[[5]], c(p-rw,samplesize))
+  tauepsilon <- rep(result[[6]], samplesize) # array(result[[6]], c(samplesize))
+  beta <- matrix(result[[9]], p, samplesize) # array(result[[9]], c(p,samplesize))
 
   t0 <- 0
-  if(t0.compute) {
-    d <- array(NA, c(T, samplesize))
-    for (j in 1:samplesize)
+  if (t0.compute) {
+    d <- matrix(NA, T, samplesize)
+    for (j in 1:samplesize) {
       d[,j] <- D %*% beta[,j]
-
-    q05 <- function(x) {
-      quantile(x, .005, na.rm=TRUE)
     }
-    med.na <- function(x) {
-      median(x, na.rm=TRUE)
-    }
-
-    d1 <- apply(d, 1, q05)
-    d2 <- apply(d, 1, med.na)
+    d1 <- apply(d, 1, quantile, probs=c(0.005), na.rm=TRUE)
+    d2 <- apply(d, 1, median, na.rm=TRUE)
     du <- min(which(d1 > 0))
-    beta.abl <- beta.abl2 <- rep(0, p)
-
+    ##beta.abl <- beta.abl2 <- rep(0, p)
     B2 <- splineDesign(knots, time.input, k-2)
     B2 <- B2[,(1:p)+1]
 
     for (j in 1:samplesize) {
       beta.abl <- 1:p
-      for (q in 1:(p - 1))
+      for (q in 1:(p - 1)) {
 	beta.abl[q] <- (beta[q+1, j] - beta[q, j]) * k / (knots[q+k+1] - knots[q+1])
+      }
       beta.abl[p] <- 0
       ABL2 <- A %*% B2 %*% beta.abl
       du2 <- time[du] - d2[du] / ABL2[du]  
       t0[j] <- du2
     }
-    if (sum(!is.na(t0))==0)
+    if (sum(!is.na(t0)) == 0) {
       t0 <- 0
-    else
-      t0 <- median(t0,na.rm=TRUE)
-    if (t0 < min(time))
+    } else {
+      t0 <- median(t0, na.rm=TRUE)
+    }
+    if (t0 < min(time)) {
       t0 <- 0
-    if (t0 > max(time))
+    }
+    if (t0 > max(time)) {
       t0 <- 0
+    }
   }
 
-  fitted <- list()
+  fitted <- vector("list", samplesize) # list()
   for (i in 1:samplesize) {
-    fitted[[i]] <- B%*% beta[,i]
+    fitted[[i]] <- B %*% beta[,i]
   }
 
-
-  if (multicore) {
-    ## require("multicore")
-    require("multicore")
-    MAX0 <- mclapply(fitted, max)
+  if (multicore && require("multicore")) {
+    MAX <- unlist(mclapply(fitted, max))
   } else {
-    MAX0 <- lapply(fitted, max)
+    MAX <- unlist(lapply(fitted, max))
   }
-  MAX <- NULL
-  for (i in 1:samplesize) {
-    MAX <- c(MAX, MAX0[[i]])
-  }
-  parameters <- list()
+  ##MAX <- rep(NA, samplesize)
+  ##for (i in 1:samplesize) {
+  ##  MAX[i] <- MAX0[[i]]
+  ##}
+  ##parameters <- list()
   if (nlr) {
-    if (model=="AATH") 
-      model.guess[2] <- median(MAX)
-
+    if (model=="AATH") {
+      model.guess[2] <- median(MAX, na.rm=TRUE)
+    }
     fcn <- function(p, time, x, N.Err, fcall, jcall)
       (x - do.call("fcall", c(list(time=time), as.list(p))))
 
     nls.lm.single <- function(fitted, par, fn, fcall, model, time) {
-   
       fcall2 <- fcall
-      if (length(fcall) > 1)
+      if (length(fcall) > 1) {
 	fcall2 <- fcall[[1]]
+      }
       fit <- nls.lm(par=par, fn=fn, fcall=fcall2, time=time, x=fitted,
                     N.Err=sqrt(300), control=list(nprint=0, ftol=10^-20))
       if (model=="AATH" && fit$par$TC < 1e-6) {
@@ -211,9 +210,8 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
       return(fit)
     }
-
-    if (multicore) {
-      require("multicore")
+    
+    if (multicore && require("multicore")) {
       response <- mclapply(fitted, nls.lm.single, par=model.guess,
                            fn=fcn, fcall=model.func, model=model,
                            time=time-t0)
@@ -224,38 +222,43 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
 
     if (model=="AATH") {
-      E <- F <- TC <- ve <- NULL
+      E <- F <- TC <- ve <- rep(NA, samplesize) # NULL
       for (i in 1:samplesize) {
-	E <- c(E, exp(response[[i]]$par$logE))
-	F <- c(F, exp(response[[i]]$par$logF))
-	TC <- c(TC, response[[i]]$par$TC)
-	ve <- c(ve, exp(response[[i]]$par$logve))
+	E[i] <- exp(response[[i]]$par$logE)
+	F[i] <- exp(response[[i]]$par$logF)
+	TC[i] <- response[[i]]$par$TC
+	ve[i] <- exp(response[[i]]$par$logve)
       }
-      parameters <- list("E"=median(E), "F"=median(F), "TC"=median(TC),
-                         "ve"=median(ve))
+      parameters <- list("E"=median(E, na.rm=TRUE),
+                         "F"=median(F, na.rm=TRUE),
+                         "TC"=median(TC, na.rm=TRUE),
+                         "ve"=median(ve, na.rm=TRUE))
       if (samples) {
-	parameters <- list("E.samples"=E, "F.samples"=F, "TC.samples"=TC,
-                           "ve.samples"=ve)
+	parameters$E.samples <- E
+        parameters$F.samples <- F
+        parameters$TC.samples <- TC
+        parameters$ve.samples <- ve
       }
     }
     if (model == "weinmann") {
-      ktrans <- kep <- NULL
+      ktrans <- kep <- rep(NA, samplesize) # NULL
       for (i in 1:samplesize) {
-	ktrans <- c(ktrans,exp(response[[i]]$par$logktrans))
-	kep <- c(kep,exp(response[[i]]$par$logkep))
+	ktrans[i] <- exp(response[[i]]$par$logktrans)
+	kep[i] <- exp(response[[i]]$par$logkep)
       }
-      parameters <- list("ktrans"=median(ktrans), "kep"=median(kep))
+      parameters <- list(ktrans=median(ktrans, na.rm=TRUE),
+                         kep=median(kep, na.rm=TRUE))
       if (samples) {
-	parameters <- list("ktrans.sample"=ktrans, "kep.sample"=kep)
+	parameters$ktrans.sample <- ktrans
+        parameters$kep.sample <- kep
       }
     }
-
   }
 
-  list("beta"=beta, "tau"=tau, "tauepsilon"=tauepsilon, "t0"=t0,
-       "Fp"=median(MAX), "Fp.samples"=MAX, "fitted"=fitted, "par"=parameters)
+  list(beta=beta, tau=tau, tauepsilon=tauepsilon, t0=t0,
+       Fp=median(MAX, na.rm=TRUE), Fp.samples=MAX, fitted=fitted,
+       par=parameters)
 }
-
 
 .dcemri.spline <- function(conc, time, img.mask, time.input=time,
                           model="weinmann", aif="tofts.kermode",
@@ -287,46 +290,45 @@ setMethod("dcemri.spline", signature(conc="array"),
     require("minpack.lm")
   }
 
-  ##function to make precision matrix for random walk
-  R <- function(taux,rw) {
-    RR <- matrix(0,nrow=length(taux)+rw,ncol=length(taux)+rw)
-    if (rw==0) {
+  ## function to make precision matrix for random walk
+  R <- function(taux, rw) {
+    RR <- matrix(0, length(taux)+rw, length(taux)+rw)
+    if (rw == 0) {
       for (i in 1:length(taux)) {
 	RR[i,i] <- taux[i]
       }
     }
-    if (rw==1) {
+    if (rw == 1) {
       for (i in 1:length(taux)) {
-	RR[i,i] <- RR[i,i]+taux[i]
-	RR[i+1,i+1] <- RR[i+1,i+1]+taux[i]
-	RR[i+1,i] <- RR[i+1,i]-taux[i]
-	RR[i,i+1] <- RR[i,i+1]-taux[i]
+	RR[i,i] <- RR[i,i] + taux[i]
+	RR[i+1,i+1] <- RR[i+1,i+1] + taux[i]
+	RR[i+1,i] <- RR[i+1,i] - taux[i]
+	RR[i,i+1] <- RR[i,i+1] - taux[i]
       }
     }
-    if (rw==2) {
+    if (rw == 2) {
       for (i in 1:length(taux)) {
-	RR[i,i] <- RR[i,i]+taux[i]
-	RR[i+1,i+1] <- RR[i+1,i+1]+4*taux[i]
-	RR[i+2,i+2] <- RR[i+2,i+2]+taux[i]
-	RR[i+1,i] <- RR[i+1,i]-2*taux[i]
-	RR[i,i+1] <- RR[i,i+1]-2*taux[i]
-	RR[i+2,i+1] <- RR[i+2,i+1]-2*taux[i]
-	RR[i+1,i+2] <- RR[i+1,i+2]-2*taux[i]
-	RR[i+2,i] <- RR[i+2,i]+taux[i]
-	RR[i,i+2] <- RR [i,i+2]+taux[i]
+	RR[i,i] <- RR[i,i] + taux[i]
+	RR[i+1,i+1] <- RR[i+1,i+1] + 4*taux[i]
+	RR[i+2,i+2] <- RR[i+2,i+2] + taux[i]
+	RR[i+1,i] <- RR[i+1,i] - 2*taux[i]
+	RR[i,i+1] <- RR[i,i+1] - 2*taux[i]
+	RR[i+2,i+1] <- RR[i+2,i+1] - 2*taux[i]
+	RR[i+1,i+2] <- RR[i+1,i+2] - 2*taux[i]
+	RR[i+2,i] <- RR[i+2,i] + taux[i]
+	RR[i,i+2] <- RR [i,i+2] + taux[i]
       }
     }
     return(RR)
   }
 
-  ## main function
+  ## Main function
 
   knotpoints <- p
   if (is.null(knots)) {
-    knots <- seq(
-      min(time) - 1e-3 - (k - 1)*(max(time) - min(time))/(knotpoints - k + 1),
-      1e-3 + max(time) + k*(max(time)-min(time))/(knotpoints - k + 1),
-      (2e-3 + max(time) - min(time))/(knotpoints - k + 1))
+    knots <- seq(min(time) - 1e-3 - (k - 1)*(max(time) - min(time))/(knotpoints - k + 1),
+                 1e-3 + max(time) + k*(max(time)-min(time))/(knotpoints - k + 1),
+                 (2e-3 + max(time) - min(time))/(knotpoints - k + 1))
   }
   mod <- model
   nvoxels <- sum(img.mask)
@@ -334,24 +336,27 @@ setMethod("dcemri.spline", signature(conc="array"),
   J <- ncol(conc)
   K <- nsli(conc)
   T <- length(time)
-
+  Ti <- length(time.input)
+  
   if (!is.numeric(dim(conc))) {
     I <- J <- K <- 1
   } else {
-    if (length(dim(conc)) ==2) {
+    if (length(dim(conc)) == 2) {
       J <- K <- 1
     } else {
-    if (length(dim(conc)) ==3) {
-      K <- 1
+      if (length(dim(conc)) == 3) {
+        K <- 1
+      }
     }
   }
+  
+  if (verbose) {
+    cat("  Deconstructing data...", fill=TRUE)
   }
-
-  if (verbose) cat("  Deconstructing data...", fill=TRUE)
   img.mask <- ifelse(img.mask > 0, TRUE, FALSE)
   conc.mat <- matrix(conc[img.mask], nvoxels)
   conc.mat[is.na(conc.mat)] <- 0
-  conc.list <- list()
+  conc.list <- vector("list", nvoxels) # list()
   for (i in 1:nvoxels) {
     conc.list[[i]] <- conc.mat[i,]
   }
@@ -372,18 +377,20 @@ setMethod("dcemri.spline", signature(conc="array"),
 
   model.func <- model.guess <- NULL
 
-  if ((nlr)&(model!="weinmann")&(model!="AATH")) {stop("Only model=\"weinmann\" or model=\"AATH\" acceptable AIFs for nlr=TRUE")}
+  if (nlr && model != "weinmann" && model != "AATH") {
+    stop("Only model=\"weinmann\" or model=\"AATH\" acceptable AIFs for nlr=TRUE")
+  }
 
-  if (model=="weinmann") {
+  if (model == "weinmann") {
     ktrans <- kep <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
     sigma2 <- rep(NA, nvoxels)
     model.func <- function(time, logktrans, logkep) {
       ktrans <- exp(logktrans)
       kep <- exp(logkep)
-      erg <- ktrans*exp(-kep*(time))
+      erg <- ktrans * exp(-kep*(time))
       eval(erg)
     }
-    model.guess <- list("logktrans"=-1, "logkep"=0)
+    model.guess <- list(logktrans=-1, logkep=0)
   }
 
   if (model=="AATH") {
@@ -393,82 +400,93 @@ setMethod("dcemri.spline", signature(conc="array"),
     model.func <- list()
     model.func[[1]] <- function(time, logF, logE, TC, logve) {
       TC2 <- 2*TC
-      if (TC < 0)
+      if (TC < 0) {
         TC2 <- 0
-      E<-exp(logE)
-      F<-exp(logF)
-      ve<-exp(logve)      
-      kep <- E*F/ve
-      erg <- E*exp(-kep*(time-TC))
+      }
+      E <- exp(logE)
+      F <- exp(logF)
+      ve <- exp(logve)      
+      kep <- E * F/ve
+      erg <- E * exp(-kep*(time-TC))
       erg[time<TC] <- 1 # - time[time<TC2]*(1-E) / TC
       erg <- erg*F
-      if (TC < 0)
-	erg <- rep(-10^16, length(time))
+      if (TC < 0) {
+	erg <- rep(-10^16, T)
+      }
       eval(erg)
     }
     model.func[[2]] <- function(time, logF, logE, logve) {
-      E<-exp(logE)
-      F<-exp(logF)
-      ve<-exp(logve)      
-      kep <- E*F/ve
-      erg <- E*exp(-kep*(time))
+      E <- exp(logE)
+      F <- exp(logF)
+      ve <- exp(logve)      
+      kep <- E * F/ve
+      erg <- E * exp(-kep*(time))
       erg <- erg*F
       eval(erg)
     }
-
-    model.guess <- list("logE"=log(.6),"logF"=log(2),"TC"=0,"logve"=log(.05))
+    model.guess <- list(logE=log(0.6),
+                        logF=log(2),
+                        TC=0,
+                        logve=log(0.05))
   }
 
-  ## define B and A
+  ## define A and B
+
   p <- length(knots) - k
   B <- splineDesign(knots, time.input, k, outer.ok=TRUE)
-  if (sum(B[, dim(B)[2]]==0) == dim(B)[1])
+  if (sum(B[, dim(B)[2]] == 0) == dim(B)[1]) {
     B <- B[,-dim(B)[2]]
-  if (sum(B[,1]==0) == dim(B)[1])
+  }
+  if (sum(B[,1] == 0) == dim(B)[1]) {
     B <- B[,-1]
+  }
   p <- dim(B)[2]
-  A <- matrix(0, nrow=length(time), ncol=length(time.input))
+  A <- matrix(0, T, Ti)
   ni <- time
-  for (i in 1:length(time)) {
-    for (j in 1:length(time.input)) {
-      if (time.input[j] <= time[i])
+  for (i in 1:T) {
+    for (j in 1:Ti) {
+      if (time.input[j] <= time[i]) {
 	ni[i] <- j
+      }
     }
   }
-  for (i in 1:length(time)) {
-    for (j in 1:ni[i])
+  for (i in 1:T) {
+    for (j in 1:ni[i]) {
       A[i,j] <- input[1+ni[i]-j]
+    }
   }
-  A <- A*mean(diff(time.input))
+  A <- A * mean(diff(time.input), na.rm=TRUE)
   A[is.na(A)] <- 0
-  D <- A%*%B
-  T <- length(time)
+  D <- A %*% B
+  ##T <- length(time)
   
-  if (verbose) cat("  Estimating the parameters...", fill=TRUE)
-
-  if (!multicore) {
-    fit <- lapply(conc.list, FUN=.dcemri.spline.single, time=time, D=D,
-                  time.input=time.input, p=p, rw=rw, knots=knots, k=k,
-                  A=A, nriters=nriters, thin=thin, burnin=burnin,
-                  ab.hyper=ab.hyper, ab.tauepsilon=ab.tauepsilon,
-                  t0.compute=t0.compute, nlr=nlr, multicore=multicore,
-                  model=model, model.func=model.func,
-                  model.guess=model.guess, samples=samples, B=B)
+  if (verbose) {
+    cat("  Estimating the parameters...", fill=TRUE)
   }
-  else {
-    require("multicore")
+
+  if (multicore && require(multicore)) {
     fit <- mclapply(conc.list, FUN=.dcemri.spline.single, time=time, D=D,
                     time.input=time.input, p=p, rw=rw, knots=knots, k=k,
                     A=A, nriters=nriters, thin=thin, burnin=burnin,
                     ab.hyper=ab.hyper, ab.tauepsilon=ab.tauepsilon,
-                    t0.compute=t0.compute, nlr=nlr, multicore=multicore,
+                    t0.compute=t0.compute, nlr=nlr, multicore=TRUE,
                     model=model, model.func=model.func,
                     model.guess=model.guess, samples=samples, B=B)
+  } else {
+    fit <- lapply(conc.list, FUN=.dcemri.spline.single, time=time, D=D,
+                  time.input=time.input, p=p, rw=rw, knots=knots, k=k,
+                  A=A, nriters=nriters, thin=thin, burnin=burnin,
+                  ab.hyper=ab.hyper, ab.tauepsilon=ab.tauepsilon,
+                  t0.compute=t0.compute, nlr=nlr, multicore=FALSE,
+                  model=model, model.func=model.func,
+                  model.guess=model.guess, samples=samples, B=B)
+  }
+  
+  if (verbose) {
+    cat("  Reconstructing results...", fill=TRUE)
   }
 
-  if (verbose) cat("  Reconstructing results...", fill=TRUE)
-
-  samplesize=floor(nriters/thin)
+  samplesize <- floor(nriters/thin)
 
   t0 <- NULL
   for (k in 1:nvoxels) {
@@ -477,7 +495,7 @@ setMethod("dcemri.spline", signature(conc="array"),
   t0.img <- array(NA, c(I,J,K))
   t0.img[img.mask] <- t0
   t0 <- t0.img
-
+  rm(t0.img)
 
   Fp <- NULL
   for (k in 1:nvoxels) {
@@ -485,7 +503,7 @@ setMethod("dcemri.spline", signature(conc="array"),
   }
   Fp.img <- array(NA, c(I,J,K))
   Fp.img[img.mask] <- Fp
-  Fp.samples <- array(NA, c(nvoxels, samplesize))
+  Fp.samples <- matrix(NA, nvoxels, samplesize)
   for (i in 1:nvoxels) {
     Fp.samples[i,] <- fit[[k]]$Fp.samples
   }
@@ -497,14 +515,14 @@ setMethod("dcemri.spline", signature(conc="array"),
   }
 
   if (nlr) {
-    ktrans <- ve <- NULL
+    ktrans <- ve <- rep(NA, nvoxels) # NULL
     if (model=="weinmann") {
       kep <- NULL
       if (samples) {
-	ktrans.samples <- array(NA, c(nvoxels,samplesize))
+	ktrans.samples <- matrix(NA, nvoxels, samplesize)
       }
       for (k in 1:nvoxels) {
-	ktrans <- c(ktrans, fit[[k]]$par$ktrans)
+	ktrans[k] <- fit[[k]]$par$ktrans
       	if (samples) {
 	  ktrans.samples[k,] <- fit[[k]]$par$ktrans.samples
         }
@@ -514,87 +532,85 @@ setMethod("dcemri.spline", signature(conc="array"),
 	kep.samples <- array(NA, c(nvoxels,samplesize))
       }
       for (k in 1:nvoxels) {
-	kep <- c(kep, fit[[k]]$par$kep)
+	kep[k] <- fit[[k]]$par$kep
 	if (samples) {
 	  kep.samples[k,] <- fit[[k]]$par$kep.samples
         }
       }
-      ve = ktrans/kep
+      ve <- ktrans / kep
       if (samples) {
-	ve.samples <- ktrans.samples/kep.samples
+	ve.samples <- ktrans.samples / kep.samples
       }
     }
-    if (model=="AATH") {
-      E <- F <- TC <- NULL
+    if (model == "AATH") {
+      E <- F <- TC <- rep(NA, nvoxels)
       if (samples) {
-	E.samples <- array(NA,c(nvoxels,samplesize))
+	E.samples <- matrix(NA, nvoxels, samplesize)
       }
       for (k in 1:nvoxels) {
-	E <- c(E, fit[[k]]$par$E)
+	E[k] <- fit[[k]]$par$E
 	if (samples) {
 	  E.samples[k,] <- fit[[k]]$par$E.samples
         }
       }
       if (samples) {
-	F.sample <- array(NA,c(nvoxels,samplesize))
+	F.sample <- matrix(NA, nvoxels, samplesize)
       }
       for (k in 1:nvoxels) {
-	F <- c(F, fit[[k]]$par$F)
+	F[k] <- fit[[k]]$par$F
 	if (samples) {
 	  F.samples[k,] <- fit[[k]]$par$F.samples
         }
       }
       if (samples) {
-	TC.samples <- array(NA,c(nvoxels,samplesize))
+	TC.samples <- matrix(NA, nvoxels, samplesize)
       }
       for (k in 1:nvoxels) {
-	TC <- c(TC, fit[[k]]$par$TC)
+	TC[k] <- fit[[k]]$par$TC
 	if (samples) {
 	  TC.samples[k,] <- fit[[k]]$par$TC.samples
         }
       }
       if (samples) {
-	ve.samples <- array(NA,c(nvoxels,samplesize))
+	ve.samples <- matrix(NA, nvoxels, samplesize)
       }
       for (k in 1:nvoxels) {
-	ve <- c(ve, fit[[k]]$par$ve)
+	ve[k] <- fit[[k]]$par$ve
 	if (samples) {
 	  ve[k,] <- fit[[k]]$par$ve.samples
         }
       }
       ktrans <- E*F
       if (samples) {
-	ktrans.samples <- E.samples/F.samples
+	ktrans.samples <- E.samples / F.samples
       }
     }
   }
 
-  beta.sample <- array(NA,c(nvoxels,p,samplesize))
+  beta.sample <- array(NA, c(nvoxels,p,samplesize))
   for(k in 1:nvoxels) {
     beta.sample[k,,] <- fit[[k]]$beta
   }
 
-  T2 <- length(time.input)
-  response.sample <- array(NA,c(nvoxels,T2,samplesize))
+  response.sample <- array(NA, c(nvoxels,Ti,samplesize))
   for(k in 1:nvoxels) {
     for(j in 1:samplesize) {
       response.sample[k,,j] <- fit[[k]]$fitted[[j]]
     }
   }
 
-
   fitted.sample <- array(NA,c(nvoxels,T,samplesize))
   for (i in 1:nvoxels) {
     for (j in 1:samplesize) {
-      fitted.sample[i,,j] <- D%*%beta.sample[i,,j]
+      fitted.sample[i,,j] <- D %*% beta.sample[i,,j]
     }
   }
 
-  beta <- array(NA, c(I,J,K,p,samplesize))
-  beta.med <- array(NA, c(I,J,K,p))
-  fitted <- array(NA, c(I,J,K,T,samplesize))
+  beta <- array(NA, c(I,J,K,p,samplesize))     # a 5-dimensional array!!!
+  beta.med <- array(NA, c(I,J,K,p))            
+  fitted <- array(NA, c(I,J,K,T,samplesize))   # a 5-dimensional array!!!
   fitted.med <- array(NA, c(I,J,K,T))
-  response <- array(NA, c(I,J,K,T,samplesize))
+  response <- array(NA, c(I,J,K,T,samplesize)) # a 5-dimensional array!!!
   response.med <- array(NA, c(I,J,K,T))
 
   if (nlr) {
@@ -602,7 +618,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     ktrans.med[img.mask] <- ktrans
     ve.med[img.mask] <- ve
     if (model=="weinmann") {
-      kep.med <- array(NA,c(I,J,K))
+      kep.med <- array(NA, c(I,J,K))
       kep.med[img.mask] <- kep
     }
     if (model=="AATH") {
@@ -633,7 +649,6 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
     }
   }
-
 
   if (I > 1) {
     for (j in 1:p) {
@@ -666,30 +681,37 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
   }
 
-  return.list <- list("beta"=beta.med, "beta.sample"=beta,
+  return.list <- list("beta"=beta.med,
+                      "beta.sample"=beta,
                       "fit"=fitted.med,
-                      "fit.sample"=fitted, "response"=response.med,
-                      "response.sample"=response, "Fp"=Fp.img, "A"=A,
-                      "B"=B, "D"=D, "t0"=t0) #, "ourfit"=fit) 
+                      "fit.sample"=fitted,
+                      "response"=response.med,
+                      "response.sample"=response,
+                      "Fp"=Fp.img,
+                      "A"=A,
+                      "B"=B,
+                      "D"=D,
+                      "t0"=t0) #, "ourfit"=fit) 
   if (nlr) {
-    switch (model,
-            weinmann = { return.list[["kep"]] <- kep.med }, 
-            AATH = { return.list <-
-                       c(return.list, list("E"=E.med, "F"=F.med, "TC"=TC.med)) })
-    return.list[["ktrans"]] <- ktrans.med
-    return.list[["ve"]] <- ve.med
+    switch(model,
+           weinmann = { return.list$kep <- kep.med }, 
+           AATH = { return.list <- c(return.list,
+                                     list(E=E.med, F=F.med, TC=TC.med)) })
+    return.list$ktrans <- ktrans.med
+    return.list$ve <- ve.med
     if (samples) {
-      return.list[["ktrans.sample"]] <- ktrans
-      return.list[["ve.sample"]] <- ve
+      return.list$ktrans.sample <- ktrans
+      return.list$ve.sample <- ve
       switch (model,
-              weinmann = { return.list[["kep.samples"]] <- kep },
+              weinmann = { return.list$kep.samples <- kep },
               AATH = { return.list <-
-                         c(return.list, list("E.samples"=E, "F.samples"=F,
-                                             "TC.samples"=TC)) })
+                         c(return.list,
+                           list(E.samples=E, F.samples=F, TC.samples=TC)) })
     }
   } 
-  if (samples)
-    return.list[["Fp.samples"]] <- Fp
+  if (samples) {
+    return.list$Fp.samples <- Fp
+  }
 
   return(return.list)
 }
