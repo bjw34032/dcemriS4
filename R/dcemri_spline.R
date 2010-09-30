@@ -1,6 +1,6 @@
 ##
 ##
-## Copyright (c) 2009, Brandon Whitcher and Volker Schmid
+## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
 ## 
 ## Redistribution and use in source and binary forms, with or without
@@ -102,9 +102,9 @@ setMethod("dcemri.spline", signature(conc="array"),
                as.integer(silent),
                PACKAGE="dcemriS4")
 
-  tau <- matrix(result[[5]], p-rw, samplesize) # array(result[[5]], c(p-rw,samplesize))
-  tauepsilon <- rep(result[[6]], samplesize) # array(result[[6]], c(samplesize))
-  beta <- matrix(result[[9]], p, samplesize) # array(result[[9]], c(p,samplesize))
+  tau <- matrix(result[[5]], p-rw, samplesize)
+  tauepsilon <- result[[6]]
+  beta <- matrix(result[[9]], p, samplesize)
 
   ##
   ## Why is this run twice?!?
@@ -134,9 +134,9 @@ setMethod("dcemri.spline", signature(conc="array"),
                as.integer(silent),
                PACKAGE="dcemriS4")
 
-  tau <- matrix(result[[5]], p-rw, samplesize) # array(result[[5]], c(p-rw,samplesize))
-  tauepsilon <- rep(result[[6]], samplesize) # array(result[[6]], c(samplesize))
-  beta <- matrix(result[[9]], p, samplesize) # array(result[[9]], c(p,samplesize))
+  tau <- matrix(result[[5]], p-rw, samplesize)
+  tauepsilon <- result[[6]]
+  beta <- matrix(result[[9]], p, samplesize)
 
   t0 <- 0
   if (t0.compute) {
@@ -147,14 +147,15 @@ setMethod("dcemri.spline", signature(conc="array"),
     d1 <- apply(d, 1, quantile, probs=c(0.005), na.rm=TRUE)
     d2 <- apply(d, 1, median, na.rm=TRUE)
     du <- min(which(d1 > 0))
-    ##beta.abl <- beta.abl2 <- rep(0, p)
+    ## beta.abl <- beta.abl2 <- rep(0, p)
     B2 <- splineDesign(knots, time.input, k-2)
     B2 <- B2[,(1:p)+1]
 
     for (j in 1:samplesize) {
       beta.abl <- 1:p
       for (q in 1:(p - 1)) {
-	beta.abl[q] <- (beta[q+1, j] - beta[q, j]) * k / (knots[q+k+1] - knots[q+1])
+	beta.abl[q] <- (beta[q+1, j] - beta[q, j]) *
+          k / (knots[q+k+1] - knots[q+1])
       }
       beta.abl[p] <- 0
       ABL2 <- A %*% B2 %*% beta.abl
@@ -179,11 +180,11 @@ setMethod("dcemri.spline", signature(conc="array"),
     fitted[[i]] <- B %*% beta[,i]
   }
 
-  if (multicore && require("multicore")) {
-    MAX <- unlist(mclapply(fitted, max))
-  } else {
+  ##if (multicore && require("multicore")) {
+  ##  MAX <- unlist(mclapply(fitted, max))
+  ##} else {
     MAX <- unlist(lapply(fitted, max))
-  }
+  ##}
   ##MAX <- rep(NA, samplesize)
   ##for (i in 1:samplesize) {
   ##  MAX[i] <- MAX0[[i]]
@@ -211,16 +212,16 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
       return(fit)
     }
-    
-    if (multicore && require("multicore")) {
-      out <- mclapply(fitted, nls.lm.single, par=model.guess,
-                           fn=fcn, fcall=model.func, model=model,
-                           time=time-t0)
-    } else {
+  
+    ##if (multicore && require("multicore")) {
+    ##  out <- mclapply(fitted, nls.lm.single, par=model.guess,
+    ##                       fn=fcn, fcall=model.func, model=model,
+    ##                       time=time-t0)
+    ##} else {
       out <- lapply(fitted, nls.lm.single, par=model.guess,
                          fn=fcn, fcall=model.func, model=model,
                          time=time-t0)
-    }
+    ##}
 
     if (model=="AATH") {
       E <- F <- TC <- ve <- rep(NA, samplesize) # NULL
@@ -459,16 +460,16 @@ setMethod("dcemri.spline", signature(conc="array"),
   A <- A * mean(diff(time.input), na.rm=TRUE)
   A[is.na(A)] <- 0
   D <- A %*% B
-  ##T <- length(time)
+  ## T <- length(time)
   
   if (verbose) {
     cat("  Estimating the parameters...", fill=TRUE)
   }
 
   if (multicore && require(multicore)) {
-    fit <- mclapply(conc.list, FUN=.dcemri.spline.single, time=time, D=D,
-                    time.input=time.input, p=p, rw=rw, knots=knots, k=k,
-                    A=A, nriters=nriters, thin=thin, burnin=burnin,
+    fit <- mclapply(conc.list, FUN=.dcemri.spline.single, time=time,
+                    D=D, time.input=time.input, p=p, rw=rw, knots=knots,
+                    k=k, A=A, nriters=nriters, thin=thin, burnin=burnin,
                     ab.hyper=ab.hyper, ab.tauepsilon=ab.tauepsilon,
                     t0.compute=t0.compute, nlr=nlr, multicore=TRUE,
                     model=model, model.func=model.func,
@@ -489,18 +490,18 @@ setMethod("dcemri.spline", signature(conc="array"),
 
   samplesize <- floor(nriters/thin)
 
-  t0 <- NULL
+  t0 <- numeric(nvoxels)
   for (k in 1:nvoxels) {
-    t0 <- c(t0, fit[[k]]$t0)
+    t0 <- fit[[k]]$t0
   }
   t0.img <- array(NA, c(I,J,K))
   t0.img[img.mask] <- t0
   t0 <- t0.img
   rm(t0.img)
 
-  Fp <- NULL
+  Fp <- numeric(nvoxels)
   for (k in 1:nvoxels) {
-    Fp <- c(Fp, fit[[k]]$Fp)
+    Fp <- fit[[k]]$Fp
   }
   Fp.img <- array(NA, c(I,J,K))
   Fp.img[img.mask] <- Fp
@@ -589,21 +590,13 @@ setMethod("dcemri.spline", signature(conc="array"),
   }
 
   beta.sample <- array(NA, c(nvoxels,p,samplesize))
-  for(k in 1:nvoxels) {
-    beta.sample[k,,] <- fit[[k]]$beta
-  }
-
   response.sample <- array(NA, c(nvoxels,Ti,samplesize))
-  for(k in 1:nvoxels) {
-    for(j in 1:samplesize) {
-      response.sample[k,,j] <- fit[[k]]$fitted[[j]]
-    }
-  }
-
-  fitted.sample <- array(NA,c(nvoxels,T,samplesize))
-  for (i in 1:nvoxels) {
+  fitted.sample <- array(NA, c(nvoxels,T,samplesize))
+  for (k in 1:nvoxels) {
+    beta.sample[k,,] <- fit[[k]]$beta
     for (j in 1:samplesize) {
-      fitted.sample[i,,j] <- D %*% beta.sample[i,,j]
+      response.sample[k,,j] <- fit[[k]]$fitted[[j]]
+      fitted.sample[k,,j] <- D %*% beta.sample[k,,j]
     }
   }
 
