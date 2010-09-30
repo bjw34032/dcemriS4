@@ -213,11 +213,11 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
     
     if (multicore && require("multicore")) {
-      response <- mclapply(fitted, nls.lm.single, par=model.guess,
+      out <- mclapply(fitted, nls.lm.single, par=model.guess,
                            fn=fcn, fcall=model.func, model=model,
                            time=time-t0)
     } else {
-      response <- lapply(fitted, nls.lm.single, par=model.guess,
+      out <- lapply(fitted, nls.lm.single, par=model.guess,
                          fn=fcn, fcall=model.func, model=model,
                          time=time-t0)
     }
@@ -225,10 +225,10 @@ setMethod("dcemri.spline", signature(conc="array"),
     if (model=="AATH") {
       E <- F <- TC <- ve <- rep(NA, samplesize) # NULL
       for (i in 1:samplesize) {
-	E[i] <- exp(response[[i]]$par$logE)
-	F[i] <- exp(response[[i]]$par$logF)
-	TC[i] <- response[[i]]$par$TC
-	ve[i] <- exp(response[[i]]$par$logve)
+	E[i] <- exp(out[[i]]$par$logE)
+	F[i] <- exp(out[[i]]$par$logF)
+	TC[i] <- out[[i]]$par$TC
+	ve[i] <- exp(out[[i]]$par$logve)
       }
       parameters <- list("E"=median(E, na.rm=TRUE),
                          "F"=median(F, na.rm=TRUE),
@@ -244,8 +244,8 @@ setMethod("dcemri.spline", signature(conc="array"),
     if (model == "weinmann") {
       ktrans <- kep <- rep(NA, samplesize) # NULL
       for (i in 1:samplesize) {
-	ktrans[i] <- exp(response[[i]]$par$logktrans)
-	kep[i] <- exp(response[[i]]$par$logkep)
+	ktrans[i] <- exp(out[[i]]$par$logktrans)
+	kep[i] <- exp(out[[i]]$par$logkep)
       }
       parameters <- list(ktrans=median(ktrans, na.rm=TRUE),
                          kep=median(kep, na.rm=TRUE))
@@ -607,13 +607,24 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
   }
 
-  if ((reponse|fitted)&samples) beta <- array(NA, c(I,J,K,p,samplesize))     # a 5-dimensional array!!!
-  if (reponse|fitted) beta.med <- array(NA, c(I,J,K,p))            
-  if (fitted&samples) fitted <- array(NA, c(I,J,K,T,samplesize))   # a 5-dimensional array!!!
-  if (fitted) fitted.med <- array(NA, c(I,J,K,T))
-  if (reponse&samples) response <- array(NA, c(I,J,K,T,samplesize)) # a 5-dimensional array!!!
-  if (reponse) response.med <- array(NA, c(I,J,K,T))
-
+  if ((response || fitted) && samples) {
+    beta <- array(NA, c(I,J,K,p,samplesize))     # a 5-dimensional array!!!
+  }
+  if (response || fitted) {
+    beta.med <- array(NA, c(I,J,K,p))
+  }
+  if (fitted && samples) {
+    fitted <- array(NA, c(I,J,K,T,samplesize))   # a 5-dimensional array!!!
+  }
+  if (fitted) {
+    fitted.med <- array(NA, c(I,J,K,T))
+  }
+  if (response && samples) {
+    response <- array(NA, c(I,J,K,T,samplesize)) # a 5-dimensional array!!!
+  }
+  if (response) {
+    response.med <- array(NA, c(I,J,K,T))
+  }
   if (nlr) {
     ktrans.med <- ve.med <- array(NA, c(I,J,K))
     ktrans.med[img.mask] <- ktrans
@@ -651,8 +662,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     }
   }
 
-  if (fitted|response)
-  {
+  if (fitted || response) {
   if (I > 1) {
     for (j in 1:p) {
       beta.med[,,,j][img.mask] <- apply(beta.sample[,j,], 1, median)
@@ -671,51 +681,73 @@ setMethod("dcemri.spline", signature(conc="array"),
   }
   }
 
-  if (fitted|response) {
+  if (fitted || response) {
     if (I == 1)
     for (j in 1:T) {
-      if (response) response.med[,,,j][img.mask] <- median(response.sample[,j,])
-      if (fitted) fitted.med[,,,j][img.mask] <- median(fitted.sample[,j,])
+      if (response)
+        response.med[,,,j][img.mask] <- median(response.sample[,j,])
+      if (fitted)
+        fitted.med[,,,j][img.mask] <- median(fitted.sample[,j,])
       }
     if (I > 1) 
     for (j in 1:T) {
-      if (response) response.med[,,,j][img.mask] <- apply(response.sample[,j,], 1, median)
-      if (fitted) fitted.med[,,,j][img.mask] <- apply(fitted.sample[,j,], 1, median)
+      if (response)
+        response.med[,,,j][img.mask] <- apply(response.sample[,j,], 1, median)
+      if (fitted)
+        fitted.med[,,,j][img.mask] <- apply(fitted.sample[,j,], 1, median)
       }
     if (samples)
     for (i in 1:samplesize) 
     for (j in 1:T) {
-      if (response) response[,,,j,i][img.mask] <- response.sample[,j,i]
-      if (fitted) fitted[,,,j,i][img.mask] <- fitted.sample[,j,i]
+      if (response)
+        response[,,,j,i][img.mask] <- response.sample[,j,i]
+      if (fitted)
+        fitted[,,,j,i][img.mask] <- fitted.sample[,j,i]
       }
   }
 
-  return.list <- list()
-  if (response|fitted) return.list[["beta"]]=beta.med
-  if ((response|fitted)&sample) return.list[["beta.sample"]]=beta
-  if (fitted) return.list[["fit"]]=fitted.med
-  if (fitted&sample) return.list[["fit.sample"]]=fitted
-  if (response) return.list[["response"]]=response.med
-  if (response&sample) return.list[["response.sample"]]=response
-  return.list[["Fp"]]=Fp.img
-  return.list[["A"]]=A
-  return.list[["B"]]=B
-  return.list[["D"]]=D
-  if (t0.compute) return.list[["t0"]]=t0
+  return.list <- vector("list")
+  if (response || fitted)
+    return.list[["beta"]] <- beta.med
+  if ((response || fitted) && samples)
+    return.list[["beta.sample"]] <- beta
+  if (fitted)
+    return.list[["fit"]] <- fitted.med
+  if (fitted && samples)
+    return.list[["fit.sample"]] <- fitted
+  if (response)
+    return.list[["response"]] <- response.med
+  if (response && samples)
+    return.list[["response.sample"]] <- response
+  return.list[["Fp"]] <- Fp.img
+  return.list[["A"]] <- A
+  return.list[["B"]] <- B
+  return.list[["D"]] <- D
+  if (t0.compute) return.list[["t0"]] <- t0
   if (nlr) {
-    if (model=="weinmann") return.list[["kep"]] <- kep.med  
-    if (model=="AATH") return.list[["E"]]=E.med; return.list[["F"]]=F.med; return.list[["TC"]]=TC.med
-
+    if (model=="weinmann")
+      return.list[["kep"]] <- kep.med  
+    if (model=="AATH") {
+      return.list[["E"]] <- E.med
+      return.list[["F"]] <- F.med
+      return.list[["TC"]] <- TC.med
+    }
     return.list[["ktrans"]] <- ktrans.med
     return.list[["ve"]] <- ve.med
     if (samples) {
       return.list[["ktrans.sample"]] <- ktrans
       return.list[["ve.sample"]] <- ve
-      if (model=="weinmann") return.list[["kep.samples"]] <- kep
-      if (model=="AATH") return.list[["E.samples"]]=E; return.list[["F.samples"]]=F; return.list[["TC.samples"=TC]]
+      if (model=="weinmann")
+        return.list[["kep.samples"]] <- kep
+      if (model=="AATH") {
+        return.list[["E.samples"]] <- E
+        return.list[["F.samples"]] <- F
+        return.list[["TC.samples" <- TC]]
+      }
     }
   } 
-  if (samples) return.list[["Fp.samples"]] <- Fp
+  if (samples)
+    return.list[["Fp.samples"]] <- Fp
 
   return(return.list)
 }

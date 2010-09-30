@@ -72,8 +72,9 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
     \pkg{multicore}.}
   \item{verbose}{Logical variable (default = \code{FALSE}) that
     allows text-based feedback during execution of the function.}
-  \item{dic}{If \code{TRUE} DIC and pD will be computed. If \dQuote(samples} is \code{TRUE},
-    samples of DIC and pD will be given.}
+  \item{dic}{If \code{TRUE} DIC and pD will be computed.  If
+    \dQuote{samples} is \code{TRUE}, samples of DIC and pD will be
+    given.}
   \item{...}{Additional parameters to the function.}
 }
 \details{

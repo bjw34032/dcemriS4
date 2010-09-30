@@ -41,8 +41,9 @@ find.center <- function(M) {
 
 ### FIXME Should this be genericised? 
 shift3D <- function(A, s, type, fill=0) {
-  if (length(dim(A)) != 3)
+  if (length(dim(A)) != 3) {
     stop("Object must be three-dimensional!")
+  }
   X <- nrow(A)
   Y <- ncol(A)
   Z <- nsli(A)
@@ -94,40 +95,52 @@ setMethod("ftm", signature(input="array"),
           function(input, ...) .dcemriWrapper("ftm", input, ...))
 
 
-.ftm <- function(input, mask, template, plot=FALSE, ...) {
+.ftm <- function(input, mask, reference, plot=TRUE, ...) {
   ## Fast template matching via cross-correlation
   W <- ntim(input)
-  if (ntim(input) < 1)
+  if (ntim(input) < 1) {
     stop("4D object is assumed!")
-  tc <- find.center(ifelse(template > 0, TRUE, FALSE))
-  maskFFT <- fft(mask)
-  templateSS <- conv.fft(mask, template^2, tc, FFTA=maskFFT)
+  }
+  template <- ifelse(mask > 0, reference, 0)
   templateFFT <- fft(template)
-  numerator <- localSS <- array(0, dim(input))
+  maskFFT <- fft(mask)
+  tc <- find.center(ifelse(template > 0, TRUE, FALSE))
+  templateSS <- conv.fft(mask, template^2, tc, FFTA=maskFFT)
+  ##numerator <- localSS <- array(0, dim(input))
+  localCOR <- array(0, dim(input))
   for (w in 1:W) {
     target <- input[,,,w]
-    numerator[,,,w] <- conv.fft(template, target, tc, FFTA=templateFFT)
-    localSS[,,,w] <- conv.fft(mask, target^2, tc, FFTA=maskFFT)
+    ##numerator[,,,w] <- conv.fft(template, target, tc, FFTA=templateFFT)
+    ##localSS[,,,w] <- conv.fft(mask, target^2, tc, FFTA=maskFFT)
+    numerator <- conv.fft(template, target, tc, FFTA=templateFFT)
+    localSS <- conv.fft(mask, target*target, tc, FFTA=maskFFT)
+    localCOR[,,,w] <- numerator / sqrt(templateSS[tc[1],tc[2],tc[3]]) / sqrt(localSS)
   }
-  localCOR <- numerator / sqrt(templateSS[tc[1],tc[2],tc[3]]) / sqrt(localSS)
+  ##localCOR <- numerator / sqrt(templateSS[tc[1],tc[2],tc[3]]) / sqrt(localSS)
   localCOR[!is.finite(localCOR)] <- NA
-  wmax.localCOR <- apply(localCOR, 4, function(x) {
-    which(x == max(x,na.rm=TRUE), arr.ind=TRUE)
-  })
-  which(localCOR[,,,w] == max(localCOR[,,,w]), arr.ind=TRUE)
+  wmax.localCOR <- apply(localCOR, 4,
+                         function(x) {
+                           which(x == max(x,na.rm=TRUE), arr.ind=TRUE)
+                         })
+  ## overlay(input[,,,1],
+  ##         as(ifelse(localCOR[,,,1] > 0.925, localCOR[,,,1], NA), "nifti"),
+  ##         zlim.x=c(0,512), col.y=tim.colors())
+  ## which(localCOR[,,,w] == max(localCOR[,,,w], na.rm=TRUE), arr.ind=TRUE)
   offset <- tc - wmax.localCOR
-  output <- input
+  output <- input@.Data
   for (w in 1:W) {
     output[,,,w] <- shift3D(output[,,,w], offset[1,w], type="LR")
     output[,,,w] <- shift3D(output[,,,w], offset[2,w], type="AP")
     output[,,,w] <- shift3D(output[,,,w], offset[3,w], type="SI")
   }
+  storage.mode(output) <- storage.mode(input)
+  as(output, "nifti") <- input
   if (plot) {
     matplot(1:ncol(offset), t(offset), type="l", lwd=2, lty=1,
             ylim=range(c(range(offset),-10,10)), xlab="", ylab="voxels",
             main="Motion Correction via Template Matching")
     legend("topleft", c("X","Y","Z"), col=1:3, lty=1, lwd=2, bty="n")
   }
-  list(out=output, offset=offset, t.center=tc)
+  list(out=output, offset=offset, t.center=tc, localCOR=localCOR, plot=NA)
 }
 
