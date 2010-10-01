@@ -179,8 +179,8 @@ setMethod("CA.fast", signature(dynamic="array"),
   A <- sweep(sweep(dynamic, 1:3, dynamic[,,,1], "-"),
              1:3, R1est$M0, "/") / sin(theta)
   B <- (1 - exp(-TR * R1est$R10)) / (1 - cos(theta) * exp(-TR * R1est$R10))
-  rm(A,B)
   AB <- sweep(A, 1:3, B, "+")
+  rm(A,B)
   R1t <- -(1/TR) * log((1 - AB) / (1 - cos(theta) * AB))
   rm(AB)
   conc <- sweep(R1t, 1:3, R1est$R10, "-") / r1
