@@ -133,7 +133,22 @@ setMethod("dcemri.bayes", signature(conc="array"),
     aperm(out, c(2:length(dim(out)), 1)) # not too sure about drop()
   }
 
-  if (sum(dim(img.mask) - dim(conc)[1:3]) != 0) {
+  I <- nrow(conc)
+  J <- ncol(conc)
+  K <- nsli(conc)
+  if (!is.numeric(dim(conc))) {
+    I <- J <- K <- 1
+  } else {
+    if (length(dim(conc)) == 2) {
+      J <- K <- 1
+    }
+    if (length(dim(conc)) == 3) {
+      K <- 1
+     }
+  }
+
+  if (J>1&K>1)
+  if (sum(dim(img.mask) - dim(conc)[-length(dim(conc))]) != 0) {
     stop("Dimensions of \"conc\" do not agree with \"img.mask\"")
   }
   if (nriters < thin) {
@@ -183,19 +198,6 @@ setMethod("dcemri.bayes", signature(conc="array"),
 
   mod <- model
   nvoxels <- sum(img.mask)
-  I <- nrow(conc)
-  J <- ncol(conc)
-  K <- nsli(conc)
-  if (!is.numeric(dim(conc))) {
-    I <- J <- K <- 1
-  } else {
-    if (length(dim(conc)) == 2) {
-      J <- K <- 1
-    }
-    if (length(dim(conc)) == 3) {
-      K <- 1
-     }
-  }
 
   switch(aif,
          tofts.kermode = {
