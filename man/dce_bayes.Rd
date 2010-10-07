@@ -52,18 +52,22 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
     models; \code{orton.exp} (default) or \code{user} for the
      \code{orton.exp} and \code{kety.orton.exp} model.}
   \item{user}{Vector of AIF parameters.  For Tofts and Kermode:
-    \eqn{a_1}, \eqn{m_1}, \eqn{a_2}, \eqn{m_2}; for Orton \emph{et al.}:
-    \eqn{A_b}, \eqn{\mu_b}, \eqn{A_g}, \eqn{\mu_g}.}
+    \eqn{a_1}{a1}, \eqn{m_1}{m1}, \eqn{a_2}{a2}, \eqn{m_2}{m2}; for
+    Orton \emph{et al.}: \eqn{A_b}{Ab}, \eqn{\mu_b}{mub}, \eqn{A_g}{Ag},
+    \eqn{\mu_g}{mug}.} 
   \item{nriters}{Total number of iterations.}
   \item{thin}{Thining factor.}
   \item{burnin}{Number of iterations for burn-in.}
   \item{tune}{Number for iterations for tuning.  The algorithm will be 
     tuned to an acceptance rate between 0.3 and 0.6.}
   \item{ab.ktrans}{Mean and variance parameter for Gaussian prior on
-    \eqn{\log(K^{trans})}.}
-  \item{ab.kep}{Mean and variance parameter for Gaussian prior on \eqn{\log(k_{ep})}.}
+    \eqn{\log(K^{trans})}{log(Ktrans)}.}
+  \item{ab.kep}{Mean and variance parameter for Gaussian prior on
+    \eqn{\log(k_{ep})}{log(kep)}.}
   \item{ab.vp}{Hyper-prior parameters for the Beta prior on
     \eqn{v_p}{vp}.}
+  \item{ab.gamma}{\ldots}
+  \item{ab.theta}{\ldots}
   \item{ab.tauepsilon}{Hyper-prior parameters for observation error
     Gamma prior.}
   \item{samples}{If \code{TRUE} output includes samples drawn
@@ -72,9 +76,13 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
     \pkg{multicore}.}
   \item{verbose}{Logical variable (default = \code{FALSE}) that
     allows text-based feedback during execution of the function.}
-  \item{dic}{If \code{TRUE} DIC and pD will be computed.  If
-    \dQuote{samples} is \code{TRUE}, samples of DIC and pD will be
+  \item{dic}{If \code{TRUE}, the deviance information criterion (DIC)
+    and effective number of parameters (pD) will be computed.  If
+    \dQuote{samples = TRUE}, then samples of the DIC and pD will be
     given.}
+  \item{aif.model}{\ldots}
+  \item{aif.parameter}{\ldots}
+  \item{vp}{\ldots}
   \item{...}{Additional parameters to the function.}
 }
 \details{
