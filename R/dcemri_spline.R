@@ -212,12 +212,12 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
       return(fit)
     }
-  
-    ##if (multicore && require("multicore")) {
-    ##  out <- mclapply(fitted, nls.lm.single, par=model.guess,
-    ##                       fn=fcn, fcall=model.func, model=model,
-    ##                       time=time-t0)
-    ##} else {
+    
+    if (multicore && require("multicore")) {
+      out <- mclapply(fitted, nls.lm.single, par=model.guess,
+                           fn=fcn, fcall=model.func, model=model,
+                           time=time-t0)
+    } else {
       out <- lapply(fitted, nls.lm.single, par=model.guess,
                          fn=fcn, fcall=model.func, model=model,
                          time=time-t0)
@@ -618,7 +618,6 @@ setMethod("dcemri.spline", signature(conc="array"),
   if (response) {
     response.med <- array(NA, c(I,J,K,T))
   }
-  if (nlr) {
     ktrans.med <- ve.med <- array(NA, c(I,J,K))
     ktrans.med[img.mask] <- ktrans
     ve.med[img.mask] <- ve
