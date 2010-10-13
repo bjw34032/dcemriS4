@@ -79,8 +79,8 @@ setMethod("ADC.fast", signature(dwi="array"),
   if (verbose) {
     cat("  Calculating S0 and D...", fill=TRUE)
   }
-  for(i in 1:nvoxels) {
-    fit <- adc.lm(dwi.mat[i,], bvalues, guess=c(0.75*dwi.mat[i,1], 0.05))
+  for (i in 1:nvoxels) {
+    fit <- adc.lm(dwi.mat[i,], bvalues, guess=c(0.75*dwi.mat[i,1], 0.001))
     if (fit$info < 4) {
       S0[i] <- fit$S0
       D[i] <- fit$D

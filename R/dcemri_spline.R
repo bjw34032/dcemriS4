@@ -328,9 +328,9 @@ setMethod("dcemri.spline", signature(conc="array"),
 
   knotpoints <- p
   if (is.null(knots)) {
-    knots <- seq(min(time) - 1e-3 - (k - 1)*(max(time) - min(time))/(knotpoints - k + 1),
-                 1e-3 + max(time) + k*(max(time)-min(time))/(knotpoints - k + 1),
-                 (2e-3 + max(time) - min(time))/(knotpoints - k + 1))
+    a <- min(time) - 1e-3 - (k-1) * (max(time)-min(time)) / (knotpoints-k+1)
+    b <- 1e-3 + max(time) + k * (max(time)-min(time)) / (knotpoints-k+1)
+    knots <- seq(a, b, (2e-3 + max(time) - min(time)) / (knotpoints - k + 1))
   }
   mod <- model
   nvoxels <- sum(img.mask)
@@ -373,7 +373,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       input <- D*(a1*exp(-m1*time)+a2*exp(-m2*time))	 
     },
     observed = {
-      input = aif.observed
+      input <- aif.observed
     },
     print("WARNING: AIF parameters must be specified!"))
 
@@ -421,15 +421,12 @@ setMethod("dcemri.spline", signature(conc="array"),
       E <- exp(logE)
       F <- exp(logF)
       ve <- exp(logve)      
-      kep <- E * F/ve
-      erg <- E * exp(-kep*(time))
-      erg <- erg*F
+      kep <- E * F / ve
+      erg <- E * exp(-kep * time)
+      erg <- erg * F
       eval(erg)
     }
-    model.guess <- list(logE=log(0.6),
-                        logF=log(2),
-                        TC=0,
-                        logve=log(0.05))
+    model.guess <- list(logE=log(0.6), logF=log(2), TC=0, logve=log(0.05))
   }
 
   ## define A and B
@@ -529,7 +526,6 @@ setMethod("dcemri.spline", signature(conc="array"),
 	  ktrans.samples[k,] <- fit[[k]]$par$ktrans.samples
         }
       }
-      
       if (samples) {
 	kep.samples <- array(NA, c(nvoxels,samplesize))
       }
@@ -599,7 +595,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       fitted.sample[k,,j] <- D %*% beta.sample[k,,j]
     }
   }
-
+  
   if ((response || fitted) && samples) {
     beta <- array(NA, c(I,J,K,p,samplesize))     # a 5-dimensional array!!!
   }
@@ -618,62 +614,61 @@ setMethod("dcemri.spline", signature(conc="array"),
   if (response) {
     response.med <- array(NA, c(I,J,K,T))
   }
-    ktrans.med <- ve.med <- array(NA, c(I,J,K))
-    ktrans.med[img.mask] <- ktrans
-    ve.med[img.mask] <- ve
+  ktrans.med <- ve.med <- array(NA, c(I,J,K))
+  ktrans.med[img.mask] <- ktrans
+  ve.med[img.mask] <- ve
+  if (model=="weinmann") {
+    kep.med <- array(NA, c(I,J,K))
+    kep.med[img.mask] <- kep
+  }
+  if (model=="AATH") {
+    E.med <- F.med <- TC.med <- array(NA, c(I,J,K))
+    E.med[img.mask] <- E
+    F.med[img.mask] <- F
+    TC.med[img.mask] <- TC
+  } 
+  if (samples) {
+    ktrans <- ve <- array(NA, c(I,J,K,samplesize))
+    for (i in 1:samplesize) {
+      ktrans[,,,i][img.mask] <- ktrans.samples[,i]
+      ve[,,,i][img.mask] <- ve.samples[,i]
+    }
     if (model=="weinmann") {
-      kep.med <- array(NA, c(I,J,K))
-      kep.med[img.mask] <- kep
+      kep <- array(NA,c(I,J,K,samplesize))
+      for (i in 1:samplesize) {
+        kep[,,,i][img.mask] <- kep.samples[,i]
+      }
     }
     if (model=="AATH") {
-      E.med <- F.med <- TC.med <- array(NA, c(I,J,K))
-      E.med[img.mask] <- E
-      F.med[img.mask] <- F
-      TC.med[img.mask] <- TC
-    } 
-    if (samples) {
-      ktrans <- ve <- array(NA, c(I,J,K,samplesize))
+      E <- F <- TC <- array(NA, c(I,J,K,samplesize))
       for (i in 1:samplesize) {
-	ktrans[,,,i][img.mask] <- ktrans.samples[,i]
-	ve[,,,i][img.mask] <- ve.samples[,i]
+        E[,,,i][img.mask] <- E.samples[,i]
+        F[,,,i][img.mask] <- F.samples[,i]
+        TC[,,,i][img.mask] <- TC.samples[,i]
       }
-      if (model=="weinmann") {
-	kep <- array(NA,c(I,J,K,samplesize))
-	for (i in 1:samplesize) {
-	  kep[,,,i][img.mask] <- kep.samples[,i]
-	}
+    }
+  }
+# }
+  if (fitted || response) {
+    if (I > 1) {
+      for (j in 1:p) {
+        beta.med[,,,j][img.mask] <- apply(beta.sample[,j,], 1, median)
+        if (samples)
+          for (i in 1:samplesize) {
+            beta[,,,j,i][img.mask] <- beta.sample[,j,i]
+          }
       }
-      if (model=="AATH") {
-	E <- F <- TC <- array(NA, c(I,J,K,samplesize))
-	for (i in 1:samplesize) {
-	  E[,,,i][img.mask] <- E.samples[,i]
-	  F[,,,i][img.mask] <- F.samples[,i]
-	  TC[,,,i][img.mask] <- TC.samples[,i]
-	}
+    } else {
+      for (j in 1:p) {
+        beta.med[,,,j][img.mask] <- median(beta.sample[,j,])
+        for (i in 1:samplesize) {
+          beta[,,,j,i][img.mask] <- beta.sample[,j,i]
+        }
       }
     }
   }
 
-  if (fitted || response) {
-  if (I > 1) {
-    for (j in 1:p) {
-      beta.med[,,,j][img.mask] <- apply(beta.sample[,j,], 1, median)
-      if (samples)
-      for (i in 1:samplesize) {
-        beta[,,,j,i][img.mask] <- beta.sample[,j,i]
-      }
-    }
-  } else {
-    for (j in 1:p) {
-      beta.med[,,,j][img.mask] <- median(beta.sample[,j,])
-      for (i in 1:samplesize) {
-        beta[,,,j,i][img.mask] <- beta.sample[,j,i]
-      }
-    }
-  }
-  }
-
-  if (fitted || response) {
+if (fitted || response) {
     if (I == 1)
     for (j in 1:T) {
       if (response)
@@ -699,26 +694,35 @@ setMethod("dcemri.spline", signature(conc="array"),
   }
 
   return.list <- vector("list")
-  if (response || fitted)
+  if (response || fitted) {
     return.list[["beta"]] <- beta.med
-  if ((response || fitted) && samples)
+  }
+  if ((response || fitted) && samples) {
     return.list[["beta.sample"]] <- beta
-  if (fitted)
+  }
+  if (fitted) {
     return.list[["fit"]] <- fitted.med
-  if (fitted && samples)
+  }
+  if (fitted && samples) {
     return.list[["fit.sample"]] <- fitted
-  if (response)
+  }
+  if (response) {
     return.list[["response"]] <- response.med
-  if (response && samples)
+  }
+  if (response && samples) {
     return.list[["response.sample"]] <- response
+  }
   return.list[["Fp"]] <- Fp.img
   return.list[["A"]] <- A
   return.list[["B"]] <- B
   return.list[["D"]] <- D
-  if (t0.compute) return.list[["t0"]] <- t0
+  if (t0.compute) {
+    return.list[["t0"]] <- t0
+  }
   if (nlr) {
-    if (model=="weinmann")
-      return.list[["kep"]] <- kep.med  
+    if (model=="weinmann") {
+      return.list[["kep"]] <- kep.med
+    }
     if (model=="AATH") {
       return.list[["E"]] <- E.med
       return.list[["F"]] <- F.med
@@ -729,17 +733,19 @@ setMethod("dcemri.spline", signature(conc="array"),
     if (samples) {
       return.list[["ktrans.sample"]] <- ktrans
       return.list[["ve.sample"]] <- ve
-      if (model=="weinmann")
+      if (model=="weinmann") {
         return.list[["kep.samples"]] <- kep
+      }
       if (model=="AATH") {
         return.list[["E.samples"]] <- E
         return.list[["F.samples"]] <- F
-        return.list[["TC.samples" <- TC]]
+        return.list[["TC.samples"]] <- TC
       }
     }
-  } 
-  if (samples)
+  }
+  if (samples) {
     return.list[["Fp.samples"]] <- Fp
+  }
 
   return(return.list)
 }

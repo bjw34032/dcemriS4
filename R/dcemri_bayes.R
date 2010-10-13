@@ -93,7 +93,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
                          burnin=500, tune=267, ab.ktrans=c(0,1),
                          ab.kep=ab.ktrans, ab.vp=c(1,19),
                          ab.tauepsilon=c(1,1/1000), samples=FALSE,
-                         multicore=FALSE, verbose=FALSE, dic=FALSE...) {
+                         multicore=FALSE, verbose=FALSE, dic=FALSE,
+                         ...) {
 
   ## dcemri.bayes - a function for fitting 1-compartment PK models to
   ## DCE-MRI images using Bayes inference
