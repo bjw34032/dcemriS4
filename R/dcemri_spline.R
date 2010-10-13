@@ -189,7 +189,7 @@ setMethod("dcemri.spline", signature(conc="array"),
   ##for (i in 1:samplesize) {
   ##  MAX[i] <- MAX0[[i]]
   ##}
-  ##parameters <- list()
+  parameters <- list()
   if (nlr) {
     if (model=="AATH") {
       model.guess[2] <- median(MAX, na.rm=TRUE)
@@ -221,7 +221,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       out <- lapply(fitted, nls.lm.single, par=model.guess,
                          fn=fcn, fcall=model.func, model=model,
                          time=time-t0)
-    ##}
+    }
 
     if (model=="AATH") {
       E <- F <- TC <- ve <- rep(NA, samplesize) # NULL
@@ -501,7 +501,7 @@ setMethod("dcemri.spline", signature(conc="array"),
 
   Fp <- numeric(nvoxels)
   for (k in 1:nvoxels) {
-    Fp <- fit[[k]]$Fp
+    Fp[k] <- fit[[k]]$Fp
   }
   Fp.img <- array(NA, c(I,J,K))
   Fp.img[img.mask] <- Fp
