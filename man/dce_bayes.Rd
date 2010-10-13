@@ -35,14 +35,14 @@ dcemri.bayes.single(conc, time, nriters=3500, thin=3,
   \item{model}{is a character string that identifies the type of
     compartmental model to be used.  Acceptable models include:
     \itemize{
-      \item{\dQuote{weinmann}}{Tofts & Kermode AIF convolved with single
+      \item{\dQuote{weinmann}}{Tofts & Kermode AIF convolved with single 
 	compartment model}
-      \item{\dQuote{extended}}{Weinmann model extended with additional
+      \item{\dQuote{extended}}{Weinmann model extended with additional 
 	vascular compartment (default)}
-      \item{\dQuote{orton.exp}}{Extended model using Orton's exponential
+      \item{\dQuote{orton.exp}}{Extended model using Orton's exponential 
 	AIF}
-      \item{\dQuote{kety.orton.exp}}{Kety model using Orton's exponential
-	AIF}
+      \item{\dQuote{kety.orton.exp}}{Kety model using Orton's
+	exponential AIF}
     }
   }
   \item{aif}{is a character string that identifies the parameters of the

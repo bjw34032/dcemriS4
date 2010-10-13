@@ -35,8 +35,10 @@
 	vascular compartment (default)}
       \item{\dQuote{orton.exp}}{Extended model using Orton's exponential
 	AIF} 
-      \item{\dQuote{orton.cos}}{Extended model using Orton's raised cosine AIF}
-      \item{\dQuote{kety.orton.exp}}{Kety model using Orton's exponential AIF} 
+      \item{\dQuote{orton.cos}}{Extended model using Orton's raised
+	cosine AIF}
+      \item{\dQuote{kety.orton.exp}}{Kety model using Orton's
+	exponential AIF}
       \item{\dQuote{kety.orton.cos}}{Kety model using Orton's raised
 	cosine AIF}
     }
@@ -45,15 +47,18 @@
     type of arterial input function (AIF) used with the above model.
     Acceptable values are:
     \itemize{
-      \item{\code{tofts.kermode}}{(default) for the \code{weinmann} and \code{extended}
-	models}
-      \item{\code{fritz.hansen}}{for the \code{weinmann} and \code{extended}
-	models}
-      \item{\dQuote{empirical}}{for the \code{weinmann} and \code{extended}
-	models}
-      \item{\code{orton.exp}}{(default) for the \code{orton.exp} and \code{kety.orton.exp} model}
-      \item{\code{orton.cos}}{(default) for the	\code{orton.cos} and \code{kety.orton.cos} model.}
-      \item{\code{user}}{for the \code{orton.exp} and \code{orton.cos} model.}
+      \item{\code{tofts.kermode}}{(default) for the \code{weinmann} and
+	\code{extended}	models}
+      \item{\code{fritz.hansen}}{for the \code{weinmann} and
+	\code{extended} models}
+      \item{\dQuote{empirical}}{for the \code{weinmann} and
+	\code{extended} models}
+      \item{\code{orton.exp}}{(default) for the \code{orton.exp} and
+	\code{kety.orton.exp} model} 
+      \item{\code{orton.cos}}{(default) for the	\code{orton.cos} and
+	\code{kety.orton.cos} model.}
+      \item{\code{user}}{for the \code{orton.exp} and \code{orton.cos}
+	model.}
     }
     All AIF models set the parametric form and parameter values --
     except \code{user}, where a set of user-defined parameter values are
@@ -93,12 +98,12 @@
   \item{ktrans}{Transfer rate from plasma to the extracellular,
     extravascular space (EES).}
   \item{kep}{Rate parameter for transport from the EES to plasma.}
-  \item{ve}{Fractional occupancy by EES (the ratio between ktrans and
-    kep).}
+  \item{ve}{Fractional occupancy by EES (the ratio between
+  \eqn{K^{trans}}{Ktrans} and \eqn{k_{ep}}{kep}).}
   \item{vp}{Fractional occupancy by plasma.}
-  \item{ktranserror}{Standard error for ktrans.}
-  \item{keperror}{Standard error for kep.}
-  \item{vperror}{Standard error for vp.}
+  \item{ktranserror}{Standard error for \eqn{K^{trans}}{Ktrans}.}
+  \item{keperror}{Standard error for \eqn{k_{ep}}{kep}.}
+  \item{vperror}{Standard error for \eqn{v_p}{vp}.}
   The residual sum-of-squares is also provided, along with the original
   acquisition times (for plotting purposes).
 }

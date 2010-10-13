@@ -35,8 +35,8 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
 	vascular compartment (default)}
       \item{\dQuote{orton.exp}}{Extended model using Orton's exponential
 	AIF} 
-      \item{\dQuote{kety.orton.exp}}{Kety model using Orton's exponential
-	AIF} 
+      \item{\dQuote{kety.orton.exp}}{Kety model using Orton's
+	exponential AIF} 
       \item{\dQuote{orton.cos}}{Extended model using Orton's raised
 	cosine AIF}
       \item{\dQuote{kety.orton.cos}}{Kety model using Orton's raised
@@ -48,14 +48,15 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
     Acceptable values are: \code{tofts.kermode} (default) or
     \code{fritz.hansen} for the \code{weinmann} and \code{extended}
     models; \code{orton.exp} (default) or \code{user} for the
-    \code{orton.exp} model and \code{orton.exp} model; \code{user} for the
-    \code{orton.cos} model and \code{orton.cos} model.}
+    \code{orton.exp} model and \code{orton.exp} model; \code{user} for
+    the \code{orton.cos} model and \code{orton.cos} model.}
   \item{user}{Vector of AIF parameters.  For Tofts and Kermode:
     \eqn{a_1}, \eqn{m_1}, \eqn{a_2}, \eqn{m_2}; for Orton \emph{et al.}:
     \eqn{A_b}, \eqn{\mu_b}, \eqn{A_g}, \eqn{\mu_g}.}
   \item{ab.ktrans}{Mean and variance parameter for Gaussian prior on
     \eqn{\log(K^{trans})}.}
-  \item{ab.kep}{Mean and variance parameter for Gaussian prior on \eqn{\log(k_{ep})}.}
+  \item{ab.kep}{Mean and variance parameter for Gaussian prior on
+    \eqn{\log(k_{ep})}.}
   \item{ab.vp}{Hyper-prior parameters for the Beta prior on
     \eqn{v_p}{vp}.}
   \item{ab.tauepsilon}{Hyper-prior parameters for observation error
@@ -74,8 +75,8 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
   \item{hyper}{...}
 }
 \details{
-  Implements maximum-a-posteriori (MAP) estimation for the Bayesian
-  model in Schmid \emph{et al.} (2006).
+  Implements \emph{maximum a posteriori} (MAP) estimation for the
+  Bayesian model in Schmid \emph{et al.} (2006).
 }
 \value{
   Parameter estimates and their standard errors are provided for the
