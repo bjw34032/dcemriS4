@@ -137,6 +137,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
   I <- nrow(conc)
   J <- ncol(conc)
   K <- nsli(conc)
+
   if (!is.numeric(dim(conc))) {
     I <- J <- K <- 1
   } else {
@@ -427,16 +428,6 @@ setMethod("dcemri.bayes", signature(conc="array"),
     } 
   } 
 
-  if (samples) {
-    temp <- ktrans.out$samples
-    rm(ktrans.out)
-    returnable[["ktrans.samples"]] <- temp
-    temp <- kep.out$samples
-    rm(kep.out)
-    returnable[["kep.samples"]] <- temp
-    returnable[["sigma2.samples"]] <- sigma2.samples
-  }
-
   ## DIC
 
   if (dic) {
@@ -458,6 +449,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
         }
       }
     }
+    
+    conc <- array(conc, c(I,J,K,length(time)))
     fitted <- fitted - conc
     fitted <- fitted * fitted
     fitted <- apply(fitted, 1:3, sum)
@@ -482,6 +475,15 @@ setMethod("dcemri.bayes", signature(conc="array"),
     gc()
   }
 
+  if (samples) {
+    temp <- ktrans.out$samples
+    rm(ktrans.out)
+    returnable[["ktrans.samples"]] <- temp
+    temp <- kep.out$samples
+    rm(kep.out)
+    returnable[["kep.samples"]] <- temp
+    returnable[["sigma2.samples"]] <- sigma2.samples
+  }
   rm(Vp.out) ; gc()
 
   return(returnable)
