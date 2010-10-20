@@ -196,7 +196,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
                            stop("Only aif=\"orton.exp\" or aif=\"user\" acceptable aifs for model=\"orton.exp\""), call.=FALSE)
                   }
                 },
-                stop("Unknown model: " + model, call.=FALSE))
+                stop(paste("Unknown model: ",model), call.=FALSE))
 
   mod <- model
   nvoxels <- sum(img.mask)

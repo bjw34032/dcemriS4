@@ -18,7 +18,6 @@
              user=NULL, ab.ktrans=c(0,1), ab.kep=ab.ktrans,
              ab.vp=c(1,19), ab.tauepsilon=c(1,1/1000),
              samples=FALSE, multicore=FALSE, verbose=FALSE, ...)
-dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif)
 }
 \arguments{
   \item{conc}{Matrix or array of concentration time series (last
@@ -68,11 +67,6 @@ dcemri.map.single(conc, time, posterior, parameter, transform, start, hyper, aif
   \item{verbose}{Logical variable (default = \code{FALSE}) that
     allows text-based feedback during execution of the function.}
   \item{...}{Additional parameters to the function.}
-  \item{posterior}{...}
-  \item{parameter}{...}
-  \item{transform}{...}
-  \item{start}{...}
-  \item{hyper}{...}
 }
 \details{
   Implements \emph{maximum a posteriori} (MAP) estimation for the
@@ -111,8 +105,7 @@ mask <- array(TRUE, dim(img)[1:3])
 time <- buckley$time.min[xi]
 
 ## MAP estimation with Fritz-Hansen default AIF
-fit.map <- dcemri.map(img, time, mask, aif="fritz.hansen",
-                      nriters=5000)
+fit.map <- dcemri.map(img, time, mask, aif="fritz.hansen")
 
 plot(breast$ktrans, fit.map$ktrans, xlim=c(0,1), ylim=c(0,1),
      xlab=expression(paste("True ", K^{trans})),

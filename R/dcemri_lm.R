@@ -205,9 +205,6 @@ setMethod("dcemri.lm", signature(conc="array"),
     return(erg)
   }
 
-  if (! model %in% c("weinmann","extended","orton.exp","orton.cos"))
-    stop("Unknown model ", model, call.=FALSE)
-
   switch(model,
          weinmann = ,
          extended = {
@@ -221,13 +218,13 @@ setMethod("dcemri.lm", signature(conc="array"),
            if (! aif %in% c("orton.exp","user"))
              stop("Only aif=\"orton.exp\" or aif=\"user\" are acceptable AIFs for model=\"orton.exp\" or model=\"kety.orton.exp\"", call.=FALSE)
          },
-         kety.orton.cos = ,
+         kety.orton.cos= ,
          orton.cos = {
            aif <- ifelse(is.null(aif), "orton.cos", aif)
            if (! aif %in% c("orton.cos","user"))
              stop("Only aif=\"orton.cos\" or aif=\"user\" are acceptable AIFs for model=\"orton.cos\" or model=\"kety.orton.cos\"", call.=FALSE)
          },
-         stop("Unknown model: " + model, call.=FALSE))
+         stop(paste("Unknown model:",model), call.=FALSE))
   
   switch(aif,
          tofts.kermode = {
