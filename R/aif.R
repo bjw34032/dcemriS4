@@ -40,7 +40,10 @@ aif.orton.exp <- function(tt, AB, muB, AG, muG) {
   return(out)
 }
 
-orton.exp.lm <- function(tt, aif, guess=c(log(100), log(10), log(1),log( 0.1)), nprint=0) {
+orton.exp.lm <- function(tt, aif,
+                         guess=c(log(100), log(10), log(1), log(0.1)),
+                         nprint=0) {
+  require("minpack.lm") # Levenberg-Marquart fitting
   func <- function(x, aparams, aif) {
     AB <- aparams[1]
     muB <- aparams[2]
@@ -48,7 +51,6 @@ orton.exp.lm <- function(tt, aif, guess=c(log(100), log(10), log(1),log( 0.1)), 
     muG <- aparams[4]
     return(aif - aif.orton.exp(x, AB, muB, AG, muG))
   }
-  require("minpack.lm") # Levenberg-Marquart fitting
   out <- nls.lm(par=guess, fn=func, control=list(nprint=nprint),
                 x=tt, aif=aif)
   list(AB=out$par[1], muB=out$par[2], AG=out$par[3], muG=out$par[4], 
@@ -57,9 +59,9 @@ orton.exp.lm <- function(tt, aif, guess=c(log(100), log(10), log(1),log( 0.1)), 
 
 model.orton.exp <- function(tt, aparams, kparams) {
   ## Extended model using the exponential AIF from Matthew Orton (ICR)
-  Cp <- function(tt, ...) 
+  Cp <- function(tt, ...) {
     AB * tt * exp(-muB * tt) + AG * (exp(-muG * tt) - exp(-muB * tt))
-  
+  }
   aparams <- as.numeric(aparams)
   kparams <- as.numeric(kparams)
   AB <- aparams[1]
@@ -84,49 +86,55 @@ model.orton.exp <- function(tt, aparams, kparams) {
 
 extract.aif <- function(img, x, y, z, thresh=0.9) {
   c.start <- function(ctc) {
-    if (sum(is.na(ctc)) > 0)
+    if (sum(is.na(ctc)) > 0) {
       return(0)
-    else {
-      if (sd(ctc) == 0)
+    } else {
+      if (sd(ctc) == 0) {
         return(0)
-      else {
+      } else {
         out <- cor(ctc, start, use="pairwise.complete.obs")
         return(out)
       }
     }
   }
-
+  
   check <- function(xx, yy, zz, aif.mask, thresh) {
-    if (xx != 1 && aif.mask[xx-1,yy,zz] == 0)
+    if (xx != 1 && aif.mask[xx-1,yy,zz] == 0) {
       if (c.test[xx-1,yy,zz] > thresh) {
         aif.mask[xx-1,yy,zz] <- 1
         aif.mask <- check(xx-1, yy, zz, aif.mask, thresh)
       }
-    if (xx != X && aif.mask[xx+1,yy,zz] == 0)
+    }
+    if (xx != X && aif.mask[xx+1,yy,zz] == 0) {
       if (c.test[xx+1,yy,zz] > thresh) {
         aif.mask[xx+1,yy,zz] <- 1
         aif.mask <- check(xx+1, yy, zz, aif.mask, thresh)
       }
-    if (yy != 1 && aif.mask[xx,yy-1,zz] == 0)
+    }
+    if (yy != 1 && aif.mask[xx,yy-1,zz] == 0) {
       if (c.test[xx,yy-1,zz] > thresh) {
         aif.mask[xx,yy-1,zz] <- 1
         aif.mask <- check(xx, yy-1, zz, aif.mask, thresh)
       }
-    if (yy != Y && aif.mask[xx,yy+1,zz] == 0)
+    }
+    if (yy != Y && aif.mask[xx,yy+1,zz] == 0) {
       if (c.test[xx,yy+1,zz] > thresh) {
         aif.mask[xx,yy+1,zz] <- 1
         aif.mask <- check(xx, yy+1, zz, aif.mask, thresh)
       }
-    if (zz != 1 && aif.mask[xx,yy,zz-1] == 0)
+    }
+    if (zz != 1 && aif.mask[xx,yy,zz-1] == 0) {
       if (c.test[xx,yy,zz-1] > thresh) {
         aif.mask[xx,yy,zz-1] <- 1
         aif.mask <- check(xx, yy, zz-1, aif.mask, thresh)
       }
-    if (zz != Z && aif.mask[xx,yy,zz+1] == 0)
+    }
+    if (zz != Z && aif.mask[xx,yy,zz+1] == 0) {
       if (c.test[xx,yy,zz+1] > thresh) {
         aif.mask[xx,yy,zz+1] <- 1
         aif.mask <- check(xx, yy, zz+1, aif.mask, thresh)
       }
+    }
     return(aif.mask)
   }
 
@@ -157,8 +165,9 @@ extract.aif <- function(img, x, y, z, thresh=0.9) {
       }
     }
   }
-  if (l != n)
+  if (l != n) {
     return(FALSE)
+  }
   list("coord"=coord, "conc"=test, "mask"=aif.mask, "cor"=c.test)
 }
 

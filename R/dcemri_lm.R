@@ -1,6 +1,6 @@
 ##
 ##
-## Copyright (c) 2009, Brandon Whitcher and Volker Schmid
+## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
 ## 
 ## Redistribution and use in source and binary forms, with or without
@@ -109,7 +109,6 @@ setMethod("dcemri.lm", signature(conc="array"),
   
   model.kety.orton.exp <- function(time, th1, th3, ...) {
     ## Kety model using the exponential AIF from Matthew Orton (ICR)
-
     ktrans <- exp(th1)
     kep <- exp(th3)
 
@@ -127,9 +126,9 @@ setMethod("dcemri.lm", signature(conc="array"),
   
   model.extended.orton.exp <- function(time, th0, th1, th3, ...) {
     ## Extended model using the exponential AIF from Matthew Orton (ICR)
-    Cp <- function(tt, ...) 
+    Cp <- function(tt, ...) {
       AB * tt * exp(-muB * tt) + AG * (exp(-muG * tt) - exp(-muB * tt))
-
+    }
     vp <- exp(th0)
     ktrans <- exp(th1)
     kep <- exp(th3)

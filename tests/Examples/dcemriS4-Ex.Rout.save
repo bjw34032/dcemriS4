@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
+R version 2.12.0 (2010-10-15)
 Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -27,7 +28,7 @@ Loading required package: XML
 oro.nifti: Rigorous - NIfTI Input / Output (version = 0.2.1)
 
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.34)
+dcemriS4: A Package for Medical Image Analysis (version = 0.35)
 
 > 
 > assign(".oldSearch", search(), pos = 'CheckExEnv')
@@ -127,7 +128,6 @@ detaching ‘package:splines’
 > 
 > ### Name: dcemri.bayes
 > ### Title: Bayesian Methods for Pharmacokinetic Modeling of Dynamic
-> ###   Contrast-Enhanced MRI Data
 > ### Aliases: dcemri.bayes dcemri.bayes,array-method dcemri.bayes.single
 > ### Keywords: models
 > 
@@ -217,8 +217,7 @@ detaching ‘package:minpack.lm’
 > time <- buckley$time.min[xi]
 > 
 > ## MAP estimation with Fritz-Hansen default AIF
-> fit.map <- dcemri.map(img, time, mask, aif="fritz.hansen",
-+                       nriters=5000)
+> fit.map <- dcemri.map(img, time, mask, aif="fritz.hansen")
 > 
 > plot(breast$ktrans, fit.map$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -443,7 +442,7 @@ detaching ‘package:minpack.lm’
 Loading required package: minpack.lm
 > unlist(ADC) # text output
           S0            D 
-9.9858999893 0.0007337532 
+9.9858999253 0.0007337532 
 > 
 > par(mfrow=c(1,1)) # graphical output
 > plot(b, signal, xlab="b-value", ylab="Signal intensity")
@@ -597,7 +596,7 @@ detaching ‘package:minpack.lm’
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  26.26 0.05 26.439 0 0 
+Time elapsed:  25.01 0 25.049 0 0 
 > grDevices::dev.off()
 null device 
           1 
