@@ -215,36 +215,48 @@ detaching ‘package:minpack.lm’
 > 
 > ## MAP estimation with Fritz-Hansen default AIF
 > fit.map <- dcemri.map(img, time, mask, aif="fritz.hansen")
-> plot(breast$ktrans, fit.map$ktrans, xlim=c(0,1), ylim=c(0,1),
-+      xlab=expression(paste("True ", K^{trans})),
-+      ylab=expression(paste("Estimated ", K^{trans}, " (MAP)")))
-> abline(0, 1, lwd=1.5, col=2)
 > ## Nonlinear regression with Fritz-Hansen default AIF
 > fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
 Loading required package: minpack.lm
+> 
 > plot(breast$ktrans, fit.map$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
 +      ylab=expression(paste("Estimated ", K^{trans})))
 > points(breast$ktrans, fit.lm$ktrans, pch=3)
-> abline(0, 1, lwd=1.5, col=2)
+> abline(0, 1, lwd=2, col=2)
 > legend("bottomright", c("MAP Estimation (fritz.hansen)",
-+                         "Levenburg-Marquardt (fritz.hansen)"),
-+        pch=c(1,3))
++                         "Levenburg-Marquardt (fritz.hansen)"), pch=c(1,3))
+> 
+> cbind(breast$kep, fit.lm$kep[,,1], fit.map$kep[,,1])
+            [,1]      [,2]      [,3]
+ [1,] 0.32355345 0.2348729 0.2357024
+ [2,] 0.48521013 0.4167251 0.4170799
+ [3,] 0.55671514 0.4979372 0.4981837
+ [4,] 0.59642650 0.5438921 0.5440902
+ [5,] 0.62161139 0.5734774 0.5736275
+ [6,] 0.02202843 2.2508843 2.2389221
+ [7,] 0.32664921 0.3567634 0.3572482
+ [8,] 0.73047326 0.6098181 0.6101336
+ [9,] 0.86170469 0.6946336 0.6949350
+[10,] 0.55671514 0.4294707 0.4302017
+[11,] 0.55671514 0.4650530 0.4653741
+[12,] 0.55671514 0.5278610 0.5281310
+[13,] 0.55671514 0.5540182 0.5543473
 > cbind(breast$ktrans, fit.lm$ktrans[,,1], fit.map$ktrans[,,1])
              [,1]      [,2]      [,3]
- [1,] 0.145599052 0.3817051 0.3820801
- [2,] 0.218344559 0.5947946 0.5859822
- [3,] 0.250521815 0.6951414 0.7442576
- [4,] 0.268391926 0.7530098 0.7701909
- [5,] 0.279725126 0.7906143 0.7907425
- [6,] 0.009912791 0.5241755 0.5215105
- [7,] 0.146992146 0.4680229 0.5922093
- [8,] 0.328712966 0.8593230 0.8740589
- [9,] 0.387767110 0.9811896 0.9824721
-[10,] 0.250521815 0.5521834 0.5526309
-[11,] 0.250521815 0.6226408 0.7270970
-[12,] 0.250521815 0.7692656 0.7695313
-[13,] 0.250521815 0.8430925 0.8564577
+ [1,] 0.145599052 0.3817051 0.3822455
+ [2,] 0.218344559 0.5947946 0.5950935
+ [3,] 0.250521815 0.6951414 0.6953642
+ [4,] 0.268391926 0.7530098 0.7531950
+ [5,] 0.279725126 0.7906143 0.7907573
+ [6,] 0.009912791 0.5241755 0.5219968
+ [7,] 0.146992146 0.4680229 0.4683643
+ [8,] 0.328712966 0.8593230 0.8596330
+ [9,] 0.387767110 0.9811896 0.9815010
+[10,] 0.250521815 0.5521834 0.5527550
+[11,] 0.250521815 0.6226408 0.6229121
+[12,] 0.250521815 0.7692656 0.7695296
+[13,] 0.250521815 0.8430925 0.8434220
 > 
 > 
 > 
@@ -628,7 +640,7 @@ detaching ‘package:minpack.lm’
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  32.95 0.04 33.028 0 0 
+Time elapsed:  55.29 0.15 55.589 0 0 
 > grDevices::dev.off()
 null device 
           1 
