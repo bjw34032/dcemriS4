@@ -45,7 +45,7 @@ dam <- function(low, high, low.deg) {
 ## R10.lm() = estimate R1 using Levenburg-Marquardt
 #############################################################################
 
-R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
+R10.lm <- function(signal, alpha, TR, guess, control=nls.lm.control()) {
   func <- function(x, y) {
     R1 <- x[1]
     m0 <- x[2]
@@ -56,8 +56,8 @@ R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
       m0 * sin(theta) * (1 - exp(-TR*R1)) / (1 - cos(theta) * exp(-TR*R1))
   }
   require("minpack.lm") # Levenberg-Marquart fitting
-  out <- nls.lm(par=guess, fn=func, control=list(nprint=nprint, maxiter=150),
-               y=list(signal, alpha, TR))
+  out <- nls.lm(par=guess, fn=func, control=control,
+                y=list(signal, alpha, TR))
   list(R1=out$par[1], S0=out$par[2], info=out$info, message=out$message)
 }
 
@@ -65,17 +65,16 @@ R10.lm <- function(signal, alpha, TR, guess, nprint=0) {
 ## E10.lm() = estimate exp(-TR*R1) using Levenburg-Marquardt
 #############################################################################
 
-E10.lm <- function(signal, alpha, guess, nprint=0) {
+E10.lm <- function(signal, alpha, guess, control=nls.lm.control()) {
   func <- function(x, signal, alpha) {
     E1 <- x[1]
     m0 <- x[2]
     theta <- pi/180 * alpha    # degrees to radians
-    signal -
-      m0 * sin(theta) * (1 - E1) / (1 - cos(theta) * E1)
+    signal - m0 * sin(theta) * (1 - E1) / (1 - cos(theta) * E1)
   }
   require("minpack.lm") # Levenberg-Marquart fitting
-  out <- nls.lm(par=guess, fn=func, control=list(nprint=nprint, maxiter=150),
-               signal=signal, alpha=alpha)
+  out <- nls.lm(par=guess, fn=func, control=control, signal=signal,
+                alpha=alpha)
   list(E10=out$par[1], m0=out$par[2], info=out$info, message=out$message)
 }
 
@@ -85,14 +84,17 @@ E10.lm <- function(signal, alpha, guess, nprint=0) {
 
 setGeneric("R1.fast", function(flip, ...) standardGeneric("R1.fast"))
 setMethod("R1.fast", signature(flip="array"),
-          function(flip, flip.mask, fangles, TR, verbose=FALSE) 
-	    .dcemriWrapper("R1.fast", flip, flip.mask, fangles, TR, verbose))
+          function(flip, flip.mask, fangles, TR, control=nls.lm.control(),
+                   verbose=FALSE) 
+	    .dcemriWrapper("R1.fast", flip, flip.mask, fangles, TR, control,
+                           verbose))
 
 #############################################################################
 ## R1.fast()
 #############################################################################
 
-.R1.fast <- function(flip, flip.mask, fangles, TR, verbose=FALSE) {
+.R1.fast <- function(flip, flip.mask, fangles, TR, control=nls.lm.control(),
+                     verbose=FALSE) {
 
   if (length(dim(flip)) != 4) { # Check flip is a 4D array
     stop("Flip-angle data must be a 4D array.")
@@ -122,7 +124,7 @@ setMethod("R1.fast", signature(flip="array"),
   }
   for (k in 1:nvoxels) {
     fit <- E10.lm(flip.mat[k,], fangles.mat[k,],
-                  guess=c(1, mean(flip.mat[k,])))
+                  guess=c(1, mean(flip.mat[k,])), control)
     if (fit$info == 1 || fit$info == 2 || fit$info == 3) {
       R10[k] <- log(fit$E10) / -TR
       M0[k] <- fit$m0
@@ -148,16 +150,17 @@ setMethod("R1.fast", signature(flip="array"),
 setGeneric("CA.fast", function(dynamic, ...) standardGeneric("CA.fast"))
 setMethod("CA.fast", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
-	      verbose=FALSE) 
-	    .dcemriWrapper("CA.fast", dynamic, dyn.mask, dangle, flip, fangles,
-		TR, r1, verbose))
+	      control=nls.lm.control(maxiter=200), verbose=FALSE) 
+	    .dcemriWrapper("CA.fast", dynamic, dyn.mask, dangle, flip,
+                           fangles, TR, r1, control, verbose))
 
 #############################################################################
 ## CA.fast() = estimate contrast-agent concentration and other stuff
 #############################################################################
 
 .CA.fast <- function(dynamic, dyn.mask, dangle, flip, fangles, TR,
-                     r1=4, verbose=FALSE) {
+                     r1=4, control=nls.lm.control(maxiter=200),
+                     verbose=FALSE) {
 
   if (length(dim(flip)) != 4) { # Check flip is a 4D array
     stop("Flip-angle data must be a 4D array.")
@@ -171,10 +174,11 @@ setMethod("CA.fast", signature(dynamic="array"),
     stop("Number of flip angles must agree with dimension of flip-angle data.")
   }
   
-  R1est <- R1.fast(flip, dyn.mask, fangles, TR, verbose)
+  R1est <- R1.fast(flip, dyn.mask, fangles, TR, control, verbose)
   
-  if (verbose)
+  if (verbose) {
     cat("  Calculating concentration...", fill=TRUE)
+  }
   theta <- dangle * pi/180
   A <- sweep(sweep(dynamic, 1:3, dynamic[,,,1], "-"),
              1:3, R1est$M0, "/") / sin(theta)
