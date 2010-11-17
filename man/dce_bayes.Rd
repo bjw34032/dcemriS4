@@ -129,26 +129,23 @@ mask <- array(TRUE, dim(img)[1:3])
 time <- buckley$time.min[xi]
 
 ## Bayesian estimation with Fritz-Hansen default AIF
-fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen",
-                          nriters=1500)
+fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen")
 
 ## Bayesian estimation with "orton.exp" function fit to Buckley's AIF
 aif <- buckley$input[xi]
 aifparams <- orton.exp.lm(time, aif)
 aifparams$D <- 1
 fit.bayes.aif <- dcemri.bayes(img, time, mask, model="orton.exp",
-                              aif="user", user=aifparams, nriters=1500)
+                              aif="user", user=aifparams)
 
 plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
      xlab=expression(paste("True ", K^{trans})),
      ylab=expression(paste("Estimated ", K^{trans}, " (Bayesian)")))
 points(breast$ktrans, fit.bayes.aif$ktrans, pch=2)
-abline(0, 1, lwd=1.5, col="red")
+abline(0, 1, lwd=2, col=2)
 legend("right", c("extended/fritz.hansen","orton.exp/user"), pch=1:2)
-
 cbind(breast$ktrans, fit.bayes$ktrans[,,1], fit.bayes.aif$ktrans[,,1])
 
-\dontrun{
 fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
 fit.lm.aif <- dcemri.lm(img, time, mask, model="orton.exp", aif="user",
                         user=aifparams)
@@ -159,12 +156,11 @@ plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
 points(breast$ktrans, fit.bayes.aif$ktrans, pch=2)
 points(breast$ktrans, fit.lm$ktrans, pch=3)
 points(breast$ktrans, fit.lm.aif$ktrans, pch=4)
-abline(0, 1, lwd=1.5, col="red")
+abline(0, 1, lwd=2, col=2)
 legend("bottomright", c("Bayesian Estimation (fritz-hansen)",
                         "Bayesian Estimation (orton.exp)",
                         "Levenburg-Marquardt (weinmann/fritz.hansen)",
                         "Levenburg-Marquardt (orton.exp/user)"), pch=1:4)
 }
-}
-\author{Volker Schmid <\email{volkerschmid@users.sourceforge.net}>}
+\author{Volker Schmid \email{volkerschmid@users.sourceforge.net}}
 \keyword{models}

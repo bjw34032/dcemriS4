@@ -65,6 +65,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
     if (tune > nriters/2) {
       tune <- floor(nriters/2)
     }
+    n0 <- rep(0, n)
     singlerun <- .C("dce_bayes_run_single",
                     as.integer(c(nriters, thin, burnin, tune)),
                     as.double(conc),
@@ -76,26 +77,28 @@ setMethod("dcemri.bayes", signature(conc="array"),
                     as.integer(vp), # is this correct?
                     as.double(time),
                     as.integer(length(time)),
-                    as.double(rep(0,n)),
-                    as.double(rep(0,n)),
-                    as.double(rep(0,n)),
-                    as.double(rep(0,n)), 
-                    as.double(rep(0,n)), 
+                    as.double(n0),
+                    as.double(n0),
+                    as.double(n0),
+                    as.double(n0), 
+                    as.double(n0), 
                     PACKAGE="dcemriS4")    
-    return(list("ktrans"= singlerun[[11]], "kep"= singlerun[[12]],
-                "vp"= singlerun[[13]], "sigma2"= 1/singlerun[[14]],
-                "deviance" = singlerun[[15]]))
+    list("ktrans"= singlerun[[11]],
+         "kep"= singlerun[[12]],
+         "vp"= singlerun[[13]],
+         "sigma2"= 1/singlerun[[14]],
+         "deviance" = singlerun[[15]])
   }
 }
 
 .dcemri.bayes <- function(conc, time, img.mask, model="extended",
-                         aif=NULL, user=NULL, nriters=3500, thin=3,
-                         burnin=500, tune=267, ab.ktrans=c(0,1),
-                         ab.kep=ab.ktrans, ab.vp=c(1,19),
-                         ab.tauepsilon=c(1,1/1000), samples=FALSE,
-                         multicore=FALSE, verbose=FALSE, dic=FALSE,
-                         ...) {
-
+                          aif=NULL, user=NULL, nriters=3500, thin=3,
+                          burnin=500, tune=267, ab.ktrans=c(0,1),
+                          ab.kep=ab.ktrans, ab.vp=c(1,19),
+                          ab.tauepsilon=c(1,1/1000), samples=FALSE,
+                          multicore=FALSE, verbose=FALSE, dic=FALSE,
+                          ...) {
+  
   ## dcemri.bayes - a function for fitting 1-compartment PK models to
   ## DCE-MRI images using Bayes inference
   ##
@@ -111,33 +114,17 @@ setMethod("dcemri.bayes", signature(conc="array"),
   ## output: list with ktrans, kep, ve, std.error of ktrans and kep
   ##         (ktranserror and keperror), samples if samples=TRUE
   ##
-
-  extract.samples <- function(sample, mask, I, J, K, NRI) {
-    A <- array(NA, c(I,J,K,NRI))
-    count <- -1
-    for (k in 1:K) {
-      for (j in 1:J) {
-        for (i in 1:I) {
-          if (mask[i,j,k]) {
-            count <- count + 1
-            A[i,j,k,] <- sample[(1:NRI) + count*NRI]
-          }
-        }
-      }
-    }
-    return(drop(A))
-  }
-
+  
   extractSamples <- function(sample, img.mask, NRI) {
     out <- array(NA, c(NRI, dim(img.mask)))
     out[img.mask] <- sample
     aperm(out, c(2:length(dim(out)), 1)) # not too sure about drop()
   }
-
+  
   I <- nrow(conc)
   J <- ncol(conc)
   K <- nsli(conc)
-
+  
   if (!is.numeric(dim(conc))) {
     I <- J <- K <- 1
   } else {
@@ -146,12 +133,13 @@ setMethod("dcemri.bayes", signature(conc="array"),
     }
     if (length(dim(conc)) == 3) {
       K <- 1
-     }
+    }
   }
-
-  if (J>1&K>1)
-  if (sum(dim(img.mask) - dim(conc)[-length(dim(conc))]) != 0) {
-    stop("Dimensions of \"conc\" do not agree with \"img.mask\"")
+  
+  if (J > 1 && K > 1) {
+    if (sum(dim(img.mask) - dim(conc)[-length(dim(conc))]) != 0) {
+      stop("Dimensions of \"conc\" do not agree with \"img.mask\"")
+    }
   }
   if (nriters < thin) {
     stop("Please check settings for nriters")
@@ -165,7 +153,6 @@ setMethod("dcemri.bayes", signature(conc="array"),
   if (tune < 50) {
     stop("Please check settings for tune")
   }
-
   if (burnin < tune) {
     burnin <- tune
     nriters <- nriters + tune
@@ -173,105 +160,73 @@ setMethod("dcemri.bayes", signature(conc="array"),
     nriters <- nriters + burnin
   }
   
-  aif <- switch(model,
-                weinmann = ,
-                extended = {
-                  if (is.null(aif)) {
-                    "tofts.kermode"
-                  } else {
-                    switch(aif,
-                           tofts.kermode = "tofts.kermode",
-                           fritz.hansen = "fritz.hansen",
-                           stop("Only aif=\"tofts.kermode\" or aif=\"fritz.hansen\" acceptable AIFs for model=\"weinmann\" or model=\"extended\"", call.=FALSE))
-                  }
-                },
-                kety.orton.exp = ,
-                orton.exp = {
-                  if (is.null(aif)) {
-                    "orton.exp"
-                  } else {
-                    switch(aif,
-                           orton.exp = "orton.exp",
-                           user = "user",
-                           stop("Only aif=\"orton.exp\" or aif=\"user\" acceptable aifs for model=\"orton.exp\""), call.=FALSE)
-                  }
-                },
-                stop(paste("Unknown model: ",model), call.=FALSE))
-
-  mod <- model
-  nvoxels <- sum(img.mask)
-
-  switch(aif,
-         tofts.kermode = {
-           D <- 0.1
-           a1 <- 3.99
-           a2 <- 4.78
-           m1 <- 0.144
-           m2 <- 0.0111
-           aif.parameter <- c(D*a1, m1, D*a2, m2)
-         },
-         fritz.hansen = {
-           D <- 1
-           a1 <- 2.4
-           a2 <- 0.62
-           m1 <- 3.0
-           m2 <- 0.016
-           aif.parameter <- c(D*a1, m1, D*a2, m2)
-         },
-         orton.exp = {
-           D <- 1
-           a1 <- 323
-           m1 <- 20.2
-           a2 <- 1.07
-           m2 <- 0.172
-           aif.parameter <- c(D*a1, m1, D*a2, m2)
-         },
-         ## FIXME orton.cos does not seem to be implemented
-         ##orton.cos = {
-         ##  D <- 1; a1 <- 2.84; m1 <- 22.8; a2 <- 1.36; m2 <- 0.171
-         ##  aif.parameter=c(D*a1, m1, D*a2, m2)
-         ##},
-         user = {
-           if (verbose) {
-             cat("  User-specified AIF parameters...", fill=TRUE)
+  switch(model,
+         weinmann = ,
+         extended = {
+           aif <- ifelse(is.null(aif), "tofts.kermode", aif)
+           aif.names <- c("tofts.kermode","fritz.hansen","empirical")
+           if (! aif %in% aif.names) {
+             stop(sprintf("Only aif=\"%s\" or aif=\"%s\" or aif=\"%s\" are acceptable AIFs for model=\"weinmann\" or model=\"extended\"", aif.names[1], aif.names[2], aif.names[3]), call.=FALSE)
            }
-           D <- try(user$D)
-           AB <- try(user$AB) 
-           muB <- try(user$muB)
-           AG <- try(user$AG)
-           muG <- try(user$muG)
-           aif.parameter <- c(D * AB, muB, D * AG, muG)
-           ## aG, aB are probably related to orton.cos which isn't implemented
-           ## aG <- try(user$aG); aB <- try(user$aB);
          },
-         print("WARNING: AIF parameters must be specified!"))
-
+         kety.orton.exp = ,
+         orton.exp = {
+           aif <- ifelse(is.null(aif), "orton.exp", aif)
+           if (! aif %in% c("orton.exp","user")) {
+             stop("Only aif=\"orton.exp\" or aif=\"user\" are acceptable AIFs for model=\"orton.exp\" or model=\"kety.orton.exp\"", call.=FALSE)
+           }
+         },
+         kety.orton.cos= ,
+         orton.cos = {
+           aif <- ifelse(is.null(aif), "orton.cos", aif)
+           if (! aif %in% c("orton.cos","user")) {
+             stop("Only aif=\"orton.cos\" or aif=\"user\" are acceptable AIFs for model=\"orton.cos\" or model=\"kety.orton.cos\"", call.=FALSE)
+           }
+         },
+         stop(paste("Unknown model:", model), call.=FALSE))
+  p <- aifParameters(aif, user)
+  am <- grep("^[Aa]|^[Mm][^Ee]", names(p))
+  aif.parameter <- unlist(p[am])
+  if (!is.null(p$D) && p$D != 1) {
+    a <- grep("^[Aa]", names(p))
+    aif.parameter[a] <- p$D * aif.parameter[a]
+  }
+  
   ## translate "model" to "aif.model" and "vp.do"
   switch(model,
-         weinmann = { aif.model <- 0 ; vp.do <- 0 },
-         extended = { aif.model <- 0 ; vp.do <- 1 },
-         orton.exp = { aif.model <- 1 ; vp.do <- 1 },
-         kety.orton.exp = { aif.model <- 1 ; vp.do <- 0 },
+         weinmann = {
+           aif.model <- 0
+           vp.do <- 0
+         },
+         extended = {
+           aif.model <- 0
+           vp.do <- 1
+         },
+         orton.exp = {
+           aif.model <- 1
+           vp.do <- 1
+         },
+         kety.orton.exp = {
+           aif.model <- 1
+           vp.do <- 0
+         },
          stop("Model is not supported."))
 
-  img.mask <- array(img.mask,c(I,J,K)) # why?
- 
+  ## img.mask <- array(img.mask,c(I,J,K)) # why?
+  nvoxels <- sum(img.mask)
   if (verbose) {
     cat("  Deconstructing data...", fill=TRUE)
   }
   img.mask <- ifelse(img.mask > 0, TRUE, FALSE)
   conc.mat <- matrix(conc[img.mask], nvoxels)
   conc.mat[is.na(conc.mat)] <- 0
-
-  conc.list <- vector("list", nvoxels) # list()
+  conc.list <- vector("list", nvoxels)
   for (i in 1:nvoxels) {
     conc.list[[i]] <- conc.mat[i,]
   }
-
   if (verbose) {
     cat("  Estimating the kinetic parameters...", fill=TRUE)
   }
-
   if (multicore && require("multicore")) {
     bayes.list <- mclapply(conc.list, FUN=.dcemri.bayes.single,
                            time=time, nriters=nriters, thin=thin,
@@ -288,24 +243,24 @@ setMethod("dcemri.bayes", signature(conc="array"),
                          vp=vp.do)    
   }
   rm(conc.list) ; gc()
-
+  
   if (verbose) {
     cat("  Extracting results...", fill=TRUE)
   }
-
+  
   n <- (nriters - burnin) / thin # number of samples from posterior
   ktrans <- kep <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
   sigma2 <- rep(NA, nvoxels)
-  if (mod %in% c("extended", "orton.exp", "orton.cos")) {
+  if (model %in% c("extended", "orton.exp", "orton.cos")) {
     Vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
   }
   if (dic) {
     med.deviance <- rep(NA, nvoxels)
   }
   if (samples) {
-    sigma2.samples <- ktrans.samples <- kep.samples <- rep(NA, n*nvoxels) # c() # NULL # 
-    if (mod %in% c("extended", "orton.exp", "orton.cos")) {
-      Vp.samples <- rep(NA, n*nvoxels) # c() # NULL #
+    sigma2.samples <- ktrans.samples <- kep.samples <- rep(NA, n*nvoxels)
+    if (model %in% c("extended", "orton.exp", "orton.cos")) {
+      Vp.samples <- rep(NA, n*nvoxels)
     }
     if (dic) {
       deviance.samples <- rep(NA, n*nvoxels)
@@ -313,19 +268,15 @@ setMethod("dcemri.bayes", signature(conc="array"),
   }
 
   for (k in 1:nvoxels) {
-    ##if (verbose && trunc(k/100) == k/100) {
-    ##  cat("  - k =", k, fill=TRUE)
-    ##}
     index <- nvoxels*(k-1)+(1:n)
     ktrans$par[k] <- median(bayes.list[[k]]$ktrans)
     kep$par[k] <- median(bayes.list[[k]]$kep)
     ktrans$error[k] <- sd(bayes.list[[k]]$ktrans)
     kep$error[k] <- sd(bayes.list[[k]]$kep)
-    if (mod %in% c("extended", "orton.exp", "orton.cos")) {
+    if (model %in% c("extended", "orton.exp", "orton.cos")) {
       Vp$par[k] <- median(bayes.list[[k]]$vp)
       Vp$error[k] <- sd(bayes.list[[k]]$vp)
       if (samples) {
-	##Vp.samples <- c(Vp.samples, bayes.list[[k]]$v)
         Vp.samples[index] <- bayes.list[[k]]$v
       }
     }
@@ -334,14 +285,10 @@ setMethod("dcemri.bayes", signature(conc="array"),
       med.deviance[k] <- median(bayes.list[[k]]$deviance)
     }
     if (samples) {
-      ##ktrans.samples <-  c(ktrans.samples, bayes.list[[k]]$ktrans)
       ktrans.samples[index] <- bayes.list[[k]]$ktrans
-      ##kep.samples <- c(kep.samples, bayes.list[[k]]$kep)
       kep.samples[index] <- bayes.list[[k]]$kep
-      ##sigma2.samples <- c(sigma2.samples, bayes.list[[k]]$sigma2)
       sigma2.samples[index] <- bayes.list[[k]]$sigma2
       if (dic) {
-        ##deviance.samples <- c(deviance.samples, bayes.list[[k]]$deviance)
         deviance.samples[index] <- bayes.list[[k]]$deviance
       }
     }
@@ -362,7 +309,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
   B[img.mask] <- kep$error
   kep.out <- list(par=A, error=B)
   rm(A,B,kep)
-  if (mod %in% c("extended", "orton.exp", "orton.cos")) {
+  if (model %in% c("extended", "orton.exp", "orton.cos")) {
     A <- B <- array(NA, c(I,J,K))
     A[img.mask] <- Vp$par 
     B[img.mask] <- Vp$error
@@ -386,19 +333,9 @@ setMethod("dcemri.bayes", signature(conc="array"),
     if (verbose) {
       cat("  Reconstructing samples...", fill=TRUE)
     }
-#    NRI <- length(ktrans.samples) / length(ktrans$par)
-#    ktrans.out <- list(par=ktrans.out$par,
-#                       error=ktrans.out$error,
-#                       samples=extract.samples(ktrans.samples,img.mask,I,J,K,NRI))
     ktrans.out$samples <- extractSamples(ktrans.samples, img.mask, n)
-#    kep.out <- list(par=kep.out$par,
-#                    error=kep.out$error,
-#                    samples=extract.samples(kep.samples,img.mask,I,J,K,NRI))
     kep.out$samples <- extractSamples(kep.samples, img.mask, n)
-    if (mod %in% c("extended", "orton.exp", "orton.cos")) {
-#      Vp.out <- list(par=Vp.out$par,
-#                     error=Vp.out$error,
-#                     samples=extract.samples(Vp.samples, img.mask, I, J, K, NRI))
+    if (model %in% c("extended", "orton.exp", "orton.cos")) {
       Vp.out$samples <- extractSamples(Vp.samples, img.mask, n)
     }
     sigma2.samples <- extractSamples(sigma2.samples, img.mask, n)
@@ -413,28 +350,19 @@ setMethod("dcemri.bayes", signature(conc="array"),
                      keperror=kep.out$error,
                      ve=ktrans.out$par/kep.out$par,
                      time=time)
-#  returnable[["kep"]] <- kep.out$par
-#  returnable[["ktranserror"]] <- ktrans.out$error
-#  returnable[["keperror"]] <- kep.out$error 
-#  returnable[["ve"]] <- ktrans.out$par/kep.out$par
-#  returnable[["sigma2"]] <- sigma2.out
-#  returnable[["time"]] <- time
-
-  if (mod %in% c("extended", "orton.exp", "orton.cos")) {
+  if (model %in% c("extended", "orton.exp", "orton.cos")) {
     returnable[["vp"]] <- Vp.out$par
     returnable[["vperror"]] <- Vp.out$error
     if (samples) {
       returnable[["vp.samples"]] <- Vp.out$samples
     } 
   } 
-
   ## DIC
-
   if (dic) {
     if (verbose) {
       cat("  Computing DIC...", fill=TRUE)
     }
-    fitted <- array(NA,c(I,J,K,length(time)))
+    fitted <- array(NA, c(I,J,K,length(time)))
     for (i in 1:I) {
       for (j in 1:J) {
         for (k in 1:K) {
@@ -444,17 +372,15 @@ setMethod("dcemri.bayes", signature(conc="array"),
             if (vp.do) {
               par["vp"] <- Vp.out$par[i,j,k]
             }
-            fitted[i,j,k,] <- kineticModel(time,par,model=model,aif=aif)
+            fitted[i,j,k,] <- kineticModel(time, par, model=model, aif=aif)
           }
         }
       }
     }
-    
     conc <- array(conc, c(I,J,K,length(time)))
     fitted <- fitted - conc
     fitted <- fitted * fitted
     fitted <- apply(fitted, 1:3, sum)
-
     deviance.med <- length(time) * log(sigma2.out) + fitted / sigma2.out
     pD <- med.deviance - deviance.med
     DIC <- med.deviance + pD
@@ -474,7 +400,6 @@ setMethod("dcemri.bayes", signature(conc="array"),
     rm(deviance.samples)
     gc()
   }
-
   if (samples) {
     temp <- ktrans.out$samples
     rm(ktrans.out)
@@ -485,7 +410,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
     returnable[["sigma2.samples"]] <- sigma2.samples
   }
   rm(Vp.out) ; gc()
-
+  
   return(returnable)
 }
-
+  
+  

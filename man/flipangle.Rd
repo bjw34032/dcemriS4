@@ -130,7 +130,7 @@ E10.lm(signal, alpha, guess, nprint=0)
 S0 <- 100
 TR <- 5 / 1000            # seconds
 T1 <- 1.5                 # seconds
-alpha <- seq(2,24,by=2)   # degrees
+alpha <- seq(2, 24, by=2) # degrees
 
 ## Signal intensities for spoiled gradient echo image
 gre <- function(S0, TR, T1, alpha) {
@@ -140,14 +140,12 @@ gre <- function(S0, TR, T1, alpha) {
 set.seed(1234)
 signal <- array(gre(S0, TR, T1, alpha) + rnorm(length(alpha), sd=.15),
                 c(rep(1,3), length(alpha)))
-
 out <- R1.fast(signal, array(TRUE, rep(1,3)), alpha, TR)
 unlist(out)
-
-par(mfrow=c(1,1))
 plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
 lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
 lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
+legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 }
 \author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
 \keyword{misc}
