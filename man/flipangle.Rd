@@ -22,9 +22,9 @@
 R10.lm(signal, alpha, TR, guess, control=nls.lm.control())
 E10.lm(signal, alpha, guess, control=nls.lm.control())
 \S4method{R1.fast}{array}(flip, flip.mask, fangles, TR, control=nls.lm.control(),
-        verbose=FALSE)
+        multicore=FALSE, verbose=FALSE)
 \S4method{CA.fast}{array}(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
-        control=nls.lm.control(maxiter=200), verbose=FALSE)
+        control=nls.lm.control(maxiter=200), multicore=FALSE, verbose=FALSE)
 \S4method{CA.fast2}{array}(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
          verbose=FALSE)
 }
@@ -51,7 +51,9 @@ E10.lm(signal, alpha, guess, control=nls.lm.control())
     spatial.}
   \item{fangles}{is the vector of flip angles (in degrees).}
   \item{r1}{is the spin-lattice relaxivity constant (default = 4.39 for
-    1.5T).  For 3T data it may be necessary to adjust this value.} 
+    1.5T).  For 3T data it may be necessary to adjust this value.}
+  \item{multicore}{is a logical variable (default = \code{FALSE}) that
+    allows parallel processing via \pkg{multicore}.}
   \item{verbose}{is a logical variable (default = \code{FALSE}) that
     allows text-based feedback during execution of the function.}
 }
@@ -145,5 +147,5 @@ lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
 lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
 legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 }
-\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
+\author{Brandon Whitcher \email{bjw34032@users.sourceforge.net}}
 \keyword{misc}

@@ -14,10 +14,9 @@
   ...
 }
 \usage{
-T2.lm(signal, TE, guess, nprint=0)
-\S4method{T2.fast}{nifti}(cpmg, cpmg.mask, TE, verbose=FALSE)
-\S4method{T2.fast}{anlz}(cpmg, cpmg.mask, TE, verbose=FALSE)
-\S4method{T2.fast}{array}(cpmg, cpmg.mask, TE, verbose=FALSE)
+T2.lm(signal, TE, guess, control=nls.lm.control())
+\S4method{T2.fast}{array}(cpmg, cpmg.mask, TE, control=nls.lm.control(maxiter=150),
+         multicore=FALSE, verbose=FALSE)
 }
 \arguments{
   \item{signal}{is the vector of signal intensities as a function of
@@ -25,17 +24,16 @@ T2.lm(signal, TE, guess, nprint=0)
   \item{TE}{is the vector of echo times (in seconds).}
   \item{guess}{is the vector of initial values for the parameters of
     interest: \eqn{\rho}{rho} and \eqn{T2}{T2}.}
-  \item{nprint}{is an integer, that enables controlled printing of
-    iterates if it is positive.  In this case, estimates of \code{par}
-    are printed at the beginning of the first iteration and every
-    \code{nprint} iterations thereafter and immediately prior to return.
-    If \code{nprint} is not positive, no tracing information on the
-    progress of the optimization is produced.}
+  \item{control}{An optional list of control settings for \code{nls.lm}.
+    See \code{nls.lm.control} for the names of the settable control
+    values and their effect.}
   \item{cpmg}{is a multidimensional array of signal intensities.  The
     last dimension is assumed to be a function of the echo times, while
     the previous dimenions are assued to be spatial.}
   \item{cpmg.mask}{is a (logical) multidimensional array that
     identifies the voxels to be analyzed.}
+  \item{multicore}{is a logical variable (default = \code{FALSE}) that
+    allows parallel processing via \pkg{multicore}.}
   \item{verbose}{is a logical variable (default = \code{FALSE}) that
     allows text-based feedback during execution of the function.}
 }
@@ -53,6 +51,8 @@ T2.lm(signal, TE, guess, nprint=0)
 \seealso{
   \code{\link{R1.fast}}, \code{\link{R10.lm}}
 }
-%\examples{}
-\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
+\examples{
+## Example?
+}
+\author{Brandon Whitcher \email{bjw34032@users.sourceforge.net}}
 \keyword{misc}

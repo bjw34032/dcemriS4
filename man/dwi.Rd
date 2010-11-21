@@ -14,30 +14,30 @@
   optimization.
 }
 \usage{
-adc.lm(signal, b, guess, nprint=0)
-\S4method{ADC.fast}{array}(dwi, bvalues, dwi.mask, verbose=FALSE)
+adc.lm(signal, b, guess, control=nls.lm.control())
+\S4method{ADC.fast}{array}(dwi, bvalues, dwi.mask,
+         control=nls.lm.control(maxiter=150), multicore=FALSE, verbose=FALSE)
 }
 \arguments{
   \item{signal}{Signal intensity vector as a function of b-values.}
   \item{b,bvalues}{Diffusion weightings (b-values).}
-  \item{guess}{Initial values of \eqn{S_0} and \eqn{D}.}
-  \item{nprint}{is an integer, that enables controlled printing of
-    iterates if it is positive.  In this case, estimates of \code{par}
-    are printed at the beginning of the first iteration and every
-    \code{nprint} iterations thereafter and immediately prior to return.
-    If \code{nprint} is not positive, no tracing information on the
-    progress of the optimization is produced.}
+  \item{guess}{Initial values of \eqn{S_0}{S0} and \eqn{D}.}
+  \item{control}{An optional list of control settings for \code{nls.lm}.
+    See \code{nls.lm.control} for the names of the settable control
+    values and their effect.}
   \item{dwi}{Multidimensional array of diffusion-weighted images.}
   \item{dwi.mask}{Logical array that defines the voxels to be analyzed.}
+  \item{multicore}{is a logical variable (default = \code{FALSE}) that
+    allows parallel processing via \pkg{multicore}.}
   \item{verbose}{Additional information will be printed when
     \code{verbose=TRUE}.}
 }
 \details{
   The \code{adc.lm} function estimates parameters for a vector of
   observed MR signal intensities using the following relationship
-  \deqn{S(b) = S_0 \exp{-bD},}
-  where \eqn{S_0} is the baseline signal intensity and \eqn{D} is the
-  apparent diffusion coefficient (ADC).  It requires the routine
+  \deqn{S(b) = S_0 \exp(-bD),}
+  where \eqn{S_0}{S0} is the baseline signal intensity and \eqn{D} is
+  the apparent diffusion coefficient (ADC).  It requires the routine
   \code{nls.lm} that applies the Levenberg-Marquardt algorithm.  Note,
   low b-values (\eqn{<50} or \eqn{<100} depending on who you read)
   should be avoided in the parameter estimation because they do not
@@ -90,5 +90,5 @@ lines(seq(0,800,10), dwi(S0, seq(0,800,10), D), lwd=2, col=1)
 lines(seq(0,800,10), dwi(ADC$S0, seq(0,800,10), ADC$D), lwd=2, col=2)
 legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 }
-\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
+\author{Brandon Whitcher \email{bjw34032@users.sourceforge.net}}
 \keyword{models}

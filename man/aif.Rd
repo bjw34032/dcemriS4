@@ -16,7 +16,8 @@
 \usage{
 aif.orton.exp(tt, AB, muB, AG, muG)
 model.orton.exp(tt, aparams, kparams)
-orton.exp.lm(tt, aif, guess=c(log(100),log(10),log(1),log(0.1)), nprint=0)
+orton.exp.lm(tt, aif, guess=c(log(100),log(10),log(1),log(0.1)),
+             nprint=0)
 }
 \arguments{
   \item{tt}{is a vector of acquisition times (in minutes) relative to
@@ -97,5 +98,5 @@ legend("right", c("Buckley's AIF", "Our approximation"), lty=1,
        lwd=2, col=1:2)
 cbind(time, aif, aoe)[1:10,]
 }
-\author{Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>}
+\author{Brandon Whitcher \email{bjw34032@users.sourceforge.net}}
 \keyword{models}

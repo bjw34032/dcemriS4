@@ -75,7 +75,8 @@ E10.lm <- function(signal, alpha, guess, control=nls.lm.control()) {
   require("minpack.lm") # Levenberg-Marquart fitting
   out <- nls.lm(par=guess, fn=func, control=control, signal=signal,
                 alpha=alpha)
-  list(E10=out$par[1], m0=out$par[2], info=out$info, message=out$message)
+  list(E10=out$par[1], m0=out$par[2], hessian=out$hessian, info=out$info,
+       message=out$message)
 }
 
 #############################################################################
@@ -85,16 +86,16 @@ E10.lm <- function(signal, alpha, guess, control=nls.lm.control()) {
 setGeneric("R1.fast", function(flip, ...) standardGeneric("R1.fast"))
 setMethod("R1.fast", signature(flip="array"),
           function(flip, flip.mask, fangles, TR, control=nls.lm.control(),
-                   verbose=FALSE) 
+                   multicore=FALSE, verbose=FALSE) 
 	    .dcemriWrapper("R1.fast", flip, flip.mask, fangles, TR, control,
-                           verbose))
+                           multicore, verbose))
 
 #############################################################################
 ## R1.fast()
 #############################################################################
 
 .R1.fast <- function(flip, flip.mask, fangles, TR, control=nls.lm.control(),
-                     verbose=FALSE) {
+                     multicore=FALSE, verbose=FALSE) {
 
   if (length(dim(flip)) != 4) { # Check flip is a 4D array
     stop("Flip-angle data must be a 4D array.")
@@ -112,35 +113,63 @@ setMethod("R1.fast", signature(flip="array"),
     cat("  Deconstructing data...", fill=TRUE)
   }
   flip.mat <- matrix(flip[flip.mask], nrow=nvoxels)
-  R10 <- M0 <- numeric(nvoxels)
   if (is.array(fangles)) {
     fangles.mat <- matrix(fangles[flip.mask], nrow=nvoxels)
   } else {
     fangles.mat <- matrix(fangles, nrow=nvoxels, ncol=length(fangles),
                           byrow=TRUE)
   }
+  flip.list <- vector("list", nvoxels)
+  for (k in 1:nvoxels) {
+    flip.list[[k]] <- list(signal=flip.mat[k,], angles=fangles.mat[k,])
+  }
   if (verbose) {
     cat("  Calculating R10 and M0...", fill=TRUE)
   }
+  if (multicore && require("multicore")) {
+    fit.list <- mclapply(flip.list, function(x) {
+      E10.lm(x$signal, x$angles, guess=c(1, mean(x$signal)), control)
+    })
+  } else {
+    fit.list <- lapply(flip.list, function(x) {
+      E10.lm(x$signal, x$angles, guess=c(1, mean(x$signal)), control)
+    })
+  }
+  rm(flip.list) ; gc()
+  R10 <- M0 <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
   for (k in 1:nvoxels) {
-    fit <- E10.lm(flip.mat[k,], fangles.mat[k,],
-                  guess=c(1, mean(flip.mat[k,])), control)
-    if (fit$info == 1 || fit$info == 2 || fit$info == 3) {
-      R10[k] <- log(fit$E10) / -TR
-      M0[k] <- fit$m0
+    if (fit.list[[k]]$info > 0 && fit.list[[k]]$info < 5) {
+      R10$par[k] <- log(fit.list[[k]]$E10) / -TR
+      M0$par[k] <- fit.list[[k]]$m0
+      R10$error[k] <- sqrt(fit.list[[k]]$hessian[1,1])
+      M0$error[k] <- sqrt(fit.list[[k]]$hessian[2,2])
     } else {
-      R10[k] <- M0[k] <- NA
+      R10$par[k] <- M0$par[k] <- R10$error[k] <- M0$error[k] <- NA
     }
   }
+
+  ##R10 <- M0 <- numeric(nvoxels)
+  ##for (k in 1:nvoxels) {
+  ##  fit <- E10.lm(flip.mat[k,], fangles.mat[k,],
+  ##                guess=c(1, mean(flip.mat[k,])), control)
+  ##  if (fit$info == 1 || fit$info == 2 || fit$info == 3) {
+  ##    R10[k] <- log(fit$E10) / -TR
+  ##    M0[k] <- fit$m0
+  ##  } else {
+  ##    R10[k] <- M0[k] <- NA
+  ##  }
+  ##}
 
   if (verbose) {
     cat("  Reconstructing results...", fill=TRUE)
   }
-  R10.array <- M0.array <- array(NA, c(X,Y,Z))
-  R10.array[flip.mask] <- R10
-  M0.array[flip.mask] <- M0
+  R10.array <- M0.array <- R10error <- M0error <- array(NA, c(X,Y,Z))
+  R10.array[flip.mask] <- R10$par
+  M0.array[flip.mask] <- M0$par
+  R10error[flip.mask] <- R10$error
+  M0error[flip.mask] <- M0$error
 
-  list(M0 = M0.array, R10 = R10.array)
+  list(M0 = M0.array, R10 = R10.array, M0.error = NULL, R10.error = NULL)
 }
 
 #############################################################################
@@ -150,9 +179,10 @@ setMethod("R1.fast", signature(flip="array"),
 setGeneric("CA.fast", function(dynamic, ...) standardGeneric("CA.fast"))
 setMethod("CA.fast", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
-	      control=nls.lm.control(maxiter=200), verbose=FALSE) 
+                   control=nls.lm.control(maxiter=200), multicore=FALSE,
+                   verbose=FALSE) 
 	    .dcemriWrapper("CA.fast", dynamic, dyn.mask, dangle, flip,
-                           fangles, TR, r1, control, verbose))
+                           fangles, TR, r1, control, multicore, verbose))
 
 #############################################################################
 ## CA.fast() = estimate contrast-agent concentration and other stuff
@@ -160,7 +190,7 @@ setMethod("CA.fast", signature(dynamic="array"),
 
 .CA.fast <- function(dynamic, dyn.mask, dangle, flip, fangles, TR,
                      r1=4, control=nls.lm.control(maxiter=200),
-                     verbose=FALSE) {
+                     multicore=FALSE, verbose=FALSE) {
 
   if (length(dim(flip)) != 4) { # Check flip is a 4D array
     stop("Flip-angle data must be a 4D array.")
@@ -174,7 +204,7 @@ setMethod("CA.fast", signature(dynamic="array"),
     stop("Number of flip angles must agree with dimension of flip-angle data.")
   }
   
-  R1est <- R1.fast(flip, dyn.mask, fangles, TR, control, verbose)
+  R1est <- R1.fast(flip, dyn.mask, fangles, TR, control, multicore, verbose)
   
   if (verbose) {
     cat("  Calculating concentration...", fill=TRUE)

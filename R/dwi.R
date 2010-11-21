@@ -36,7 +36,7 @@
 ## adc.lm() = estimate ADC using Levenburg-Marquardt
 #############################################################################
 
-adc.lm <- function(signal, b, guess, nprint=0) {
+adc.lm <- function(signal, b, guess, control=nls.lm.control()) {
   func <- function(x, y) {
     S0 <- x[1]
     D <- x[2]
@@ -45,9 +45,9 @@ adc.lm <- function(signal, b, guess, nprint=0) {
     signal - S0 * exp(-b*D)
   }
   require("minpack.lm") # Levenberg-Marquart fitting
-  out <- nls.lm(par=guess, fn=func, control=list(nprint=nprint),
-                y=list(signal, b))
-  list(S0=out$par[1], D=out$par[2], info=out$info, message=out$message)
+  out <- nls.lm(par=guess, fn=func, control=control, y=list(signal, b))
+  list(S0=out$par[1], D=out$par[2], hessian=out$hessian, info=out$info,
+       message=out$message)
 }
 
 #############################################################################
@@ -56,45 +56,64 @@ adc.lm <- function(signal, b, guess, nprint=0) {
 
 setGeneric("ADC.fast", function(dwi, ...) standardGeneric("ADC.fast"))
 setMethod("ADC.fast", signature(dwi="array"),
-          function(dwi, bvalues, dwi.mask, verbose=FALSE)
-          .dcemriWrapper("ADC.fast", dwi, bvalues, dwi.mask, verbose))
+          function(dwi, bvalues, dwi.mask,
+                   control=nls.lm.control(maxiter=150),
+                   multicore=FALSE, verbose=FALSE)
+          .dcemriWrapper("ADC.fast", dwi, bvalues, dwi.mask, control,
+                         multicore, verbose))
 
-.ADC.fast <- function(dwi, bvalues, dwi.mask, verbose=FALSE) {
+.ADC.fast <- function(dwi, bvalues, dwi.mask,
+                      control=nls.lm.control(maxiter=150),
+                      multicore=FALSE, verbose=FALSE) {
   if (length(dim(dwi)) != 4) { # Check dwi is a 4D array
     stop("Diffusion-weighted data must be a 4D array.")
   }
   if (!is.logical(dwi.mask)) { # Check dyn.mask is logical
     stop("Mask must be logical.")
   }
-
   nvalues <- length(bvalues)
   nvoxels <- sum(dwi.mask)
-  
   if (verbose) {
     cat("  Deconstructing data...", fill=TRUE)
   }
   dwi.mat <- matrix(dwi[dwi.mask], nvoxels)
-  S0 <- D <- numeric(nvoxels)
-
+  dwi.list <- vector("list", nvoxels)
+  for (k in 1:nvoxels) {
+    dwi.list[[k]] <- dwi.mat[k,]
+  }
   if (verbose) {
     cat("  Calculating S0 and D...", fill=TRUE)
   }
-  for (i in 1:nvoxels) {
-    fit <- adc.lm(dwi.mat[i,], bvalues, guess=c(0.75*dwi.mat[i,1], 0.001))
-    if (fit$info < 4) {
-      S0[i] <- fit$S0
-      D[i] <- fit$D
+  if (multicore && require("multicore")) {
+    fit.list <- mclapply(dwi.list, function(x) {
+      adc.lm(x, bvalues, guess=c(0.75*x[1], 0.001), control)
+    })
+  } else {
+    fit.list <- lapply(dwi.list, function(x) {
+      adc.lm(x, bvalues, guess=c(0.75*x[1], 0.001), control)
+    })
+  }
+  rm(dwi.list) ; gc()
+  S0 <- D <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
+  for (k in 1:nvoxels) {
+    if (fit.list[[k]]$info > 0 && fit.list[[k]]$info < 5) {
+      S0$par[k] <- fit.list[[k]]$S0
+      D$par[k] <- fit.list[[k]]$D
+      S0$error[k] <- sqrt(fit.list[[k]]$hessian[1,1])
+      D$error[k] <- sqrt(fit.list[[k]]$hessian[2,2])
     } else {
-      S0[i] <- D[i] <- NA
+      S0$par[k] <- D$par[k] <- S0$error[k] <- D$error[k] <- NA
     }
   }
-
+  rm(fit.list) ; gc()
   if (verbose) {
     cat("  Reconstructing results...", fill=TRUE)
   }
-  S0.array <- D.array <- array(NA, dim(dwi)[1:3])
-  S0.array[dwi.mask] <- S0
-  D.array[dwi.mask] <- D
+  S0.array <- D.array <- S0error <- Derror <- array(NA, dim(dwi)[1:3])
+  S0.array[dwi.mask] <- S0$par
+  D.array[dwi.mask] <- D$par
+  S0error[dwi.mask] <- S0$error
+  Derror[dwi.mask] <- D$error
   
-  list(S0 = S0.array, D = D.array)
+  list(S0 = S0.array, D = D.array, S0.error = S0error, D.error = Derror)
 }
