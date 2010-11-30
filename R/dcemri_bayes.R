@@ -268,7 +268,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
   }
 
   for (k in 1:nvoxels) {
-    index <- nvoxels*(k-1)+(1:n)
+    index <- nvoxels * (k-1) + (1:n)
     ktrans$par[k] <- median(bayes.list[[k]]$ktrans)
     kep$par[k] <- median(bayes.list[[k]]$kep)
     ktrans$error[k] <- sd(bayes.list[[k]]$ktrans)
@@ -409,7 +409,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
     returnable[["kep.samples"]] <- temp
     returnable[["sigma2.samples"]] <- sigma2.samples
   }
-  rm(Vp.out) ; gc()
+  ## rm(Vp.out) ; gc()
   
   return(returnable)
 }
