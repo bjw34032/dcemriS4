@@ -14,8 +14,8 @@
 }
 \usage{
 \S4method{dcemri.lm}{array}(conc, time, img.mask, model="extended", aif=NULL,
-          control=nls.lm.control(), user=NULL, multicore=FALSE, verbose=FALSE,
-          ...)
+          control=nls.lm.control(), user=NULL, guess=NULL, multicore=FALSE,
+          verbose=FALSE, ...)
 }
 \arguments{
   \item{conc}{is a multidimensional (1D-4D) array of contrast agent
@@ -70,6 +70,11 @@
     that are set by default, but may be customized by the user.}
   \item{user}{is a list with the following parameters required: D, AB,
     muB, AG, muG.}
+  \item{guess}{is a vector of starting values for kinetic parameter
+    estimation.  The vector must have length = 3 (with names \code{th0},
+    \code{th1} and \code{th3}) when the extended Kety model is used with
+    the vascular parameter and length = 2 (with names \code{th1} and
+    \code{th3}) otherwise.}
   \item{multicore}{is a logical variable (default = \code{FALSE}) that
     allows parallel processing via \pkg{multicore}.}
   \item{verbose}{is a logical variable (default = \code{FALSE}) that

@@ -41,34 +41,15 @@ setGeneric("dcemri.lm",
            function(conc,  ...) standardGeneric("dcemri.lm"))
 setMethod("dcemri.lm", signature(conc="array"), 
 	  function(conc,time,img.mask, model="extended", aif=NULL,
-                   control=nls.lm.control(), user=NULL, multicore=FALSE,
-                   verbose=FALSE, ...)
+                   control=nls.lm.control(), user=NULL, guess=NULL,
+                   multicore=FALSE, verbose=FALSE, ...)
           .dcemriWrapper("dcemri.lm", conc, time, img.mask, model, aif,
-                         control, user, multicore, verbose, ...))
+                         control, user, guess, multicore, verbose, ...))
 
 .dcemri.lm <- function(conc, time, img.mask, model="extended", aif=NULL,
-                       control=nls.lm.control(), user=NULL, multicore=FALSE,
-                       verbose=FALSE, ...) {
-  ## dcemri.lm - a function for fitting 1-compartment PK models to
-  ## DCE-MRI images
-  ##
-  ## authors: Volker Schmid, Brandon Whitcher
-  ##
-  ## input:
-  ##        conc: array of Gd concentration,
-  ##        time: timepoints of aquisition,
-  ##        img.mask: array of voxels to fit,
-  ##        D(=0.1): Gd dose in mmol/kg,
-  ##        model: AIF... "weinmann" or "parker",
-  ##        update: re-do given parameter maps where parameters not fitted,
-  ##        ktransmap, kepmap, ktranserror, keperror: given parameter maps.
-  ##
-  ## output: list with ktrans, kep, ve, std.error of ktrans and kep
-  ##         (ktranserror and keperror)
-  ##
-
+                       control=nls.lm.control(), user=NULL, guess=NULL,
+                       multicore=FALSE, verbose=FALSE, ...) {
   require("minpack.lm")
-  
   switch(model,
          weinmann = ,
          extended = {
@@ -108,14 +89,27 @@ setMethod("dcemri.lm", signature(conc="array"),
          weinmann.empirical = ,
          kety.orton.exp = ,
          kety.orton.cos = {
-           guess <- c("th1"=-1, "th3"=-1)
+           if (is.null(guess)) {
+             guess <- c("th1"=-1, "th3"=-1)
+           } else {
+             if (length(guess) != 2 || all(names(guess) %in% c("th1","th3"))) {
+               stop("Names of starting parameters must be \"th1\" and \"th3\"")
+             }
+           }
          },
          extended = ,
          extended.empirical = ,
          orton.exp = ,
          orton.cos = {
-           guess <- c("th0"=-1, "th1"=-1, "th3"=-1)
-           vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
+           if (is.null(guess)) {
+             guess <- c("th0"=-3, "th1"=-1, "th3"=-1)
+             vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
+           } else {
+             if (length(guess) != 3 ||
+                 all(names(guess) %in% c("th0","th1","th3"))) {
+               stop("Names of starting parameters must be \"th0\", \"th1\" and \"th3\"")
+             }
+           }
          },
          stop("Model/AIF combination is not supported."))
        
@@ -196,7 +190,6 @@ setMethod("dcemri.lm", signature(conc="array"),
   A[img.mask] <- sse
   R$sse <- A
   rm(A)
-  
   return(R)
 }
 
