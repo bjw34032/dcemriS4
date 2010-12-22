@@ -1,5 +1,5 @@
 
-R version 2.12.0 (2010-10-15)
+R version 2.12.1 (2010-12-16)
 Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-unknown-linux-gnu (64-bit)
@@ -26,7 +26,7 @@ Loading required package: oro.nifti
 Creating a new generic function for "image" in "oro.nifti"
 Loading required package: XML
 
-oro.nifti: Rigorous - NIfTI Input / Output (version = 0.2.3)
+oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.2.4)
 
 
 dcemriS4: A Package for Medical Image Analysis (version = 0.41)
@@ -143,6 +143,7 @@ detaching ‘package:minpack.lm’
 > 
 > ### Name: dcemri.bayes
 > ### Title: Bayesian Methods for Pharmacokinetic Modeling of Dynamic
+> ###   Contrast-Enhanced MRI Data
 > ### Aliases: dcemri.bayes dcemri.bayes,array-method dcemri.bayes.single
 > ### Keywords: models
 > 
@@ -654,7 +655,7 @@ detaching ‘package:minpack.lm’
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  30.12 0.02 30.173 0 0 
+Time elapsed:  35.74 0.07 35.884 0 0 
 > grDevices::dev.off()
 null device 
           1 
