@@ -43,4 +43,3 @@ double RNDGAM(double a, double b);
 double normal(double m, double s);
 void gausssample(double* temp, int* noa);
 double reins();
-
