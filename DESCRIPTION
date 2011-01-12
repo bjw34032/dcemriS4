@@ -1,6 +1,6 @@
 Package: dcemriS4
-Version: 0.41
-Date: 2010-10-20
+Version: 0.42
+Date: 2011-01-12
 Title: A Package for Medical Image Analysis (S4 implementation)
 Author: Brandon Whitcher and Volker Schmid, with contributions from
   Andrew Thornton
@@ -13,3 +13,6 @@ Description: A collection of routines and documentation that allows one to
 License: BSD
 URL: http://www.dcemri.org/, http://dcemri.sourceforge.net/, 
   http://dcemri.blogspot.com/
+LazyLoad: no
+LazyData: no
+ZipData: no
