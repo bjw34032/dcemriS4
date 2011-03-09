@@ -1,6 +1,6 @@
 ##
 ##
-## Copyright (c) 2009, Brandon Whitcher and Volker Schmid
+## Copyright (c) 2009-2011 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
 ## 
 ## Redistribution and use in source and binary forms, with or without
@@ -240,57 +240,68 @@ setMethod("CA.fast2", signature(dynamic="array"),
 .CA.fast2 <- function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
                      verbose=FALSE) {
   
-  if (length(dim(flip)) != 4)  # Check flip is a 4D array
+  if (length(dim(flip)) != 4) {  # Check flip is a 4D array
     stop("Flip-angle data must be a 4D array.")
-  if (!is.logical(dyn.mask))  # Check dyn.mask is logical
+  }
+  if (! identical(length(fangles), ntim(flip)) &&
+      ! isTRUE(all.equal(dim(flip), dim(fangles)))) {
+    ## Check that #(flip angles) are equal
+    stop("Number of flip angles must agree with dimension of flip-angle data.")
+  }
+  ##if (ntim(flip) != 2 || length(fangles) != 2) {
+  ##  stop("Only two flip angles are allowed.")
+  ##}
+  if (!is.logical(dyn.mask)) { # Check dyn.mask is logical
     stop("Mask must be logical.")
-  
+  }
   nangles <- length(fangles)
   nvoxels <- sum(dyn.mask)
   M <- nrow(flip)
   N <- ncol(flip)
-  if(ntim(flip) != 2 || length(fangles) != 2)
-    stop("Only two flip angles are allowed.")
   Z <- nsli(dynamic)
   W <- ntim(dynamic)
-  
-  if (verbose)
+  if (verbose) {
     cat("  Deconstructing data...", fill=TRUE)
+  }
+  if (is.array(fangles)) {
+    fangles.mat <- matrix(fangles[dyn.mask], nrow=nvoxels)
+  } else {
+    fangles.mat <- matrix(fangles, nrow=nvoxels, ncol=length(fangles),
+                          byrow=TRUE)
+  }
   dyn.mat <- matrix(dynamic[dyn.mask], nvoxels)
   flip.mat <- matrix(flip[dyn.mask], nvoxels)
   R10 <- M0 <- numeric(nvoxels)
-
-  if (verbose)
+  if (verbose) {
     cat("  Calculating R10 and M0...", fill=TRUE)
+  }
   for (k in 1:nvoxels) {
-    x <- c(flip.mat[k,1] / tan(pi*fangles[1]/180),
-           flip.mat[k,2] / tan(pi*fangles[2]/180))
-    y <- c(flip.mat[k,1] / sin(pi*fangles[1]/180),
-           flip.mat[k,2] / sin(pi*fangles[2]/180))
+    x <- c(flip.mat[k,1] / tan(pi * fangles.mat[k,1] / 180),
+           flip.mat[k,2] / tan(pi * fangles.mat[k,2] / 180))
+    y <- c(flip.mat[k,1] / sin(pi * fangles.mat[k,1] / 180),
+           flip.mat[k,2] / sin(pi * fangles.mat[k,2] / 180))
     fit <- lsfit(x, y)$coefficients
     R10[k] <- log(fit[2]) / -TR
     M0[k] <- fit[1] / (1 - fit[2])
   }
-
-  if (verbose)
+  if (verbose) {
     cat("  Calculating concentration...", fill=TRUE)
+  }
   theta <- dangle * pi/180
   CD <- conc <- matrix(NA, nvoxels, W)
   B <- (1 - exp(-TR * R10)) / (1 - cos(theta) * exp(-TR * R10))
   A <- (dyn.mat - dyn.mat[,1]) / M0 / sin(theta)
   R1t <- -(1/TR) * log((1 - (A+B)) / (1 - cos(theta) * (A+B)))
   conc <- (R1t - R10) / r1
-
-  if (verbose)
+  if (verbose) {
     cat("  Reconstructing results...", fill=TRUE)
+  }
   R10.array <- M0.array <- array(NA, c(M,N,Z))
   R10.array[dyn.mask] <- R10
   M0.array[dyn.mask] <- M0
   conc.array <- R1t.array <- array(NA, c(M,N,Z,W))
-  ## conc.array <- array(NA, c(M,N,Z,W))
   mask4D <- array(dyn.mask, c(M,N,Z,W))
   conc.array[mask4D] <- unlist(conc)
   R1t.array[mask4D] <- unlist(R1t)
-  ## list(M0 = M0.array, R10 = R10.array, conc = conc.array)
   list(M0 = M0.array, R10 = R10.array, R1t = R1t.array, conc = conc.array)
 }
