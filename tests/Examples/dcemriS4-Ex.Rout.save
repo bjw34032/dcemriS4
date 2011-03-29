@@ -1,6 +1,6 @@
 
-R version 2.12.1 (2010-12-16)
-Copyright (C) 2010 The R Foundation for Statistical Computing
+R version 2.12.2 (2011-02-25)
+Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
@@ -26,10 +26,10 @@ Loading required package: oro.nifti
 Creating a new generic function for "image" in "oro.nifti"
 Loading required package: XML
 
-oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.2.5)
+oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.2.6)
 
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.42)
+dcemriS4: A Package for Medical Image Analysis (version = 0.43)
 
 > 
 > assign(".oldSearch", search(), pos = 'CheckExEnv')
@@ -655,7 +655,7 @@ detaching ‘package:minpack.lm’
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  31.74 0.06 31.947 0 0 
+Time elapsed:  36.96 0.24 37.227 0 0 
 > grDevices::dev.off()
 null device 
           1 
