@@ -275,12 +275,18 @@ setMethod("CA.fast2", signature(dynamic="array"),
   if (verbose) {
     cat("  Calculating R10 and M0...", fill=TRUE)
   }
+  x <- flip.mat / tan(pi * fangles.mat / 180)
+  x <- ifelse(is.finite(x), x, 0)
+  y <- flip.mat / sin(pi * fangles.mat / 180)
+  y <- ifelse(is.finite(y), y, 0)
   for (k in 1:nvoxels) {
-    x <- c(flip.mat[k,1] / tan(pi * fangles.mat[k,1] / 180),
-           flip.mat[k,2] / tan(pi * fangles.mat[k,2] / 180))
-    y <- c(flip.mat[k,1] / sin(pi * fangles.mat[k,1] / 180),
-           flip.mat[k,2] / sin(pi * fangles.mat[k,2] / 180))
-    fit <- lsfit(x, y)$coefficients
+    #x <- c(flip.mat[k,1] / tan(pi * fangles.mat[k,1] / 180),
+    #       flip.mat[k,2] / tan(pi * fangles.mat[k,2] / 180))
+    #x <- ifelse(is.finite(x), x, 0)
+    #y <- c(flip.mat[k,1] / sin(pi * fangles.mat[k,1] / 180),
+    #       flip.mat[k,2] / sin(pi * fangles.mat[k,2] / 180))
+    #y <- ifelse(is.finite(y), y, 0)
+    fit <- lsfit(x[k, ], y[k, ])$coefficients
     R10[k] <- log(fit[2]) / -TR
     M0[k] <- fit[1] / (1 - fit[2])
   }
