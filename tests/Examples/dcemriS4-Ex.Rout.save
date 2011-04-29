@@ -1,5 +1,5 @@
 
-R version 2.12.2 (2011-02-25)
+R version 2.13.0 (2011-04-13)
 Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-unknown-linux-gnu (64-bit)
@@ -29,7 +29,7 @@ Loading required package: XML
 oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.2.6)
 
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.43)
+dcemriS4: A Package for Medical Image Analysis (version = 0.44)
 
 > 
 > assign(".oldSearch", search(), pos = 'CheckExEnv')
@@ -65,17 +65,17 @@ Loading required package: minpack.lm
 > legend("right", c("Buckley's AIF", "Our approximation"), lty=1,
 +        lwd=2, col=1:2)
 > cbind(time, aif, aoe)[1:10,]
-            time      aif      aoe
- [1,] 0.06666667 0.912633 2.258002
- [2,] 0.15000000 2.807515 3.779942
- [3,] 0.23333333 4.915784 4.402032
- [4,] 0.31666667 5.942284 4.506284
- [5,] 0.40000000 4.981387 4.332074
- [6,] 0.48333333 4.016821 4.025862
- [7,] 0.56666667 3.326276 3.674312
- [8,] 0.65000000 2.873297 3.326187
- [9,] 0.73333333 2.580520 3.006701
-[10,] 0.81666667 2.383784 2.726828
+            time       aif      aoe
+ [1,] 0.06666667 0.9126331 2.258002
+ [2,] 0.15000000 2.8075149 3.779942
+ [3,] 0.23333333 4.9157838 4.402032
+ [4,] 0.31666667 5.9422838 4.506284
+ [5,] 0.40000000 4.9813873 4.332074
+ [6,] 0.48333333 4.0168210 4.025862
+ [7,] 0.56666667 3.3262760 3.674312
+ [8,] 0.65000000 2.8732966 3.326187
+ [9,] 0.73333333 2.5805205 3.006701
+[10,] 0.81666667 2.3837840 2.726828
 > 
 > 
 > 
@@ -655,7 +655,7 @@ detaching ‘package:minpack.lm’
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  36.96 0.24 37.227 0 0 
+Time elapsed:  38.3 0.02 38.378 0 0 
 > grDevices::dev.off()
 null device 
           1 
