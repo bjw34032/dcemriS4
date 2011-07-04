@@ -13,6 +13,6 @@ Description: A collection of routines and documentation that allows one to
 License: BSD
 URL: http://www.dcemri.org/, http://dcemri.sourceforge.net/, 
   http://dcemri.blogspot.com/
-LazyLoad: no
+LazyLoad: yes
 LazyData: no
 ZipData: no
