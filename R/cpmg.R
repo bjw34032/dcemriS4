@@ -57,9 +57,9 @@ T2.lm <- function(signal, TE, guess, control=nls.lm.control()) {
 setGeneric("T2.fast", function(cpmg, ...) standardGeneric("T2.fast"))
 setMethod("T2.fast", signature(cpmg="array"),
           function(cpmg, cpmg.mask, TE, control=nls.lm.control(maxiter=150),
-                   multicore=FALSE, verbose=FALSE) 
-	    .dcemriWrapper("T2.fast", cpmg, cpmg.mask, TE, control,
-                           multicore, verbose))
+                   multicore=FALSE, verbose=FALSE)
+          .dcemriWrapper("T2.fast", cpmg, cpmg.mask, TE, control, multicore,
+                         verbose))
 
 #############################################################################
 ## T2.fast()
@@ -100,6 +100,7 @@ setMethod("T2.fast", signature(cpmg="array"),
   }
   rm(cpmg.list) ; gc()
   T2 <- rho <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
+  pb <- txtProgressBar()
   for (k in 1:nvoxels) {
     if (T2.list[[k]]$info > 0 && T2.list[[k]]$info < 5) {
       T2$par[k] <- T2.list[[k]]$T2
@@ -109,17 +110,10 @@ setMethod("T2.fast", signature(cpmg="array"),
     } else {
       T2$par[k] <- rho$par[k] <- T2$error[k] <- rho$error[k] <- NA
     }
+    setTxtProgressBar(pb, k)
   }
+  close(pb)
   rm(T2.list) ; gc()
-  ##for (k in 1:nvoxels) {
-  ##  fit <- T2.lm(cpmg.mat[k,], TE, guess=c(0.75*cpmg.mat[k,1], 0.05), control)
-  ##  if (fit$info < 4) {
-  ##    T2[k] <- fit$T2
-  ##    rho[k] <- fit$rho
-  ##  } else {
-  ##    T2[k] <- rho[k] <- NA
-  ##  }
-  ##}
   if (verbose) {
     cat("  Reconstructing results...", fill=TRUE)
   }

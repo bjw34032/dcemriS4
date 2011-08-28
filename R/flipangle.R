@@ -148,18 +148,6 @@ setMethod("R1.fast", signature(flip="array"),
     }
   }
 
-  ##R10 <- M0 <- numeric(nvoxels)
-  ##for (k in 1:nvoxels) {
-  ##  fit <- E10.lm(flip.mat[k,], fangles.mat[k,],
-  ##                guess=c(1, mean(flip.mat[k,])), control)
-  ##  if (fit$info == 1 || fit$info == 2 || fit$info == 3) {
-  ##    R10[k] <- log(fit$E10) / -TR
-  ##    M0[k] <- fit$m0
-  ##  } else {
-  ##    R10[k] <- M0[k] <- NA
-  ##  }
-  ##}
-
   if (verbose) {
     cat("  Reconstructing results...", fill=TRUE)
   }
@@ -230,7 +218,7 @@ setGeneric("CA.fast2", function(dynamic, ...) standardGeneric("CA.fast2"))
 setMethod("CA.fast2", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
                    verbose=FALSE) 
-          .dcemriWrapper("CA.fast2", dynamic, dyn.mask, dangle, flip,
+          .dcemriwrapper("CA.fast2", dynamic, dyn.mask, dangle, flip,
                          fangles, TR, r1, verbose))
 
 #############################################################################

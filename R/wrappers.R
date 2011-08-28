@@ -37,16 +37,6 @@
 #############################################################################
 
 .dcemriWrapper <- function(name, ...) {
-  .wrapper(getFunction(paste(".", name, sep=""), generic=FALSE), name, ...)
+  .wrapper(getFunction(paste(".", name, sep="")), name, ...)
 }
 
-.wrapper <- function(fun, name, nim, ...) {
-  if (! is(nim, "nifti")) {
-    nim <- as(nim, "nifti")
-  }
-  audit.trail(nim) <- niftiAuditTrailEvent(nim, "processing", name)
-  result <- fun(nim, ...)
-  try(as(result, "nifti") <- nim)
-  audit.trail(nim) <- niftiAuditTrailEvent(nim, "completed", name)
-  return(result)
-}

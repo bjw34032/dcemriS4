@@ -56,8 +56,8 @@ rCBV <- function(Ct, Ca, time, Hf=1, rho=1) {
 setGeneric("rCBV.fast", function(signal, ...) standardGeneric("rCBV.fast"))
 setMethod("rCBV.fast", signature(signal="array"),
           function(signal, mask, aif, time, multicore=FALSE, verbose=FALSE) 
-	    .dcemriWrapper("rCBV.fast", signal, mask, aif, time, multicore,
-                           verbose))
+          .dcemriWrapper("rCBV.fast", signal, mask, aif, time, multicore,
+                         verbose))
 
 #############################################################################
 ## rCBV.fast()

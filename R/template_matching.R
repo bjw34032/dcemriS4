@@ -1,3 +1,37 @@
+##
+##
+## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
+## All rights reserved.
+## 
+## Redistribution and use in source and binary forms, with or without
+## modification, are permitted provided that the following conditions are
+## met:
+## 
+##     * Redistributions of source code must retain the above copyright
+##       notice, this list of conditions and the following disclaimer. 
+##     * Redistributions in binary form must reproduce the above
+##       copyright notice, this list of conditions and the following
+##       disclaimer in the documentation and/or other materials provided
+##       with the distribution.
+##     * The names of the authors may not be used to endorse or promote
+##       products derived from this software without specific prior
+##       written permission.
+## 
+## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+## LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+## A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+## SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+## LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+## DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+## THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+## 
+## $Id:$
+##
+
 conv.fft <- function(A, B, C, FFTA=NULL) {
   if (length(dim(A)) == 3) {
     if (length(dim(A)) == length(dim(B)) && length(dim(A)) == length(C)) {
@@ -94,7 +128,6 @@ setGeneric("ftm", function(input, ...) standardGeneric("ftm"))
 setMethod("ftm", signature(input="array"),
           function(input, ...) .dcemriWrapper("ftm", input, ...))
 
-
 .ftm <- function(input, mask, reference, plot=TRUE, ...) {
   ## Fast template matching via cross-correlation
   W <- ntim(input)
@@ -116,15 +149,12 @@ setMethod("ftm", signature(input="array"),
     localSS <- conv.fft(mask, target*target, tc, FFTA=maskFFT)
     localCOR[,,,w] <- numerator / sqrt(templateSS[tc[1],tc[2],tc[3]]) / sqrt(localSS)
   }
-  ##localCOR <- numerator / sqrt(templateSS[tc[1],tc[2],tc[3]]) / sqrt(localSS)
+  ## localCOR <- numerator / sqrt(templateSS[tc[1],tc[2],tc[3]]) / sqrt(localSS)
   localCOR[!is.finite(localCOR)] <- NA
   wmax.localCOR <- apply(localCOR, 4,
                          function(x) {
                            which(x == max(x,na.rm=TRUE), arr.ind=TRUE)
                          })
-  ## overlay(input[,,,1],
-  ##         as(ifelse(localCOR[,,,1] > 0.925, localCOR[,,,1], NA), "nifti"),
-  ##         zlim.x=c(0,512), col.y=tim.colors())
   ## which(localCOR[,,,w] == max(localCOR[,,,w], na.rm=TRUE), arr.ind=TRUE)
   offset <- tc - wmax.localCOR
   output <- input@.Data

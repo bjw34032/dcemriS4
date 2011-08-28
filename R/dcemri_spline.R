@@ -48,10 +48,10 @@ setMethod("dcemri.spline", signature(conc="array"),
                    samples=FALSE, multicore=FALSE, verbose=FALSE, 
 		   response=FALSE, fitted=FALSE, ...)
           .dcemriWrapper("dcemri.spline", conc, time, img.mask, time.input,
-                         model, aif, user, aif.observed, nriters,
-                         thin, burnin, ab.hyper, ab.tauepsilon, k, p, rw,
-                         knots, nlr, t0.compute, samples, multicore,
-                         verbose, response, fitted, ...))
+                         model, aif, user, aif.observed, nriters, thin,
+                         burnin, ab.hyper, ab.tauepsilon, k, p, rw, knots,
+                         nlr, t0.compute, samples, multicore, verbose,
+                         response, fitted, ...))
 
 .dcemri.spline.single <- function(conc, time, D, time.input, p, rw, knots,
                                   k, A, t0.compute=FALSE, nlr=FALSE,
