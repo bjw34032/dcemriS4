@@ -2,6 +2,8 @@ useDynLib("dcemriS4")
 
 import("grDevices", "graphics", "methods", "oro.nifti", "utils")
 
+export(".dcemri.bayes")
+
 exportPattern("^[^\\.]")
 
 exportMethods("ADC.fast",
@@ -12,4 +14,6 @@ exportMethods("ADC.fast",
               "dcemri.map",
               "dcemri.spline",
               "ftm",
-              "R1.fast")
+              "R1.fast",
+              "rCBV.fast",
+              "T2.fast")
