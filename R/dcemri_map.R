@@ -138,13 +138,13 @@ setMethod("dcemri.map", signature(conc="array"),
            }
 	 },		
          extended = {
-           inverse <- function(x){
+           inverse <- function(x) {
              1/x
            }
-           ident <- function(x){
+           ident <- function(x) {
              x
            }
-           parameter <- c("ktrans","kep","vp","sigma2")
+           parameter <- c("ktrans", "kep", "vp", "sigma2")
            transform <- c(exp, exp, exp, inverse)
            hyper <- c(ab.ktrans, ab.kep, ab.vp, ab.tauepsilon)
            start <- c(exp(hyper[1]), exp(hyper[3]),
@@ -155,18 +155,17 @@ setMethod("dcemri.map", signature(conc="array"),
              vp <- par[3]
              tauepsilon <- par[4]
              T <- length(time)
-             p <- log(dnorm(gamma, hyper[1], hyper[2]))
-             p <- p + log(dnorm(theta, hyper[3], hyper[4]))
-             p <- p + log(dgamma(tauepsilon, hyper[7], rate=hyper[8]))
-             p <- p + log(dbeta(exp(vp),hyper[5], hyper[6]))
-             conc.hat <- ifelse(time > 0,
-                                (exp(vp) * extraterm(time, aif) + exp(gamma) *
-                                 convterm(exp(theta), time, aif)),
-                                0)
-             p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
-             if (is.na(p)) {
-               p <- -1e-6
-             }
+             conc.hat <- func.model(time, c(vp, gamma, theta), aif)
+                         #ifelse(time > 0,
+                         #       (exp(vp) * extraterm(time, aif) + exp(gamma) *
+                         #        convterm(exp(theta), time, aif)),
+                         #       0)
+             p <- (log(dnorm(gamma, hyper[1], hyper[2])) +
+                   log(dnorm(theta, hyper[3], hyper[4])) + 
+                   log(dgamma(tauepsilon, hyper[7], rate=hyper[8])) + 
+                   log(dbeta(exp(vp),hyper[5], hyper[6])) + 
+                   sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon)))))
+             p <- ifelse(is.na(p), -1e-6, p)
              return(-p)
            }
 	 },		
@@ -188,16 +187,13 @@ setMethod("dcemri.map", signature(conc="array"),
              vp <- par[3]
              tauepsilon <- par[4]
              T <- length(time)
-             p <- log(dnorm(gamma, hyper[1], hyper[2]))
-             p <- p + log(dnorm(theta, hyper[3], hyper[4]))
-             p <- p + log(dgamma(tauepsilon, hyper[7], rate=hyper[8]))
-             p <- p + log(dbeta(vp, hyper[5], hyper[6]))
-             conc.hat <- model.orton.exp(time, gamma, theta, vp, AB=aif[1],
-                                         muB=aif[2], AG=aif[3], muG=aif[4])
-             p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
-             if (is.na(p)) {
-               p <- 1e-6
-             }
+             conc.hat <- func.model(time, c(vp, gamma, theta), aif)
+             p <- (log(dnorm(gamma, hyper[1], hyper[2])) + 
+                   log(dnorm(theta, hyper[3], hyper[4])) + 
+                   log(dgamma(tauepsilon, hyper[7], rate=hyper[8])) + 
+                   log(dbeta(vp, hyper[5], hyper[6])) + 
+                   sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon)))))
+             p <- ifelse(is.na(p), 1e-6, p)
              return(-p)
            }
 	 },		
@@ -214,15 +210,12 @@ setMethod("dcemri.map", signature(conc="array"),
              theta <- par[2]
              tauepsilon <- par[3]
              T <- length(time)
-             p <- log(dnorm(gamma, hyper[1], hyper[2]))
-             p <- p + log(dnorm(theta, hyper[3], hyper[4]))
-             p <- p + log(dgamma(tauepsilon, hyper[5], rate=hyper[6]))
-             conc.hat <- model.kety.orton.exp(time, gamma, theta, AB=aif[1],
-                                         muB=aif[2], AG=aif[3], muG=aif[4])
-             p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
-             if (is.na(p)) {
-               p <- 1e-6
-             }
+             conc.hat <- func.model(time, c(gamma, theta), aif)
+             p <- (log(dnorm(gamma, hyper[1], hyper[2])) + 
+                   log(dnorm(theta, hyper[3], hyper[4])) + 
+                   log(dgamma(tauepsilon, hyper[5], rate=hyper[6])) + 
+                   sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon)))))
+             p <- ifelse(is.na(p), 1e-6, p)
              return(-p)
            }
 	 },		
@@ -245,15 +238,13 @@ setMethod("dcemri.map", signature(conc="array"),
              theta0 <- par[3]
              tauepsilon <- par[4]
              T <- length(time)
-             p <- log(dnorm(gamma, hyper[1], hyper[2]))
-             p <- p + log(dnorm(theta, hyper[3], hyper[4]))
-             p <- p + log(dgamma(tauepsilon, hyper[7], rate=hyper[8]))
-             p <- p + log(dbeta(exp(theta0), hyper[5], hyper[6]))
-             conc.hat <- func.model(time, c(par[3],par[1:2]), aif)
-             p <- p + sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon))))
-             if (is.na(p)) {
-               p <- -1e-6
-             }
+             conc.hat <- func.model(time, c(theta0, gamma, theta), aif)
+             p <- (log(dnorm(gamma, hyper[1], hyper[2])) + 
+                   log(dnorm(theta, hyper[3], hyper[4])) + 
+                   log(dgamma(tauepsilon, hyper[7], rate=hyper[8])) + 
+                   log(dbeta(exp(theta0), hyper[5], hyper[6])) + 
+                   sum(log(dnorm(conc, conc.hat, sqrt(1/tauepsilon)))))
+             p <- ifelse(is.na(p), 1e-6, p)
              return(-p)
            }
 	 },		

@@ -1,5 +1,4 @@
 ##
-##
 ## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
 ## 
