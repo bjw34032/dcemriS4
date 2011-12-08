@@ -20,7 +20,7 @@
 \arguments{
   \item{conc}{is a multidimensional (1D-4D) array of contrast agent
     concentrations.  The last dimension is assumed to be temporal, while
-    the previous dimensions are assued to be spatial.}
+    the previous dimensions are assumed to be spatial.}
   \item{time}{is a vector of acquisition times (in minutes) relative to 
     injection of the contrast agent.  Negative values should be used
     prior to the injection.}
