@@ -88,7 +88,7 @@ setMethod("T2.fast", signature(cpmg="array"),
   if (verbose) {
     cat("  Calculating T2 and rho...", fill=TRUE)
   }
-  if (multicore && require("multicore")) {
+  if (multicore && require("parallel")) {
     T2.list <- mclapply(cpmg.list, function(x) {
       T2.lm(x, TE, guess=c(0.75 * x[1], 0.05), control)
     })

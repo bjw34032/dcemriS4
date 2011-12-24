@@ -14,8 +14,8 @@
 }
 \usage{
 \S4method{dcemri.lm}{array}(conc, time, img.mask, model="extended", aif=NULL,
-          control=nls.lm.control(), user=NULL, guess=NULL, multicore=FALSE,
-          verbose=FALSE, ...)
+          control=nls.lm.control(), user=NULL, guess=NULL,
+          multicore=FALSE, verbose=FALSE, ...)
 }
 \arguments{
   \item{conc}{is a multidimensional (1D-4D) array of contrast agent
@@ -92,6 +92,15 @@
   The arterial input function must be either literature-based (with
   fixed parameters) or the exponential AIF from Orton \emph{et al.}
   (2008) with user-defined parameters.
+
+  WARNING: when using the \code{empirical} AIF, a linear interpolation
+  is used to upsample the AIF to a one-second sampling rate.  This
+  allows one to utilize a computationally efficient numeric method to
+  perform the convolution.  If the empirical AIF is sampled faster than
+  one Hertz, then the upsampling operation will become a downsampling
+  operation.  This should not have any serious effect on the parameter
+  estimates, but caution should be exercised if very fast sampling rates
+  are used to obtain an empirical AIF.
 }
 \value{
   Parameter estimates and their standard errors are provided for the

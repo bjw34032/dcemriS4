@@ -180,7 +180,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     fitted[[i]] <- B %*% beta[,i]
   }
 
-  ##if (multicore && require("multicore")) {
+  ##if (multicore && require("parallel")) {
   ##  MAX <- unlist(mclapply(fitted, max))
   ##} else {
     MAX <- unlist(lapply(fitted, max))
@@ -213,7 +213,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       return(fit)
     }
     
-    if (multicore && require("multicore")) {
+    if (multicore && require("parallel")) {
       out <- mclapply(fitted, nls.lm.single, par=model.guess,
                            fn=fcn, fcall=model.func, model=model,
                            time=time-t0)
@@ -463,7 +463,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     cat("  Estimating the parameters...", fill=TRUE)
   }
 
-  if (multicore && require(multicore)) {
+  if (multicore && require("parallel")) {
     fit <- mclapply(conc.list, FUN=.dcemri.spline.single, time=time,
                     D=D, time.input=time.input, p=p, rw=rw, knots=knots,
                     k=k, A=A, nriters=nriters, thin=thin, burnin=burnin,

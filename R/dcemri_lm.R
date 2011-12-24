@@ -81,7 +81,8 @@ setMethod("dcemri.lm", signature(conc="array"),
   }
   func.model <- compartmentalModel(model)
   func <- function(theta, signal, time, ...) {
-    signal - func.model(time, theta, p)
+    out <- signal - func.model(time, theta, p)
+    out[!is.na(out)]
   }
   nvoxels <- sum(img.mask)
   switch(model,
@@ -136,7 +137,7 @@ setMethod("dcemri.lm", signature(conc="array"),
   if (verbose) {
     cat("  Estimating the kinetic parameters...", fill=TRUE)
   }
-  if (multicore && require("multicore")) {
+  if (multicore && require("parallel")) {
     lm.list <- mclapply(conc.list, function(x) {
       nls.lm(par=guess, fn=func, control=control, signal=x, time=time, p=p)
     })

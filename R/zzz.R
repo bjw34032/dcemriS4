@@ -33,8 +33,12 @@
 ##
 
 .onAttach <- function(lib, pkg) {
-  cat("\n", pkg,": A Package for Medical Image Analysis (version = ",
-      as.character(sessionInfo()$otherPkgs$dcemriS4["Version"]), ")\n",
-      sep="", fill=TRUE)
+  txt <- paste("\n",
+               pkg,
+               ": A Package for Medical Image Analysis (version = ",
+               as.character(sessionInfo()$otherPkgs$dcemriS4["Version"]),
+               ")\n",
+               sep="")
+  packageStartupMessage(txt)
 }
 

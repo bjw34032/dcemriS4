@@ -1,18 +1,20 @@
-citHeader("To cite package 'dcemriS4' in publications use:")
+citHeader("To cite dcemriS4 in publications use:")
 
-desc <- packageDescription("dcemriS4")
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
-vers <- paste("R package version", desc$Version)
+citEntry(entry = "Article",
+  title        = "Quantitative Analysis of Dynamic Contrast-Enhanced and Diffusion-Weighted Magnetic Resonance Imaging for Oncology in {R}",
+  author       = personList(as.person("Brandon Whitcher"),
+                   as.person("Volker J. Schmid")),
+  journal      = "Journal of Statistical Software",
+  year         = "2011",
+  volume       = "44",
+  number       = "5",
+  pages        = "1--29",
+  url          = "http://www.jstatsoft.org/v44/i05/",
 
-citEntry(entry="Manual",
-         title = "dcemriS4: A Package for Medical Image Analysis",
-         author = personList(as.person("Brandon Whitcher"),
-                             as.person("Volker J. Schmid")),
-         year = year,
-         note = vers,
+  textVersion  =
+  paste("Brandon Whitcher, Volker J. Schmid (2011).",
+        "Quantitative Analysis of Dynamic Contrast-Enhanced and Diffusion-Weighted Magnetic Resonance Imaging for Oncology in R.",
+        "Journal of Statistical Software, 44(5), 1-29.",
+        "URL http://www.jstatsoft.org/v44/i05/.")
+)
 
-         textVersion =
-         paste("Brandon Whitcher and Volker J. Schmid (",
-               year,
-               "). dcemriS4: A Package for Medical Image Analysis. ",
-               vers, ".", sep=""))

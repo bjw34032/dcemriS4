@@ -225,7 +225,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
   if (verbose) {
     cat("  Estimating the kinetic parameters...", fill=TRUE)
   }
-  if (multicore && require("multicore")) {
+  if (multicore && require("parallel")) {
     bayes.list <- mclapply(conc.list, FUN=.dcemri.bayes.single,
                            time=time, nriters=nriters, thin=thin,
                            burnin=burnin, tune=tune, ab.gamma=ab.ktrans,

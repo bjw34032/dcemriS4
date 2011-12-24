@@ -84,7 +84,7 @@ setMethod("ADC.fast", signature(dwi="array"),
   if (verbose) {
     cat("  Calculating S0 and D...", fill=TRUE)
   }
-  if (multicore && require("multicore")) {
+  if (multicore && require("parallel")) {
     fit.list <- mclapply(dwi.list, function(x) {
       adc.lm(x, bvalues, guess=c(0.75*x[1], 0.001), control)
     })

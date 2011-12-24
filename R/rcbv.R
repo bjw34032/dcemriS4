@@ -89,7 +89,7 @@ setMethod("rCBV.fast", signature(signal="array"),
   if (verbose) {
     cat("  Calculating rCBV...", fill=TRUE)
   }
-  if (multicore && require("multicore")) {
+  if (multicore && require("parallel")) {
     rcbv.list <- mclapply(signal.list, function(x) {
       rCBV(x, Ca=aif, time=time)
     })

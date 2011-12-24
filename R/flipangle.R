@@ -126,7 +126,7 @@ setMethod("R1.fast", signature(flip="array"),
   if (verbose) {
     cat("  Calculating R10 and M0...", fill=TRUE)
   }
-  if (multicore && require("multicore")) {
+  if (multicore && require("parallel")) {
     fit.list <- mclapply(flip.list, function(x) {
       E10.lm(x$signal, x$angles, guess=c(1, mean(x$signal)), control)
     })

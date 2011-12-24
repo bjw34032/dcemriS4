@@ -265,7 +265,7 @@ setMethod("dcemri.map", signature(conc="array"),
   if (verbose) {
     cat("  Estimating the kinetic parameters...", fill=TRUE)
   }
-  if (multicore && require("multicore")) {
+  if (multicore && require("parallel")) {
     fit <- mclapply(conc.list, FUN=.dcemri.map.single, time=time,
                     posterior=posterior, parameter=parameter,
                     transform=transform, start=start, hyper=hyper,
