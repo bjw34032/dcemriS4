@@ -1,6 +1,6 @@
 ##
 ##
-## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
+## Copyright (c) 2009-2011 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
 ## 
 ## Redistribution and use in source and binary forms, with or without
@@ -39,16 +39,19 @@ conv.fft <- function(A, B, C, FFTA=NULL) {
       Y <- ncol(A)
       Z <- nsli(A)
       if (is.null(FFTA)) {
-        out <- Re(fft(fft(A) * Conj(fft(B)), inv=TRUE))[X:1,Y:1,Z:1,drop=FALSE] / (X*Y*Z)
+        out <- Re(fft(fft(A) * Conj(fft(B)), inverse=TRUE))[X:1,Y:1,Z:1,drop=FALSE] / (X*Y*Z)
       } else {
-        out <- Re(fft(FFTA * Conj(fft(B)), inv=TRUE))[X:1,Y:1,Z:1,drop=FALSE] / (X*Y*Z)
+        out <- Re(fft(FFTA * Conj(fft(B)), inverse=TRUE))[X:1,Y:1,Z:1,drop=FALSE] / (X*Y*Z)
       }
-      if (X > 1)
+      if (X > 1) {
         out <- out[c((X-C[1]+1):X, 1:(X-C[1])),,,drop=FALSE]
-      if (Y > 1)
+      }
+      if (Y > 1) {
         out <- out[,c((Y-C[2]+1):Y, 1:(Y-C[2])),,drop=FALSE]
-      if (Z > 1)
+      }
+      if (Z > 1) {
         out <- out[,,c((Z-C[3]+1):Z, 1:(Z-C[3])),drop=FALSE]
+      }
       return(out)
     } else {
       stop("Objects are not all the same dimension!")
@@ -59,10 +62,12 @@ conv.fft <- function(A, B, C, FFTA=NULL) {
 }
 
 find.center <- function(M) {
-  if (!is.logical(M))
+  if (!is.logical(M)) {
     stop("Object must be logical!")
-  if (length(dim(M)) != 3)
+  }
+  if (length(dim(M)) != 3) {
     stop("Object must be three-dimensional!")
+  }
   X <- nrow(M)
   Y <- ncol(M)
   Z <- nsli(M)
