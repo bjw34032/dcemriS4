@@ -948,12 +948,13 @@ limited region-of-interest (ROI) created in FSLView
 format.
 
 <<RiderNeuroMRI+pre0>>=
-perf <- paste("281949", "19040721", "perfusion", sep="_")
-mask <- readANALYZE(paste(perf, "mask", sep="_"))
+perf <- paste("281949", "19040721", "perfusion.nii.gz", sep="_")
+fmask <- system.file(file.path("nifti", sub(".nii", "_mask.hdr", perf)),
+                     package="dcemriS4")
+mask <- readANALYZE(fmask)
 mask <- ifelse(mask > 0, TRUE, FALSE)
-dynamic <- readNIfTI(perf)
-@ 
 <<RiderNeuroMRI+pre1,eval=FALSE>>=
+dynamic <- readNIfTI(perf)
 TR <- 4.43 / 1000 # taken from CSV file
 dangle <- 25      # taken from CSV file
 (fflip <- list.files(pattern="ax[0-9]"))
@@ -1017,7 +1018,7 @@ data and supplying them via the \code{user} option in
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<RiderNeuroMRI+lm0>>=
+<<RiderNeuroMRI+lm0,eval=FALSE>>=
 acqtimes <- str2time(unique(sort(scan("rawtimes.txt", quiet=TRUE))))$time
 acqtimes <- (acqtimes - acqtimes[9]) / 60 # minutes
 conc <- readNIfTI(paste(perf, "gdconc", sep="_"))
@@ -1036,19 +1037,19 @@ writeNIfTI(fit.lm$sse, paste(perf, "sse", sep="_"))
 rm(fit.lm)
 @ 
 <<RiderNeuroMRI+lm3,echo=FALSE>>=
-fit.lm <- list(ktrans=readNIfTI(paste(perf, "ktrans", sep="_")))
+fit.lm <- list(ktrans=readNIfTI(system.file(file.path("nifti", sub(".nii", "_ktrans.nii", perf)), package="dcemriS4")))
 x <- 41:220
 y <- 21:220
 @ 
-<<RiderNeuroMRI+lm4,echo=FALSE>>=
+<<RiderNeuroMRI+lm4,echo=FALSE,eval=FALSE>>=
 png(file=paste(paste(perf, "ktrans", sep="_"), "png", sep="."), 
     width=2*480, height=2*480)
 @ 
-<<RiderNeuroMRI+lm5>>=
+<<RiderNeuroMRI+lm5,eval=FALSE>>=
 overlay(dynamic, ifelse(mask, fit.lm$ktrans, NA), w=11, zlim.x=c(32,256), 
         zlim.y=c(0,0.1))
 @ 
-<<RiderNeuroMRI+lm6,echo=FALSE,results=hide>>=
+<<RiderNeuroMRI+lm6,echo=FALSE,eval=FALSE,results=hide>>=
 dev.off()
 fit.lm$kep <- readNIfTI(paste(perf, "kep", sep="_"))
 fit.lm$vp <- readNIfTI(paste(perf, "vp", sep="_"))
@@ -1168,9 +1169,9 @@ writeNIfTI(fit.map$vp, paste(perf, "vp", "map", sep="_"))
 writeNIfTI(fit.map$sigma2, paste(perf, "sigma2", "map", sep="_"))
 @ 
 <<RiderNeuroMRI+map3,echo=FALSE>>=
-fit.map <- list(ktrans=readNIfTI(paste(perf, "ktrans", "map", sep="_")))
+fit.map <- list(ktrans=readNIfTI(system.file(file.path("nifti", sub(".nii", "_ktrans_map.nii", perf)), package="dcemriS4")))
 @ 
-<<RiderNeuroMRI+map4,echo=FALSE,results=hide>>=
+<<RiderNeuroMRI+map4,echo=FALSE,eval=FALSE,results=hide>>=
 png(file=paste(paste(perf, "ktrans", "map", sep="_"), "png", sep="."), 
     width=2*480, height=2*480)
 overlay(as(dynamic[x,y,,], "nifti"), 
@@ -1247,10 +1248,10 @@ compartmental model.
 <<RiderNeuroMRI+bayes1,eval=FALSE>>=
 fit.bayes <- dcemri.bayes(conc, acqtimes, mask, model="extended", 
                           aif="fritz.hansen", ab.ktrans=c(log(0.05),1), 
-                          ab.kep=c(log(0.7),1), ab.vp=c(1,19)) #, multicore=TRUE)
+                          ab.kep=c(log(0.7),1), ab.vp=c(1,19))
 writeNIfTI(fit.bayes$ktrans, paste(perf, "ktrans", "bayes", sep="_"))
 @ 
-<<RiderNeuroMRI+bayes2,eval=FALSE,echo=FALSE>>=
+<<RiderNeuroMRI+bayes2,echo=FALSE,eval=FALSE>>=
 writeNIfTI(fit.bayes$ktranserror, paste(perf, "ktrans", "bayes", "sd", sep="_"))
 writeNIfTI(fit.bayes$kep, paste(perf, "kep", "bayes", sep="_"))
 writeNIfTI(fit.bayes$keperror, paste(perf, "kep","bayes", "sd", sep="_"))
@@ -1259,7 +1260,7 @@ writeNIfTI(fit.bayes$vp, paste(perf, "vp", "bayes", sep="_"))
 writeNIfTI(fit.bayes$vperror, paste(perf, "vp","bayes", "sd", sep="_"))
 rm(fit.bayes)
 @ 
-<<RiderNeuroMRI+bayes3,echo=FALSE,results=hide>>=
+<<RiderNeuroMRI+bayes3,echo=FALSE,eval=FALSE,results=hide>>=
 fit.bayes <- list(ktrans=readNIfTI(paste(perf, "ktrans","bayes", sep="_")))
 png(file=paste(paste(perf, "ktrans", "bayes", sep="_"), "png", sep="."), 
     width=2*480, height=2*480)
@@ -1345,7 +1346,7 @@ fit.spline <- dcemri.spline(conc[,,,-(1:8)], acqtimes[-(1:8)], mask.spline,
 writeNIfTI(fit.spline$ktrans, paste(perf, "ktrans","spline", sep="_"))
 writeNIfTI(fit.spline$Fp, paste(perf, "Fp","spline", sep="_"))
 @ 
-<<RiderNeuroMRI+spline2,echo=FALSE,results=hide>>=
+<<RiderNeuroMRI+spline2,echo=FALSE,eval=FALSE,results=hide>>=
 fit.spline <- list(ktrans=readNIfTI(paste(perf, "ktrans","spline", sep="_")))
 png(file=paste(paste(perf, "ktrans", "spline", sep="_"), "png", sep="."), 
     width=2*480, height=2*480)
@@ -1426,17 +1427,18 @@ As previously noted this acquisition protocol has not been optimized
 for ADC estimation, and will include both perfusion and diffusion
 effects, but is adequate for the purpose of illustration.
 
-<<RIDERNeuroMRI+dwi1>>=
-tensor <- paste("281949", "19040721", "axtensor", sep="_")
+<<RIDERNeuroMRI+dwi1,eval=FALSE>>=
+tensor <- system.file(file.path("nifti", sub("perfusion", "axtensor", perf)),
+                      package="dcemriS4")
 (dwi <- readNIfTI(tensor))
-tmask <- readANALYZE(paste(tensor, "mask", sep="_"))
+tmask <- readANALYZE(sub(".nii", "_mask.hdr", tensor))
 tmask <- ifelse(tmask > 0, TRUE, FALSE)
 b <- c(0, rep(1000, ntim(dwi)-1)) # from Daniel Barboriak!
 fit.adc <- ADC.fast(dwi, b, tmask)
 writeNIfTI(fit.adc$S0, paste(tensor, "S0", sep="_"))
 writeNIfTI(fit.adc$D, paste(tensor, "D", sep="_"))
 @ 
-<<RiderNeuroMRI+dwi2,echo=FALSE,results=hide>>=
+<<RiderNeuroMRI+dwi2,echo=FALSE,eval=FALSE,results=hide>>=
 fit.adc <- list(D=readNIfTI(paste(tensor, "D", sep="_")))
 png(file=paste(paste(tensor, "D", sep="_"), "png", sep="."), 
     width=2*480, height=2*480)
@@ -1484,9 +1486,60 @@ reader is encouraged to look at
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[tbp]
 \small
-<<AuditTrail>>=
-audit.trail(dwi)
-@ 
+% <<AuditTrail>>=
+% audit.trail(dwi)
+% @ 
+\begin{verbatim}
+R> audit.trail(dwi)
+<audit-trail xmlns="http://www.dcemri.org/namespaces/audit-trail/1.0">
+  <created>
+    <call>oro.nifti::nifti(img = img, datatype = datatype)</call>
+    <system>
+      <r-version.version.string>R version 2.11.0 (2010-04-22)
+        </r-version.version.string>
+      <date>Thu May 27 08:40:18 PM 2010 BST</date>
+      <user.LOGNAME>brandon</user.LOGNAME>
+      <package-version.Version>0.1.4</package-version.Version>
+    </system>
+  </created>
+  <saved>
+    <workingDirectory>/home/guest/rider</workingDirectory>
+    <filename>281949_19040721_axtensor</filename>
+    <call>writeNIfTI(nim = uid.nifti, filename = fname)</call>
+    <system>
+      <r-version.version.string>R version 2.11.0 (2010-04-22)
+        </r-version.version.string>
+      <date>Thu May 27 08:40:23 PM 2010 BST</date>
+      <user.LOGNAME>brandon</user.LOGNAME>
+      <package-version.Version>0.1.4</package-version.Version>
+    </system>
+  </saved>
+  <read>
+    <workingDirectory>/home/guest/rider</workingDirectory>
+    <filename>281949_19040721_axtensor.nii.gz</filename>
+    <call>readNIfTI(fname = tensor)</call>
+    <system>
+      <r-version.version.string>R version 2.14.1 (2011-12-22)
+        </r-version.version.string>
+      <date>Fri Dec 30 10:01:15 2011 GMT</date>
+      <user>bwhitcher</user>
+      <package-version.Version>0.3.1</package-version.Version>
+    </system>
+  </read>
+  <event>
+    <type>processing</type>
+    <call>ADC.fast(dwi, b, tmask)</call>
+    <date>Fri Dec 30 10:01:20 2011 GMT</date>
+    <user>bwhitcher</user>
+  </event>
+  <event>
+    <type>completed</type>
+    <call>ADC.fast(dwi, b, tmask)</call>
+    <date>Fri Dec 30 10:01:23 2011 GMT</date>
+    <user>bwhitcher</user>
+  </event>
+</audit-trail> 
+\end{verbatim}
 \normalsize
 \caption{\proglang{XML}-based ``audit trail'' for the DWI acquisition
   of the RIDER~Neuro~MRI data.}
