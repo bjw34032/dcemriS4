@@ -1,4 +1,6 @@
 \documentclass[article,nojss,shortnames]{jss}
+%\VignetteIndexEntry{MRI}
+%\VignettePackage{dcemriS4}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
