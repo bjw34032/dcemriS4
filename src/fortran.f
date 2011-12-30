@@ -8191,7 +8191,7 @@ c
 * Comment out this if block if EMIN is ok
          IF( IWARN ) THEN
             FIRST = .TRUE.
-            WRITE( 6, FMT = 9999 )LEMIN
+*REMOVED FOR R            WRITE( 6, FMT = 9999 )LEMIN
          END IF
 ***
 *
@@ -23868,9 +23868,9 @@ C     ILAENV = 0
 *          of the calling routine.
 *
 *
-      WRITE( *, FMT = 9999 )SRNAME, INFO
+*REMOVED FOR R      WRITE( *, FMT = 9999 )SRNAME, INFO
 *
-      STOP
+*REMOVED FOR R      STOP
 *
  9999 FORMAT( ' ** On entry to ', A6, ' parameter number ', I2, ' had ',
      $      'an illegal value' )
