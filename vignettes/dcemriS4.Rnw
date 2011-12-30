@@ -19,8 +19,8 @@
 \newcommand{\bh}{\mathbf{h}}
 
 %% almost as usual
-\author{Brandon Whitcher\\Mango~Solutions \And 
-        Volker J.~Schmid\\Ludwig-Maximilians Universit\"at M\"unchen}
+\author{Brandon Whitcher\\Mango Solutions \And 
+        Volker J. Schmid\\Ludwig-Maximilians Universit\"at M\"unchen}
 \title{Quantitative Analysis of Dynamic Contrast-Enhanced and Diffusion-Weighted Magnetic Resonance Imaging for Oncology in \proglang{R}}
 
 %% for pretty printing and a nice hypersummary also set:
@@ -82,7 +82,7 @@ available in the public domain.
   E-mail: \email{bwhitcher@mango-solutions.com}\\
   URL: \url{http://www2.imperial.ac.uk/~bwhitche}, \url{http://www.dcemri.org}\\
   
-  Volker J.~Schmid\\
+  Volker J. Schmid\\
   Bioimaging group\\
   Department of Statistics\\
   Ludwig-Maximilians Universit\"at M\"unchen, Germany\\
@@ -125,11 +125,11 @@ mathematics, engineering and statistics to produce a set of
 statistical images based on parameter estimates from a compartmental
 model.  The purpose of the \pkg{dcemriS4} package is to provide the
 user with a collection of functions and subroutines that move
-experimental data through all steps of this data analysis pipeline,
-using standard data formats (such as ANALYZE or NIfTI) that may be
-visualized and manipulated in \proglang{R} \citep{R} or exported for
-accessibility across a wide variety of medical image analysis software
-packages.
+experimental data through all steps of this data analysis pipeline
+\citep{whi-sch:JSS}, using standard data formats (such as ANALYZE or
+NIfTI) that may be visualized and manipulated in \proglang{R}
+\citep{R} or exported for accessibility across a wide variety of
+medical image analysis software packages.
 
 The \proglang{S}4 designation in \pkg{dcemriS4} means that
 \proglang{S}4 object classes are used throughout to ensure efficient
@@ -377,7 +377,7 @@ The horizontal tubes embedded within the phantom cover a range of
 $\text{T1}\in[350,1543]\;\text{ms}$, where shorter T1 relaxation times
 are darker and longer relaxation times are brighter.  By defining
 regions of interest (ROIs) in FSLView one may construct a mask that
-separates voxels belonging to the 10~unique gels.
+separates voxels belonging to the 10 unique gels.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[tbp]
@@ -386,7 +386,7 @@ separates voxels belonging to the 10~unique gels.
   \end{center}
   \caption{Boxplots of the estimated T1 values for the gel-based
     phantom, grouped by user-specified regions of interest.  True
-    T1~values are displayed as colored circles for each distinct ROI.}
+    T1 values are displayed as colored circles for each distinct ROI.}
   \label{fig:t1-phantom-boxplot}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -410,7 +410,7 @@ dev.off()
 We compare the ``true'' T1 values for each ROI with those obtained
 from acquiring multiple flip angles with the application of B1+
 mapping in Figure~\ref{fig:t1-phantom-boxplot}.  Boxplots summarize
-the estimated T1~relaxation times, across all voxel in the ROI defined
+the estimated T1 relaxation times, across all voxel in the ROI defined
 by \code{pmask}, with the true T1 values (large circles).  The first
 seven ROIs correspond to the cylinders that run around and through the
 phantom, clockwise starting from approximately one o'clock.  The
@@ -931,7 +931,7 @@ repository integrating \emph{in vivo} cancer images with clinical and
 genomic data.  The NBIA provides the scientific community with public
 access to DICOM images, image markup, annotations, and rich metadata.
 The DCE-MRI and DW-MRI data analyzed here were downloaded from the
-``RIDER~Neuro~MRI'' collection
+``RIDER Neuro MRI'' collection
 (\url{http://wiki.nci.nih.gov/display/CIP/RIDER}).
 
 \subsection{Dynamic contrast-enhanced MRI}
@@ -1012,7 +1012,7 @@ data and supplying them via the \code{user} option in
     \includegraphics*[width=0.9\textwidth]{281949_19040721_perfusion_ktrans.png}
   \end{center}
   \caption{Statistical images of $\ktrans$ overlayed on the dynamic
-    acquisition for the RIDER~Neuro~MRI data.  Two potential tumors
+    acquisition for the RIDER Neuro MRI data.  Two potential tumors
     are visible, in the region-of-interest, by enhanced rims of high
     $\ktrans$ and central cores of low $\ktrans$.  The values of
     $\ktrans$ are $[0,0.1]\,\text{min}^{-1}$.}
@@ -1100,7 +1100,7 @@ dev.off()
     \end{tabular}
   \end{center}
   \caption{Statistical images of the RIDER Neuro MRI data using
-    non-linear regression for slice~$z=7$.  The parameter $\kep$ is
+    non-linear regression for slice $z=7$.  The parameter $\kep$ is
     the rate constant between EES and blood plasma (units are
     $[0,1.25]\,\text{min}^{-1}$), $v_p$ is the vascular space fraction
     of plasma (units are $[0,30]\,\text{\%}$) and $v_e$ is the EES
@@ -1120,7 +1120,7 @@ the center of both rings, indicating that no blood is being supplied
 to the core of the tumors (most likely caused by necrotic or apoptotic
 processes).  Figure~\ref{fig:perfusion-parametermaps} provides
 statistical images that summarize the entire model-fitting procedure
-for slice~$z=7$.  For both tumors the fraction of contrast agent in the
+for slice $z=7$.  For both tumors the fraction of contrast agent in the
 extravascular extracellular space (EES) $v_e$ is high at the tumor
 rim, a common feature in a tumor that is hypervascular compared to the
 surrounding tissue.  The perfusion/permeability is vastly diminished
@@ -1142,11 +1142,11 @@ robust results may be achieved by using biologically-relevant prior
 information in a Bayesian framework \citep{sch-etal:TMI}.  Two methods
 for parameter estimation from a Bayesian perspective are implemented
 in \pkg{dcemriS4}.  The function \code{dcemri.bayes} uses Markov Chain
-Monte Carlo (MCMC) to explore the posterior~PDF
+Monte Carlo (MCMC) to explore the posterior PDF
 \citep{gil-ric-spi:MCMC} and \code{dcemri.map} uses numerical
 optimization to maximize the posterior \citep{degroot70}.
 
-From the non-linear regression analysis of the RIDER~Neuro~MRI data,
+From the non-linear regression analysis of the RIDER Neuro MRI data,
 it appears that approximately $\ktrans\in[0,0.1]$ and
 $\kep\in[0,1.25]$ (Figure~\ref{fig:perfusion-ktrans}).  Hence, we use
 a Gaussian distribution with expected value $a(\ktrans)=\log(0.05)$
@@ -1210,7 +1210,7 @@ dev.off()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Figure~\ref{fig:perfusion-map} shows the $\ktrans$ statistical image
-for the slice~$z=7$ obtained using the Bayesian~MAP estimator.
+for the slice $z=7$ obtained using the Bayesian MAP estimator.
 Estimated values are similar to those obtained using non-linear
 regression (reproduced in Figure~\ref{fig:perfusion-map} to facilitate
 a side-by-side comparison).  The estimation is similar, but subtly
@@ -1228,14 +1228,14 @@ sum.map <- sum(is.na(fit.map$ktrans[mask]))
 Because we have avoided a computationally expensive procedure, the
 computing times for \code{dcemri.lm} and \code{dcemri.map} are roughly
 the same.  However, the MAP estimator does not make use of the
-complete joint posterior~PDF.
+complete joint posterior PDF.
 
 \subsubsection{Bayesian estimation via Markov Chain Monte Carlo}
 
 Using the MCMC algorithm provided by \code{dcemri.bayes} is
 computationally expensive when compared with all previous estimation
 procedures.  However, the MCMC algorithm explores the complete
-posterior~PDF.  Statistical summaries of the marginal posteriors,
+posterior PDF.  Statistical summaries of the marginal posteriors,
 associated with all parameters of interest, are provided by default
 and all samples from the joint posterior may be obtained using the
 option \code{samples=TRUE} (internal memory may become an issue when
@@ -1297,11 +1297,11 @@ dev.off()
       \includegraphics*[width=0.4\textwidth]{281949_19040721_perfusion_ktrans_bayes_cv.png}
     \end{tabular}
   \end{center}
-  \caption{Statistical images of $\ktrans$ for the RIDER~Neuro~MRI
+  \caption{Statistical images of $\ktrans$ for the RIDER Neuro MRI
     data (slice $z=7$) using Bayesian estimation.  The posterior
     median $\ktrans$, posterior standard deviation of $\ktrans$ and
     the ratio of these two statistics have been obtained from a fully
-    Bayesian~MCMC algorithm.  The MAP estimator of $\ktrans$ is also
+    Bayesian MCMC algorithm.  The MAP estimator of $\ktrans$ is also
     displayed for comparison.  The units of $\ktrans$ are
     $[0,0.1]\,\text{min}^{-1}$ for both estimation techniques.}
   \label{fig:perfusion-bayes}
@@ -1311,7 +1311,7 @@ dev.off()
 Figure~\ref{fig:perfusion-bayes} displays statistical summaries of
 $\ktrans$ (posterior median and standard deviation) provided the
 default settings of \code{dcemri.bayes}.  It is clear that the
-posterior median differs from the MAP~estimator (reproduced in
+posterior median differs from the MAP estimator (reproduced in
 Figure~\ref{fig:perfusion-bayes} for a side-by-side comparison) across
 the majority of non-tumor voxel in the ROI.  However, $\ktrans$ values
 around the enhancing rim of the tumor are similar across all three
@@ -1368,7 +1368,7 @@ dev.off()
 As a summary statistic the maximum of the response function may be
 used.  Alternatively, a response model may be derived from the
 response function (\code{nlr=TRUE}).  Please note that a sample of the
-posterior~PDF is given for the response function and, hence, a
+posterior PDF is given for the response function and, hence, a
 non-linear fit to the response model is performed for each response
 function in the sample.  The \code{dcemri.spline} function supports
 two models, the standard Kety model and the adiabatic approximation of
@@ -1383,7 +1383,7 @@ tissue homogeneity (AATH) \citep{stl-lee:aath}.
       \includegraphics*[width=0.4\textwidth]{281949_19040721_perfusion_ktrans_spline.png}
     \end{tabular}
   \end{center}
-  \caption{Statistical images of $\ktrans$ for the RIDER~Neuro~MRI
+  \caption{Statistical images of $\ktrans$ for the RIDER Neuro MRI
     data (slice $z=7$) using Bayesian penalized splines.  The
     parameter $F_p$ (left) is given by the maximum of the response
     function after deconvolution using an adaptive spline fitting
@@ -1409,7 +1409,7 @@ the negligence of the vascular compartment in the standard Kety model.
 
 \subsection{Diffusion weighted imaging}
 
-The RIDER~Neuro~MRI data repository does not provide DWI acquisitions
+The RIDER Neuro MRI data repository does not provide DWI acquisitions
 \emph{per se} but a diffusion tensor imaging (DTI) acquisition was
 performed at each visit.  The analysis of DTI data is beyond the scope
 of this article, but the interested reader is pointed to the following
@@ -1456,7 +1456,7 @@ dev.off()
     \includegraphics*[width=0.75\textwidth]{281949_19040721_axtensor_D.png}
   \end{center}
   \caption{Statistical images of the apparent diffusion coefficient
-    (ADC) values for the RIDER~Neuro~MRI data.  The range of displayed
+    (ADC) values for the RIDER Neuro MRI data.  The range of displayed
     values of the ADC is $[0.0005,0.003]\,\text{mm$^2$/s}$.}
   \label{fig:tensor}
 \end{figure}
@@ -1544,7 +1544,7 @@ R> audit.trail(dwi)
 \end{verbatim}
 \normalsize
 \caption{\proglang{XML}-based ``audit trail'' for the DWI acquisition
-  of the RIDER~Neuro~MRI data.}
+  of the RIDER Neuro MRI data.}
 \label{fig:audit-trail}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1564,7 +1564,7 @@ conversion process and the last three tags were performed during
 compilation of this document.  In each block pertinent information has
 been recorded; such as the function call, version of \proglang{R}
 being used, version of the \pkg{oro.nifti} package being used,
-user~ID, date, etc.  Notice that some of these properties have changed
+user ID, date, etc.  Notice that some of these properties have changed
 over time, allowing one to accurately reproduce the data processing
 stream (if necessary).
 
@@ -1595,7 +1595,7 @@ intervals or the entire posterior distribution.
 
 The \pkg{dcemriS4} package utilizes the \code{nifti} class defined in
 the \pkg{oro.nifti} package.  This allows one to retain metadata
-information stored in the original DICOM data (e.g., patient~ID or the
+information stored in the original DICOM data (e.g., patient ID or the
 scan date) when performing an analysis.  In addition, each step in the
 data analysis pipeline are recorded using the audit trail capability
 provided by \pkg{oro.nifti}.  Hence, results may be reproduced in a
