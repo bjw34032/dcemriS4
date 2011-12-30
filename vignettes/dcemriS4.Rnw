@@ -1,5 +1,5 @@
 \documentclass[article,nojss,shortnames]{jss}
-%\VignetteIndexEntry{MRI}
+%\VignetteIndexEntry{Using dcemriS4 for the analysis of DCE-MRI and DWI}
 %\VignettePackage{dcemriS4}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,9 +146,9 @@ applied on a voxel-by-voxel basis to the ANALYZE or NIfTI objects and
 all statistical summaries are output as valid NIfTI objects to
 facilitate interoperability.  As voxel-wise quantitative analysis can
 be time consuming, \pkg{dcemriS4} supports basic parallel computing by
-incorporating the \pkg{multicore} package \citep{multicore}.
-Computations are easily parallelized with the variable
-\code{multicore=TRUE} in the most computationally expensive functions.
+incorporating the \pkg{parallel} package.  Computations are easily
+parallelized with the variable \code{multicore=TRUE} in the most
+computationally expensive functions.
 
 \section{Dynamic contrast-enhanced magnetic resonance imaging}
 
@@ -727,7 +727,7 @@ functions are provided to exploit the posterior PDF:
   posterior when one wants to construct, for example, voxel-wise
   credible intervals on the kinetic parameters.  The algorithm is
   computationally expensive and parallel computation has been enabled
-  with the \pkg{multicore} package by setting the option
+  with the \pkg{parallel} package by setting the option
   \code{multicore=TRUE}.
 
 \end{itemize}
@@ -835,7 +835,7 @@ provided.  Samples from the posterior density for the kinetic
 parameters, the maximum response $F_p$, the onset time $t_0$, the
 response functions, and the fitted curves are also available
 (\code{samples=TRUE}).  Parallel computing may be accessed using the
-\pkg{multicore} package (\code{multicore=TRUE}).
+\pkg{parallel} package (\code{multicore=TRUE}).
 
 \subsubsection{Estimating the kinetic curves}
 
@@ -949,14 +949,15 @@ limited region-of-interest (ROI) created in FSLView
 (\url{http://fsl.fmrib.ox.ac.uk/fsl/fslview/}) and saved in ANALYZE
 format.
 
-<<RiderNeuroMRI+pre0>>=
+<<RiderNeuroMRI+pre0,eval=FALSE>>=
 perf <- paste("281949", "19040721", "perfusion.nii.gz", sep="_")
 fmask <- system.file(file.path("nifti", sub(".nii", "_mask.hdr", perf)),
                      package="dcemriS4")
 mask <- readANALYZE(fmask)
 mask <- ifelse(mask > 0, TRUE, FALSE)
-<<RiderNeuroMRI+pre1,eval=FALSE>>=
 dynamic <- readNIfTI(perf)
+@ 
+<<RiderNeuroMRI+pre1,eval=FALSE>>=
 TR <- 4.43 / 1000 # taken from CSV file
 dangle <- 25      # taken from CSV file
 (fflip <- list.files(pattern="ax[0-9]"))
@@ -1038,7 +1039,7 @@ writeNIfTI(fit.lm$ve, paste(perf, "ve", sep="_"))
 writeNIfTI(fit.lm$sse, paste(perf, "sse", sep="_"))
 rm(fit.lm)
 @ 
-<<RiderNeuroMRI+lm3,echo=FALSE>>=
+<<RiderNeuroMRI+lm3,echo=FALSE,eval=FALSE>>=
 fit.lm <- list(ktrans=readNIfTI(system.file(file.path("nifti", sub(".nii", "_ktrans.nii", perf)), package="dcemriS4")))
 x <- 41:220
 y <- 21:220
@@ -1170,7 +1171,7 @@ writeNIfTI(fit.map$ve, paste(perf, "ve", "map", sep="_"))
 writeNIfTI(fit.map$vp, paste(perf, "vp", "map", sep="_"))
 writeNIfTI(fit.map$sigma2, paste(perf, "sigma2", "map", sep="_"))
 @ 
-<<RiderNeuroMRI+map3,echo=FALSE>>=
+<<RiderNeuroMRI+map3,echo=FALSE,eval=FALSE>>=
 fit.map <- list(ktrans=readNIfTI(system.file(file.path("nifti", sub(".nii", "_ktrans_map.nii", perf)), package="dcemriS4")))
 @ 
 <<RiderNeuroMRI+map4,echo=FALSE,eval=FALSE,results=hide>>=
@@ -1219,7 +1220,7 @@ parameters the number of voxels where the MAP estimator does not
 converge is essentially eliminated when compared with non-linear
 regression.
 
-<<RiderNeuroMRI+lm-versus-map>>=
+<<RiderNeuroMRI+lm-versus-map,echo=FALSE,eval=FALSE>>=
 sum.lm <- sum(is.na(fit.lm$ktrans[mask]))
 sum.map <- sum(is.na(fit.map$ktrans[mask]))
 100 * c("LM"=sum.lm, "MAP"=sum.map) / sum(mask > 0)
