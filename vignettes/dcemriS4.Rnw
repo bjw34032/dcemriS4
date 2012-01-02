@@ -100,12 +100,12 @@ available in the public domain.
 %% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 <<preliminaries,echo=FALSE,results=hide>>=
-library("oro.dicom")
-library("oro.nifti")
-library("dcemriS4")
-library("bitops")
-library("minpack.lm")
-library("splines")
+require("oro.dicom")
+require("oro.nifti")
+require("dcemriS4")
+require("bitops")
+require("minpack.lm")
+require("splines")
 options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
 @
 
