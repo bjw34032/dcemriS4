@@ -93,7 +93,7 @@ setMethod("dcemri.lm", signature(conc="array"),
            if (is.null(guess)) {
              guess <- c("th1"=-1, "th3"=-1)
            } else {
-             if (length(guess) != 2 || all(names(guess) %in% c("th1","th3"))) {
+             if (length(guess) != 2 || !all(names(guess) %in% c("th1","th3"))) {
                stop("Names of starting parameters must be \"th1\" and \"th3\"")
              }
            }
