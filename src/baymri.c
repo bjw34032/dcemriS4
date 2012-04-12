@@ -254,7 +254,7 @@ void dce_bayes_run_single(int* NRI, double* conc, double* tau_gamma,
 			  int* settings, double* time, int* T,
 			  double *ktrans_trace, double* kep_trace, 
 			  double* vp_trace, double* tau_epsilon_trace,
-			  double* deviance_trace) {
+			  double* deviance_trace, int* nsample) {
   GetRNGstate();
   int iter = 0, tu;
   double temp;
@@ -339,6 +339,7 @@ void dce_bayes_run_single(int* NRI, double* conc, double* tau_gamma,
       deviance_trace[sample] = deviance(tau_epsilon, conc, time, ktrans, 
 					kep, vp, T[0], aif_settings);
       sample++;
+      if (sample>nsample[0]){sample=nsample[0];iter=iter+NRI[1];}
     }
   }
   PutRNGstate();
