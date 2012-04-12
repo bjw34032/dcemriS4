@@ -15,13 +15,13 @@
 }
 \usage{
 \S4method{dcemri.bayes}{array}(conc, time, img.mask, model="extended",
-             aif=NULL, user=NULL, nriters=3500, thin=3, burnin=500,
+             aif=NULL, user=NULL, nriters=3000, thin=3, burnin=1000,
              tune=267, ab.ktrans=c(0,1), ab.kep=ab.ktrans,
              ab.vp=c(1,19), ab.tauepsilon=c(1,1/1000),
              samples=FALSE, multicore=FALSE, verbose=FALSE, dic=FALSE,
              ...)
-dcemri.bayes.single(conc, time, nriters=3500, thin=3,
-                    burnin=500, tune=267, ab.gamma=c(0,1),
+dcemri.bayes.single(conc, time, nriters=3000, thin=3,
+                    burnin=1000, tune=267, ab.gamma=c(0,1),
                     ab.theta=c(0,1), ab.vp=c(1,19),
                     ab.tauepsilon=c(1,1/1000), aif.model=0,
                     aif.parameter=c(2.4,0.62,3,0.016), vp=1)
