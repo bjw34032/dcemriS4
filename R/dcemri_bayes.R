@@ -59,7 +59,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
   if (sum(is.na(conc)) > 0) {
     return(NA)
   } else {
-    n <- ceiling((nriters - burnin) / thin) 
+    n <- floor((nriters - burnin) / thin) 
     if (tune > nriters/2) {
       tune <- floor(nriters/2)
     }
@@ -247,7 +247,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
     cat("  Extracting results...", fill=TRUE)
   }
   
-  n <- length(ktrans.sample) # number of samples from posterior
+  n <- floor((nriters - burnin) / thin)  # number of samples from posterior
   ktrans <- kep <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
   sigma2 <- rep(NA, nvoxels)
   if (model %in% c("extended", "orton.exp", "orton.cos")) {
@@ -267,7 +267,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
   }
 
   for (k in 1:nvoxels) {
-    index <- nvoxels * (k-1) + (1:n)
+    index <- (k-1)*n + (1:n)
     ktrans$par[k] <- median(bayes.list[[k]]$ktrans)
     kep$par[k] <- median(bayes.list[[k]]$kep)
     ktrans$error[k] <- sd(bayes.list[[k]]$ktrans)
