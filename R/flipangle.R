@@ -1,5 +1,4 @@
 ##
-##
 ## Copyright (c) 2009-2011 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
 ## 
@@ -46,19 +45,18 @@ dam <- function(low, high, low.deg) {
 #############################################################################
 
 R10.lm <- function(signal, alpha, TR, guess, control=nls.lm.control()) {
-  func <- function(x, y) {
+  require("minpack.lm") # Levenberg-Marquart fitting
+  func <- function(x, signal, alpha, TR) {
     R1 <- x[1]
     m0 <- x[2]
-    signal <- y[[1]]
-    theta <- pi/180 * y[[2]]    # degrees to radians
-    TR <- y[[3]]
+    theta <- pi/180 * alpha # degrees to radians
     signal -
       m0 * sin(theta) * (1 - exp(-TR*R1)) / (1 - cos(theta) * exp(-TR*R1))
   }
-  require("minpack.lm") # Levenberg-Marquart fitting
-  out <- nls.lm(par=guess, fn=func, control=control,
-                y=list(signal, alpha, TR))
-  list(R1=out$par[1], S0=out$par[2], info=out$info, message=out$message)
+  out <- nls.lm(par=guess, fn=func, control=control, signal=signal,
+                alpha=alpha, TR=TR)
+  list(R1=out$par[1], m0=out$par[2], hessian=out$hessian, info=out$info,
+       message=out$message)
 }
 
 #############################################################################
@@ -66,13 +64,13 @@ R10.lm <- function(signal, alpha, TR, guess, control=nls.lm.control()) {
 #############################################################################
 
 E10.lm <- function(signal, alpha, guess, control=nls.lm.control()) {
+  require("minpack.lm") # Levenberg-Marquart fitting
   func <- function(x, signal, alpha) {
     E1 <- x[1]
     m0 <- x[2]
-    theta <- pi/180 * alpha    # degrees to radians
+    theta <- pi/180 * alpha # degrees to radians
     signal - m0 * sin(theta) * (1 - E1) / (1 - cos(theta) * E1)
   }
-  require("minpack.lm") # Levenberg-Marquart fitting
   out <- nls.lm(par=guess, fn=func, control=control, signal=signal,
                 alpha=alpha)
   list(E10=out$par[1], m0=out$par[2], hessian=out$hessian, info=out$info,
@@ -103,6 +101,15 @@ setMethod("R1.fast", signature(flip="array"),
   if (!is.logical(flip.mask)) { # Check flip.mask is logical
     stop("Mask must be logical.")
   }
+  if (length(fangles) > 1 && length(TR) == 1) {
+    method <- "E10"
+  } else {
+    if (length(fangles) == 1 && length(TR) > 1) {
+      method <- "R10"
+    } else {
+      stop("Only vector of flip angles and single TR or single flip angle and vector TR is allowed.")
+    }
+  }
     
   X <- nrow(flip)
   Y <- ncol(flip)
@@ -127,19 +134,35 @@ setMethod("R1.fast", signature(flip="array"),
     cat("  Calculating R10 and M0...", fill=TRUE)
   }
   if (multicore && require("parallel")) {
-    fit.list <- mclapply(flip.list, function(x) {
-      E10.lm(x$signal, x$angles, guess=c(1, mean(x$signal)), control)
-    })
+    if (method == "E10") {
+      fit.list <- mclapply(flip.list, function(x) {
+        E10.lm(x$signal, x$angles, guess=c(1, mean(x$signal)), control)
+      })
+    } else {
+      fit.list <- mclapply(flip.list, function(x) {
+        R10.lm(x$signal, x$angles, TR, guess=c(1, mean(x$signal)), control)
+      })
+    }
   } else {
-    fit.list <- lapply(flip.list, function(x) {
-      E10.lm(x$signal, x$angles, guess=c(1, mean(x$signal)), control)
-    })
+    if (method == "E10") {
+      fit.list <- lapply(flip.list, function(x) {
+        E10.lm(x$signal, x$angles, guess=c(1, mean(x$signal)), control)
+      })
+    } else {
+      fit.list <- lapply(flip.list, function(x) {
+        R10.lm(x$signal, x$angles, TR, guess=c(1, mean(x$signal)), control)
+      })
+    }
   }
   rm(flip.list) ; gc()
   R10 <- M0 <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
   for (k in 1:nvoxels) {
     if (fit.list[[k]]$info > 0 && fit.list[[k]]$info < 5) {
-      R10$par[k] <- log(fit.list[[k]]$E10) / -TR
+      if (method == "E10") {
+        R10$par[k] <- log(fit.list[[k]]$E10) / -TR
+      } else {
+        R10$par[k] <- fit.list[[k]]$R10
+      }
       M0$par[k] <- fit.list[[k]]$m0
       R10$error[k] <- sqrt(fit.list[[k]]$hessian[1,1])
       M0$error[k] <- sqrt(fit.list[[k]]$hessian[2,2])

@@ -163,7 +163,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
          weinmann = ,
          extended = {
            aif <- ifelse(is.null(aif), "tofts.kermode", aif)
-           aif.names <- c("tofts.kermode","fritz.hansen","empirical")
+           aif.names <- c("tofts.kermode","fritz.hansen","empirical","user")
            if (! aif %in% aif.names) {
              stop(sprintf("Only aif=\"%s\" or aif=\"%s\" or aif=\"%s\" are acceptable AIFs for model=\"weinmann\" or model=\"extended\"", aif.names[1], aif.names[2], aif.names[3]), call.=FALSE)
            }

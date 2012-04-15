@@ -54,7 +54,7 @@ setMethod("dcemri.lm", signature(conc="array"),
          weinmann = ,
          extended = {
            aif <- ifelse(is.null(aif), "tofts.kermode", aif)
-           aif.names <- c("tofts.kermode","fritz.hansen","empirical")
+           aif.names <- c("tofts.kermode","fritz.hansen","empirical","user")
            if (! aif %in% aif.names) {
              stop(sprintf("Only aif=\"%s\" or aif=\"%s\" or aif=\"%s\" are acceptable AIFs for model=\"weinmann\" or model=\"extended\"", aif.names[1], aif.names[2], aif.names[3]), call.=FALSE)
            }
@@ -93,7 +93,7 @@ setMethod("dcemri.lm", signature(conc="array"),
            if (is.null(guess)) {
              guess <- c("th1"=-1, "th3"=-1)
            } else {
-             if (length(guess) != 2 || !all(names(guess) %in% c("th1","th3"))) {
+             if (length(guess) != 2 || ! all(names(guess) %in% c("th1","th3"))) {
                stop("Names of starting parameters must be \"th1\" and \"th3\"")
              }
            }
@@ -102,12 +102,12 @@ setMethod("dcemri.lm", signature(conc="array"),
          extended.empirical = ,
          orton.exp = ,
          orton.cos = {
+           vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
            if (is.null(guess)) {
              guess <- c("th0"=-3, "th1"=-1, "th3"=-1)
-             vp <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
            } else {
              if (length(guess) != 3 ||
-                 all(names(guess) %in% c("th0","th1","th3"))) {
+                 ! all(names(guess) %in% c("th0","th1","th3"))) {
                stop("Names of starting parameters must be \"th0\", \"th1\" and \"th3\"")
              }
            }
