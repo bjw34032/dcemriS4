@@ -232,7 +232,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
                            burnin=burnin, tune=tune, ab.gamma=ab.ktrans,
                            ab.theta=ab.kep, ab.vp=ab.vp,
                            ab.tauepsilon=ab.tauepsilon, aif.model=aif.model,
-                           aif.parameter=aif.parameter, vp=vp.do)
+                           aif.parameter=aif.parameter, vp=vp.do, mc.preschedule=TRUE)
   } else {
     bayes.list <- lapply(conc.list, FUN=.dcemri.bayes.single, time=time,
                          nriters=nriters, thin=thin, burnin=burnin,
@@ -366,11 +366,12 @@ setMethod("dcemri.bayes", signature(conc="array"),
       for (j in 1:J) {
         for (k in 1:K) {
           if (img.mask[i,j,k]) {
-            par <- list("ktrans"=ktrans.out$par[i,j,k],
-                        "kep"=kep.out$par[i,j,k])
+            par <- NULL
             if (vp.do) {
               par["vp"] <- Vp.out$par[i,j,k]
-            }
+            }		# Caution: order of assignment is important!!!
+            par["ktrans"]=ktrans.out$par[i,j,k]
+            par["kep"]=kep.out$par[i,j,k]
             fitted[i,j,k,] <- kineticModel(time, par, model=model, aif=aif)
           }
         }
