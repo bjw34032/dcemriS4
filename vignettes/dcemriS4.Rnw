@@ -283,7 +283,7 @@ f120 <- system.file(file.path("nifti", "SDAM_ep2d_120deg_26slc.nii.gz"),
                     package="dcemriS4")
 sdam120 <- readNIfTI(f120)
 sdam.image <- rowMeans(dam(sdam60, sdam120, 60), dims=3)
-mask <- (rowSums(sdam60, dims=3) > 500)
+mask <- (rowSums(sdam60, dims=3) > 64)
 @ 
 <<dam+png,echo=FALSE,results=hide>>=
 png("sdam.png", width=2*480, height=2*480)
