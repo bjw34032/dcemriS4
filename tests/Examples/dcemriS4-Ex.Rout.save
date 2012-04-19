@@ -1,6 +1,6 @@
 
-R version 2.14.0 beta (2011-10-16 r57266)
-Copyright (C) 2011 The R Foundation for Statistical Computing
+R version 2.15.0 (2012-03-30)
+Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
@@ -23,12 +23,14 @@ Type 'q()' to quit R.
 > options(warn = 1)
 > library('dcemriS4')
 Loading required package: oro.nifti
+Loading required package: bitops
 Loading required package: XML
 
-oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.2.8)
-TRUE
+oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.3.2)
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.45)
+Loading required package: parallel
+
+dcemriS4: A Package for Medical Image Analysis (version = 0.47)
 
 > 
 > assign(".oldSearch", search(), pos = 'CheckExEnv')
@@ -156,6 +158,78 @@ detaching ‘package:minpack.lm’
 > 
 > ## Bayesian estimation with Fritz-Hansen default AIF
 > fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen")
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > 
 > ## Bayesian estimation with "orton.exp" function fit to Buckley's AIF
 > aif <- buckley$input[xi]
@@ -164,6 +238,78 @@ Loading required package: minpack.lm
 > aifparams$D <- 1
 > fit.bayes.aif <- dcemri.bayes(img, time, mask, model="orton.exp",
 +                               aif="user", user=aifparams)
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > 
 > plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -173,23 +319,183 @@ Loading required package: minpack.lm
 > legend("right", c("extended/fritz.hansen","orton.exp/user"), pch=1:2)
 > cbind(breast$ktrans, fit.bayes$ktrans[,,1], fit.bayes.aif$ktrans[,,1])
              [,1]      [,2]       [,3]
- [1,] 0.145599052 0.3806528 0.55273543
- [2,] 0.218344559 0.5962756 0.50296353
- [3,] 0.250521815 0.6969395 0.48791286
- [4,] 0.268391926 0.7513096 0.48090299
- [5,] 0.279725126 0.7883641 0.47508049
- [6,] 0.009912791 0.4541934 0.09155171
- [7,] 0.146992146 0.4598022 0.47405873
- [8,] 0.328712966 0.8580009 0.49762431
- [9,] 0.387767110 0.9695250 0.50383711
-[10,] 0.250521815 0.5508540 0.45697278
-[11,] 0.250521815 0.6214630 0.47239940
-[12,] 0.250521815 0.7706327 0.50486749
-[13,] 0.250521815 0.8406215 0.52505953
+ [1,] 0.145599052 0.3810125 0.55292642
+ [2,] 0.218344559 0.5962536 0.50322417
+ [3,] 0.250521815 0.6975559 0.48797216
+ [4,] 0.268391926 0.7516978 0.48087096
+ [5,] 0.279725126 0.7905062 0.47505964
+ [6,] 0.009912791 0.4574822 0.08727356
+ [7,] 0.146992146 0.4597193 0.47426411
+ [8,] 0.328712966 0.8578130 0.49763244
+ [9,] 0.387767110 0.9703206 0.50389926
+[10,] 0.250521815 0.5507150 0.45706188
+[11,] 0.250521815 0.6216169 0.47242806
+[12,] 0.250521815 0.7714078 0.50453120
+[13,] 0.250521815 0.8395316 0.52522990
 > 
 > fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > fit.lm.aif <- dcemri.lm(img, time, mask, model="orton.exp", aif="user",
 +                         user=aifparams)
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > 
 > plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -229,9 +535,145 @@ detaching ‘package:minpack.lm’
 > 
 > ## MAP estimation with extended Kety model and Fritz-Hansen default AIF
 > fit.map.vp <- dcemri.map(img, time, mask, aif="fritz.hansen")
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > ## Nonlinear regression with extended Kety model and Fritz-Hansen default AIF
 > fit.lm.vp <- dcemri.lm(img, time, mask, aif="fritz.hansen")
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 Loading required package: minpack.lm
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > 
 > plot(breast$ktrans, fit.map.vp$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -243,8 +685,120 @@ Loading required package: minpack.lm
 > 
 > ## MAP estimation with Kety model and Fritz-Hansen default AIF
 > fit.map <- dcemri.map(img, time, mask, model="weinmann", aif="fritz.hansen")
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > ## Nonlinear regression with Kety model and Fritz-Hansen default AIF
 > fit.lm <- dcemri.lm(img, time, mask, model="weinmann", aif="fritz.hansen")
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > 
 > cbind(breast$kep, fit.lm$kep[,,1], fit.lm.vp$kep[,,1], fit.map$kep[,,1],
 +       fit.map.vp$kep[,,1])
@@ -308,11 +862,155 @@ detaching ‘package:minpack.lm’
 > 
 > fit.spline <- dcemri.spline(img, time, mask, aif="fritz.hansen",
 +                             nriters=250, nlr=TRUE)
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 Loading required package: splines
 Loading required package: minpack.lm
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
 +                                 aif.observed=aif, nriters=250,
 +                                 nlr=TRUE)
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > 
 > plot(breast$ktrans, fit.spline$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -365,9 +1063,153 @@ detaching ‘package:minpack.lm’, ‘package:splines’
 > ## Estimate kinetic parameters directly from Buckley's empirical AIF
 > fit1 <- dcemri.lm(img, time, mask, model="weinmann", aif="empirical",
 +                   user=buckley$input)
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 Loading required package: minpack.lm
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > fit2 <- dcemri.lm(img, time, mask, model="extended", aif="empirical",
 +                   user=buckley$input)
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > 
 > ## Set up breast data for dcemri
 > xi <- seq(5, 300, by=3)
@@ -397,6 +1239,86 @@ $message
 
 > fit3 <- dcemri.lm(img, time, mask, model="orton.exp", aif="user",
 +                   user=aifparams)
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > 
 > ## Scatterplot comparing true and estimated Ktrans values
 > plot(breast$ktrans, fit1$ktrans, xlim=c(0,0.75), ylim=c(0,0.75),
@@ -442,7 +1364,7 @@ $message
  [7,] 0.0600 3.971422e-02 3.895469e-02
  [8,] 0.0600 1.899215e-02 1.873551e-02
  [9,] 0.0600 1.138390e-02 1.112868e-02
-[10,] 0.0001 2.089745e-12 3.025355e-18
+[10,] 0.0001 1.128817e-17 3.025355e-18
 [11,] 0.0300 1.521879e-02 1.482669e-02
 [12,] 0.0900 3.789190e-02 3.776697e-02
 [13,] 0.1200 4.396546e-02 4.480785e-02
@@ -502,7 +1424,55 @@ detaching ‘package:minpack.lm’
 > signal <- array(dwi(S0, b, D) + rnorm(length(b), sd=0.15),
 +                 c(rep(1,3), length(b)))
 > ADC <- ADC.fast(signal, b, array(TRUE, rep(1,3)))
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 Loading required package: minpack.lm
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > unlist(ADC) # text output
           S0            D     S0.error      D.error 
 9.985900e+00 7.337532e-04 1.671637e+00 5.369434e+03 
@@ -569,7 +1539,39 @@ detaching ‘package:minpack.lm’
 > signal <- array(gre(S0, TR, T1, alpha) + rnorm(length(alpha), sd=.15),
 +                 c(rep(1,3), length(alpha)))
 > out <- R1.fast(signal, array(TRUE, rep(1,3)), alpha, TR)
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 Loading required package: minpack.lm
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > unlist(out)
         M0        R10 
 99.5197735  0.6534572 
@@ -603,13 +1605,165 @@ detaching ‘package:minpack.lm’
 > time <- buckley$time.min[xi]
 > 
 > fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 Loading required package: minpack.lm
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > par.lm <- c("vp"=fit.lm$vp[3], "ktrans"=fit.lm$ktrans[3], "kep"=fit.lm$kep[3])
 > curve.lm <- kineticModel(time, par.lm)
 > plot(time, img[3,1,1,], xlab="time", ylab="contrast agent concentration")
 > lines(time, curve.lm, lwd=2, col=2)
 > 
 > fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen")
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
+Warning in removeNodes.list(kids) :
+  removeNode only works on internal nodes at present
 > par.bayes <- c("vp"=fit.bayes$vp[3], "ktrans"=fit.bayes$ktrans[3],
 +                "kep"=fit.bayes$kep[3])
 > curve.bayes <- kineticModel(time, par.bayes)
@@ -619,17 +1773,17 @@ Loading required package: minpack.lm
 +        lwd=2, col=c(2,4))
 > cbind(time, img[3,,,], curve.lm, curve.bayes)[20:30,]
           time           curve.lm curve.bayes
- [1,] 1.650000 0.775142 0.7662219   0.7666571
- [2,] 1.733333 0.778938 0.7701721   0.7705047
- [3,] 1.816667 0.782176 0.7737276   0.7739610
- [4,] 1.900000 0.784939 0.7769461   0.7770835
- [5,] 1.983333 0.787302 0.7798738   0.7799184
- [6,] 2.066667 0.789326 0.7825480   0.7825028
- [7,] 2.150000 0.791067 0.7849987   0.7848667
- [8,] 2.233333 0.792571 0.7872505   0.7870345
- [9,] 2.316667 0.793878 0.7893233   0.7890263
-[10,] 2.400000 0.795021 0.7912340   0.7908584
-[11,] 2.483333 0.796029 0.7929963   0.7925449
+ [1,] 1.650000 0.775142 0.7662219   0.7671487
+ [2,] 1.733333 0.778938 0.7701721   0.7709909
+ [3,] 1.816667 0.782176 0.7737276   0.7744416
+ [4,] 1.900000 0.784939 0.7769461   0.7775586
+ [5,] 1.983333 0.787302 0.7798738   0.7803881
+ [6,] 2.066667 0.789326 0.7825480   0.7829671
+ [7,] 2.150000 0.791067 0.7849987   0.7853256
+ [8,] 2.233333 0.792571 0.7872505   0.7874881
+ [9,] 2.316667 0.793878 0.7893233   0.7894747
+[10,] 2.400000 0.795021 0.7912340   0.7913018
+[11,] 2.483333 0.796029 0.7929963   0.7929833
 > 
 > 
 > 
@@ -661,7 +1815,7 @@ detaching ‘package:minpack.lm’
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  24.22 0.02 24.269 0 0 
+Time elapsed:  25.48 0.05 25.614 0 0 
 > grDevices::dev.off()
 null device 
           1 
