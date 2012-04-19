@@ -51,7 +51,11 @@ compartmentalModel <- function(type) {
            ## Convolution of Tofts & Kermode AIF with single-compartment model
            th1 <- theta[1]
            th3 <- theta[2]
-           erg <- p$D * exp(th1) * ((p$a1 / (p$m1 - exp(th3))) * (exp(-(time * exp(th3))) - exp(-(time * p$m1))) + (p$a2 / (p$m2 - exp(th3))) * (exp(-(time * exp(th3))) - exp(-(time * p$m2))))
+           erg <- p$D * exp(th1) *
+             (p$a1 / (exp(th3) - p$m1) *
+              (exp(-time * p$m1) - exp(-time * exp(th3))) +
+              p$a2 / (exp(th3) - p$m2) *
+              (exp(-time * p$m2) - exp(-time * exp(th3))))
            erg[time <= 0] <- 0
            return(erg)
          },
@@ -66,10 +70,10 @@ compartmentalModel <- function(type) {
            th1 <- theta[2]
            th3 <- theta[3]
            erg <- exp(th0) * Cp(time, p) + p$D * exp(th1) *
-             ((p$a1 / (p$m1 - exp(th3))) *
-              (exp(-(time * exp(th3))) - exp(-(time * p$m1))) +
-              (p$a2 / (p$m2 - exp(th3))) *
-              (exp(-(time * exp(th3))) - exp(-(time * p$m2))))
+             (p$a1 / (exp(th3) - p$m1) *
+              (exp(-time * p$m1) - exp(-time * exp(th3))) +
+              p$a2 / (exp(th3) - p$m2) *
+              (exp(-time * p$m2) - exp(-time * exp(th3))))
            erg[time <= 0] <- 0
            return(erg)
          },
@@ -154,10 +158,20 @@ compartmentalModel <- function(type) {
          function(time, theta, aif) {
            th1 <- theta[1]
            th3 <- theta[2]
-           tsec <- seq(min(time*60), ceiling(max(time*60)), by=1)
-           aif.new <- approx(time*60, aif, tsec)$y
-           erg <- approx(tsec, expConv(aif.new, exp(th1)/60, exp(th3)/60), time*60)$y
-           erg[time <= 0] <- 0
+           tsec <- seq(min(time * 60), ceiling(max(time * 60)), by=1)
+           ltsec <- length(tsec)
+           tsec.gt0 <- tsec[tsec >= 0]
+           tsec.lt0 <- tsec[tsec < 0]
+           aif.sec <- approx(time * 60, aif, tsec.gt0)$y
+           if (is.na(aif.sec[ltsec])) {
+             aif.sec[ltsec] <- aif.sec[ltsec - 1]
+           }
+           erg.gt0 <- approx(tsec.gt0,
+                             expConv(aif.sec, exp(th1) / 60, exp(th3) / 60),
+                             time[time >= 0] * 60)$y
+           erg.gt0[1] <- 0
+           erg <- numeric(length(time))
+           erg[time >= 0] <- erg.gt0
            return(erg)
          },
          extended.empirical =
@@ -165,24 +179,36 @@ compartmentalModel <- function(type) {
            th0 <- theta[1]
            th1 <- theta[2]
            th3 <- theta[3]
-           tsec <- seq(min(time*60), ceiling(max(time*60)), by=1)
-           aif.new <- approx(time*60, aif, tsec)$y
-           erg <- approx(tsec, exp(th0) * aif.new + expConv(aif.new, exp(th1)/60, exp(th3)/60), time*60)$y
-           erg[time <= 0] <- 0
+           tsec <- seq(min(time * 60), ceiling(max(time * 60)), by=1)
+           ltsec <- length(tsec)
+           tsec.gt0 <- tsec[tsec >= 0]
+           tsec.lt0 <- tsec[tsec < 0]
+           aif.sec <- approx(time * 60, aif, tsec.gt0)$y
+           if (is.na(aif.sec[ltsec])) {
+             aif.sec[ltsec] <- aif.sec[ltsec - 1]
+           }
+           erg.gt0 <- approx(tsec.gt0,
+                             expConv(aif.sec, exp(th1) / 60, exp(th3) / 60),
+                             time[time >= 0] * 60)$y
+           erg.gt0[1] <- 0
+           erg <- numeric(length(time))
+           erg[time >= 0] <- exp(th0) * aif[time >= 0] + erg.gt0
            return(erg)
          })
 }
 
 expConv <- function(input, k1, k2) {
-  n <- length(input)
-  convolution <- rep(0, n)
-  ek2 <- exp(-k2)
-  if (ek2 == 1) {
-    convolution <- k1 * cumsum(input)
+  k1input <- k1 * input
+  if (k2 == 0) {
+    convolution <- cumsum(k1input)
   } else {
     prev <- 0
-    for (i in 1:n) {
-      prev <- prev * ek2 + k1 * input[i] * (1 - ek2) / k2
+    len <- length(input)
+    convolution <- numeric(len)
+    ek2 <- exp(-k2)
+    k1intputk2 <- k1input * (1 - ek2) / k2
+    for (i in 1:len) {
+      prev <- prev * ek2 + k1intputk2[i]
       convolution[i] <- prev
     }
   }
