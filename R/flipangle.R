@@ -241,7 +241,7 @@ setGeneric("CA.fast2", function(dynamic, ...) standardGeneric("CA.fast2"))
 setMethod("CA.fast2", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
                    verbose=FALSE) 
-          .dcemriwrapper("CA.fast2", dynamic, dyn.mask, dangle, flip,
+          .dcemriWrapper("CA.fast2", dynamic, dyn.mask, dangle, flip,
                          fangles, TR, r1, verbose))
 
 #############################################################################

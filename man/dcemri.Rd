@@ -92,7 +92,8 @@
   The arterial input function must be either literature-based (with
   fixed parameters) or the exponential AIF from Orton \emph{et al.}
   (2008) with user-defined parameters.
-
+}
+\note{
   WARNING: when using the \code{empirical} AIF, a linear interpolation
   is used to upsample the AIF to a one-second sampling rate.  This
   allows one to utilize a computationally efficient numeric method to

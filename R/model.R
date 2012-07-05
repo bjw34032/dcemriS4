@@ -56,7 +56,7 @@ compartmentalModel <- function(type) {
               (exp(-time * p$m1) - exp(-time * exp(th3))) +
               p$a2 / (exp(th3) - p$m2) *
               (exp(-time * p$m2) - exp(-time * exp(th3))))
-           erg[time <= 0] <- 0
+           erg[time < 0] <- 0
            return(erg)
          },
          extended =
@@ -74,7 +74,7 @@ compartmentalModel <- function(type) {
               (exp(-time * p$m1) - exp(-time * exp(th3))) +
               p$a2 / (exp(th3) - p$m2) *
               (exp(-time * p$m2) - exp(-time * exp(th3))))
-           erg[time <= 0] <- 0
+           erg[time < 0] <- 0
            return(erg)
          },
          kety.orton.exp =
@@ -89,7 +89,7 @@ compartmentalModel <- function(type) {
            T4 <- (exp(-p$muG * time) - exp(-kep * time)) / (kep - p$muG) -
              (exp(-p$muB * time) - exp(-kep * time)) / (kep - p$muB)
            erg <- ktrans * (T1 * T2 + T3 * T4)
-           erg[time <= 0] <- 0
+           erg[time < 0] <- 0
            return(erg)
          },
          orton.exp =
@@ -110,7 +110,7 @@ compartmentalModel <- function(type) {
              (kep - p$muG) - (exp(-p$muB * time) - exp(-kep * time)) /
                (kep - p$muB)
            erg <- vp * Cp(time, p) + ktrans * (T1 * T2 + T3 * T4)
-           erg[time <= 0] <- 0
+           erg[time < 0] <- 0
            return(erg)
          },
          kety.orton.cos =
@@ -130,7 +130,7 @@ compartmentalModel <- function(type) {
            erg <- ifelse(time <= tB,
                          p$aB * p$aG * ktrans / (kep - p$muG) * ((A2(time, p$muG, p) + (kep - p$muG) / p$aG - 1) * A2(time, kep, p)),
                          p$aB * p$aG * ktrans / (kep - p$muG) * (A2(tB, p$muG, p) * exp(-p$muB * (time - tB)) + ((kep - p$muG) / p$aG - 1) * A2(tB, kep, p) * exp(-kep * (time - tB))))
-           erg[time <= 0] <- 0
+           erg[time < 0] <- 0
            return(erg)
          },
          orton.cos =
@@ -151,7 +151,7 @@ compartmentalModel <- function(type) {
            erg <- ifelse(time <= tB,
                          vp * cp + p$aB * p$aG * ktrans / (kep - p$muG) * ((A2(time, p$muG, p) + (kep - p$muG) / p$aG - 1) * A2(time, kep, p)),
                          vp * cp + p$aB * p$aG * ktrans / (kep - p$muG) * (A2(tB, p$muG, p) * exp(-p$muB * (time - tB)) + ((kep - p$muG) / p$aG - 1) * A2(tB, kep, p) * exp(-kep * (time - tB))))
-           erg[time <= 0] <- 0
+           erg[time < 0] <- 0
            return(erg)
          },
          weinmann.empirical =
@@ -180,12 +180,12 @@ compartmentalModel <- function(type) {
            th1 <- theta[2]
            th3 <- theta[3]
            tsec <- seq(min(time * 60), ceiling(max(time * 60)), by=1)
-           ltsec <- length(tsec)
            tsec.gt0 <- tsec[tsec >= 0]
+           ltsec.gt0 <- length(tsec.gt0)
            tsec.lt0 <- tsec[tsec < 0]
            aif.sec <- approx(time * 60, aif, tsec.gt0)$y
-           if (is.na(aif.sec[ltsec])) {
-             aif.sec[ltsec] <- aif.sec[ltsec - 1]
+           if (is.na(aif.sec[ltsec.gt0])) {
+             aif.sec[ltsec.gt0] <- aif.sec[ltsec.gt0 - 1]
            }
            erg.gt0 <- approx(tsec.gt0,
                              expConv(aif.sec, exp(th1) / 60, exp(th3) / 60),
