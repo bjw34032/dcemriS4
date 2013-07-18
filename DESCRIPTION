@@ -1,5 +1,5 @@
 Package: dcemriS4
-Version: 0.49
+Version: 0.50
 Date: 2013-06-14
 Title: A Package for Medical Image Analysis (S4 implementation)
 Author: Brandon Whitcher and Volker Schmid, with contributions from
@@ -9,7 +9,7 @@ Depends: R (>= 2.14.0), grDevices, graphics, methods, oro.nifti (>= 0.3.0), para
 Suggests: bitops, minpack.lm, splines, XML, oro.dicom
 Description: A collection of routines and documentation that allows one to
   perform voxel-wise quantitative analysis of dynamic contrast-enhanced or
-  diffusion-weighted MRI data.
+  diffusion-weighted MRI data, with emphasis on oncology applications.
 License: BSD
 URL: http://www.dcemri.org/, http://dcemri.sourceforge.net/, 
   http://dcemri.blogspot.com/

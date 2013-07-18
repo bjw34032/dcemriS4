@@ -1,7 +1,6 @@
 
-R version 2.15.2 Patched (2012-12-18 r61375) -- "Trick or Treat"
-Copyright (C) 2012 The R Foundation for Statistical Computing
-ISBN 3-900051-07-0
+R version 3.0.1 (2013-05-16) -- "Good Sport"
+Copyright (C) 2013 The R Foundation for Statistical Computing
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -25,14 +24,14 @@ Type 'q()' to quit R.
 Loading required package: oro.nifti
 Loading required package: bitops
 
-oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.3.8)
+oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.3.9)
 
 Loading required package: parallel
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.48)
+dcemriS4: A Package for Medical Image Analysis (version = 0.50)
 
 > 
-> assign(".oldSearch", search(), pos = 'CheckExEnv')
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 > cleanEx()
 > nameEx("aif")
 > ### * aif
@@ -661,8 +660,9 @@ detaching ‘package:minpack.lm’
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > ### * <FOOTER>
 > ###
-> cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  25.397 0.024 25.436 0 0 
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  26.653 0.056 26.756 0 0 
 > grDevices::dev.off()
 null device 
           1 
