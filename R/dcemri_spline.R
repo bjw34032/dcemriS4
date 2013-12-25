@@ -62,7 +62,6 @@ setMethod("dcemri.spline", signature(conc="array"),
                                   model.func=NULL, model.guess=NULL,
                                   samples=FALSE, B=NULL) {
 
-  require("minpack.lm")
   ## Sanity check: conc must not contain any missing values
   if (any(is.na(conc))) {
     stop("Concentration time curves must not contain missing values.")
@@ -202,10 +201,10 @@ setMethod("dcemri.spline", signature(conc="array"),
       if (length(fcall) > 1) {
 	fcall2 <- fcall[[1]]
       }
-      fit <- nls.lm(par=par, fn=fn, fcall=fcall2, time=time, x=fitted,
+      fit <- minpack.lm::nls.lm(par=par, fn=fn, fcall=fcall2, time=time, x=fitted,
                     N.Err=sqrt(300), control=list(nprint=0, ftol=10^-20))
       if (model=="AATH" && fit$par$TC < 1e-6) {
-	fit <- nls.lm(par=par[-3], fn=fn, fcall=fcall[[2]], time=time,
+	fit <- minpack.lm::nls.lm(par=par[-3], fn=fn, fcall=fcall[[2]], time=time,
                       x=fitted, N.Err=sqrt(300),
                       control=list(nprint=0, ftol=10^-20))
 	fit$par$TC <- 0
@@ -286,11 +285,6 @@ setMethod("dcemri.spline", signature(conc="array"),
   ## output: list with ktrans, kep, ve, std.error of ktrans and kep
   ##         (ktranserror and keperror)
   ##
-
-  require("splines")
-  if (nlr) {
-    require("minpack.lm")
-  }
 
   ## function to make precision matrix for random walk
   R <- function(taux, rw) {
@@ -432,7 +426,7 @@ setMethod("dcemri.spline", signature(conc="array"),
   ## define A and B
 
   p <- length(knots) - k
-  B <- splineDesign(knots, time.input, k, outer.ok=TRUE)
+  B <- splines::splineDesign(knots, time.input, k, outer.ok=TRUE)
   if (sum(B[, dim(B)[2]] == 0) == dim(B)[1]) {
     B <- B[,-dim(B)[2]]
   }

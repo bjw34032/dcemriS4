@@ -14,9 +14,10 @@
   optimization.
 }
 \usage{
-adc.lm(signal, b, guess, control=nls.lm.control())
+adc.lm(signal, b, guess, control=minpack.lm::nls.lm.control())
 \S4method{ADC.fast}{array}(dwi, bvalues, dwi.mask,
-         control=nls.lm.control(maxiter=150), multicore=FALSE, verbose=FALSE)
+         control=minpack.lm::nls.lm.control(maxiter=150), 
+         multicore=FALSE, verbose=FALSE)
 }
 \arguments{
   \item{signal}{Signal intensity vector as a function of b-values.}

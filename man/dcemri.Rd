@@ -14,7 +14,7 @@
 }
 \usage{
 \S4method{dcemri.lm}{array}(conc, time, img.mask, model="extended", aif=NULL,
-          control=nls.lm.control(), user=NULL, guess=NULL,
+          control=minpack.lm::nls.lm.control(), user=NULL, guess=NULL,
           multicore=FALSE, verbose=FALSE, ...)
 }
 \arguments{

@@ -43,7 +43,6 @@ aif.orton.exp <- function(tt, AB, muB, AG, muG) {
 orton.exp.lm <- function(tt, aif,
                          guess=c(log(100), log(10), log(1), log(0.1)),
                          nprint=0) {
-  require("minpack.lm") # Levenberg-Marquart fitting
   func <- function(x, aparams, aif) {
     AB <- aparams[1]
     muB <- aparams[2]
@@ -51,8 +50,8 @@ orton.exp.lm <- function(tt, aif,
     muG <- aparams[4]
     return(aif - aif.orton.exp(x, AB, muB, AG, muG))
   }
-  out <- nls.lm(par=guess, fn=func, control=list(nprint=nprint),
-                x=tt, aif=aif)
+  out <- minpack.lm::nls.lm(par=guess, fn=func, control=list(nprint=nprint),
+                            x=tt, aif=aif)
   list(AB=out$par[1], muB=out$par[2], AG=out$par[3], muG=out$par[4], 
        info=out$info, message=out$message)
 }

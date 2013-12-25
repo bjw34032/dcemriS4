@@ -286,7 +286,7 @@ sdam.image <- rowMeans(dam(sdam60, sdam120, 60), dims=3)
 mask <- (rowSums(sdam60, dims=3) > 64)
 @ 
 <<dam+png,echo=FALSE,results=hide>>=
-png("sdam.png", width=2*480, height=2*480)
+png("sdam.png", width=480, height=480)
 @ 
 <<dam+figure>>=
 # A smooth version of "sdam.image"
@@ -361,7 +361,7 @@ maskzi[,,(! 1:Z %in% zi)] <- FALSE
 R1 <- R1.fast(flip, maskzi, fanglesB1, TR, verbose=TRUE)
 @ 
 <<t1estimation+png,echo=FALSE,results=hide>>=
-png("t1_phantom.png", width=2*480, height=2*480)
+png("t1_phantom.png", width=480, height=480)
 @ 
 <<t1estimation+figure>>=
 overlay(vibe, 1/R1$R10[,,1:nsli(vibe)], z=13, zlim.x=c(0,1024), 
@@ -1046,7 +1046,7 @@ y <- 21:220
 @ 
 <<RiderNeuroMRI+lm4,echo=FALSE,eval=FALSE>>=
 png(file=paste(paste(perf, "ktrans", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 @ 
 <<RiderNeuroMRI+lm5,eval=FALSE>>=
 overlay(dynamic, ifelse(mask, fit.lm$ktrans, NA), w=11, zlim.x=c(32,256), 
@@ -1060,29 +1060,29 @@ fit.lm$ve <- readNIfTI(paste(perf, "ve", sep="_"))
 fit.lm$sse <- readNIfTI(paste(perf, "sse", sep="_"))
 zrx <- c(32,256)
 png(file=paste(paste(perf, "ktrans7", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), 
         ifelse(mask[x,y,], fit.lm$ktrans[x,y,], NA), z=7, w=11, 
         zlim.x=zrx, zlim.y=c(0,0.1), plot.type="single")
 dev.off()
 png(file=paste(paste(perf, "kep", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), 
         ifelse(mask[x,y,], fit.lm$kep[x,y,], NA), z=7, w=11, 
         zlim.x=zrx, zlim.y=c(0,1.25), plot.type="single")
 dev.off()
 png(file=paste(paste(perf, "vp", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), ifelse(mask[x,y,], fit.lm$vp[x,y,], NA),
         z=7, w=11, zlim.x=zrx, zlim.y=c(0,0.03), plot.type="single")
 dev.off()
 png(file=paste(paste(perf, "ve", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), ifelse(mask[x,y,], fit.lm$ve[x,y,], NA),
         z=7, w=11, zlim.x=zrx, zlim.y=c(0,0.3), plot.type="single")
 dev.off()
 png(file=paste(paste(perf, "sse", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), ifelse(mask[x,y,], fit.lm$sse[x,y,], NA),
         z=7, w=11, zlim.x=zrx, zlim.y=c(0,0.05), plot.type="single")
 dev.off()
@@ -1176,7 +1176,7 @@ fit.map <- list(ktrans=readNIfTI(system.file(file.path("nifti", sub(".nii", "_kt
 @ 
 <<RiderNeuroMRI+map4,echo=FALSE,eval=FALSE,results=hide>>=
 png(file=paste(paste(perf, "ktrans", "map", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), 
         ifelse(mask[x,y,], fit.map$ktrans[x,y,], NA),
         z=7, w=11, zlim.x=zrx, zlim.y=c(0,0.1), plot.type="single")
@@ -1266,20 +1266,20 @@ rm(fit.bayes)
 <<RiderNeuroMRI+bayes3,echo=FALSE,eval=FALSE,results=hide>>=
 fit.bayes <- list(ktrans=readNIfTI(paste(perf, "ktrans","bayes", sep="_")))
 png(file=paste(paste(perf, "ktrans", "bayes", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), 
         ifelse(mask[x,y,], fit.bayes$ktrans[x,y,], NA), z=7, w=11, 
         zlim.x=zrx, zlim.y=c(0,0.1), plot.type="single")
 dev.off()
 fit.bayes$ktranserror <- readNIfTI(paste(perf, "ktrans","bayes","sd", sep="_"))
 png(file=paste(paste(perf, "ktrans", "bayes", "sd", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), 
         ifelse(mask[x,y,], fit.bayes$ktranserror[x,y,], NA), z=7, w=11, 
         zlim.x=zrx, zlim.y=c(0,0.0075), plot.type="single")
 dev.off()
 png(file=paste(paste(perf, "ktrans", "bayes", "cv", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), 
         ifelse(mask[x,y,], (fit.bayes$ktranserror/fit.bayes$ktrans)[x,y,], NA),
         z=7, w=11, zlim.x=zrx, zlim.y=c(0,0.2), plot.type="single")
@@ -1352,13 +1352,13 @@ writeNIfTI(fit.spline$Fp, paste(perf, "Fp","spline", sep="_"))
 <<RiderNeuroMRI+spline2,echo=FALSE,eval=FALSE,results=hide>>=
 fit.spline <- list(ktrans=readNIfTI(paste(perf, "ktrans","spline", sep="_")))
 png(file=paste(paste(perf, "ktrans", "spline", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dynamic[x,y,,], "nifti"), 
         ifelse(mask[x,y,], fit.spline$ktrans[x,y,], NA), z=7, w=11, 
         zlim.x=zrx, zlim.y=c(0,0.1), plot.type="single")
 dev.off()
 png(file=paste(paste(perf, "Fp", "spline", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 fit.spline$Fp <- readNIfTI(paste(perf, "Fp","spline", sep="_"))
 overlay(as(dynamic[x,y,,], "nifti"), 
         ifelse(mask[x,y,], fit.spline$Fp[x,y,], NA), z=7, w=11, 
@@ -1444,7 +1444,7 @@ writeNIfTI(fit.adc$D, paste(tensor, "D", sep="_"))
 <<RiderNeuroMRI+dwi2,echo=FALSE,eval=FALSE,results=hide>>=
 fit.adc <- list(D=readNIfTI(paste(tensor, "D", sep="_")))
 png(file=paste(paste(tensor, "D", sep="_"), "png", sep="."), 
-    width=2*480, height=2*480)
+    width=480, height=480)
 overlay(as(dwi[,,17:20,], "nifti"),
         ifelse(tmask[,,17:20], fit.adc$D[,,17:20], NA), zlim.x=c(32,1024), 
         zlim.y=c(0.0005,0.003))

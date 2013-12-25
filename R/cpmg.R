@@ -35,7 +35,7 @@
 ## T2.lm() = estimate exp(-TE/T2) using Levenburg-Marquardt
 #############################################################################
 
-T2.lm <- function(signal, TE, guess, control=nls.lm.control()) {
+T2.lm <- function(signal, TE, guess, control=minpack.lm::nls.lm.control()) {
   func <- function(x, y) {
     rho <- x[1]
     T2 <- x[2]
@@ -43,8 +43,8 @@ T2.lm <- function(signal, TE, guess, control=nls.lm.control()) {
     TE <- y[[2]]
     signal - rho * exp(-TE/T2)
   }
-  require("minpack.lm") # Levenberg-Marquart fitting
-  out <- nls.lm(par=guess, fn=func, control=control, y=list(signal, TE))
+  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control, 
+                            y=list(signal, TE))
   list(rho=out$par[1], T2=out$par[2], hessian=out$hessian, info=out$info,
        message=out$message)
 }
@@ -55,7 +55,8 @@ T2.lm <- function(signal, TE, guess, control=nls.lm.control()) {
 
 setGeneric("T2.fast", function(cpmg, ...) standardGeneric("T2.fast"))
 setMethod("T2.fast", signature(cpmg="array"),
-          function(cpmg, cpmg.mask, TE, control=nls.lm.control(maxiter=150),
+          function(cpmg, cpmg.mask, TE, 
+                   control=minpack.lm::nls.lm.control(maxiter=150),
                    multicore=FALSE, verbose=FALSE)
           .dcemriWrapper("T2.fast", cpmg, cpmg.mask, TE, control, multicore,
                          verbose))
@@ -64,7 +65,8 @@ setMethod("T2.fast", signature(cpmg="array"),
 ## T2.fast()
 #############################################################################
 
-.T2.fast <- function(cpmg, cpmg.mask, TE, control=nls.lm.control(maxiter=150),
+.T2.fast <- function(cpmg, cpmg.mask, TE, 
+                     control=minpack.lm::nls.lm.control(maxiter=150),
                      multicore=FALSE, verbose=FALSE) {
 
   if (length(dim(cpmg)) != 4) { # Check cpmg is a 4D array

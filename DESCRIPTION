@@ -1,17 +1,17 @@
 Package: dcemriS4
-Version: 0.50
-Date: 2013-06-14
+Version: 0.51
+Date: 2013-12-25
 Title: A Package for Medical Image Analysis (S4 implementation)
 Author: Brandon Whitcher and Volker Schmid, with contributions from
   Andrew Thornton
 Maintainer: Brandon Whitcher <bwhitcher@gmail.com>
-Depends: R (>= 2.14.0), grDevices, graphics, methods, oro.nifti (>= 0.3.0), parallel, utils
-Suggests: bitops, minpack.lm, splines, XML, oro.dicom
+Depends: R (>= 2.14.0), oro.nifti (>= 0.3.9)
+Suggests: bitops, minpack.lm, splines, XML, oro.dicom (>= 0.3.7)
+Imports: grDevices, graphics, methods, parallel, utils
 Description: A collection of routines and documentation that allows one to
   perform voxel-wise quantitative analysis of dynamic contrast-enhanced or
   diffusion-weighted MRI data, with emphasis on oncology applications.
-License: BSD
-URL: http://www.dcemri.org/, http://dcemri.sourceforge.net/, 
-  http://dcemri.blogspot.com/
+License: BSD_3_clause + file LICENSE
+URL: http://www.dcemri.com/, http://dcemri.blogspot.com/
 LazyData: yes
 ZipData: yes

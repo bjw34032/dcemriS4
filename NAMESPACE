@@ -1,6 +1,6 @@
 useDynLib("dcemriS4")
 
-import("grDevices", "graphics", "methods", "oro.nifti", "utils")
+import("grDevices", "graphics", "methods", "oro.nifti", "parallel", "utils")
 
 export(".dcemri.bayes")
 

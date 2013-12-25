@@ -19,12 +19,14 @@
   converted into contrast agent concentration.
 }
 \usage{
-R10.lm(signal, alpha, TR, guess, control=nls.lm.control())
-E10.lm(signal, alpha, guess, control=nls.lm.control())
-\S4method{R1.fast}{array}(flip, flip.mask, fangles, TR, control=nls.lm.control(),
-        multicore=FALSE, verbose=FALSE)
+R10.lm(signal, alpha, TR, guess, control=minpack.lm::nls.lm.control())
+E10.lm(signal, alpha, guess, control=minpack.lm::nls.lm.control())
+\S4method{R1.fast}{array}(flip, flip.mask, fangles, TR, 
+        control=minpack.lm::nls.lm.control(), multicore=FALSE, 
+        verbose=FALSE)
 \S4method{CA.fast}{array}(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
-        control=nls.lm.control(maxiter=200), multicore=FALSE, verbose=FALSE)
+        control=minpack.lm::nls.lm.control(maxiter=200), multicore=FALSE, 
+        verbose=FALSE)
 \S4method{CA.fast2}{array}(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
          verbose=FALSE)
 }

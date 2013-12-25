@@ -36,7 +36,7 @@
   txt <- paste("\n",
                pkg,
                ": A Package for Medical Image Analysis (version = ",
-               packageDescription(pkg, lib)[["Version"]],
+               utils::packageDescription(pkg, lib)[["Version"]],
                ")\n",
                sep="")
   packageStartupMessage(txt)

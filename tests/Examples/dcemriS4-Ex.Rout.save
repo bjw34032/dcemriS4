@@ -1,7 +1,7 @@
 
-R version 3.0.1 (2013-05-16) -- "Good Sport"
+R version 3.0.2 (2013-09-25) -- "Frisbee Sailing"
 Copyright (C) 2013 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+Platform: x86_64-apple-darwin10.8.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -26,9 +26,8 @@ Loading required package: bitops
 
 oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.3.9)
 
-Loading required package: parallel
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.50)
+dcemriS4: A Package for Medical Image Analysis (version = 0.51)
 
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
@@ -51,11 +50,10 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.50)
 > time <- buckley$time.min[xi]
 > aif <- buckley$input[xi]
 > aifparams <- orton.exp.lm(time, aif)
-Loading required package: minpack.lm
 > aifparams$D <- 1 
 > unlist(aifparams[1:4])
          AB         muB          AG         muG 
-37.14845917  3.89506144  1.51615753 -0.01066018 
+37.14845796  3.89506149  1.51615773 -0.01066014 
 > 
 > aoe <- aif.orton.exp(time, aifparams$AB, aifparams$muB, aifparams$AG,
 +                      aifparams$muG)
@@ -79,9 +77,6 @@ Loading required package: minpack.lm
 > 
 > 
 > cleanEx()
-
-detaching ‘package:minpack.lm’
-
 > nameEx("conv_fft")
 > ### * conv_fft
 > 
@@ -160,7 +155,6 @@ detaching ‘package:minpack.lm’
 > ## Bayesian estimation with "orton.exp" function fit to Buckley's AIF
 > aif <- buckley$input[xi]
 > aifparams <- orton.exp.lm(time, aif)
-Loading required package: minpack.lm
 > aifparams$D <- 1
 > fit.bayes.aif <- dcemri.bayes(img, time, mask, model="orton.exp",
 +                               aif="user", user=aifparams)
@@ -206,9 +200,6 @@ Loading required package: minpack.lm
 > 
 > 
 > cleanEx()
-
-detaching ‘package:minpack.lm’
-
 > nameEx("dce_map")
 > ### * dce_map
 > 
@@ -231,7 +222,6 @@ detaching ‘package:minpack.lm’
 > fit.map.vp <- dcemri.map(img, time, mask, aif="fritz.hansen")
 > ## Nonlinear regression with extended Kety model and Fritz-Hansen default AIF
 > fit.lm.vp <- dcemri.lm(img, time, mask, aif="fritz.hansen")
-Loading required package: minpack.lm
 > 
 > plot(breast$ktrans, fit.map.vp$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -282,9 +272,6 @@ Loading required package: minpack.lm
 > 
 > 
 > cleanEx()
-
-detaching ‘package:minpack.lm’
-
 > nameEx("dce_spline")
 > ### * dce_spline
 > 
@@ -308,8 +295,6 @@ detaching ‘package:minpack.lm’
 > 
 > fit.spline <- dcemri.spline(img, time, mask, aif="fritz.hansen",
 +                             nriters=250, nlr=TRUE)
-Loading required package: splines
-Loading required package: minpack.lm
 > fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
 +                                 aif.observed=aif, nriters=250,
 +                                 nlr=TRUE)
@@ -340,9 +325,6 @@ Loading required package: minpack.lm
 > 
 > 
 > cleanEx()
-
-detaching ‘package:minpack.lm’, ‘package:splines’
-
 > nameEx("dcemri")
 > ### * dcemri
 > 
@@ -365,7 +347,6 @@ detaching ‘package:minpack.lm’, ‘package:splines’
 > ## Estimate kinetic parameters directly from Buckley's empirical AIF
 > fit1 <- dcemri.lm(img, time, mask, model="weinmann", aif="empirical",
 +                   user=buckley$input)
-Loading required package: minpack.lm
 > fit2 <- dcemri.lm(img, time, mask, model="extended", aif="empirical",
 +                   user=buckley$input)
 > 
@@ -387,7 +368,7 @@ $AG
 [1] 1.522075
 
 $muG
-[1] -0.00983213
+[1] -0.009832147
 
 $info
 [1] 1
@@ -414,13 +395,13 @@ $message
  [3,] 0.250521815 0.3129245 0.27084876 0.48798626
  [4,] 0.268391926 0.3403433 0.28533489 0.48014075
  [5,] 0.279725126 0.3582433 0.29400920 0.47516093
- [6,] 0.009912791 0.7331255 0.01475737 0.09028433
- [7,] 0.146992146 0.2043296 0.15691602 0.47338402
+ [6,] 0.009912791 0.7331255 0.01475737 0.09028431
+ [7,] 0.146992146 0.2043296 0.15691602 0.47338401
  [8,] 0.328712966 0.3961533 0.36284044 0.49722426
- [9,] 0.387767110 0.4608153 0.43840557 0.50468088
+ [9,] 0.387767110 0.4608153 0.43840557 0.50468089
 [10,] 0.250521815 0.2491542 0.24915417 0.45785050
 [11,] 0.250521815 0.2801023 0.25820501 0.47252744
-[12,] 0.250521815 0.3476498 0.28871475 0.50510374
+[12,] 0.250521815 0.3476498 0.28871475 0.50510375
 [13,] 0.250521815 0.3833826 0.31198211 0.52406078
 > 
 > ## Scatterplot comparing true and estimated Ktrans values
@@ -433,16 +414,16 @@ $message
 > legend("bottomright", c("extended/empirical","orton.exp/user"), pch=2:3)
 > cbind(breast$vp, fit2$vp[,,1], fit3$vp[,,1])
         [,1]         [,2]         [,3]
- [1,] 0.0600 1.840405e-03 1.371419e-03
+ [1,] 0.0600 1.840405e-03 1.371417e-03
  [2,] 0.0600 1.754635e-02 1.710092e-02
- [3,] 0.0600 2.818906e-02 2.771864e-02
+ [3,] 0.0600 2.818906e-02 2.771863e-02
  [4,] 0.0600 3.486796e-02 3.447373e-02
  [5,] 0.0600 3.933510e-02 3.905019e-02
  [6,] 0.0600 5.451225e-02 5.395206e-02
- [7,] 0.0600 3.971422e-02 3.895469e-02
- [8,] 0.0600 1.899215e-02 1.873551e-02
+ [7,] 0.0600 3.971422e-02 3.895468e-02
+ [8,] 0.0600 1.899215e-02 1.873550e-02
  [9,] 0.0600 1.138390e-02 1.112868e-02
-[10,] 0.0001 1.128817e-17 3.025355e-18
+[10,] 0.0001 1.128817e-17 3.025093e-18
 [11,] 0.0300 1.521879e-02 1.482669e-02
 [12,] 0.0900 3.789190e-02 3.776697e-02
 [13,] 0.1200 4.396546e-02 4.480785e-02
@@ -450,9 +431,6 @@ $message
 > 
 > 
 > cleanEx()
-
-detaching ‘package:minpack.lm’
-
 > nameEx("dcemriS4-package")
 > ### * dcemriS4-package
 > 
@@ -502,7 +480,6 @@ detaching ‘package:minpack.lm’
 > signal <- array(dwi(S0, b, D) + rnorm(length(b), sd=0.15),
 +                 c(rep(1,3), length(b)))
 > ADC <- ADC.fast(signal, b, array(TRUE, rep(1,3)))
-Loading required package: minpack.lm
 > unlist(ADC) # text output
           S0            D     S0.error      D.error 
 9.985900e+00 7.337532e-04 1.671637e+00 5.369434e+03 
@@ -517,9 +494,6 @@ Loading required package: minpack.lm
 > 
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
-
-detaching ‘package:minpack.lm’
-
 > nameEx("find_center")
 > ### * find_center
 > 
@@ -569,7 +543,6 @@ detaching ‘package:minpack.lm’
 > signal <- array(gre(S0, TR, T1, alpha) + rnorm(length(alpha), sd=.15),
 +                 c(rep(1,3), length(alpha)))
 > out <- R1.fast(signal, array(TRUE, rep(1,3)), alpha, TR)
-Loading required package: minpack.lm
 > unlist(out)
         M0        R10 
 99.5197735  0.6534572 
@@ -581,9 +554,6 @@ Loading required package: minpack.lm
 > 
 > 
 > cleanEx()
-
-detaching ‘package:minpack.lm’
-
 > nameEx("kineticmodel")
 > ### * kineticmodel
 > 
@@ -603,7 +573,6 @@ detaching ‘package:minpack.lm’
 > time <- buckley$time.min[xi]
 > 
 > fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
-Loading required package: minpack.lm
 > par.lm <- c("vp"=fit.lm$vp[3], "ktrans"=fit.lm$ktrans[3], "kep"=fit.lm$kep[3])
 > curve.lm <- kineticModel(time, par.lm)
 > plot(time, img[3,1,1,], xlab="time", ylab="contrast agent concentration")
@@ -634,9 +603,6 @@ Loading required package: minpack.lm
 > 
 > 
 > cleanEx()
-
-detaching ‘package:minpack.lm’
-
 > nameEx("shift3D")
 > ### * shift3D
 > 
@@ -662,7 +628,7 @@ detaching ‘package:minpack.lm’
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  26.653 0.056 26.756 0 0 
+Time elapsed:  12.181 0.101 12.295 0 0 
 > grDevices::dev.off()
 null device 
           1 

@@ -44,8 +44,8 @@ dam <- function(low, high, low.deg) {
 ## R10.lm() = estimate R1 using Levenburg-Marquardt
 #############################################################################
 
-R10.lm <- function(signal, alpha, TR, guess, control=nls.lm.control()) {
-  require("minpack.lm") # Levenberg-Marquart fitting
+R10.lm <- function(signal, alpha, TR, guess, 
+                   control=minpack.lm::nls.lm.control()) {
   func <- function(x, signal, alpha, TR) {
     R1 <- x[1]
     m0 <- x[2]
@@ -53,8 +53,8 @@ R10.lm <- function(signal, alpha, TR, guess, control=nls.lm.control()) {
     signal -
       m0 * sin(theta) * (1 - exp(-TR*R1)) / (1 - cos(theta) * exp(-TR*R1))
   }
-  out <- nls.lm(par=guess, fn=func, control=control, signal=signal,
-                alpha=alpha, TR=TR)
+  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control, 
+                            signal=signal, alpha=alpha, TR=TR)
   list(R1=out$par[1], m0=out$par[2], hessian=out$hessian, info=out$info,
        message=out$message)
 }
@@ -63,16 +63,16 @@ R10.lm <- function(signal, alpha, TR, guess, control=nls.lm.control()) {
 ## E10.lm() = estimate exp(-TR*R1) using Levenburg-Marquardt
 #############################################################################
 
-E10.lm <- function(signal, alpha, guess, control=nls.lm.control()) {
-  require("minpack.lm") # Levenberg-Marquart fitting
+E10.lm <- function(signal, alpha, guess, 
+                   control=minpack.lm::nls.lm.control()) {
   func <- function(x, signal, alpha) {
     E1 <- x[1]
     m0 <- x[2]
     theta <- pi/180 * alpha # degrees to radians
     signal - m0 * sin(theta) * (1 - E1) / (1 - cos(theta) * E1)
   }
-  out <- nls.lm(par=guess, fn=func, control=control, signal=signal,
-                alpha=alpha)
+  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control, 
+                            signal=signal, alpha=alpha)
   list(E10=out$par[1], m0=out$par[2], hessian=out$hessian, info=out$info,
        message=out$message)
 }
@@ -83,7 +83,8 @@ E10.lm <- function(signal, alpha, guess, control=nls.lm.control()) {
 
 setGeneric("R1.fast", function(flip, ...) standardGeneric("R1.fast"))
 setMethod("R1.fast", signature(flip="array"),
-          function(flip, flip.mask, fangles, TR, control=nls.lm.control(),
+          function(flip, flip.mask, fangles, TR, 
+                   control=minpack.lm::nls.lm.control(),
                    multicore=FALSE, verbose=FALSE) 
 	    .dcemriWrapper("R1.fast", flip, flip.mask, fangles, TR, control,
                            multicore, verbose))
@@ -92,7 +93,8 @@ setMethod("R1.fast", signature(flip="array"),
 ## R1.fast()
 #############################################################################
 
-.R1.fast <- function(flip, flip.mask, fangles, TR, control=nls.lm.control(),
+.R1.fast <- function(flip, flip.mask, fangles, TR, 
+                     control=minpack.lm::nls.lm.control(),
                      multicore=FALSE, verbose=FALSE) {
 
   if (length(dim(flip)) != 4) { # Check flip is a 4D array
@@ -190,8 +192,8 @@ setMethod("R1.fast", signature(flip="array"),
 setGeneric("CA.fast", function(dynamic, ...) standardGeneric("CA.fast"))
 setMethod("CA.fast", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
-                   control=nls.lm.control(maxiter=200), multicore=FALSE,
-                   verbose=FALSE) 
+                   control=minpack.lm::nls.lm.control(maxiter=200), 
+                   multicore=FALSE, verbose=FALSE) 
 	    .dcemriWrapper("CA.fast", dynamic, dyn.mask, dangle, flip,
                            fangles, TR, r1, control, multicore, verbose))
 
@@ -200,7 +202,7 @@ setMethod("CA.fast", signature(dynamic="array"),
 #############################################################################
 
 .CA.fast <- function(dynamic, dyn.mask, dangle, flip, fangles, TR,
-                     r1=4, control=nls.lm.control(maxiter=200),
+                     r1=4, control=minpack.lm::nls.lm.control(maxiter=200),
                      multicore=FALSE, verbose=FALSE) {
 
   if (length(dim(flip)) != 4) { # Check flip is a 4D array

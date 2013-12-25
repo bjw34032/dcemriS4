@@ -41,15 +41,14 @@ setGeneric("dcemri.lm",
            function(conc,  ...) standardGeneric("dcemri.lm"))
 setMethod("dcemri.lm", signature(conc="array"), 
 	  function(conc,time,img.mask, model="extended", aif=NULL,
-                   control=nls.lm.control(), user=NULL, guess=NULL,
-                   multicore=FALSE, verbose=FALSE, ...)
+                   control=minpack.lm::nls.lm.control(), user=NULL, 
+                   guess=NULL, multicore=FALSE, verbose=FALSE, ...)
           .dcemriWrapper("dcemri.lm", conc, time, img.mask, model, aif,
                          control, user, guess, multicore, verbose, ...))
 
 .dcemri.lm <- function(conc, time, img.mask, model="extended", aif=NULL,
-                       control=nls.lm.control(), user=NULL, guess=NULL,
-                       multicore=FALSE, verbose=FALSE, ...) {
-  require("minpack.lm")
+                       control=minpack.lm::nls.lm.control(), user=NULL, 
+                       guess=NULL, multicore=FALSE, verbose=FALSE, ...) {
   switch(model,
          weinmann = ,
          extended = {
@@ -139,11 +138,11 @@ setMethod("dcemri.lm", signature(conc="array"),
   }
   if (multicore && require("parallel")) {
     lm.list <- mclapply(conc.list, function(x) {
-      nls.lm(par=guess, fn=func, control=control, signal=x, time=time, p=p)
+      minpack.lm::nls.lm(par=guess, fn=func, control=control, signal=x, time=time, p=p)
     })
   } else {
     lm.list <- lapply(conc.list, function(x) {
-      nls.lm(par=guess, fn=func, control=control, signal=x, time=time, p=p)
+      minpack.lm::nls.lm(par=guess, fn=func, control=control, signal=x, time=time, p=p)
     })
   }
   rm(conc.list) ; gc()

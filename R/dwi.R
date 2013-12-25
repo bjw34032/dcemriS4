@@ -36,7 +36,7 @@
 ## adc.lm() = estimate ADC using Levenburg-Marquardt
 #############################################################################
 
-adc.lm <- function(signal, b, guess, control=nls.lm.control()) {
+adc.lm <- function(signal, b, guess, control=minpack.lm::nls.lm.control()) {
   func <- function(x, y) {
     S0 <- x[1]
     D <- x[2]
@@ -44,8 +44,8 @@ adc.lm <- function(signal, b, guess, control=nls.lm.control()) {
     b <- y[[2]]
     signal - S0 * exp(-b*D)
   }
-  require("minpack.lm") # Levenberg-Marquart fitting
-  out <- nls.lm(par=guess, fn=func, control=control, y=list(signal, b))
+  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control, 
+                            y=list(signal, b))
   list(S0=out$par[1], D=out$par[2], hessian=out$hessian, info=out$info,
        message=out$message)
 }
@@ -57,13 +57,13 @@ adc.lm <- function(signal, b, guess, control=nls.lm.control()) {
 setGeneric("ADC.fast", function(dwi, ...) standardGeneric("ADC.fast"))
 setMethod("ADC.fast", signature(dwi="array"),
           function(dwi, bvalues, dwi.mask,
-                   control=nls.lm.control(maxiter=150),
+                   control=minpack.lm::nls.lm.control(maxiter=150),
                    multicore=FALSE, verbose=FALSE)
           .dcemriWrapper("ADC.fast", dwi, bvalues, dwi.mask, control,
                          multicore, verbose))
 
 .ADC.fast <- function(dwi, bvalues, dwi.mask,
-                      control=nls.lm.control(maxiter=150),
+                      control=minpack.lm::nls.lm.control(maxiter=150),
                       multicore=FALSE, verbose=FALSE) {
   if (length(dim(dwi)) != 4) { # Check dwi is a 4D array
     stop("Diffusion-weighted data must be a 4D array.")

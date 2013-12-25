@@ -14,8 +14,9 @@
   ...
 }
 \usage{
-T2.lm(signal, TE, guess, control=nls.lm.control())
-\S4method{T2.fast}{array}(cpmg, cpmg.mask, TE, control=nls.lm.control(maxiter=150),
+T2.lm(signal, TE, guess, control=minpack.lm::nls.lm.control())
+\S4method{T2.fast}{array}(cpmg, cpmg.mask, TE, 
+         control=minpack.lm::nls.lm.control(maxiter=150),
          multicore=FALSE, verbose=FALSE)
 }
 \arguments{
