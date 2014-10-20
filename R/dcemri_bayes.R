@@ -2,13 +2,13 @@
 ##
 ## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
-## 
+##
 ## Redistribution and use in source and binary forms, with or without
 ## modification, are permitted provided that the following conditions are
 ## met:
-## 
+##
 ##     * Redistributions of source code must retain the above copyright
-##       notice, this list of conditions and the following disclaimer. 
+##       notice, this list of conditions and the following disclaimer.
 ##     * Redistributions in binary form must reproduce the above
 ##       copyright notice, this list of conditions and the following
 ##       disclaimer in the documentation and/or other materials provided
@@ -16,7 +16,7 @@
 ##     * The names of the authors may not be used to endorse or promote
 ##       products derived from this software without specific prior
 ##       written permission.
-## 
+##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 ## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 ## LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,7 +28,7 @@
 ## THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-## 
+##
 ## $Id: dcemri_bayes.R 332 2010-01-29 16:54:07Z bjw34032 $
 ##
 
@@ -38,7 +38,7 @@
 
 setGeneric("dcemri.bayes",
            function(conc, ...) standardGeneric("dcemri.bayes"))
-setMethod("dcemri.bayes", signature(conc="array"), 
+setMethod("dcemri.bayes", signature(conc="array"),
           function(conc, time, img.mask, model="extended",
                          aif=NULL, user=NULL, nriters=3000, thin=3,
                          burnin=1000, tune=267, ab.ktrans=c(0,1),
@@ -55,11 +55,11 @@ setMethod("dcemri.bayes", signature(conc="array"),
                                  ab.theta=c(0,1), ab.vp=c(1,19),
                                  ab.tauepsilon=c(1,1/1000), aif.model=0,
                                  aif.parameter=c(2.4,0.62,3,0.016), vp=1) {
-  
+
   if (sum(is.na(conc)) > 0) {
     return(NA)
   } else {
-    n <- floor((nriters - burnin) / thin) 
+    n <- floor((nriters - burnin) / thin)
     if (tune > nriters/2) {
       tune <- floor(nriters/2)
     }
@@ -78,10 +78,10 @@ setMethod("dcemri.bayes", signature(conc="array"),
                     as.double(n0),
                     as.double(n0),
                     as.double(n0),
-                    as.double(n0), 
+                    as.double(n0),
                     as.double(n0),
                     as.integer(n),
-                    PACKAGE="dcemriS4")    
+                    PACKAGE="dcemriS4")
     list("ktrans"= singlerun[[11]],
          "kep"= singlerun[[12]],
          "vp"= singlerun[[13]],
@@ -97,7 +97,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
                           ab.tauepsilon=c(1,1/1000), samples=FALSE,
                           multicore=FALSE, verbose=FALSE, dic=FALSE,
                           ...) {
-  
+
   ## dcemri.bayes - a function for fitting 1-compartment PK models to
   ## DCE-MRI images using Bayes inference
   ##
@@ -113,17 +113,17 @@ setMethod("dcemri.bayes", signature(conc="array"),
   ## output: list with ktrans, kep, ve, std.error of ktrans and kep
   ##         (ktranserror and keperror), samples if samples=TRUE
   ##
-  
+
   extractSamples <- function(sample, img.mask, NRI) {
     out <- array(NA, c(NRI, dim(img.mask)))
     out[img.mask] <- sample
     aperm(out, c(2:length(dim(out)), 1)) # not too sure about drop()
   }
-  
+
   I <- nrow(conc)
   J <- ncol(conc)
   K <- nsli(conc)
-  
+
   if (!is.numeric(dim(conc))) {
     I <- J <- K <- 1
   } else {
@@ -134,7 +134,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
       K <- 1
     }
   }
-  
+
   if (J > 1 && K > 1) {
     if (sum(dim(img.mask) - dim(conc)[-length(dim(conc))]) != 0) {
       stop("Dimensions of \"conc\" do not agree with \"img.mask\"")
@@ -158,7 +158,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
   } else {
     nriters <- nriters + burnin
   }
-  
+
   switch(model,
          weinmann = ,
          extended = {
@@ -190,7 +190,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
     a <- grep("^[Aa]", names(p))
     aif.parameter[a] <- p$D * aif.parameter[a]
   }
-  
+
   ## translate "model" to "aif.model" and "vp.do"
   switch(model,
          weinmann = {
@@ -226,27 +226,27 @@ setMethod("dcemri.bayes", signature(conc="array"),
   if (verbose) {
     cat("  Estimating the kinetic parameters...", fill=TRUE)
   }
-  if (multicore && require("parallel")) {
-    bayes.list <- mclapply(conc.list, FUN=.dcemri.bayes.single,
-                           time=time, nriters=nriters, thin=thin,
-                           burnin=burnin, tune=tune, ab.gamma=ab.ktrans,
-                           ab.theta=ab.kep, ab.vp=ab.vp,
-                           ab.tauepsilon=ab.tauepsilon, aif.model=aif.model,
-                           aif.parameter=aif.parameter, vp=vp.do, mc.preschedule=TRUE)
+  if (multicore) {
+    bayes.list <- parallel::mclapply(conc.list, FUN=.dcemri.bayes.single,
+                                     time=time, nriters=nriters, thin=thin,
+                                     burnin=burnin, tune=tune, ab.gamma=ab.ktrans,
+                                     ab.theta=ab.kep, ab.vp=ab.vp,
+                                     ab.tauepsilon=ab.tauepsilon, aif.model=aif.model,
+                                     aif.parameter=aif.parameter, vp=vp.do, mc.preschedule=TRUE)
   } else {
     bayes.list <- lapply(conc.list, FUN=.dcemri.bayes.single, time=time,
                          nriters=nriters, thin=thin, burnin=burnin,
                          tune=tune, ab.gamma=ab.ktrans, ab.theta=ab.kep,
                          ab.vp=ab.vp, ab.tauepsilon=ab.tauepsilon,
                          aif.model=aif.model, aif.parameter=aif.parameter,
-                         vp=vp.do)    
+                         vp=vp.do)
   }
   rm(conc.list) ; gc()
-  
+
   if (verbose) {
     cat("  Extracting results...", fill=TRUE)
   }
-  
+
   n <- floor((nriters - burnin) / thin)  # number of samples from posterior
   ktrans <- kep <- list(par=rep(NA, nvoxels), error=rep(NA, nvoxels))
   sigma2 <- rep(NA, nvoxels)
@@ -310,7 +310,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
   rm(A,B,kep)
   if (model %in% c("extended", "orton.exp", "orton.cos")) {
     A <- B <- array(NA, c(I,J,K))
-    A[img.mask] <- Vp$par 
+    A[img.mask] <- Vp$par
     B[img.mask] <- Vp$error
     Vp.out <- list(par=A, error=B)
     rm(A,B,Vp)
@@ -354,8 +354,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
     returnable[["vperror"]] <- Vp.out$error
     if (samples) {
       returnable[["vp.samples"]] <- Vp.out$samples
-    } 
-  } 
+    }
+  }
   ## DIC
   if (dic) {
     if (verbose) {
@@ -387,7 +387,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
     returnable[["DIC"]] <- sum(DIC,na.rm=TRUE)
     returnable[["pD"]] <- sum(pD,na.rm=TRUE)
     returnable[["DIC.map"]] <- DIC
-    returnable[["pD.map"]] <- pD 
+    returnable[["pD.map"]] <- pD
     returnable[["deviance.med"]] <- deviance.med
     returnable[["med.deviance"]] <- med.deviance
     if (samples) {
@@ -410,7 +410,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
     returnable[["sigma2.samples"]] <- sigma2.samples
   }
   ## rm(Vp.out) ; gc()
-  
+
   return(returnable)
 }
 

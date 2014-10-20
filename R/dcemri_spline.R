@@ -2,13 +2,13 @@
 ##
 ## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
-## 
+##
 ## Redistribution and use in source and binary forms, with or without
 ## modification, are permitted provided that the following conditions are
 ## met:
-## 
+##
 ##     * Redistributions of source code must retain the above copyright
-##       notice, this list of conditions and the following disclaimer. 
+##       notice, this list of conditions and the following disclaimer.
 ##     * Redistributions in binary form must reproduce the above
 ##       copyright notice, this list of conditions and the following
 ##       disclaimer in the documentation and/or other materials provided
@@ -16,7 +16,7 @@
 ##     * The names of the authors may not be used to endorse or promote
 ##       products derived from this software without specific prior
 ##       written permission.
-## 
+##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 ## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 ## LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,7 +28,7 @@
 ## THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-## 
+##
 ## $Id: dcemri_spline.R 332 2010-01-29 16:54:07Z bjw34032 $
 ##
 
@@ -45,7 +45,7 @@ setMethod("dcemri.spline", signature(conc="array"),
                    thin=5, burnin=100, ab.hyper=c(1e-5,1e-5),
                    ab.tauepsilon=c(1,1/1000), k=4, p=25, rw=2,
                    knots=NULL, nlr=FALSE, t0.compute=FALSE,
-                   samples=FALSE, multicore=FALSE, verbose=FALSE, 
+                   samples=FALSE, multicore=FALSE, verbose=FALSE,
 		   response=FALSE, fitted=FALSE, ...)
           .dcemriWrapper("dcemri.spline", conc, time, img.mask, time.input,
                          model, aif, user, aif.observed, nriters, thin,
@@ -76,7 +76,7 @@ setMethod("dcemri.spline", signature(conc="array"),
   ##MAX <- array(0, c(samplesize))
   tauepsilon <- rep(1000, samplesize) # array(1000, c(samplesize))
   burnin <- min(burnin, samplesize)
-  
+
   result <- .C("dce_spline_run",
                as.integer(1),
                as.integer(burnin),
@@ -108,7 +108,7 @@ setMethod("dcemri.spline", signature(conc="array"),
   ##
   ## Why is this run twice?!?
   ##
-  
+
   result <- .C("dce_spline_run",
                as.integer(samplesize),
                as.integer(thin),
@@ -147,7 +147,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     d2 <- apply(d, 1, median, na.rm=TRUE)
     du <- min(which(d1 > 0))
     ## beta.abl <- beta.abl2 <- rep(0, p)
-    B2 <- splineDesign(knots, time.input, k-2)
+    B2 <- splines::splineDesign(knots, time.input, k-2)
     B2 <- B2[,(1:p)+1]
 
     for (j in 1:samplesize) {
@@ -158,7 +158,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
       beta.abl[p] <- 0
       ABL2 <- A %*% B2 %*% beta.abl
-      du2 <- time[du] - d2[du] / ABL2[du]  
+      du2 <- time[du] - d2[du] / ABL2[du]
       t0[j] <- du2
     }
     if (sum(!is.na(t0)) == 0) {
@@ -211,11 +211,11 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
       return(fit)
     }
-    
-    if (multicore && require("parallel")) {
-      out <- mclapply(fitted, nls.lm.single, par=model.guess,
-                           fn=fcn, fcall=model.func, model=model,
-                           time=time-t0)
+
+    if (multicore) {
+      out <- parallel::mclapply(fitted, nls.lm.single, par=model.guess,
+                                fn=fcn, fcall=model.func, model=model,
+                                time=time-t0)
     } else {
       out <- lapply(fitted, nls.lm.single, par=model.guess,
                          fn=fcn, fcall=model.func, model=model,
@@ -270,7 +270,7 @@ setMethod("dcemri.spline", signature(conc="array"),
                           samples=FALSE, multicore=FALSE, verbose=FALSE,
                           response=FALSE, fitted=FALSE, ...) {
 
-  ## dcemri.spline - a function for fitting Bayesian Penalty Splines to 
+  ## dcemri.spline - a function for fitting Bayesian Penalty Splines to
   ## DCE-MRI images and computing kinetic parameters
   ##
   ## authors: Volker Schmid, Brandon Whitcher
@@ -333,7 +333,7 @@ setMethod("dcemri.spline", signature(conc="array"),
   K <- nsli(conc)
   T <- length(time)
   Ti <- length(time.input)
-  
+
   if (!is.numeric(dim(conc))) {
     I <- J <- K <- 1
   } else {
@@ -345,7 +345,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
     }
   }
-  
+
   if (verbose) {
     cat("  Deconstructing data...", fill=TRUE)
   }
@@ -364,7 +364,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     },
     fritz.hansen = {
       D <- 1; a1 <- 2.4; a2 <- 0.62; m1 <- 3.0; m2 <- 0.016
-      input <- D*(a1*exp(-m1*time)+a2*exp(-m2*time))	 
+      input <- D*(a1*exp(-m1*time)+a2*exp(-m2*time))
     },
     observed = {
       input <- aif.observed
@@ -401,7 +401,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       }
       E <- exp(logE)
       F <- exp(logF)
-      ve <- exp(logve)      
+      ve <- exp(logve)
       kep <- E * F/ve
       erg <- E * exp(-kep*(time-TC))
       erg[time<TC] <- 1 # - time[time<TC2]*(1-E) / TC
@@ -414,7 +414,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     model.func[[2]] <- function(time, logF, logE, logve) {
       E <- exp(logE)
       F <- exp(logF)
-      ve <- exp(logve)      
+      ve <- exp(logve)
       kep <- E * F / ve
       erg <- E * exp(-kep * time)
       erg <- erg * F
@@ -452,19 +452,19 @@ setMethod("dcemri.spline", signature(conc="array"),
   A[is.na(A)] <- 0
   D <- A %*% B
   ## T <- length(time)
-  
+
   if (verbose) {
     cat("  Estimating the parameters...", fill=TRUE)
   }
 
-  if (multicore && require("parallel")) {
-    fit <- mclapply(conc.list, FUN=.dcemri.spline.single, time=time,
-                    D=D, time.input=time.input, p=p, rw=rw, knots=knots,
-                    k=k, A=A, nriters=nriters, thin=thin, burnin=burnin,
-                    ab.hyper=ab.hyper, ab.tauepsilon=ab.tauepsilon,
-                    t0.compute=t0.compute, nlr=nlr, multicore=TRUE,
-                    model=model, model.func=model.func,
-                    model.guess=model.guess, samples=samples, B=B)
+  if (multicore) {
+    fit <- parallel::mclapply(conc.list, FUN=.dcemri.spline.single, time=time,
+                              D=D, time.input=time.input, p=p, rw=rw, knots=knots,
+                              k=k, A=A, nriters=nriters, thin=thin, burnin=burnin,
+                              ab.hyper=ab.hyper, ab.tauepsilon=ab.tauepsilon,
+                              t0.compute=t0.compute, nlr=nlr, multicore=TRUE,
+                              model=model, model.func=model.func,
+                              model.guess=model.guess, samples=samples, B=B)
   } else {
     fit <- lapply(conc.list, FUN=.dcemri.spline.single, time=time, D=D,
                   time.input=time.input, p=p, rw=rw, knots=knots, k=k,
@@ -474,7 +474,7 @@ setMethod("dcemri.spline", signature(conc="array"),
                   model=model, model.func=model.func,
                   model.guess=model.guess, samples=samples, B=B)
   }
-  
+
   if (verbose) {
     cat("  Reconstructing results...", fill=TRUE)
   }
@@ -589,7 +589,7 @@ setMethod("dcemri.spline", signature(conc="array"),
       fitted.sample[k,,j] <- D %*% beta.sample[k,,j]
     }
   }
-  
+
   if ((response || fitted) && samples) {
     beta <- array(NA, c(I,J,K,p,samplesize))     # a 5-dimensional array!!!
   }
@@ -620,7 +620,7 @@ setMethod("dcemri.spline", signature(conc="array"),
     E.med[img.mask] <- E
     F.med[img.mask] <- F
     TC.med[img.mask] <- TC
-  } 
+  }
   if (samples) {
     ktrans <- ve <- array(NA, c(I,J,K,samplesize))
     for (i in 1:samplesize) {
@@ -670,7 +670,7 @@ if (fitted || response) {
       if (fitted)
         fitted.med[,,,j][img.mask] <- median(fitted.sample[,j,])
       }
-    if (I > 1) 
+    if (I > 1)
     for (j in 1:T) {
       if (response)
         response.med[,,,j][img.mask] <- apply(response.sample[,j,], 1, median)
@@ -678,7 +678,7 @@ if (fitted || response) {
         fitted.med[,,,j][img.mask] <- apply(fitted.sample[,j,], 1, median)
       }
     if (samples)
-    for (i in 1:samplesize) 
+    for (i in 1:samplesize)
     for (j in 1:T) {
       if (response)
         response[,,,j,i][img.mask] <- response.sample[,j,i]

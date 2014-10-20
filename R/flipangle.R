@@ -1,13 +1,13 @@
 ##
 ## Copyright (c) 2009-2011 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
-## 
+##
 ## Redistribution and use in source and binary forms, with or without
 ## modification, are permitted provided that the following conditions are
 ## met:
-## 
+##
 ##     * Redistributions of source code must retain the above copyright
-##       notice, this list of conditions and the following disclaimer. 
+##       notice, this list of conditions and the following disclaimer.
 ##     * Redistributions in binary form must reproduce the above
 ##       copyright notice, this list of conditions and the following
 ##       disclaimer in the documentation and/or other materials provided
@@ -15,7 +15,7 @@
 ##     * The names of the authors may not be used to endorse or promote
 ##       products derived from this software without specific prior
 ##       written permission.
-## 
+##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 ## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 ## LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -27,7 +27,7 @@
 ## THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-## 
+##
 ## $Id: flipangle.R 332 2010-01-29 16:54:07Z bjw34032 $
 ##
 
@@ -44,7 +44,7 @@ dam <- function(low, high, low.deg) {
 ## R10.lm() = estimate R1 using Levenburg-Marquardt
 #############################################################################
 
-R10.lm <- function(signal, alpha, TR, guess, 
+R10.lm <- function(signal, alpha, TR, guess,
                    control=minpack.lm::nls.lm.control()) {
   func <- function(x, signal, alpha, TR) {
     R1 <- x[1]
@@ -53,7 +53,7 @@ R10.lm <- function(signal, alpha, TR, guess,
     signal -
       m0 * sin(theta) * (1 - exp(-TR*R1)) / (1 - cos(theta) * exp(-TR*R1))
   }
-  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control, 
+  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control,
                             signal=signal, alpha=alpha, TR=TR)
   list(R1=out$par[1], m0=out$par[2], hessian=out$hessian, info=out$info,
        message=out$message)
@@ -63,7 +63,7 @@ R10.lm <- function(signal, alpha, TR, guess,
 ## E10.lm() = estimate exp(-TR*R1) using Levenburg-Marquardt
 #############################################################################
 
-E10.lm <- function(signal, alpha, guess, 
+E10.lm <- function(signal, alpha, guess,
                    control=minpack.lm::nls.lm.control()) {
   func <- function(x, signal, alpha) {
     E1 <- x[1]
@@ -71,7 +71,7 @@ E10.lm <- function(signal, alpha, guess,
     theta <- pi/180 * alpha # degrees to radians
     signal - m0 * sin(theta) * (1 - E1) / (1 - cos(theta) * E1)
   }
-  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control, 
+  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control,
                             signal=signal, alpha=alpha)
   list(E10=out$par[1], m0=out$par[2], hessian=out$hessian, info=out$info,
        message=out$message)
@@ -83,9 +83,9 @@ E10.lm <- function(signal, alpha, guess,
 
 setGeneric("R1.fast", function(flip, ...) standardGeneric("R1.fast"))
 setMethod("R1.fast", signature(flip="array"),
-          function(flip, flip.mask, fangles, TR, 
+          function(flip, flip.mask, fangles, TR,
                    control=minpack.lm::nls.lm.control(),
-                   multicore=FALSE, verbose=FALSE) 
+                   multicore=FALSE, verbose=FALSE)
 	    .dcemriWrapper("R1.fast", flip, flip.mask, fangles, TR, control,
                            multicore, verbose))
 
@@ -93,7 +93,7 @@ setMethod("R1.fast", signature(flip="array"),
 ## R1.fast()
 #############################################################################
 
-.R1.fast <- function(flip, flip.mask, fangles, TR, 
+.R1.fast <- function(flip, flip.mask, fangles, TR,
                      control=minpack.lm::nls.lm.control(),
                      multicore=FALSE, verbose=FALSE) {
 
@@ -112,12 +112,12 @@ setMethod("R1.fast", signature(flip="array"),
       stop("Only vector of flip angles and single TR or single flip angle and vector TR is allowed.")
     }
   }
-    
+
   X <- nrow(flip)
   Y <- ncol(flip)
   Z <- nsli(flip)
   nvoxels <- sum(flip.mask)
-  
+
   if (verbose) {
     cat("  Deconstructing data...", fill=TRUE)
   }
@@ -135,13 +135,13 @@ setMethod("R1.fast", signature(flip="array"),
   if (verbose) {
     cat("  Calculating R10 and M0...", fill=TRUE)
   }
-  if (multicore && require("parallel")) {
+  if (multicore) {
     if (method == "E10") {
-      fit.list <- mclapply(flip.list, function(x) {
+      fit.list <- parallel::mclapply(flip.list, function(x) {
         E10.lm(x$signal, x$angles, guess=c(1, mean(x$signal)), control)
       })
     } else {
-      fit.list <- mclapply(flip.list, function(x) {
+      fit.list <- parallel::mclapply(flip.list, function(x) {
         R10.lm(x$signal, x$angles, TR, guess=c(1, mean(x$signal)), control)
       })
     }
@@ -192,8 +192,8 @@ setMethod("R1.fast", signature(flip="array"),
 setGeneric("CA.fast", function(dynamic, ...) standardGeneric("CA.fast"))
 setMethod("CA.fast", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
-                   control=minpack.lm::nls.lm.control(maxiter=200), 
-                   multicore=FALSE, verbose=FALSE) 
+                   control=minpack.lm::nls.lm.control(maxiter=200),
+                   multicore=FALSE, verbose=FALSE)
 	    .dcemriWrapper("CA.fast", dynamic, dyn.mask, dangle, flip,
                            fangles, TR, r1, control, multicore, verbose))
 
@@ -216,9 +216,9 @@ setMethod("CA.fast", signature(dynamic="array"),
     ## Check that #(flip angles) are equal
     stop("Number of flip angles must agree with dimension of flip-angle data.")
   }
-  
+
   R1est <- R1.fast(flip, dyn.mask, fangles, TR, control, multicore, verbose)
-  
+
   if (verbose) {
     cat("  Calculating concentration...", fill=TRUE)
   }
@@ -242,7 +242,7 @@ setMethod("CA.fast", signature(dynamic="array"),
 setGeneric("CA.fast2", function(dynamic, ...) standardGeneric("CA.fast2"))
 setMethod("CA.fast2", signature(dynamic="array"),
 	  function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
-                   verbose=FALSE) 
+                   verbose=FALSE)
           .dcemriWrapper("CA.fast2", dynamic, dyn.mask, dangle, flip,
                          fangles, TR, r1, verbose))
 
@@ -252,7 +252,7 @@ setMethod("CA.fast2", signature(dynamic="array"),
 
 .CA.fast2 <- function(dynamic, dyn.mask, dangle, flip, fangles, TR, r1=4,
                      verbose=FALSE) {
-  
+
   if (length(dim(flip)) != 4) {  # Check flip is a 4D array
     stop("Flip-angle data must be a 4D array.")
   }

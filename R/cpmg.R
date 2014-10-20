@@ -1,13 +1,13 @@
 ##
 ## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
-## 
+##
 ## Redistribution and use in source and binary forms, with or without
 ## modification, are permitted provided that the following conditions are
 ## met:
-## 
+##
 ##     * Redistributions of source code must retain the above copyright
-##       notice, this list of conditions and the following disclaimer. 
+##       notice, this list of conditions and the following disclaimer.
 ##     * Redistributions in binary form must reproduce the above
 ##       copyright notice, this list of conditions and the following
 ##       disclaimer in the documentation and/or other materials provided
@@ -15,7 +15,7 @@
 ##     * The names of the authors may not be used to endorse or promote
 ##       products derived from this software without specific prior
 ##       written permission.
-## 
+##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 ## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 ## LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -27,7 +27,7 @@
 ## THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-## 
+##
 ## $Id:$
 ##
 
@@ -43,7 +43,7 @@ T2.lm <- function(signal, TE, guess, control=minpack.lm::nls.lm.control()) {
     TE <- y[[2]]
     signal - rho * exp(-TE/T2)
   }
-  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control, 
+  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control,
                             y=list(signal, TE))
   list(rho=out$par[1], T2=out$par[2], hessian=out$hessian, info=out$info,
        message=out$message)
@@ -55,7 +55,7 @@ T2.lm <- function(signal, TE, guess, control=minpack.lm::nls.lm.control()) {
 
 setGeneric("T2.fast", function(cpmg, ...) standardGeneric("T2.fast"))
 setMethod("T2.fast", signature(cpmg="array"),
-          function(cpmg, cpmg.mask, TE, 
+          function(cpmg, cpmg.mask, TE,
                    control=minpack.lm::nls.lm.control(maxiter=150),
                    multicore=FALSE, verbose=FALSE)
           .dcemriWrapper("T2.fast", cpmg, cpmg.mask, TE, control, multicore,
@@ -65,7 +65,7 @@ setMethod("T2.fast", signature(cpmg="array"),
 ## T2.fast()
 #############################################################################
 
-.T2.fast <- function(cpmg, cpmg.mask, TE, 
+.T2.fast <- function(cpmg, cpmg.mask, TE,
                      control=minpack.lm::nls.lm.control(maxiter=150),
                      multicore=FALSE, verbose=FALSE) {
 
@@ -90,8 +90,8 @@ setMethod("T2.fast", signature(cpmg="array"),
   if (verbose) {
     cat("  Calculating T2 and rho...", fill=TRUE)
   }
-  if (multicore && require("parallel")) {
-    T2.list <- mclapply(cpmg.list, function(x) {
+  if (multicore) {
+    T2.list <- parallel::mclapply(cpmg.list, function(x) {
       T2.lm(x, TE, guess=c(0.75 * x[1], 0.05), control)
     })
   } else {

@@ -2,13 +2,13 @@
 ##
 ## Copyright (c) 2009,2010 Brandon Whitcher and Volker Schmid
 ## All rights reserved.
-## 
+##
 ## Redistribution and use in source and binary forms, with or without
 ## modification, are permitted provided that the following conditions are
 ## met:
-## 
+##
 ##     * Redistributions of source code must retain the above copyright
-##       notice, this list of conditions and the following disclaimer. 
+##       notice, this list of conditions and the following disclaimer.
 ##     * Redistributions in binary form must reproduce the above
 ##       copyright notice, this list of conditions and the following
 ##       disclaimer in the documentation and/or other materials provided
@@ -16,7 +16,7 @@
 ##     * The names of the authors may not be used to endorse or promote
 ##       products derived from this software without specific prior
 ##       written permission.
-## 
+##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 ## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 ## LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,7 +28,7 @@
 ## THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-## 
+##
 ##
 ## $Id: dcemri_lm.R 329 2010-01-07 16:33:56Z bjw34032 $
 ##
@@ -39,15 +39,15 @@
 
 setGeneric("dcemri.lm",
            function(conc,  ...) standardGeneric("dcemri.lm"))
-setMethod("dcemri.lm", signature(conc="array"), 
+setMethod("dcemri.lm", signature(conc="array"),
 	  function(conc,time,img.mask, model="extended", aif=NULL,
-                   control=minpack.lm::nls.lm.control(), user=NULL, 
+                   control=minpack.lm::nls.lm.control(), user=NULL,
                    guess=NULL, multicore=FALSE, verbose=FALSE, ...)
           .dcemriWrapper("dcemri.lm", conc, time, img.mask, model, aif,
                          control, user, guess, multicore, verbose, ...))
 
 .dcemri.lm <- function(conc, time, img.mask, model="extended", aif=NULL,
-                       control=minpack.lm::nls.lm.control(), user=NULL, 
+                       control=minpack.lm::nls.lm.control(), user=NULL,
                        guess=NULL, multicore=FALSE, verbose=FALSE, ...) {
   switch(model,
          weinmann = ,
@@ -112,7 +112,7 @@ setMethod("dcemri.lm", signature(conc="array"),
            }
          },
          stop("Model/AIF combination is not supported."))
-       
+
   I <- nrow(conc)
   J <- ncol(conc)
   K <- nsli(conc)
@@ -136,8 +136,8 @@ setMethod("dcemri.lm", signature(conc="array"),
   if (verbose) {
     cat("  Estimating the kinetic parameters...", fill=TRUE)
   }
-  if (multicore && require("parallel")) {
-    lm.list <- mclapply(conc.list, function(x) {
+  if (multicore) {
+    lm.list <- parallel::mclapply(conc.list, function(x) {
       minpack.lm::nls.lm(par=guess, fn=func, control=control, signal=x, time=time, p=p)
     })
   } else {
