@@ -1,0 +1,13 @@
+# Sample .travis.yml for R projects
+
+language: r
+warnings_are_errors: true
+sudo: required
+
+r_build_args: --compact-vignettes=gs+qpdf --resave-data
+r_check_args: 
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change

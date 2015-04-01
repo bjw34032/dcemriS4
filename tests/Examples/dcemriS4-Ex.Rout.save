@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2014-10-17 r66788) -- "Unsuffered Consequences"
+R version 3.1.2 (2014-10-31) -- "Pumpkin Helmet"
 Copyright (C) 2014 The R Foundation for Statistical Computing
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
@@ -20,25 +20,13 @@ Type 'q()' to quit R.
 > pkgname <- "dcemriS4"
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
-> base::assign(".ExTimings", "dcemriS4-Ex.timings", pos = 'CheckExEnv')
-> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
-> base::assign(".format_ptime",
-+ function(x) {
-+   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
-+   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
-+   options(OutDec = '.')
-+   format(x[1L:3L], digits = 7L)
-+ },
-+ pos = 'CheckExEnv')
-> 
-> ### * </HEADER>
 > library('dcemriS4')
 Loading required package: oro.nifti
 
 oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.4.3)
 
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.52)
+dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
@@ -48,7 +36,6 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.52)
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: Arterial Input Functions
 > ### Title: Arterial Input Functions
 > ### Aliases: aif.orton.exp model.orton.exp orton.exp.lm
@@ -88,15 +75,12 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.52)
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("aif", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("conv_fft")
 > ### * conv_fft
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: conv.fft
 > ### Title: Convolution of 3D Arrays using the Fourier Transform
 > ### Aliases: conv.fft
@@ -125,8 +109,6 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.52)
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("conv_fft", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
 > nameEx("cpmg")
@@ -134,7 +116,6 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.52)
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: CPMG
 > ### Title: Quantitative T2
 > ### Aliases: T2.lm T2.fast T2.fast,array-method T2.fast,anlz-method
@@ -147,15 +128,12 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.52)
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("cpmg", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("dce_bayes")
 > ### * dce_bayes
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: dcemri.bayes
 > ### Title: Bayesian Methods for Pharmacokinetic Modeling of Dynamic
 > ###   Contrast-Enhanced MRI Data
@@ -220,15 +198,12 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.52)
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("dce_bayes", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("dce_map")
 > ### * dce_map
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: dcemri.map
 > ### Title: Pharmacokinetic Modeling of Dynamic Contrast-Enhanced MRI Data
 > ### Aliases: dcemri.map dcemri.map,array-method dcemri.map.single
@@ -295,15 +270,12 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.52)
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("dce_map", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("dce_spline")
 > ### * dce_spline
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: dcemri.spline
 > ### Title: Bayesian P-Splines for Dynamic Contrast-Enhanced MRI Data
 > ### Aliases: dcemri.spline dcemri.spline,array-method dcemri.spline.single
@@ -351,15 +323,12 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.52)
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("dce_spline", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("dcemri")
 > ### * dcemri
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: dcemri.lm
 > ### Title: Pharmacokinetic Models for Dynamic Contrast-Enhanced MRI Data
 > ### Aliases: dcemri.lm dcemri.lm,array-method
@@ -460,15 +429,12 @@ $message
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("dcemri", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("dcemriS4-package")
 > ### * dcemriS4-package
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: dcemriS4-package
 > ### Title: dcemri: A Package for Medical Image Analysis (S4 implementation)
 > ### Aliases: dcemriS4-package dcemriS4
@@ -487,15 +453,12 @@ $message
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("dcemriS4-package", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("dwi")
 > ### * dwi
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: Apparent Diffusion Coefficient
 > ### Title: Estimate the Apparent Diffusion Coefficient (ADC)
 > ### Aliases: adc.lm ADC.fast,array-method ADC.fast
@@ -528,8 +491,6 @@ $message
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("dwi", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
 > nameEx("find_center")
@@ -537,7 +498,6 @@ $message
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: find.center
 > ### Title: Find the Center of a Binary Mask
 > ### Aliases: find.center
@@ -553,15 +513,12 @@ $message
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("find_center", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("flipangle")
 > ### * flipangle
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: Relaxivity
 > ### Title: Estimate Intrinsic Tissue Relaxivity
 > ### Aliases: R10.lm E10.lm R1.fast,array-method CA.fast,array-method
@@ -595,15 +552,12 @@ $message
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("flipangle", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("kineticmodel")
 > ### * kineticmodel
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: kineticModel
 > ### Title: Pharmacokinetic Models
 > ### Aliases: kineticModel
@@ -647,15 +601,12 @@ $message
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("kineticmodel", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("shift3D")
 > ### * shift3D
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: shift3D
 > ### Title: Shift a 3D Array in One Dimension
 > ### Aliases: shift3D
@@ -671,14 +622,12 @@ $message
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("shift3D", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > ### * <FOOTER>
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  27.772 0.095 27.899 0 0 
+Time elapsed:  27.077 0.04 27.093 0 0 
 > grDevices::dev.off()
 null device 
           1 
