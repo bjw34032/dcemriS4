@@ -32,11 +32,6 @@
 ## $Id: wrappers.R 332 2010-01-29 16:54:07Z bjw34032 $
 ##
 
-#############################################################################
-## A couple of wrapper functions to make our generic methods look all the same
-#############################################################################
-
 .dcemriWrapper <- function(name, ...) {
-  .wrapper(getFunction(paste(".", name, sep="")), name, ...)
+  oro.nifti::.wrapper(getFunction(paste(".", name, sep="")), name, ...)
 }
-

@@ -32,28 +32,52 @@
 ##
 
 #############################################################################
-## T2.lm() = estimate exp(-TE/T2) using Levenburg-Marquardt
-#############################################################################
-
-T2.lm <- function(signal, TE, guess, control=minpack.lm::nls.lm.control()) {
-  func <- function(x, y) {
-    rho <- x[1]
-    T2 <- x[2]
-    signal <- y[[1]]
-    TE <- y[[2]]
-    signal - rho * exp(-TE/T2)
-  }
-  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control,
-                            y=list(signal, TE))
-  list(rho=out$par[1], T2=out$par[2], hessian=out$hessian, info=out$info,
-       message=out$message)
-}
-
-#############################################################################
 ## setGeneric("T2.fast")
 #############################################################################
-
+#' Quantitative T2 Methods
+#' 
+#' Carr–Purcell–Meiboom–Gill (CPMG)
+#' 
+#' @aliases T2.lm T2.fast T2.fast,array-method T2.fast,anlz-method
+#' T2.fast,nifti-method
+#' @usage T2.lm(signal, TE, guess, control=minpack.lm::nls.lm.control())
+#' \S4method{T2.fastarray}(cpmg, cpmg.mask, TE,
+#' control=minpack.lm::nls.lm.control(maxiter=150), multicore=FALSE,
+#' verbose=FALSE)
+#' @param signal is the vector of signal intensities as a function of echo
+#' times.
+#' @param TE is the vector of echo times (in seconds).
+#' @param guess is the vector of initial values for the parameters of interest:
+#' \eqn{\rho}{rho} and \eqn{T2}{T2}.
+#' @param control An optional list of control settings for \code{nls.lm}.  See
+#' \code{nls.lm.control} for the names of the settable control values and their
+#' effect.
+#' @param cpmg is a multidimensional array of signal intensities.  The last
+#' dimension is assumed to be a function of the echo times, while the previous
+#' dimenions are assued to be spatial.
+#' @param cpmg.mask is a (logical) multidimensional array that identifies the
+#' voxels to be analyzed.
+#' @param multicore is a logical variable (default = \code{FALSE}) that allows
+#' parallel processing via \pkg{multicore}.
+#' @param verbose is a logical variable (default = \code{FALSE}) that allows
+#' text-based feedback during execution of the function.
+#' @return A list structure is produced with (all or some of the) parameter
+#' estimates \item{list(list("\\rho"), list("rho"))}{Scaling factor between
+#' signal intensity and T2 (proton density).} \item{T2}{T2 relaxation time.}
+#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' @seealso \code{\link{R1.fast}}, \code{\link{R10.lm}}
+#' @keywords misc
+#' @examples
+#' 
+#' ## Example?
+#' 
+#' @rdname CPMG-methods
+#' @export
+#' @docType methods
 setGeneric("T2.fast", function(cpmg, ...) standardGeneric("T2.fast"))
+#' @export
+#' @rdname CPMG-methods
+#' @aliases T2.fast,array-method
 setMethod("T2.fast", signature(cpmg="array"),
           function(cpmg, cpmg.mask, TE,
                    control=minpack.lm::nls.lm.control(maxiter=150),
@@ -77,7 +101,7 @@ setMethod("T2.fast", signature(cpmg="array"),
   }
   X <- nrow(cpmg)
   Y <- ncol(cpmg)
-  Z <- nsli(cpmg)
+  Z <- oro.nifti::nsli(cpmg)
   nvoxels <- sum(cpmg.mask)
   if (verbose) {
     cat("  Deconstructing data...", fill=TRUE)
@@ -128,3 +152,22 @@ setMethod("T2.fast", signature(cpmg="array"),
        T2.error = T2.error)
 }
 
+#############################################################################
+## T2.lm() = estimate exp(-TE/T2) using Levenburg-Marquardt
+#############################################################################
+#' @export
+#' @rdname CPMG-methods
+#' @aliases T2.lm
+T2.lm <- function(signal, TE, guess, control=minpack.lm::nls.lm.control()) {
+  func <- function(x, y) {
+    rho <- x[1]
+    T2 <- x[2]
+    signal <- y[[1]]
+    TE <- y[[2]]
+    signal - rho * exp(-TE/T2)
+  }
+  out <- minpack.lm::nls.lm(par=guess, fn=func, control=control,
+                            y=list(signal, TE))
+  list(rho=out$par[1], T2=out$par[2], hessian=out$hessian, info=out$info,
+       message=out$message)
+}
