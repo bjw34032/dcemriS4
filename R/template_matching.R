@@ -32,12 +32,51 @@
 ## $Id:$
 ##
 
+
+
+#' Convolution of 3D Arrays using the Fourier Transform
+#' 
+#' Convolve a
+#' 
+#' The arrays \eqn{A} and \eqn{B} are transformed into the Fourier domain and
+#' multiplied together (equivalent to a convolution in the image domain across
+#' all spatial locations simultaneously).
+#' 
+#' @usage conv.fft(A, B, C, FFTA=NULL)
+#' @param A is a three-dimensional array (\dQuote{the template}).
+#' @param B is a three-dimensional array (\dQuote{the target}).
+#' @param C is a vector of length three (the center of \dQuote{the template}).
+#' @param FFTA is the three-dimensional Fourier transform of \code{A}, this may
+#' save time when looping over multiple \dQuote{targets}.
+#' @return A three-dimensional array, the same dimension as the input arrays,
+#' that is the convolution of the \dQuote{target} to the \dQuote{template} at
+#' all spatial locations.
+#' @author Brandon Whitcher
+#' @seealso \code{\link{fft}}, \code{\link{ftm}}, \code{\link{shift3D}}
+#' @references Briggs, W.L. and Henson, V.E. (1995) \emph{The DFT: An Owner's
+#' Manual for the Discrete Fourier Transform}, SIAM: Philadelphia.
+#' @examples
+#' 
+#' cube <- array(0, c(20,20,1))
+#' cube[9:12,9:12,1] <- 1
+#' tkernel <- array(0, c(20,20,1))
+#' tkernel[,,1] <- c(.5, 1, .5, rep(0,20-3)) %o% c(.5, 1, .5, rep(0,20-3))
+#' tcenter <- find.center(ifelse(tkernel > 0, TRUE, FALSE))
+#' out <- conv.fft(tkernel, cube, tcenter)
+#' out[8:13,8:13,1]  ## text output
+#' 
+#' par(mfrow=c(2,2))  ## graphic output
+#' image(drop(tkernel), col=oro.nifti::tim.colors(), main="Template")
+#' image(drop(cube), col=oro.nifti::tim.colors(), main="Target")
+#' image(drop(out), col=oro.nifti::tim.colors(), main="Output")
+#' 
+#' @export conv.fft
 conv.fft <- function(A, B, C, FFTA=NULL) {
   if (length(dim(A)) == 3) {
     if (length(dim(A)) == length(dim(B)) && length(dim(A)) == length(C)) {
       X <- nrow(A)
       Y <- ncol(A)
-      Z <- nsli(A)
+      Z <- oro.nifti::nsli(A)
       if (is.null(FFTA)) {
         out <- Re(fft(fft(A) * Conj(fft(B)), inverse=TRUE))[X:1,Y:1,Z:1,drop=FALSE] / (X*Y*Z)
       } else {
@@ -61,6 +100,30 @@ conv.fft <- function(A, B, C, FFTA=NULL) {
   }
 }
 
+
+
+#' Find the Center of a Binary Mask
+#' 
+#' The center of a binary mask is determined.
+#' 
+#' This method most likely only works with convex three-dimensional shapes
+#' (e.g., a hyper-rectangle).  Further testing is required to know the limits
+#' of the current implementation.
+#' 
+#' @usage find.center(M)
+#' @param M is a binary mask (multidimensional array of logical values).
+#' @return A vector of values the same length as the input array.
+#' @author Brandon Whitcher
+#' @seealso \code{\link{ftm}}
+#' @keywords misc
+#' @examples
+#' 
+#' M <- array(FALSE, rep(10,3))
+#' M[6:10,6:10,6:10] <- TRUE
+#' Mc <- find.center(M)
+#' print(Mc)
+#' 
+#' @export find.center
 find.center <- function(M) {
   if (!is.logical(M)) {
     stop("Object must be logical!")
@@ -70,7 +133,7 @@ find.center <- function(M) {
   }
   X <- nrow(M)
   Y <- ncol(M)
-  Z <- nsli(M)
+  Z <- oro.nifti::nsli(M)
   xx <- array(1:X, dim(M))
   yy <- array(rep(1:Y, each=X), dim(M))
   zz <- array(rep(1:Z, each=X*Y), dim(M))
@@ -79,13 +142,44 @@ find.center <- function(M) {
 }
 
 ### FIXME Should this be genericised? 
+
+
+#' Shift a 3D Array in One Dimension
+#' 
+#' One axis of the three-dimensional array is translated by an integer amount.
+#' This is useful when applying convolution operators in the Fourier domain.
+#' 
+#' 
+#' @usage shift3D(A, s, type, fill=0)
+#' @param A is a three-dimensional array.
+#' @param s is the integer number of translation steps.
+#' @param type is a character string using anatomical coordinates assuming a
+#' transverse acquisition scheme (\dQuote{LR} = left-right = x-axis,
+#' \dQuote{AP} = anterior-posterior = y-axis, \dQuote{SI} = superior-inferior =
+#' z-axis).
+#' @param fill is the quantity used to fill gaps induced by the translations
+#' (circular boundary conditions are NOT used).
+#' @return A three-dimensional array is returned, the same dimension as the
+#' original array, with one dimension translated.
+#' @author Brandon Whitcher
+#' @seealso \code{\link{conv.fft}}
+#' @examples
+#' 
+#' cube <- array(0, rep(20,3))
+#' cube[9:12,9:12,9:12] <- 1
+#' cube.shift <- shift3D(cube, 5, type="AP")
+#' par(mfrow=c(1,2), mar=rep(0.5,4))
+#' image(cube[,,10], xlab="", ylab="", axes=FALSE)
+#' image(cube.shift[,,10], xlab="", ylab="", axes=FALSE)
+#' 
+#' @export shift3D
 shift3D <- function(A, s, type, fill=0) {
   if (length(dim(A)) != 3) {
     stop("Object must be three-dimensional!")
   }
   X <- nrow(A)
   Y <- ncol(A)
-  Z <- nsli(A)
+  Z <- oro.nifti::nsli(A)
   if (s != 0) {
     if (type == "LR") {
       ## left-right
@@ -128,15 +222,50 @@ shift3D <- function(A, s, type, fill=0) {
 #############################################################################
 ## setGeneric("ftm")
 #############################################################################
-
+#' Fast Template Matching via Cross-Correlation
+#' 
+#' Motion correction and/or co-registration of three-dimensional arrays
+#' (medical imaging data) are performed by applying a user-defined mask of
+#' voxels.  Normalized cross-correlations (in 3D) are computed using the FFT.
+#' 
+#' An extremely basic method of motion correction/co-registration is
+#' implemented by estimating \dQuote{local} cross-correlations based on a
+#' binary mask that is a subset of the original three-dimensional volume.  All
+#' convolutions are preformed via the FFT (\code{\link{fft}}) and repetitive
+#' calculations are minimized where possible.
+#' 
+#' Only whole-voxel translations are considered.  This does not begin to
+#' capture the true effects of motion in soft tissue, but we assume that the
+#' object of interest (e.g., tumor) is a fairly rigid structure.  Potential
+#' extensions include rigid-body, affine and nonlinear registration techniques
+#' along with interploation schemes in order to capture intra-voxel
+#' manipulations of the data.
+#' 
+#' @aliases ftm ftm,array-method
+#' @usage \S4method{ftmarray}(input, ...)
+#' @param input is a four-dimensional array of signal intensities.
+#' @param ... Additional variables passed to the \code{plot} function.
+#' @return A list of objects are returned: \item{out}{Motion-corrected version
+#' of the four-dimensional array.} \item{offset}{Translations (in 3D) for each
+#' volume in the 4D array.} \item{t.center}{Estimated center of the binary
+#' mask.}
+#' @author Brandon Whitcher <\email{bjw34032@@users.sourceforge.net}>
+#' @seealso \code{\link{conv.fft}}, \code{\link{find.center}},
+#' \code{\link{shift3D}}
+#' @references Lewis, J.P. (2003) Fast normalized cross-correlation.\cr
+#' \url{www.idiom.com/~zilla/}
+#' @rdname ftm
+#' @export
 setGeneric("ftm", function(input, ...) standardGeneric("ftm"))
+#' @rdname ftm
+#' @export
 setMethod("ftm", signature(input="array"),
           function(input, ...) .dcemriWrapper("ftm", input, ...))
 
 .ftm <- function(input, mask, reference, plot=TRUE, ...) {
   ## Fast template matching via cross-correlation
-  W <- ntim(input)
-  if (ntim(input) < 1) {
+  W <- oro.nifti::ntim(input)
+  if (W < 1) {
     stop("4D object is assumed!")
   }
   template <- ifelse(mask > 0, reference, 0)

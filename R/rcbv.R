@@ -33,9 +33,54 @@
 ##
 
 #############################################################################
+## setGeneric("rCBV.fast")
+#############################################################################
+#' Regional Cerebral Blood Volume
+#' 
+#' This is a set of functions that...
+#' 
+#' @aliases rCBV rCBV.fast rCBV.fast,array-method rCBV.fast,anlz-method
+#' rCBV.fast,nifti-method
+#' @usage rCBV(Ct, Ca, time, Hf=1, rho=1) \S4method{rCBV.fastarray}(signal,
+#' mask, aif, time, multicore=FALSE, verbose=FALSE)
+#' @param Ct ...
+#' @param Ca ...
+#' @param time is the vector of acquisition times associated with the dynamic
+#' data.
+#' @param Hf ...
+#' @param rho ...
+#' @param signal is a multidimensional array of signal intensities (or
+#' concentrations).  The last dimension is assumed to be a function of the
+#' acquisition times, while the previous dimenions are assued to be spatial.
+#' @param mask is a (logical) multidimensional array that identifies the voxels
+#' to be analyzed.
+#' @param aif Arterial Input Function.
+#' @param multicore is a logical variable (default = \code{FALSE}) that allows
+#' parallel processing via \pkg{multicore}.
+#' @param verbose is a logical variable (default = \code{FALSE}) that allows
+#' text-based feedback during execution of the function.
+#' @return A \code{nifti} object containing the estimates of regional cerebral
+#' blood volume (rCBV).
+#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' @keywords misc
+#' @export
+#' @docType methods
+#' @rdname rcbv-methods
+setGeneric("rCBV.fast", function(signal, ...) standardGeneric("rCBV.fast"))
+#' @rdname rcbv-methods
+#' @export
+#' @aliases rCBV.fast,array-method
+setMethod("rCBV.fast", signature(signal="array"),
+          function(signal, mask, aif, time, multicore=FALSE, verbose=FALSE)
+          .dcemriWrapper("rCBV.fast", signal, mask, aif, time, multicore,
+                         verbose))
+
+#############################################################################
 ## Regional Blood Volume (rCBV) using numeric integration
 #############################################################################
-
+#' @rdname rcbv-methods
+#' @export
+#' @aliases rCBV
 rCBV <- function(Ct, Ca, time, Hf=1, rho=1) {
   trapezoid <- function(x, y) {
     ## Trapezoidal rule
@@ -50,16 +95,6 @@ rCBV <- function(Ct, Ca, time, Hf=1, rho=1) {
 }
 
 #############################################################################
-## setGeneric("rCBV.fast")
-#############################################################################
-
-setGeneric("rCBV.fast", function(signal, ...) standardGeneric("rCBV.fast"))
-setMethod("rCBV.fast", signature(signal="array"),
-          function(signal, mask, aif, time, multicore=FALSE, verbose=FALSE)
-          .dcemriWrapper("rCBV.fast", signal, mask, aif, time, multicore,
-                         verbose))
-
-#############################################################################
 ## rCBV.fast()
 #############################################################################
 
@@ -71,12 +106,12 @@ setMethod("rCBV.fast", signature(signal="array"),
   if (!is.logical(mask)) { # Check mask is logical
     stop("Mask must be logical.")
   }
-  if (length(time) != ntim(signal)) { # Check signal and time match
+  if (length(time) != oro.nifti::ntim(signal)) { # Check signal and time match
     stop("Data must have the same length as the acquisition times.")
   }
   X <- nrow(signal)
   Y <- ncol(signal)
-  Z <- nsli(signal)
+  Z <- oro.nifti::nsli(signal)
   nvoxels <- sum(mask)
   if (verbose) {
     cat("  Deconstructing data...", fill=TRUE)
@@ -108,4 +143,3 @@ setMethod("rCBV.fast", signature(signal="array"),
   rcbv.array[mask] <- rcbv
   return(rcbv.array)
 }
-

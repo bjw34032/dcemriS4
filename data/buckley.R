@@ -1,4 +1,4 @@
-buckley <- read.table("buckley.txt", header=TRUE)
+buckley <- utils::read.table("buckley.txt", header=TRUE)
 breast <- list(data = buckley[,4:16])
 breast$fp <- c(.17, .37, .57, .77, .97, rep(.57, 8))
 breast$ps <- c(rep(.33, 5), .01, .17, .49, .65, rep(.33, 4))
