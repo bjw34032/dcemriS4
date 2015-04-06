@@ -119,14 +119,16 @@ mask <- array(TRUE, dim(img)[1:3])
 time <- buckley$time.min[xi]
 
 ## Bayesian estimation with Fritz-Hansen default AIF
-fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen")
+fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen",
+                         nriters=1500, thin=2, burnin=500)
 
 ## Bayesian estimation with "orton.exp" function fit to Buckley's AIF
 aif <- buckley$input[xi]
 aifparams <- orton.exp.lm(time, aif)
 aifparams$D <- 1
 fit.bayes.aif <- dcemri.bayes(img, time, mask, model="orton.exp",
-                              aif="user", user=aifparams)
+                              aif="user", user=aifparams,
+                              nriters=1500, thin=2, burnin=500)
 
 plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
      xlab=expression(paste("True ", K^{trans})),

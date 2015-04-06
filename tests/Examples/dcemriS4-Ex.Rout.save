@@ -609,7 +609,7 @@ $message
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  26.967 0.021 26.958 0 0 
+Time elapsed:  27.086 0.032 27.095 0 0 
 > grDevices::dev.off()
 null device 
           1 

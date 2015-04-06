@@ -2,7 +2,7 @@
 % Please edit documentation in R/model.R
 \name{expConv}
 \alias{expConv}
-\title{Convolution}
+\title{Convolution of Exponential Functions}
 \usage{
 expConv(input, k1, k2)
 }
@@ -14,7 +14,7 @@ expConv(input, k1, k2)
 \item{k2}{...}
 }
 \value{
-...
+The convolved time series.
 }
 \description{
 ...

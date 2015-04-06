@@ -111,7 +111,6 @@
 #' 
 #' @rdname aif-models
 #' @export 
-#' @import oro.nifti
 aif.orton.exp <- function(tt, AB, muB, AG, muG) {
   out <- AB * tt * exp(-muB * tt) + AG * (exp(-muG * tt) - exp(-muB * tt))
   out[tt < 0] <- 0

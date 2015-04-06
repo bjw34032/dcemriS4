@@ -74,4 +74,6 @@
 #' demo(zstat1)
 #' }
 #' 
+#' @import methods
+#' @import oro.nifti
 NULL

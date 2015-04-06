@@ -259,7 +259,7 @@ compartmentalModel <- function(type) {
          })
 }
 
-#' Convolution
+#' Convolution of Exponential Functions
 #' 
 #' ...
 #' 
@@ -268,7 +268,7 @@ compartmentalModel <- function(type) {
 #' @param input ...
 #' @param k1 ...
 #' @param k2 ...
-#' @return ...
+#' @return The convolved time series.  
 #' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @keywords misc
 #' @export expConv
