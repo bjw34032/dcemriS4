@@ -4,7 +4,7 @@
 \alias{shift3D}
 \title{Shift a 3D Array in One Dimension}
 \usage{
-shift3D(A, s, type, fill=0)
+shift3D(A, s, type, fill = 0)
 }
 \arguments{
 \item{A}{is a three-dimensional array.}
@@ -36,7 +36,7 @@ image(cube[,,10], xlab="", ylab="", axes=FALSE)
 image(cube.shift[,,10], xlab="", ylab="", axes=FALSE)
 }
 \author{
-Brandon Whitcher
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \seealso{
 \code{\link{conv.fft}}

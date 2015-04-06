@@ -6,10 +6,7 @@
 \alias{dcemri.map,array-method}
 \title{Pharmacokinetic Modeling of Dynamic Contrast-Enhanced MRI Data}
 \usage{
-\S4method{dcemri.maparray}(conc, time, img.mask, model="extended",
-aif=NULL, user=NULL, ab.ktrans=c(0,1), ab.kep=ab.ktrans, ab.vp=c(1,19),
-ab.tauepsilon=c(1,1/1000), maxit=5000, samples=FALSE, multicore=FALSE,
-verbose=FALSE, ...)
+dcemri.map(conc, ...)
 
 \S4method{dcemri.map}{array}(conc, time, img.mask, model = "extended",
   aif = NULL, user = NULL, ab.ktrans = c(0, 1), ab.kep = ab.ktrans,
@@ -28,14 +25,17 @@ must be time).}
 excluded.}
 
 \item{model}{is a character string that identifies the type of compartmental
-model to be used.  Acceptable models include: \itemize{
-\item\dQuote{weinmann}Tofts & Kermode AIF convolved with single compartment
-model \item\dQuote{extended}Weinmann model extended with additional vascular
-compartment (default) \item\dQuote{orton.exp}Extended model using Orton's
-exponential AIF \item\dQuote{kety.orton.exp}Kety model using Orton's
-exponential AIF \item\dQuote{orton.cos}Extended model using Orton's raised
-cosine AIF \item\dQuote{kety.orton.cos}Kety model using Orton's raised
-cosine AIF }}
+model to be used.  Acceptable models include:
+\describe{
+\item{\dQuote{weinmann}}{Tofts & Kermode AIF convolved with single
+compartment model}
+\item{\dQuote{extended}}{Weinmann model extended with additional vascular
+compartment (default)}
+\item{\dQuote{orton.exp}}{Extended model using Orton's exponential AIF}
+\item{\dQuote{kety.orton.exp}}{Kety model using Orton's exponential AIF}
+\item{\dQuote{orton.cos}}{Extended model using Orton's raised cosine AIF}
+\item{\dQuote{kety.orton.cos}}{Kety model using Orton's raised cosine AIF}
+}}
 
 \item{aif}{is a character string that identifies the parameters of the type
 of arterial input function (AIF) used with the above model.  Acceptable
@@ -76,13 +76,16 @@ Parameter estimates and their standard errors are provided for the
 masked region of the multidimensional array.  The multi-dimensional arrays
 are provided in \code{nifti} format.
 
-They include: \item{ktrans}{Transfer rate from plasma to the extracellular,
-extravascular space (EES).} \item{kep}{Rate parameter for transport from the
-EES to plasma.} \item{ve}{Fractional occupancy by EES (the ratio between
-ktrans and kep).} \item{vp}{Fractional occupancy by plasma.}
+They include:
+\item{ktrans}{Transfer rate from plasma to the extracellular,
+extravascular space (EES).}
+\item{kep}{Rate parameter for transport from the EES to plasma.}
+\item{ve}{Fractional occupancy by EES (the ratio between ktrans and kep).}
+\item{vp}{Fractional occupancy by plasma.}
 \item{sigma2}{The residual sum-of-squares from the model fit.}
-\item{time}{Acquisition times (for plotting purposes).} Note, not all
-parameters are available under all models choices.
+\item{time}{Acquisition times (for plotting purposes).
+}
+Note, not all parameters are available under all models choices.
 }
 \description{
 Maximum-a-posteriori (MAP) estimation for single compartment models is

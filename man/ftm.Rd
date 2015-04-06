@@ -6,7 +6,7 @@
 \alias{ftm,array-method}
 \title{Fast Template Matching via Cross-Correlation}
 \usage{
-\S4method{ftmarray}(input, ...)
+ftm(input, ...)
 
 \S4method{ftm}{array}(input, ...)
 }
@@ -41,7 +41,7 @@ along with interploation schemes in order to capture intra-voxel
 manipulations of the data.
 }
 \author{
-Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \references{
 Lewis, J.P. (2003) Fast normalized cross-correlation.\cr

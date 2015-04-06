@@ -31,12 +31,51 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 > cleanEx()
-> nameEx("aif")
-> ### * aif
+> nameEx("ADC-methods")
+> ### * ADC-methods
 > 
 > flush(stderr()); flush(stdout())
 > 
-> ### Name: Arterial Input Functions
+> ### Name: ADC.fast
+> ### Title: Estimate the Apparent Diffusion Coefficient (ADC)
+> ### Aliases: ADC.fast ADC.fast,array-method adc.lm
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> S0 <- 10
+> b <- c(0, 50, 400, 800)  # units?
+> D <- 0.7e-3              # mm^2 / sec (normal white matter)
+> 
+> ## Signal intensities based on the (simplified) Bloch-Torry equation
+> dwi <- function(S0, b, D) {
++   S0 * exp(-b*D)
++ }
+> 
+> set.seed(1234)
+> signal <- array(dwi(S0, b, D) + rnorm(length(b), sd=0.15),
++                 c(rep(1,3), length(b)))
+> ADC <- ADC.fast(signal, b, array(TRUE, rep(1,3)))
+> unlist(ADC) # text output
+          S0            D     S0.error      D.error 
+9.985900e+00 7.337532e-04 1.671637e+00 5.369434e+03 
+> 
+> par(mfrow=c(1,1)) # graphical output
+> plot(b, signal, xlab="b-value", ylab="Signal intensity")
+> lines(seq(0,800,10), dwi(S0, seq(0,800,10), D), lwd=2, col=1)
+> lines(seq(0,800,10), dwi(ADC$S0, seq(0,800,10), ADC$D), lwd=2, col=2)
+> legend("topright", c("True","Estimated"), lwd=2, col=1:2)
+> 
+> 
+> 
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx()
+> nameEx("aif-models")
+> ### * aif-models
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: aif.orton.exp
 > ### Title: Arterial Input Functions
 > ### Aliases: aif.orton.exp model.orton.exp orton.exp.lm
 > ### Keywords: models
@@ -49,7 +88,7 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > time <- buckley$time.min[xi]
 > aif <- buckley$input[xi]
 > aifparams <- orton.exp.lm(time, aif)
-> aifparams$D <- 1 
+> aifparams$D <- 1
 > unlist(aifparams[1:4])
          AB         muB          AG         muG 
 37.14845917  3.89506144  1.51615753 -0.01066018 
@@ -76,8 +115,8 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > 
 > 
 > cleanEx()
-> nameEx("conv_fft")
-> ### * conv_fft
+> nameEx("conv.fft")
+> ### * conv.fft
 > 
 > flush(stderr()); flush(stdout())
 > 
@@ -90,47 +129,29 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > cube <- array(0, c(20,20,1))
 > cube[9:12,9:12,1] <- 1
 > tkernel <- array(0, c(20,20,1))
-> tkernel[,,1] <- c(.5, 1, .5, rep(0,20-3)) 
+> tkernel[,,1] <- c(.5, 1, .5, rep(0,20-3)) %o% c(.5, 1, .5, rep(0,20-3))
 > tcenter <- find.center(ifelse(tkernel > 0, TRUE, FALSE))
 > out <- conv.fft(tkernel, cube, tcenter)
 > out[8:13,8:13,1]  ## text output
      [,1] [,2] [,3] [,4] [,5] [,6]
-[1,]    2    2    2    2    2    2
-[2,]    6    6    6    6    6    6
-[3,]    8    8    8    8    8    8
-[4,]    8    8    8    8    8    8
-[5,]    6    6    6    6    6    6
-[6,]    2    2    2    2    2    2
+[1,] 0.25 0.75    1    1 0.75 0.25
+[2,] 0.75 2.25    3    3 2.25 0.75
+[3,] 1.00 3.00    4    4 3.00 1.00
+[4,] 1.00 3.00    4    4 3.00 1.00
+[5,] 0.75 2.25    3    3 2.25 0.75
+[6,] 0.25 0.75    1    1 0.75 0.25
 > 
 > par(mfrow=c(2,2))  ## graphic output
-> image(drop(tkernel), col=tim.colors(), main="Template")
-> image(drop(cube), col=tim.colors(), main="Target")
-> image(drop(out), col=tim.colors(), main="Output")
+> image(drop(tkernel), col=oro.nifti::tim.colors(), main="Template")
+> image(drop(cube), col=oro.nifti::tim.colors(), main="Target")
+> image(drop(out), col=oro.nifti::tim.colors(), main="Output")
 > 
 > 
 > 
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
-> nameEx("cpmg")
-> ### * cpmg
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: CPMG
-> ### Title: Quantitative T2
-> ### Aliases: T2.lm T2.fast T2.fast,array-method T2.fast,anlz-method
-> ###   T2.fast,nifti-method
-> ### Keywords: misc
-> 
-> ### ** Examples
-> 
-> ## Example?
-> 
-> 
-> 
-> cleanEx()
-> nameEx("dce_bayes")
-> ### * dce_bayes
+> nameEx("dcemri.bayes-methods")
+> ### * dcemri.bayes-methods
 > 
 > flush(stderr()); flush(stdout())
 > 
@@ -199,133 +220,8 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > 
 > 
 > cleanEx()
-> nameEx("dce_map")
-> ### * dce_map
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: dcemri.map
-> ### Title: Pharmacokinetic Modeling of Dynamic Contrast-Enhanced MRI Data
-> ### Aliases: dcemri.map dcemri.map,array-method dcemri.map.single
-> ### Keywords: models
-> 
-> ### ** Examples
-> 
-> data("buckley")
-> xi <- seq(5, 300, by=5)
-> img <- array(t(breast$data)[,xi], c(13,1,1,60))
-> mask <- array(TRUE, dim(img)[1:3])
-> time <- buckley$time.min[xi]
-> 
-> ## MAP estimation with extended Kety model and Fritz-Hansen default AIF
-> fit.map.vp <- dcemri.map(img, time, mask, aif="fritz.hansen")
-> ## Nonlinear regression with extended Kety model and Fritz-Hansen default AIF
-> fit.lm.vp <- dcemri.lm(img, time, mask, aif="fritz.hansen")
-> 
-> plot(breast$ktrans, fit.map.vp$ktrans, xlim=c(0,1), ylim=c(0,1),
-+      xlab=expression(paste("True ", K^{trans})),
-+      ylab=expression(paste("Estimated ", K^{trans})))
-> points(breast$ktrans, fit.lm.vp$ktrans, pch=3)
-> abline(0, 1, lwd=2, col=2)
-> legend("bottomright", c("MAP Estimation (fritz.hansen)",
-+                         "Levenburg-Marquardt (fritz.hansen)"), pch=c(1,3))
-> 
-> ## MAP estimation with Kety model and Fritz-Hansen default AIF
-> fit.map <- dcemri.map(img, time, mask, model="weinmann", aif="fritz.hansen")
-> ## Nonlinear regression with Kety model and Fritz-Hansen default AIF
-> fit.lm <- dcemri.lm(img, time, mask, model="weinmann", aif="fritz.hansen")
-> 
-> cbind(breast$kep, fit.lm$kep[,,1], fit.lm.vp$kep[,,1], fit.map$kep[,,1],
-+       fit.map.vp$kep[,,1])
-            [,1]      [,2]      [,3]      [,4]      [,5]
- [1,] 0.32355345 0.2348731 0.2348731 0.2356731 0.2356962
- [2,] 0.48521013 0.4167250 0.4167250 0.4170607 0.4170742
- [3,] 0.55671514 0.4979371 0.4979372 0.4981651 0.4981680
- [4,] 0.59642650 0.5438920 0.5438921 0.5440587 0.5440795
- [5,] 0.62161139 0.5734775 0.5734776 0.5736243 0.5736333
- [6,] 0.02202843 2.2508666 2.2509156 2.2398360 2.2396892
- [7,] 0.32664921 0.3567631 0.3567634 0.3572666 0.3572627
- [8,] 0.73047326 0.6098186 0.6098180 0.6101053 0.6101285
- [9,] 0.86170469 0.6946350 0.6946319 0.6948689 0.6949021
-[10,] 0.55671514 0.4294708 0.4294700 0.4301810 0.4302156
-[11,] 0.55671514 0.4650526 0.4650528 0.4653740 0.4653682
-[12,] 0.55671514 0.5278610 0.5278610 0.5281173 0.5281034
-[13,] 0.55671514 0.5540183 0.5540182 0.5543170 0.5543132
-> cbind(breast$ktrans, fit.lm$ktrans[,,1], fit.lm.vp$ktrans[,,1],
-+       fit.map$ktrans[,,1], fit.map.vp$ktrans[,,1])
-             [,1]      [,2]      [,3]      [,4]      [,5]
- [1,] 0.145599052 0.3817053 0.3817053 0.3822287 0.3822429
- [2,] 0.218344559 0.5947945 0.5947945 0.5950718 0.5950952
- [3,] 0.250521815 0.6951413 0.6951414 0.6953527 0.6953499
- [4,] 0.268391926 0.7530097 0.7530098 0.7531700 0.7531903
- [5,] 0.279725126 0.7906144 0.7906145 0.7907517 0.7907595
- [6,] 0.009912791 0.5241719 0.5241820 0.5221588 0.5221473
- [7,] 0.146992146 0.4680227 0.4680229 0.4683815 0.4683723
- [8,] 0.328712966 0.8593235 0.8593229 0.8596005 0.8596348
- [9,] 0.387767110 0.9811911 0.9811879 0.9814133 0.9814754
-[10,] 0.250521815 0.5521834 0.5521828 0.5527387 0.5527606
-[11,] 0.250521815 0.6226405 0.6226407 0.6229096 0.6229033
-[12,] 0.250521815 0.7692656 0.7692656 0.7695114 0.7694966
-[13,] 0.250521815 0.8430926 0.8430925 0.8434068 0.8433965
-> 
-> 
-> 
-> cleanEx()
-> nameEx("dce_spline")
-> ### * dce_spline
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: dcemri.spline
-> ### Title: Bayesian P-Splines for Dynamic Contrast-Enhanced MRI Data
-> ### Aliases: dcemri.spline dcemri.spline,array-method dcemri.spline.single
-> ### Keywords: models
-> 
-> ### ** Examples
-> 
-> data("buckley")
-> xi <- seq(5, 300, by=5)
-> img <- array(t(breast$data)[,xi], c(13,1,1,60))
-> mask <- array(TRUE, dim(img)[1:3])
-> time <- buckley$time.min[xi]
-> 
-> ## Generate AIF params using the orton.exp function from Buckley's AIF
-> aif <- buckley$input[xi]
-> 
-> fit.spline <- dcemri.spline(img, time, mask, aif="fritz.hansen",
-+                             nriters=250, nlr=TRUE)
-> fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
-+                                 aif.observed=aif, nriters=250,
-+                                 nlr=TRUE)
-> 
-> plot(breast$ktrans, fit.spline$ktrans, xlim=c(0,1), ylim=c(0,1),
-+      xlab=expression(paste("True ", K^{trans})),
-+      ylab=expression(paste("Estimated ", K^{trans})))
-> points(breast$ktrans, fit.spline.aif$ktrans, pch=2)
-> abline(0, 1, lwd=1.5, col="red")
-> legend("right", c("fritz.hansen", "observed"), pch=1:2)
-> 
-> cbind(breast$ktrans, fit.spline$ktrans[,,1], fit.spline.aif$ktrans[,,1])
-             [,1]      [,2]      [,3]
- [1,] 0.145599052 0.3789511 0.1633419
- [2,] 0.218344559 0.5890241 0.2686158
- [3,] 0.250521815 0.6907638 0.3264283
- [4,] 0.268391926 0.7496435 0.3633549
- [5,] 0.279725126 0.7925732 0.3900094
- [6,] 0.009912791 0.4894625 0.7023563
- [7,] 0.146992146 0.4888983 0.2270190
- [8,] 0.328712966 0.8272781 0.3970100
- [9,] 0.387767110 0.9256766 0.4481946
-[10,] 0.250521815 0.5322583 0.2390196
-[11,] 0.250521815 0.6121643 0.2807765
-[12,] 0.250521815 0.7693844 0.3709485
-[13,] 0.250521815 0.8433382 0.4125105
-> 
-> 
-> 
-> cleanEx()
-> nameEx("dcemri")
-> ### * dcemri
+> nameEx("dcemri.lm-methods")
+> ### * dcemri.lm-methods
 > 
 > flush(stderr()); flush(stdout())
 > 
@@ -430,6 +326,131 @@ $message
 > 
 > 
 > cleanEx()
+> nameEx("dcemri.map-methods")
+> ### * dcemri.map-methods
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: dcemri.map
+> ### Title: Pharmacokinetic Modeling of Dynamic Contrast-Enhanced MRI Data
+> ### Aliases: dcemri.map dcemri.map,array-method
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> data("buckley")
+> xi <- seq(5, 300, by=5)
+> img <- array(t(breast$data)[,xi], c(13,1,1,60))
+> mask <- array(TRUE, dim(img)[1:3])
+> time <- buckley$time.min[xi]
+> 
+> ## MAP estimation with extended Kety model and Fritz-Hansen default AIF
+> fit.map.vp <- dcemri.map(img, time, mask, aif="fritz.hansen")
+> ## Nonlinear regression with extended Kety model and Fritz-Hansen default AIF
+> fit.lm.vp <- dcemri.lm(img, time, mask, aif="fritz.hansen")
+> 
+> plot(breast$ktrans, fit.map.vp$ktrans, xlim=c(0,1), ylim=c(0,1),
++      xlab=expression(paste("True ", K^{trans})),
++      ylab=expression(paste("Estimated ", K^{trans})))
+> points(breast$ktrans, fit.lm.vp$ktrans, pch=3)
+> abline(0, 1, lwd=2, col=2)
+> legend("bottomright", c("MAP Estimation (fritz.hansen)",
++                         "Levenburg-Marquardt (fritz.hansen)"), pch=c(1,3))
+> 
+> ## MAP estimation with Kety model and Fritz-Hansen default AIF
+> fit.map <- dcemri.map(img, time, mask, model="weinmann", aif="fritz.hansen")
+> ## Nonlinear regression with Kety model and Fritz-Hansen default AIF
+> fit.lm <- dcemri.lm(img, time, mask, model="weinmann", aif="fritz.hansen")
+> 
+> cbind(breast$kep, fit.lm$kep[,,1], fit.lm.vp$kep[,,1], fit.map$kep[,,1],
++       fit.map.vp$kep[,,1])
+            [,1]      [,2]      [,3]      [,4]      [,5]
+ [1,] 0.32355345 0.2348731 0.2348731 0.2356731 0.2356962
+ [2,] 0.48521013 0.4167250 0.4167250 0.4170607 0.4170742
+ [3,] 0.55671514 0.4979371 0.4979372 0.4981651 0.4981680
+ [4,] 0.59642650 0.5438920 0.5438921 0.5440587 0.5440795
+ [5,] 0.62161139 0.5734775 0.5734776 0.5736243 0.5736333
+ [6,] 0.02202843 2.2508666 2.2509156 2.2398360 2.2396892
+ [7,] 0.32664921 0.3567631 0.3567634 0.3572666 0.3572627
+ [8,] 0.73047326 0.6098186 0.6098180 0.6101053 0.6101285
+ [9,] 0.86170469 0.6946350 0.6946319 0.6948689 0.6949021
+[10,] 0.55671514 0.4294708 0.4294700 0.4301810 0.4302156
+[11,] 0.55671514 0.4650526 0.4650528 0.4653740 0.4653682
+[12,] 0.55671514 0.5278610 0.5278610 0.5281173 0.5281034
+[13,] 0.55671514 0.5540183 0.5540182 0.5543170 0.5543132
+> cbind(breast$ktrans, fit.lm$ktrans[,,1], fit.lm.vp$ktrans[,,1],
++       fit.map$ktrans[,,1], fit.map.vp$ktrans[,,1])
+             [,1]      [,2]      [,3]      [,4]      [,5]
+ [1,] 0.145599052 0.3817053 0.3817053 0.3822287 0.3822429
+ [2,] 0.218344559 0.5947945 0.5947945 0.5950718 0.5950952
+ [3,] 0.250521815 0.6951413 0.6951414 0.6953527 0.6953499
+ [4,] 0.268391926 0.7530097 0.7530098 0.7531700 0.7531903
+ [5,] 0.279725126 0.7906144 0.7906145 0.7907517 0.7907595
+ [6,] 0.009912791 0.5241719 0.5241820 0.5221588 0.5221473
+ [7,] 0.146992146 0.4680227 0.4680229 0.4683815 0.4683723
+ [8,] 0.328712966 0.8593235 0.8593229 0.8596005 0.8596348
+ [9,] 0.387767110 0.9811911 0.9811879 0.9814133 0.9814754
+[10,] 0.250521815 0.5521834 0.5521828 0.5527387 0.5527606
+[11,] 0.250521815 0.6226405 0.6226407 0.6229096 0.6229033
+[12,] 0.250521815 0.7692656 0.7692656 0.7695114 0.7694966
+[13,] 0.250521815 0.8430926 0.8430925 0.8434068 0.8433965
+> 
+> 
+> 
+> cleanEx()
+> nameEx("dcemri.spline-methods")
+> ### * dcemri.spline-methods
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: dcemri.spline
+> ### Title: Bayesian P-Splines for Dynamic Contrast-Enhanced MRI Data
+> ### Aliases: dcemri.spline dcemri.spline,array-method dcemri.spline.single
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> data("buckley")
+> xi <- seq(5, 300, by=5)
+> img <- array(t(breast$data)[,xi], c(13,1,1,60))
+> mask <- array(TRUE, dim(img)[1:3])
+> time <- buckley$time.min[xi]
+> 
+> ## Generate AIF params using the orton.exp function from Buckley's AIF
+> aif <- buckley$input[xi]
+> 
+> fit.spline <- dcemri.spline(img, time, mask, aif="fritz.hansen",
++                             nriters=250, nlr=TRUE)
+> fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
++                                 aif.observed=aif, nriters=250,
++                                 nlr=TRUE)
+> 
+> plot(breast$ktrans, fit.spline$ktrans, xlim=c(0,1), ylim=c(0,1),
++      xlab=expression(paste("True ", K^{trans})),
++      ylab=expression(paste("Estimated ", K^{trans})))
+> points(breast$ktrans, fit.spline.aif$ktrans, pch=2)
+> abline(0, 1, lwd=1.5, col="red")
+> legend("right", c("fritz.hansen", "observed"), pch=1:2)
+> 
+> cbind(breast$ktrans, fit.spline$ktrans[,,1], fit.spline.aif$ktrans[,,1])
+             [,1]      [,2]      [,3]
+ [1,] 0.145599052 0.3789511 0.1633419
+ [2,] 0.218344559 0.5890241 0.2686158
+ [3,] 0.250521815 0.6907638 0.3264283
+ [4,] 0.268391926 0.7496435 0.3633549
+ [5,] 0.279725126 0.7925732 0.3900094
+ [6,] 0.009912791 0.4894625 0.7023563
+ [7,] 0.146992146 0.4888983 0.2270190
+ [8,] 0.328712966 0.8272781 0.3970100
+ [9,] 0.387767110 0.9256766 0.4481946
+[10,] 0.250521815 0.5322583 0.2390196
+[11,] 0.250521815 0.6121643 0.2807765
+[12,] 0.250521815 0.7693844 0.3709485
+[13,] 0.250521815 0.8433382 0.4125105
+> 
+> 
+> 
+> cleanEx()
 > nameEx("dcemriS4-package")
 > ### * dcemriS4-package
 > 
@@ -437,7 +458,7 @@ $message
 > 
 > ### Name: dcemriS4-package
 > ### Title: dcemri: A Package for Medical Image Analysis (S4 implementation)
-> ### Aliases: dcemriS4-package dcemriS4
+> ### Aliases: dcemriS4 dcemriS4-package
 > ### Keywords: package
 > 
 > ### ** Examples
@@ -447,54 +468,15 @@ $message
 > ##D demo(avg152T1LR)
 > ##D demo(avg152T1RL)
 > ##D demo(buckley)
-> ##D demo("filtered_func_data")
+> ##D demo(filtered_func_data)
 > ##D demo(zstat1)
 > ## End(Not run)
 > 
 > 
 > 
 > cleanEx()
-> nameEx("dwi")
-> ### * dwi
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: Apparent Diffusion Coefficient
-> ### Title: Estimate the Apparent Diffusion Coefficient (ADC)
-> ### Aliases: adc.lm ADC.fast,array-method ADC.fast
-> ### Keywords: models
-> 
-> ### ** Examples
-> 
-> S0 <- 10
-> b <- c(0, 50, 400, 800)  # units?
-> D <- 0.7e-3              # mm^2 / sec (normal white matter)
-> 
-> ## Signal intensities based on the (simplified) Bloch-Torry equation
-> dwi <- function(S0, b, D) {
-+   S0 * exp(-b*D)
-+ }
-> 
-> set.seed(1234)
-> signal <- array(dwi(S0, b, D) + rnorm(length(b), sd=0.15),
-+                 c(rep(1,3), length(b)))
-> ADC <- ADC.fast(signal, b, array(TRUE, rep(1,3)))
-> unlist(ADC) # text output
-          S0            D     S0.error      D.error 
-9.985900e+00 7.337532e-04 1.671637e+00 5.369434e+03 
-> 
-> par(mfrow=c(1,1)) # graphical output
-> plot(b, signal, xlab="b-value", ylab="Signal intensity")
-> lines(seq(0,800,10), dwi(S0, seq(0,800,10), D), lwd=2, col=1)
-> lines(seq(0,800,10), dwi(ADC$S0, seq(0,800,10), ADC$D), lwd=2, col=2)
-> legend("topright", c("True","Estimated"), lwd=2, col=1:2)
-> 
-> 
-> 
-> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
-> cleanEx()
-> nameEx("find_center")
-> ### * find_center
+> nameEx("find.center")
+> ### * find.center
 > 
 > flush(stderr()); flush(stdout())
 > 
@@ -514,47 +496,8 @@ $message
 > 
 > 
 > cleanEx()
-> nameEx("flipangle")
-> ### * flipangle
-> 
-> flush(stderr()); flush(stdout())
-> 
-> ### Name: Relaxivity
-> ### Title: Estimate Intrinsic Tissue Relaxivity
-> ### Aliases: R10.lm E10.lm R1.fast,array-method CA.fast,array-method
-> ###   CA.fast2,array-method R1.fast CA.fast CA.fast2
-> ### Keywords: misc
-> 
-> ### ** Examples
-> 
-> ## Parameters for simulated data
-> S0 <- 100
-> TR <- 5 / 1000            # seconds
-> T1 <- 1.5                 # seconds
-> alpha <- seq(2, 24, by=2) # degrees
-> 
-> ## Signal intensities for spoiled gradient echo image
-> gre <- function(S0, TR, T1, alpha) {
-+   theta <- alpha * pi/180 # radians
-+   S0 * (1 - exp(-TR/T1)) * sin(theta) / (1 - cos(theta) * exp(-TR/T1))
-+ }
-> set.seed(1234)
-> signal <- array(gre(S0, TR, T1, alpha) + rnorm(length(alpha), sd=.15),
-+                 c(rep(1,3), length(alpha)))
-> out <- R1.fast(signal, array(TRUE, rep(1,3)), alpha, TR)
-> unlist(out)
-        M0        R10 
-99.5197735  0.6534572 
-> plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
-> lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
-> lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
-> legend("topright", c("True","Estimated"), lwd=2, col=1:2)
-> 
-> 
-> 
-> cleanEx()
-> nameEx("kineticmodel")
-> ### * kineticmodel
+> nameEx("kineticModel")
+> ### * kineticModel
 > 
 > flush(stderr()); flush(stdout())
 > 
@@ -602,6 +545,45 @@ $message
 > 
 > 
 > cleanEx()
+> nameEx("relaxation-methods")
+> ### * relaxation-methods
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: R10.lm
+> ### Title: Estimate Intrinsic Tissue Relaxivity
+> ### Aliases: CA.fast CA.fast,array-method CA.fast2 CA.fast2,array-method
+> ###   E10.lm R1.fast R1.fast,array-method R1.lm R10.lm
+> ### Keywords: misc
+> 
+> ### ** Examples
+> 
+> ## Parameters for simulated data
+> S0 <- 100
+> TR <- 5 / 1000            # seconds
+> T1 <- 1.5                 # seconds
+> alpha <- seq(2, 24, by=2) # degrees
+> 
+> ## Signal intensities for spoiled gradient echo image
+> gre <- function(S0, TR, T1, alpha) {
++   theta <- alpha * pi/180 # radians
++   S0 * (1 - exp(-TR/T1)) * sin(theta) / (1 - cos(theta) * exp(-TR/T1))
++ }
+> set.seed(1234)
+> signal <- array(gre(S0, TR, T1, alpha) + rnorm(length(alpha), sd=.15),
++                 c(rep(1,3), length(alpha)))
+> out <- R1.fast(signal, array(TRUE, rep(1,3)), alpha, TR)
+> unlist(out)
+        M0        R10 
+99.5197735  0.6534572 
+> plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
+> lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
+> lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
+> legend("topright", c("True","Estimated"), lwd=2, col=1:2)
+> 
+> 
+> 
+> cleanEx()
 > nameEx("shift3D")
 > ### * shift3D
 > 
@@ -627,7 +609,7 @@ $message
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  27.077 0.04 27.093 0 0 
+Time elapsed:  26.967 0.021 26.958 0 0 
 > grDevices::dev.off()
 null device 
           1 

@@ -37,31 +37,31 @@
 #############################################################################
 #' Regional Cerebral Blood Volume
 #' 
-#' This is a set of functions that...
+#' Quantification of relative cerebral blood volume (rCBV) using the first pass
+#' from a bolus injection of a contrast agent.  
 #' 
 #' @aliases rCBV rCBV.fast rCBV.fast,array-method rCBV.fast,anlz-method
 #' rCBV.fast,nifti-method
-#' @usage rCBV(Ct, Ca, time, Hf=1, rho=1) \S4method{rCBV.fastarray}(signal,
-#' mask, aif, time, multicore=FALSE, verbose=FALSE)
-#' @param Ct ...
-#' @param Ca ...
+#' @param Ct is the time series of contrast agent concentration in tissue.
+#' @param Ca is the time series of contrast agent concentration in the blood.  
 #' @param time is the vector of acquisition times associated with the dynamic
 #' data.
-#' @param Hf ...
-#' @param rho ...
+#' @param Hf is the hematocrit factor.
+#' @param rho is the density of brain tissue.
 #' @param signal is a multidimensional array of signal intensities (or
 #' concentrations).  The last dimension is assumed to be a function of the
 #' acquisition times, while the previous dimenions are assued to be spatial.
+#' @param ... Additional variables defined by the method.  
 #' @param mask is a (logical) multidimensional array that identifies the voxels
 #' to be analyzed.
 #' @param aif Arterial Input Function.
 #' @param multicore is a logical variable (default = \code{FALSE}) that allows
-#' parallel processing via \pkg{multicore}.
+#' parallel processing via \pkg{parallel}.
 #' @param verbose is a logical variable (default = \code{FALSE}) that allows
 #' text-based feedback during execution of the function.
 #' @return A \code{nifti} object containing the estimates of regional cerebral
 #' blood volume (rCBV).
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @keywords misc
 #' @export
 #' @docType methods

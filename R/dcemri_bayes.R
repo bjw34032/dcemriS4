@@ -44,30 +44,27 @@
 #' See Schmid \emph{et al.} (2006) for details.
 #' 
 #' @aliases dcemri.bayes dcemri.bayes,array-method dcemri.bayes.single
-#' @usage \S4method{dcemri.bayesarray}(conc, time, img.mask, model="extended",
-#' aif=NULL, user=NULL, nriters=3000, thin=3, burnin=1000, tune=267,
-#' ab.ktrans=c(0,1), ab.kep=ab.ktrans, ab.vp=c(1,19),
-#' ab.tauepsilon=c(1,1/1000), samples=FALSE, multicore=FALSE, verbose=FALSE,
-#' dic=FALSE, ...) dcemri.bayes.single(conc, time, nriters=3000, thin=3,
-#' burnin=1000, tune=267, ab.gamma=c(0,1), ab.theta=c(0,1), ab.vp=c(1,19),
-#' ab.tauepsilon=c(1,1/1000), aif.model=0, aif.parameter=c(2.4,0.62,3,0.016),
-#' vp=1)
 #' @param conc Matrix or array of concentration time series (last dimension
 #' must be time).
 #' @param time Time in minutes.
 #' @param img.mask Mask matrix or array. Voxels with mask=0 will be excluded.
 #' @param model is a character string that identifies the type of compartmental
-#' model to be used.  Acceptable models include: \itemize{
-#' \item\dQuote{weinmann}Tofts & Kermode AIF convolved with single compartment
-#' model \item\dQuote{extended}Weinmann model extended with additional vascular
-#' compartment (default) \item\dQuote{orton.exp}Extended model using Orton's
-#' exponential AIF \item\dQuote{kety.orton.exp}Kety model using Orton's
-#' exponential AIF }
+#' model to be used.  Acceptable models include: 
+#' \describe{
+#' \item{"weinmann"}{Tofts & Kermode AIF convolved with single 
+#' compartment model} 
+#' \item{"extended"}{Weinmann model extended with additional 
+#' vascular compartment (default)}
+#' \item{"orton.exp"}{Extended model using Orton's exponential AIF} 
+#' \item{"kety.orton.exp"}{Kety model using Orton's exponential AIF}
+#' }
 #' @param aif is a character string that identifies the parameters of the type
 #' of arterial input function (AIF) used with the above model.  Acceptable
-#' values are: \code{tofts.kermode} (default) or \code{fritz.hansen} for the
-#' \code{weinmann} and \code{extended} models; \code{orton.exp} (default) or
-#' \code{user} for the \code{orton.exp} and \code{kety.orton.exp} model.
+#' values are: 
+#' \code{tofts.kermode} (default) or \code{fritz.hansen} for the
+#' \code{weinmann} and \code{extended} models; 
+#' \code{orton.exp} (default) or \code{user} for the \code{orton.exp} and 
+#' \code{kety.orton.exp} model.
 #' @param user Vector of AIF parameters.  For Tofts and Kermode: \eqn{a_1}{a1},
 #' \eqn{m_1}{m1}, \eqn{a_2}{a2}, \eqn{m_2}{m2}; for Orton \emph{et al.}:
 #' \eqn{A_b}{Ab}, \eqn{\mu_b}{mub}, \eqn{A_g}{Ag}, \eqn{\mu_g}{mug}.
@@ -81,8 +78,6 @@
 #' @param ab.kep Mean and variance parameter for Gaussian prior on
 #' \eqn{\log(k_{ep})}{log(kep)}.
 #' @param ab.vp Hyper-prior parameters for the Beta prior on \eqn{v_p}{vp}.
-#' @param ab.gamma \ldots{}
-#' @param ab.theta \ldots{}
 #' @param ab.tauepsilon Hyper-prior parameters for observation error Gamma
 #' prior.
 #' @param samples If \code{TRUE} output includes samples drawn from the
@@ -92,31 +87,34 @@
 #' @param verbose Logical variable (default = \code{FALSE}) that allows
 #' text-based feedback during execution of the function.
 #' @param dic If \code{TRUE}, the deviance information criterion (DIC) and
-#' effective number of parameters (pD) will be computed.  If \dQuote{samples =
-#' TRUE}, then samples of the DIC and pD will be given.
-#' @param aif.model \ldots{}
-#' @param aif.parameter \ldots{}
-#' @param vp \ldots{}
+#' effective number of parameters (pD) will be computed.  If 
+#' \code{"samples = TRUE"}, then samples of the DIC and pD will be given.
+#' @param vp Fractional occupancy in the plasma space.
 #' @param ... Additional parameters to the function.
 #' @return Parameter estimates and their standard errors are provided for the
 #' masked region of the multidimensional array.  All multi-dimensional arrays
 #' are output in \code{nifti} format.
-#' 
-#' They include: \item{ktrans}{Transfer rate from plasma to the extracellular,
-#' extravascular space (EES).} \item{ktranserror}{Error on
-#' \eqn{K^{trans}}{ktrans}.} \item{kep}{Rate parameter for transport from the
-#' EES to plasma.} \item{keperror}{Error on \eqn{k_{ep}}{kep}.}
+#' They include: 
+#' \item{ktrans}{Transfer rate from plasma to the extracellular,
+#' extravascular space (EES).} 
+#' \item{ktranserror}{Error on \eqn{K^{trans}}{ktrans}.} 
+#' \item{kep}{Rate parameter for transport from the EES to plasma.} 
+#' \item{keperror}{Error on \eqn{k_{ep}}{kep}.}
 #' \item{ve}{Fractional occupancy by EES (the ratio between ktrans and kep).}
-#' \item{vperror}{Error on \eqn{v_e}{ve}.} \item{vp}{Fractional occupancy by
-#' plasma.} \item{sigma2}{The residual sum-of-squares from the model fit.}
-#' \item{time}{Acquisition times (for plotting purposes).} \item{DIC}{Deviance
-#' information criterion.} \item{DIC.map}{Contribution to DIC per voxel.}
-#' \item{pD}{Effective number of parameters.} \item{pD.map}{Constribution to pD
-#' per voxel.} Note, not all parameters are available under all models choices.
+#' \item{vperror}{Error on \eqn{v_e}{ve}.} 
+#' \item{vp}{Fractional occupancy by plasma.} 
+#' \item{sigma2}{The residual sum-of-squares from the model fit.}
+#' \item{time}{Acquisition times (for plotting purposes).} 
+#' \item{DIC}{Deviance information criterion.} 
+#' \item{DIC.map}{Contribution to DIC per voxel.}
+#' \item{pD}{Effective number of parameters.} 
+#' \item{pD.map}{Constribution to pD per voxel.} 
+#' Note, not all parameters are available under all models choices.
 #' @author Volker Schmid \email{volkerschmid@@users.sourceforge.net}
 #' @seealso \code{\link{dcemri.lm}}, \code{\link{dcemri.map}},
 #' \code{\link{dcemri.spline}}
-#' @references Schmid, V., Whitcher, B., Padhani, A.R., Taylor, N.J. and Yang,
+#' @references 
+#' Schmid, V., Whitcher, B., Padhani, A.R., Taylor, N.J. and Yang,
 #' G.-Z.  (2006) Bayesian methods for pharmacokinetic models in dynamic
 #' contrast-enhanced magnetic resonance imaging, \emph{IEEE Transactions on
 #' Medical Imaging}, \bold{25} (12), 1627-1636.
@@ -169,6 +167,7 @@ setGeneric("dcemri.bayes", function(conc, ...) standardGeneric("dcemri.bayes"))
 #' @export
 #' @rdname dcemri.bayes-methods
 #' @aliases dcemri.bayes,array-method
+#' @useDynLib dcemriS4 dce_bayes_run_single
 setMethod("dcemri.bayes", signature(conc="array"),
           function(conc, time, img.mask, model="extended",
                          aif=NULL, user=NULL, nriters=3000, thin=3,
@@ -363,7 +362,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
                                      burnin=burnin, tune=tune, ab.gamma=ab.ktrans,
                                      ab.theta=ab.kep, ab.vp=ab.vp,
                                      ab.tauepsilon=ab.tauepsilon, aif.model=aif.model,
-                                     aif.parameter=aif.parameter, vp=vp.do, mc.preschedule=TRUE)
+                                     aif.parameter=aif.parameter, vp=vp.do, 
+                                     mc.preschedule=TRUE)
   } else {
     bayes.list <- lapply(conc.list, FUN=.dcemri.bayes.single, time=time,
                          nriters=nriters, thin=thin, burnin=burnin,

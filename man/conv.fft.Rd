@@ -4,7 +4,7 @@
 \alias{conv.fft}
 \title{Convolution of 3D Arrays using the Fourier Transform}
 \usage{
-conv.fft(A, B, C, FFTA=NULL)
+conv.fft(A, B, C, FFTA = NULL)
 }
 \arguments{
 \item{A}{is a three-dimensional array (\dQuote{the template}).}
@@ -18,11 +18,12 @@ save time when looping over multiple \dQuote{targets}.}
 }
 \value{
 A three-dimensional array, the same dimension as the input arrays,
-that is the convolution of the \dQuote{target} to the \dQuote{template} at
-all spatial locations.
+  that is the convolution of the \dQuote{target} to the \dQuote{template} at
+  all spatial locations.
 }
 \description{
-Convolve a
+Convolve a three-dimensinal array with another three-dimensional arry using
+the Fast Fourier Transform (FFT).
 }
 \details{
 The arrays \eqn{A} and \eqn{B} are transformed into the Fourier domain and
@@ -44,7 +45,7 @@ image(drop(cube), col=oro.nifti::tim.colors(), main="Target")
 image(drop(out), col=oro.nifti::tim.colors(), main="Output")
 }
 \author{
-Brandon Whitcher
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \references{
 Briggs, W.L. and Henson, V.E. (1995) \emph{The DFT: An Owner's

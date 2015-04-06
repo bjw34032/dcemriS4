@@ -32,8 +32,6 @@
 ##
 ## $Id: kineticmodel.R 332 2010-01-29 16:54:07Z bjw34032 $
 
-
-
 #' Pharmacokinetic Models
 #' 
 #' Kinetic curves from single compartment models are computed from kinetic
@@ -49,7 +47,6 @@
 #' The arterial input function must be literature-based (with fixed
 #' parameters).
 #' 
-#' @usage kineticModel(time, par, model="extended", aif="fritz.hansen")
 #' @param time is a vector of acquisition times (in minutes).
 #' @param par is a list of kinetic parameters; e.g.,
 #' \code{list("ktrans"=0.5,"kep"=1)}.
@@ -61,11 +58,13 @@
 #' function (AIF) to be used.  Acceptable AIF models include:
 #' \code{tofts.kermode}, \code{fritz.hansen}
 #' @return Computed pharmacokinetic curve.
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net} and Volker
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com} and Volker
 #' Schmid \email{volkerschmid@@users.sourceforge.net}
 #' @seealso \code{\link{dcemri.lm}}, \code{\link{dcemri.bayes}},
 #' \code{\link{dcemri.spline}}
-#' @references Fritz-Hansen, T., Rostrup, E., Larsson, H.B.W, Sondergaard, L.,
+#' @references 
+#' 
+#' Fritz-Hansen, T., Rostrup, E., Larsson, H.B.W, Sondergaard, L.,
 #' Ring, P. and Henriksen, O. (1993) Measurement of the arterial concentration
 #' of Gd-DTPA using MRI: A step toward quantitative perfusion imaging,
 #' \emph{Magnetic Resonance in Medicine}, \bold{36}, 225-231.

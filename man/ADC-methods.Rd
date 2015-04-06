@@ -7,10 +7,7 @@
 \alias{adc.lm}
 \title{Estimate the Apparent Diffusion Coefficient (ADC)}
 \usage{
-adc.lm(signal, b, guess, control=minpack.lm::nls.lm.control())
-\S4method{ADC.fastarray}(dwi, bvalues, dwi.mask,
-control=minpack.lm::nls.lm.control(maxiter=150), multicore=FALSE,
-verbose=FALSE)
+ADC.fast(dwi, ...)
 
 \S4method{ADC.fast}{array}(dwi, bvalues, dwi.mask,
   control = minpack.lm::nls.lm.control(maxiter = 150), multicore = FALSE,
@@ -21,6 +18,8 @@ adc.lm(signal, b, guess, control = minpack.lm::nls.lm.control())
 \arguments{
 \item{dwi}{Multidimensional array of diffusion-weighted images.}
 
+\item{...}{Additional variables defined by the method.}
+
 \item{dwi.mask}{Logical array that defines the voxels to be analyzed.}
 
 \item{control}{An optional list of control settings for \code{nls.lm}.  See
@@ -28,7 +27,7 @@ adc.lm(signal, b, guess, control = minpack.lm::nls.lm.control())
 effect.}
 
 \item{multicore}{is a logical variable (default = \code{FALSE}) that allows
-parallel processing via \pkg{multicore}.}
+parallel processing via \pkg{parallel}.}
 
 \item{verbose}{Additional information will be printed when
 \code{verbose=TRUE}.}
@@ -84,7 +83,7 @@ lines(seq(0,800,10), dwi(ADC$S0, seq(0,800,10), ADC$D), lwd=2, col=2)
 legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 }
 \author{
-Brandon Whitcher \email{bjw34032@users.sourceforge.net}
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \references{
 Buxton, R.B. (2002) \emph{Introduction to Functional Magnetic

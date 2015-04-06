@@ -9,10 +9,7 @@
 \alias{T2.lm}
 \title{Quantitative T2 Methods}
 \usage{
-T2.lm(signal, TE, guess, control=minpack.lm::nls.lm.control())
-\S4method{T2.fastarray}(cpmg, cpmg.mask, TE,
-control=minpack.lm::nls.lm.control(maxiter=150), multicore=FALSE,
-verbose=FALSE)
+T2.fast(cpmg, ...)
 
 \S4method{T2.fast}{array}(cpmg, cpmg.mask, TE,
   control = minpack.lm::nls.lm.control(maxiter = 150), multicore = FALSE,
@@ -24,6 +21,8 @@ T2.lm(signal, TE, guess, control = minpack.lm::nls.lm.control())
 \item{cpmg}{is a multidimensional array of signal intensities.  The last
 dimension is assumed to be a function of the echo times, while the previous
 dimenions are assued to be spatial.}
+
+\item{...}{Additional variables defined by the method.}
 
 \item{cpmg.mask}{is a (logical) multidimensional array that identifies the
 voxels to be analyzed.}
@@ -48,17 +47,15 @@ times.}
 }
 \value{
 A list structure is produced with (all or some of the) parameter
-estimates \item{list(list("\\rho"), list("rho"))}{Scaling factor between
-signal intensity and T2 (proton density).} \item{T2}{T2 relaxation time.}
+estimates
+\item{rho}{Scaling factor between signal intensity and T2 (proton density).}
+\item{T2}{T2 relaxation time.}
 }
 \description{
-Carr–Purcell–Meiboom–Gill (CPMG)
-}
-\examples{
-## Example?
+Carr-Purcell-Meiboom-Gill (CPMG)
 }
 \author{
-Brandon Whitcher \email{bjw34032@users.sourceforge.net}
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \seealso{
 \code{\link{R1.fast}}, \code{\link{R10.lm}}

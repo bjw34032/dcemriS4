@@ -36,14 +36,10 @@
 #############################################################################
 #' Quantitative T2 Methods
 #' 
-#' Carr–Purcell–Meiboom–Gill (CPMG)
+#' Carr-Purcell-Meiboom-Gill (CPMG)
 #' 
 #' @aliases T2.lm T2.fast T2.fast,array-method T2.fast,anlz-method
 #' T2.fast,nifti-method
-#' @usage T2.lm(signal, TE, guess, control=minpack.lm::nls.lm.control())
-#' \S4method{T2.fastarray}(cpmg, cpmg.mask, TE,
-#' control=minpack.lm::nls.lm.control(maxiter=150), multicore=FALSE,
-#' verbose=FALSE)
 #' @param signal is the vector of signal intensities as a function of echo
 #' times.
 #' @param TE is the vector of echo times (in seconds).
@@ -55,6 +51,7 @@
 #' @param cpmg is a multidimensional array of signal intensities.  The last
 #' dimension is assumed to be a function of the echo times, while the previous
 #' dimenions are assued to be spatial.
+#' @param ... Additional variables defined by the method.  
 #' @param cpmg.mask is a (logical) multidimensional array that identifies the
 #' voxels to be analyzed.
 #' @param multicore is a logical variable (default = \code{FALSE}) that allows
@@ -62,15 +59,12 @@
 #' @param verbose is a logical variable (default = \code{FALSE}) that allows
 #' text-based feedback during execution of the function.
 #' @return A list structure is produced with (all or some of the) parameter
-#' estimates \item{list(list("\\rho"), list("rho"))}{Scaling factor between
-#' signal intensity and T2 (proton density).} \item{T2}{T2 relaxation time.}
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' estimates 
+#' \item{rho}{Scaling factor between signal intensity and T2 (proton density).} 
+#' \item{T2}{T2 relaxation time.}
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{R1.fast}}, \code{\link{R10.lm}}
 #' @keywords misc
-#' @examples
-#' 
-#' ## Example?
-#' 
 #' @rdname CPMG-methods
 #' @export
 #' @docType methods

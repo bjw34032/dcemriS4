@@ -44,24 +44,23 @@
 #' model in Schmid \emph{et al.} (2006).
 #' 
 #' @aliases dcemri.map
-#' @usage \S4method{dcemri.maparray}(conc, time, img.mask, model="extended",
-#' aif=NULL, user=NULL, ab.ktrans=c(0,1), ab.kep=ab.ktrans, ab.vp=c(1,19),
-#' ab.tauepsilon=c(1,1/1000), maxit=5000, samples=FALSE, multicore=FALSE,
-#' verbose=FALSE, ...)
 #' @param conc Matrix or array of concentration time series (last dimension
 #' must be time).
 #' @param time Time in minutes.
 #' @param img.mask Mask matrix or array. Voxels with \code{mask=0} will be
 #' excluded.
 #' @param model is a character string that identifies the type of compartmental
-#' model to be used.  Acceptable models include: \itemize{
-#' \item\dQuote{weinmann}Tofts & Kermode AIF convolved with single compartment
-#' model \item\dQuote{extended}Weinmann model extended with additional vascular
-#' compartment (default) \item\dQuote{orton.exp}Extended model using Orton's
-#' exponential AIF \item\dQuote{kety.orton.exp}Kety model using Orton's
-#' exponential AIF \item\dQuote{orton.cos}Extended model using Orton's raised
-#' cosine AIF \item\dQuote{kety.orton.cos}Kety model using Orton's raised
-#' cosine AIF }
+#' model to be used.  Acceptable models include: 
+#' \describe{
+#' \item{\dQuote{weinmann}}{Tofts & Kermode AIF convolved with single 
+#' compartment model} 
+#' \item{\dQuote{extended}}{Weinmann model extended with additional vascular
+#' compartment (default)} 
+#' \item{\dQuote{orton.exp}}{Extended model using Orton's exponential AIF} 
+#' \item{\dQuote{kety.orton.exp}}{Kety model using Orton's exponential AIF} 
+#' \item{\dQuote{orton.cos}}{Extended model using Orton's raised cosine AIF} 
+#' \item{\dQuote{kety.orton.cos}}{Kety model using Orton's raised cosine AIF} 
+#' }
 #' @param aif is a character string that identifies the parameters of the type
 #' of arterial input function (AIF) used with the above model.  Acceptable
 #' values are: \code{tofts.kermode} (default) or \code{fritz.hansen} for the
@@ -91,16 +90,20 @@
 #' masked region of the multidimensional array.  The multi-dimensional arrays
 #' are provided in \code{nifti} format.
 #' 
-#' They include: \item{ktrans}{Transfer rate from plasma to the extracellular,
-#' extravascular space (EES).} \item{kep}{Rate parameter for transport from the
-#' EES to plasma.} \item{ve}{Fractional occupancy by EES (the ratio between
-#' ktrans and kep).} \item{vp}{Fractional occupancy by plasma.}
+#' They include: 
+#' \item{ktrans}{Transfer rate from plasma to the extracellular,
+#' extravascular space (EES).} 
+#' \item{kep}{Rate parameter for transport from the EES to plasma.} 
+#' \item{ve}{Fractional occupancy by EES (the ratio between ktrans and kep).} 
+#' \item{vp}{Fractional occupancy by plasma.}
 #' \item{sigma2}{The residual sum-of-squares from the model fit.}
-#' \item{time}{Acquisition times (for plotting purposes).} Note, not all
-#' parameters are available under all models choices.
+#' \item{time}{Acquisition times (for plotting purposes).
+#' } 
+#' Note, not all parameters are available under all models choices.
 #' @author Volker Schmid \email{volkerschmid@@users.sourceforge.net}
 #' @seealso \code{\link{dcemri.lm}}, \code{\link{dcemri.bayes}}
-#' @references Schmid, V., Whitcher, B., Padhani, A.R., Taylor, N.J. and Yang,
+#' @references 
+#' Schmid, V., Whitcher, B., Padhani, A.R., Taylor, N.J. and Yang,
 #' G.-Z.  (2006) Bayesian methods for pharmacokinetic models in dynamic
 #' contrast-enhanced magnetic resonance imaging, \emph{IEEE Transactions on
 #' Medical Imaging}, \bold{25} (12), 1627-1636.
@@ -219,7 +222,6 @@ setMethod("dcemri.map", signature(conc="array"),
   ident <- function(x) {
     return(x)
   }
-
 
   switch(model,
          weinmann =,

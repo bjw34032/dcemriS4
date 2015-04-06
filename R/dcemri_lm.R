@@ -29,8 +29,7 @@
 ## (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ##
-##
-## $Id: dcemri_lm.R 329 2010-01-07 16:33:56Z bjw34032 $
+## $Id: dcemri_bayes.R 332 2010-01-29 16:54:07Z bjw34032 $
 ##
 
 #############################################################################
@@ -54,9 +53,6 @@
 #' user-defined parameters.
 #' 
 #' @aliases dcemri.lm dcemri.lm,array-method
-#' @usage \S4method{dcemri.lmarray}(conc, time, img.mask, model="extended",
-#' aif=NULL, control=minpack.lm::nls.lm.control(), user=NULL, guess=NULL,
-#' multicore=FALSE, verbose=FALSE, ...)
 #' @param conc is a multidimensional (1D-4D) array of contrast agent
 #' concentrations.  The last dimension is assumed to be temporal, while the
 #' previous dimensions are assumed to be spatial.
@@ -67,27 +63,35 @@
 #' voxels to be analyzed. Has to have same dimension as \code{conc} minus
 #' temporal dimension.
 #' @param model is a character string that identifies the type of compartmental
-#' model to be used.  Acceptable models include: \describe{
-#' \item{list("weinmann")}{Tofts & Kermode AIF convolved with single
-#' compartment model} \item{list("extended")}{Weinmann model extended with
-#' additional vascular compartment (default)} \item{list("orton.exp")}{Extended
-#' model using Orton's exponential AIF} \item{list("orton.cos")}{Extended model
-#' using Orton's raised cosine AIF} \item{list("kety.orton.exp")}{Kety model
-#' using Orton's exponential AIF} \item{list("kety.orton.cos")}{Kety model
-#' using Orton's raised cosine AIF} }
+#' model to be used.  Acceptable models include: 
+#' \describe{
+#' \item{"weinmann"}{Tofts & Kermode AIF convolved with single
+#' compartment model}
+#' \item{"extended"}{Weinmann model extended with additional vascular 
+#' compartment (default)}
+#' \item{"orton.exp"}{Extended model using Orton's exponential AIF} 
+#' \item{"orton.cos"}{Extended model using Orton's raised cosine AIF} 
+#' \item{"kety.orton.exp"}{Kety model using Orton's exponential AIF} 
+#' \item{"kety.orton.cos"}{Kety model using Orton's raised cosine AIF}
+#' }
 #' @param aif is a character string that identifies the parameters of the type
 #' of arterial input function (AIF) used with the above model.  Acceptable
-#' values are: \itemize{ \item\code{tofts.kermode}(default) for the
-#' \code{weinmann} and \code{extended} models \item\code{fritz.hansen}for the
-#' \code{weinmann} and \code{extended} models \item\dQuote{empirical}for the
-#' \code{weinmann} and \code{extended} models \item\code{orton.exp}(default)
-#' for the \code{orton.exp} and \code{kety.orton.exp} model
+#' values are: 
+#' \itemize{ 
+#' \item\code{tofts.kermode}(default) for the \code{weinmann} and 
+#' \code{extended} models 
+#' \item\code{fritz.hansen} for the \code{weinmann} and \code{extended} models 
+#' \item\dQuote{empirical} for the \code{weinmann} and \code{extended} models 
+#' \item\code{orton.exp}(default) for the \code{orton.exp} and 
+#' \code{kety.orton.exp} model
 #' \item\code{orton.cos}(default) for the \code{orton.cos} and
-#' \code{kety.orton.cos} model.  \item\code{user}for the \code{orton.exp} and
-#' \code{orton.cos} model.  } All AIF models set the parametric form and
-#' parameter values -- except \code{user}, where a set of user-defined
-#' parameter values are allowed, and \code{empirical}, where a vector of values
-#' that fully characterize the empirical AIF.
+#' \code{kety.orton.cos} model.  
+#' \item\code{user} for the \code{orton.exp} and \code{orton.cos} model.
+#' } 
+#' All AIF models set the parametric form and parameter values -- except
+#' \code{user}, where a set of user-defined parameter values are allowed, and
+#' \code{empirical}, where a vector of values that fully characterize the
+#' empirical AIF.
 #' @param control is a list of parameters used by \code{nls.lm.control} that
 #' are set by default, but may be customized by the user.
 #' @param user is a list with the following parameters required: D, AB, muB,
@@ -98,22 +102,24 @@
 #' vascular parameter and length = 2 (with names \code{th1} and \code{th3})
 #' otherwise.
 #' @param multicore is a logical variable (default = \code{FALSE}) that allows
-#' parallel processing via \pkg{multicore}.
+#' parallel processing via \pkg{parallel}.
 #' @param verbose is a logical variable (default = \code{FALSE}) that allows
 #' text-based feedback during execution of the function.
 #' @param ... Additional parameters to the function.
 #' @return Parameter estimates and their standard errors are provided for the
 #' masked region of the multidimensional array.  All multi-dimensional arrays
 #' are provided in \code{nifti} format.
-#' 
-#' They include: \item{ktrans}{Transfer rate from plasma to the extracellular,
-#' extravascular space (EES).} \item{kep}{Rate parameter for transport from the
-#' EES to plasma.} \item{ve}{Fractional occupancy by EES (the ratio between
-#' \eqn{K^{trans}}{Ktrans} and \eqn{k_{ep}}{kep}).} \item{vp}{Fractional
-#' occupancy by plasma.} \item{ktranserror}{Standard error for
-#' \eqn{K^{trans}}{Ktrans}.} \item{keperror}{Standard error for
-#' \eqn{k_{ep}}{kep}.} \item{vperror}{Standard error for \eqn{v_p}{vp}.} The
-#' residual sum-of-squares is also provided, along with the original
+#' They include: 
+#' \item{ktrans}{Transfer rate from plasma to the extracellular,
+#' extravascular space (EES).} 
+#' \item{kep}{Rate parameter for transport from the EES to plasma.} 
+#' \item{ve}{Fractional occupancy by EES (the ratio between
+#' \eqn{K^{trans}}{Ktrans} and \eqn{k_{ep}}{kep}).} 
+#' \item{vp}{Fractional occupancy in the plasma space.} 
+#' \item{ktranserror}{Standard error for \eqn{K^{trans}}{Ktrans}.} 
+#' \item{keperror}{Standard error for \eqn{k_{ep}}{kep}.} 
+#' \item{vperror}{Standard error for \eqn{v_p}{vp}.} 
+#' The residual sum-of-squares is also provided, along with the original
 #' acquisition times (for plotting purposes).
 #' @note WARNING: when using the \code{empirical} AIF, a linear interpolation
 #' is used to upsample the AIF to a one-second sampling rate.  This allows one
@@ -123,11 +129,12 @@
 #' not have any serious effect on the parameter estimates, but caution should
 #' be exercised if very fast sampling rates are used to obtain an empirical
 #' AIF.
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}, Volker
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com} and Volker
 #' Schmid \email{volkerschmid@@users.sourceforge.net}
 #' @seealso \code{\link{dcemri.bayes}}, \code{\link{dcemri.map}},
 #' \code{\link{dcemri.spline}}, \code{\link[minpack.lm]{nls.lm}}
-#' @references Ahearn, T.S., Staff, R.T., Redpath, T.W. and Semple, S.I.K.
+#' @references 
+#' Ahearn, T.S., Staff, R.T., Redpath, T.W. and Semple, S.I.K.
 #' (2005) The use of the Levenburg-Marquardt curve-fitting algorithm in
 #' pharmacokinetic modelling of DCE-MRI data, \emph{Physics in Medicine and
 #' Biology}, \bold{50}, N85-N92.
@@ -212,6 +219,7 @@
 #' 
 #' @export
 #' @docType methods
+#' @import methods
 #' @rdname dcemri.lm-methods
 setGeneric("dcemri.lm", function(conc,  ...) standardGeneric("dcemri.lm"))
 #' @export

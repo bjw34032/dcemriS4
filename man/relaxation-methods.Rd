@@ -17,15 +17,7 @@ R10.lm(signal, alpha, TR, guess, control = minpack.lm::nls.lm.control())
 
 E10.lm(signal, alpha, guess, control = minpack.lm::nls.lm.control())
 
-R10.lm(signal, alpha, TR, guess,
-control=minpack.lm::nls.lm.control()) E10.lm(signal, alpha, guess,
-control=minpack.lm::nls.lm.control()) \S4method{R1.fastarray}(flip,
-flip.mask, fangles, TR, control=minpack.lm::nls.lm.control(),
-multicore=FALSE, verbose=FALSE) \S4method{CA.fastarray}(dynamic, dyn.mask,
-dangle, flip, fangles, TR, r1=4,
-control=minpack.lm::nls.lm.control(maxiter=200), multicore=FALSE,
-verbose=FALSE) \S4method{CA.fast2array}(dynamic, dyn.mask, dangle, flip,
-fangles, TR, r1=4, verbose=FALSE)
+R1.fast(flip, ...)
 
 \S4method{R1.fast}{array}(flip, flip.mask, fangles, TR,
   control = minpack.lm::nls.lm.control(), multicore = FALSE,
@@ -61,6 +53,8 @@ effect.}
 \item{flip}{a multidimensional array of contrast agent concentrations.  The
 last dimension is assumed to be a function of the flip angles, while the
 previous dimenions are assued to be spatial.}
+
+\item{...}{Additional variables defined by the method.}
 
 \item{flip.mask,dyn.mask}{is a (logical) multidimensional array that
 identifies the voxels to be analyzed.}
@@ -149,7 +143,7 @@ lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
 legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 }
 \author{
-Brandon Whitcher \email{bjw34032@users.sourceforge.net}
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \references{
 Buxton, R.B. (2002) \emph{Introduction to Functional Magnetic

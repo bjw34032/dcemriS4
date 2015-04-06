@@ -27,7 +27,7 @@ Mc <- find.center(M)
 print(Mc)
 }
 \author{
-Brandon Whitcher
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \seealso{
 \code{\link{ftm}}

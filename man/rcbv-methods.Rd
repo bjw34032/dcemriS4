@@ -9,8 +9,7 @@
 \alias{rCBV.fast,nifti-method}
 \title{Regional Cerebral Blood Volume}
 \usage{
-rCBV(Ct, Ca, time, Hf=1, rho=1) \S4method{rCBV.fastarray}(signal,
-mask, aif, time, multicore=FALSE, verbose=FALSE)
+rCBV.fast(signal, ...)
 
 \S4method{rCBV.fast}{array}(signal, mask, aif, time, multicore = FALSE,
   verbose = FALSE)
@@ -22,6 +21,8 @@ rCBV(Ct, Ca, time, Hf = 1, rho = 1)
 concentrations).  The last dimension is assumed to be a function of the
 acquisition times, while the previous dimenions are assued to be spatial.}
 
+\item{...}{Additional variables defined by the method.}
+
 \item{mask}{is a (logical) multidimensional array that identifies the voxels
 to be analyzed.}
 
@@ -31,28 +32,29 @@ to be analyzed.}
 data.}
 
 \item{multicore}{is a logical variable (default = \code{FALSE}) that allows
-parallel processing via \pkg{multicore}.}
+parallel processing via \pkg{parallel}.}
 
 \item{verbose}{is a logical variable (default = \code{FALSE}) that allows
 text-based feedback during execution of the function.}
 
-\item{Ct}{...}
+\item{Ct}{is the time series of contrast agent concentration in tissue.}
 
-\item{Ca}{...}
+\item{Ca}{is the time series of contrast agent concentration in the blood.}
 
-\item{Hf}{...}
+\item{Hf}{is the hematocrit factor.}
 
-\item{rho}{...}
+\item{rho}{is the density of brain tissue.}
 }
 \value{
 A \code{nifti} object containing the estimates of regional cerebral
 blood volume (rCBV).
 }
 \description{
-This is a set of functions that...
+Quantification of relative cerebral blood volume (rCBV) using the first pass
+from a bolus injection of a contrast agent.
 }
 \author{
-Brandon Whitcher \email{bjw34032@users.sourceforge.net}
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \keyword{misc}
 

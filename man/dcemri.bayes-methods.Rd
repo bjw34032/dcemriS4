@@ -8,14 +8,7 @@
 \title{Bayesian Methods for Pharmacokinetic Modeling of Dynamic Contrast-Enhanced
 MRI Data}
 \usage{
-\S4method{dcemri.bayesarray}(conc, time, img.mask, model="extended",
-aif=NULL, user=NULL, nriters=3000, thin=3, burnin=1000, tune=267,
-ab.ktrans=c(0,1), ab.kep=ab.ktrans, ab.vp=c(1,19),
-ab.tauepsilon=c(1,1/1000), samples=FALSE, multicore=FALSE, verbose=FALSE,
-dic=FALSE, ...) dcemri.bayes.single(conc, time, nriters=3000, thin=3,
-burnin=1000, tune=267, ab.gamma=c(0,1), ab.theta=c(0,1), ab.vp=c(1,19),
-ab.tauepsilon=c(1,1/1000), aif.model=0, aif.parameter=c(2.4,0.62,3,0.016),
-vp=1)
+dcemri.bayes(conc, ...)
 
 \S4method{dcemri.bayes}{array}(conc, time, img.mask, model = "extended",
   aif = NULL, user = NULL, nriters = 3000, thin = 3, burnin = 1000,
@@ -34,18 +27,23 @@ must be time).}
 \item{img.mask}{Mask matrix or array. Voxels with mask=0 will be excluded.}
 
 \item{model}{is a character string that identifies the type of compartmental
-model to be used.  Acceptable models include: \itemize{
-\item\dQuote{weinmann}Tofts & Kermode AIF convolved with single compartment
-model \item\dQuote{extended}Weinmann model extended with additional vascular
-compartment (default) \item\dQuote{orton.exp}Extended model using Orton's
-exponential AIF \item\dQuote{kety.orton.exp}Kety model using Orton's
-exponential AIF }}
+model to be used.  Acceptable models include:
+\describe{
+\item{"weinmann"}{Tofts & Kermode AIF convolved with single
+compartment model}
+\item{"extended"}{Weinmann model extended with additional
+vascular compartment (default)}
+\item{"orton.exp"}{Extended model using Orton's exponential AIF}
+\item{"kety.orton.exp"}{Kety model using Orton's exponential AIF}
+}}
 
 \item{aif}{is a character string that identifies the parameters of the type
 of arterial input function (AIF) used with the above model.  Acceptable
-values are: \code{tofts.kermode} (default) or \code{fritz.hansen} for the
-\code{weinmann} and \code{extended} models; \code{orton.exp} (default) or
-\code{user} for the \code{orton.exp} and \code{kety.orton.exp} model.}
+values are:
+\code{tofts.kermode} (default) or \code{fritz.hansen} for the
+\code{weinmann} and \code{extended} models;
+\code{orton.exp} (default) or \code{user} for the \code{orton.exp} and
+\code{kety.orton.exp} model.}
 
 \item{user}{Vector of AIF parameters.  For Tofts and Kermode: \eqn{a_1}{a1},
 \eqn{m_1}{m1}, \eqn{a_2}{a2}, \eqn{m_2}{m2}; for Orton \emph{et al.}:
@@ -81,35 +79,31 @@ posterior distribution for all parameters.}
 text-based feedback during execution of the function.}
 
 \item{dic}{If \code{TRUE}, the deviance information criterion (DIC) and
-effective number of parameters (pD) will be computed.  If \dQuote{samples =
-TRUE}, then samples of the DIC and pD will be given.}
+effective number of parameters (pD) will be computed.  If
+\code{"samples = TRUE"}, then samples of the DIC and pD will be given.}
 
-\item{ab.gamma}{\ldots{}}
-
-\item{ab.theta}{\ldots{}}
-
-\item{aif.model}{\ldots{}}
-
-\item{aif.parameter}{\ldots{}}
-
-\item{vp}{\ldots{}}
+\item{vp}{Fractional occupancy in the plasma space.}
 }
 \value{
 Parameter estimates and their standard errors are provided for the
 masked region of the multidimensional array.  All multi-dimensional arrays
 are output in \code{nifti} format.
-
-They include: \item{ktrans}{Transfer rate from plasma to the extracellular,
-extravascular space (EES).} \item{ktranserror}{Error on
-\eqn{K^{trans}}{ktrans}.} \item{kep}{Rate parameter for transport from the
-EES to plasma.} \item{keperror}{Error on \eqn{k_{ep}}{kep}.}
+They include:
+\item{ktrans}{Transfer rate from plasma to the extracellular,
+extravascular space (EES).}
+\item{ktranserror}{Error on \eqn{K^{trans}}{ktrans}.}
+\item{kep}{Rate parameter for transport from the EES to plasma.}
+\item{keperror}{Error on \eqn{k_{ep}}{kep}.}
 \item{ve}{Fractional occupancy by EES (the ratio between ktrans and kep).}
-\item{vperror}{Error on \eqn{v_e}{ve}.} \item{vp}{Fractional occupancy by
-plasma.} \item{sigma2}{The residual sum-of-squares from the model fit.}
-\item{time}{Acquisition times (for plotting purposes).} \item{DIC}{Deviance
-information criterion.} \item{DIC.map}{Contribution to DIC per voxel.}
-\item{pD}{Effective number of parameters.} \item{pD.map}{Constribution to pD
-per voxel.} Note, not all parameters are available under all models choices.
+\item{vperror}{Error on \eqn{v_e}{ve}.}
+\item{vp}{Fractional occupancy by plasma.}
+\item{sigma2}{The residual sum-of-squares from the model fit.}
+\item{time}{Acquisition times (for plotting purposes).}
+\item{DIC}{Deviance information criterion.}
+\item{DIC.map}{Contribution to DIC per voxel.}
+\item{pD}{Effective number of parameters.}
+\item{pD.map}{Constribution to pD per voxel.}
+Note, not all parameters are available under all models choices.
 }
 \description{
 Bayesian analysis of contrast agent concentration time curves from DCE-MRI.

@@ -8,24 +8,30 @@ aifParameters(type, user = NULL)
 }
 \arguments{
 \item{type}{is one of the following character strings associated with an
-AIF: \itemize{ \item\code{tofts.kermode} \item\code{fritz.hansen}
-\item\code{orton.exp} \item\code{orton.cos} \item\code{user}
-\item\code{empirical} }}
+AIF:
+\itemize{
+\item\code{tofts.kermode}
+\item\code{fritz.hansen}
+\item\code{orton.exp}
+\item\code{orton.cos}
+\item\code{user}
+\item\code{empirical}
+}}
 
 \item{user}{is a vector of estimated AIF parameters or the empirical AIF
 values.}
 }
 \value{
-...
+A vector of parameter values that are appropriate for the model selected.
 }
 \description{
 Specification of parameters for arterial input functions (AIFs)
 }
 \details{
-...
+See \code{\link{kineticModel}} for more information.
 }
 \author{
-Brandon Whitcher \email{bjw34032@users.sourceforge.net}
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \seealso{
 \code{\link{compartmentalModel}}, \code{\link{dcemri.lm}}

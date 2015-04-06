@@ -77,7 +77,7 @@
 #' angle acquisition.  That is, if no B1+ inhomogeneity was present then the
 #' array would only contain ones.  Numbers other than one indicate the extent
 #' of the inhomogeneity as a function of spatial location.
-#' @author Brandon Whitcher <\email{bjw34032@@users.sourceforge.net}>
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @references Cunningham, C.H., Pauly, J.M. and Nayak, K.S. (2006) Saturated
 #' Double-Angle Method for Rapid B1+ Mapping, \emph{Magnetic Resonance in
 #' Medicine}, \bold{55}, 1326-1333.
@@ -163,17 +163,9 @@ E10.lm <- function(signal, alpha, guess,
 #' 
 #' @aliases R10.lm E10.lm R1.fast,array-method CA.fast,array-method
 #' CA.fast2,array-method R1.fast CA.fast CA.fast2
-#' @usage R10.lm(signal, alpha, TR, guess,
-#' control=minpack.lm::nls.lm.control()) E10.lm(signal, alpha, guess,
-#' control=minpack.lm::nls.lm.control()) \S4method{R1.fastarray}(flip,
-#' flip.mask, fangles, TR, control=minpack.lm::nls.lm.control(),
-#' multicore=FALSE, verbose=FALSE) \S4method{CA.fastarray}(dynamic, dyn.mask,
-#' dangle, flip, fangles, TR, r1=4,
-#' control=minpack.lm::nls.lm.control(maxiter=200), multicore=FALSE,
-#' verbose=FALSE) \S4method{CA.fast2array}(dynamic, dyn.mask, dangle, flip,
-#' fangles, TR, r1=4, verbose=FALSE)
 #' @param signal is the vector of signal intensities as a function of flip
 #' angles.
+#' @param ... Additional variables defined by the method.  
 #' @param alpha is the vector of flip angles (in degrees).
 #' @param TR is the relaxation time (in seconds) used in the acquisition of the
 #' MRI data.
@@ -209,7 +201,7 @@ E10.lm <- function(signal, alpha, guess,
 #' \eqn{r_1=4(mM\cdot{s})^{-1}}{r1=4/(mM s)} which is a reasonable value for
 #' gadolinium contrast agents at 1.5 Tesla.  Double-check the scanning
 #' procedure manual to ensure the correct value is used.
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{dcemri.lm}}, \code{\link[minpack.lm]{nls.lm}}
 #' @references Buxton, R.B. (2002) \emph{Introduction to Functional Magnetic
 #' Resonance Imaging: Principles & Techniques}, Cambridge University Press:

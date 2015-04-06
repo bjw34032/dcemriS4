@@ -8,18 +8,25 @@ compartmentalModel(type)
 }
 \arguments{
 \item{type}{is a character string that identifies the type of compartmental
-model to be used.  Acceptable models include: \describe{
-\item{list("weinmann")}{Weinmann AIF convolved with a single compartment
-(Kety) model} \item{list("extended")}{Kety model extended with additional
-vascular compartment (default)} \item{list("orton.exp")}{Extended model
-using Orton's exponential arterial input function}
-\item{list("orton.cos")}{Extended model using Orton's raised cosine arterial
-input function} \item{list("kety.orton.exp")}{Kety model using Orton's
-exponential arterial input function} \item{list("kety.orton.cos")}{Kety
-model using Orton's raised cosine arterial input function}
-\item{list("weinmann.empirical")}{User-specified empirical AIF convolved
-with a single compartment model} \item{list("extended.empirical")}{Extended
-model using a user-specified empirical arterial input function} }}
+model to be used.  Acceptable models include:
+\describe{
+\item{"weinmann"}{Weinmann AIF convolved with a single compartment
+(Kety) model}
+\item{"extended"}{Kety model extended with additional vascular
+compartment (default)}
+\item{"orton.exp"}{Extended model using Orton's exponential arterial
+input function}
+\item{"orton.cos"}{Extended model using Orton's raised cosine arterial
+input function}
+\item{"kety.orton.exp"}{Kety model using Orton's exponential arterial
+input function}
+\item{"kety.orton.cos"}{Kety model using Orton's raised cosine
+arterial input function}
+\item{"weinmann.empirical"}{User-specified empirical AIF convolved
+with a single compartment model}
+\item{"extended.empirical"}{Extended model with user-specified
+empirical arterial input function}
+}}
 }
 \value{
 A function.
@@ -35,7 +42,7 @@ marked \sQuote{empirical} incorporate a parametric model for the arterial
 input function (AIF).
 }
 \author{
-Brandon Whitcher \email{bjw34032@users.sourceforge.net}
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \seealso{
 \code{\link{aifParameters}}, \code{\link{dcemri.bayes}},

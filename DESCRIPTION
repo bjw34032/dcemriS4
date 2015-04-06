@@ -1,6 +1,6 @@
 Package: dcemriS4
 Version: 0.55
-Date: 2015-04-01
+Date: 2015-04-06
 Title: A Package for Medical Image Analysis (S4 implementation)
 Authors@R: c(person("Brandon", "Whitcher", role = c("aut", "cre"),
 		     email = "bwhitcher@gmail.com"),
@@ -9,7 +9,8 @@ Authors@R: c(person("Brandon", "Whitcher", role = c("aut", "cre"),
 	      person("Andrew", "Thornton", role = "ctb",
 		     email = "zeripath@gmail.com"))
 Depends: 
-  R (>= 2.14.0)
+  R (>= 2.14.0),
+  oro.nifti (>= 0.4.1)
 Suggests: 
   bitops, 
   minpack.lm, 
@@ -18,9 +19,9 @@ Suggests:
   oro.dicom (>= 0.4.1),
   testthat
 Imports: 
-  utils, 
-  oro.nifti (>= 0.4.1),
-  parallel
+  utils,
+  parallel,
+  methods
 Description: A collection of routines and documentation that allows one to
   perform voxel-wise quantitative analysis of dynamic contrast-enhanced or
   diffusion-weighted MRI data, with emphasis on oncology applications.

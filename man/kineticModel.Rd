@@ -4,7 +4,7 @@
 \alias{kineticModel}
 \title{Pharmacokinetic Models}
 \usage{
-kineticModel(time, par, model="extended", aif="fritz.hansen")
+kineticModel(time, par, model = "extended", aif = "fritz.hansen")
 }
 \arguments{
 \item{time}{is a vector of acquisition times (in minutes).}
@@ -63,7 +63,7 @@ legend("bottomright", c("Levenburg-Marquardt (extended/fritz.hansen)",
 cbind(time, img[3,,,], curve.lm, curve.bayes)[20:30,]
 }
 \author{
-Brandon Whitcher \email{bjw34032@users.sourceforge.net} and Volker
+Brandon Whitcher \email{bwhitcher@gmail.com} and Volker
 Schmid \email{volkerschmid@users.sourceforge.net}
 }
 \references{

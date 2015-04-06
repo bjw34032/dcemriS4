@@ -7,16 +7,7 @@
 \alias{dcemri.spline.single}
 \title{Bayesian P-Splines for Dynamic Contrast-Enhanced MRI Data}
 \usage{
-\S4method{dcemri.splinearray}(conc, time, img.mask, time.input=time,
-model="weinmann", aif="tofts.kermode", user=NULL, aif.observed=NULL,
-nriters=500, thin=5, burnin=100, ab.hyper=c(1e-5,1e-5),
-ab.tauepsilon=c(1,1/1000), k=4, p=25, rw=2, knots=NULL, nlr=FALSE,
-t0.compute=FALSE, samples=FALSE, multicore=FALSE, verbose=FALSE,
-response=FALSE, fitted=FALSE, ...)  dcemri.spline.single(conc, time, D,
-time.input, p, rw, knots, k, A, t0.compute=FALSE, nlr=FALSE, nriters=500,
-thin=5, burnin=100, ab.hyper=c(1e-5,1e-5), ab.tauepsilon=c(1,1/1000),
-silent=0, multicore=FALSE, model=NULL, model.func=NULL, model.guess=NULL,
-samples=FALSE, B=NULL)
+dcemri.spline(conc, ...)
 
 \S4method{dcemri.spline}{array}(conc, time, img.mask, time.input = time,
   model = "weinmann", aif = "tofts.kermode", user = NULL,
@@ -29,6 +20,8 @@ samples=FALSE, B=NULL)
 \arguments{
 \item{conc}{Matrix or array of concentration time series (last dimension
 must be time).}
+
+\item{...}{Additional variables defined by the method.}
 
 \item{time}{Time in minutes.}
 
@@ -80,7 +73,7 @@ response function.}
 \item{samples}{If \code{TRUE} output includes samples drawn from the
 posterior distribution for all parameters.}
 
-\item{multicore}{(logical) use the \pkg{multicore} package.}
+\item{multicore}{(logical) use the \pkg{parallel} package.}
 
 \item{verbose}{(logical) allows text-based feedback during execution of the
 function (default = \code{FALSE}).}
@@ -90,20 +83,6 @@ returned.}
 
 \item{fitted}{If \code{TRUE}, then fitted time curved per voxel are
 returned.}
-
-\item{silent}{\ldots{}}
-
-\item{model.func}{\ldots{}}
-
-\item{model.guess}{\ldots{}}
-
-\item{A}{\ldots{}}
-
-\item{B}{\ldots{}}
-
-\item{D}{\ldots{}}
-
-\item{list()}{\ldots{}}
 }
 \value{
 The maximum of the response function \code{Fp} for the masked region
@@ -148,7 +127,7 @@ legend("right", c("fritz.hansen", "observed"), pch=1:2)
 cbind(breast$ktrans, fit.spline$ktrans[,,1], fit.spline.aif$ktrans[,,1])
 }
 \author{
-Volker Schmid <\email{volkerschmid@users.sourceforge.net}>
+Volker Schmid \email{volkerschmid@users.sourceforge.net}
 }
 \references{
 Schmid, V., Whitcher, B., Padhani, A.R. and G.-Z. Yang (2009) A

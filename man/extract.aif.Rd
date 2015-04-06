@@ -15,14 +15,14 @@ extract.aif(img, x, y, z, thresh = 0.9)
 }
 \value{
 \item{coord}{is a matrix of the three-dimesional coordinates
-\eqn{(x,y,z)} for all voxels found by the algorithm.} \item{conc}{is a
-matrix whose rows correspond to the voxels found by the algorithm and whose
-columns are the fourth dimension from the input array (e.g., contrast agent
-concentration time curve).} \item{mask}{is an array of boolean values, where
-only voxels included by the algorithm are given a value greater than zero.}
+\eqn{(x,y,z)} for all voxels found by the algorithm.}
+\item{conc}{is a matrix whose rows correspond to the voxels found by the
+algorithm and whose columns are the fourth dimension from the input array
+(e.g., contrast agent concentration time curve).}
+\item{mask}{is an array of boolean values, where only voxels included by the
+algorithm are given a value greater than zero.}
 \item{cor}{is an array that mimics the \code{mask}, but contains the
-estimated correlation coefficients for all voxels included by the
-algorithm.}
+estimated correlation coefficients for all voxels included by the algorithm.}
 }
 \description{
 Seed growing algorithm to find voxels in a three-dimensional array according
@@ -36,7 +36,7 @@ recursive algorithm is then used to grow the region of interest
 voxels, where the correlation exceeds the threshold, are included.
 }
 \author{
-Volker Schmid <\email{volker.schmid@users.sourceforge.net}>
+Volker Schmid \email{volker.schmid@users.sourceforge.net}
 }
 \keyword{misc}
 

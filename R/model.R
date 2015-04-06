@@ -33,23 +33,26 @@
 ## $Id:$
 ##
 
-
-
 #' Parameters for Arterial Input Functions
 #' 
 #' Specification of parameters for arterial input functions (AIFs)
 #' 
-#' ...
+#' See \code{\link{kineticModel}} for more information.  
 #' 
-#' @usage aifParameters(type, user = NULL)
 #' @param type is one of the following character strings associated with an
-#' AIF: \itemize{ \item\code{tofts.kermode} \item\code{fritz.hansen}
-#' \item\code{orton.exp} \item\code{orton.cos} \item\code{user}
-#' \item\code{empirical} }
+#' AIF: 
+#' \itemize{ 
+#' \item\code{tofts.kermode} 
+#' \item\code{fritz.hansen}
+#' \item\code{orton.exp} 
+#' \item\code{orton.cos} 
+#' \item\code{user}
+#' \item\code{empirical}
+#' }
 #' @param user is a vector of estimated AIF parameters or the empirical AIF
 #' values.
-#' @return ...
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' @return A vector of parameter values that are appropriate for the model selected.  
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{compartmentalModel}}, \code{\link{dcemri.lm}}
 #' @keywords misc
 #' @export aifParameters
@@ -65,7 +68,6 @@ aifParameters <- function(type, user=NULL) {
 }
 
 
-
 #' Compartmental Models for Kinetic Parameter Estimation
 #' 
 #' A selection of parametric models are provided that combine a compartmental
@@ -76,22 +78,28 @@ aifParameters <- function(type, user=NULL) {
 #' marked \sQuote{empirical} incorporate a parametric model for the arterial
 #' input function (AIF).
 #' 
-#' @usage compartmentalModel(type)
 #' @param type is a character string that identifies the type of compartmental
-#' model to be used.  Acceptable models include: \describe{
-#' \item{list("weinmann")}{Weinmann AIF convolved with a single compartment
-#' (Kety) model} \item{list("extended")}{Kety model extended with additional
-#' vascular compartment (default)} \item{list("orton.exp")}{Extended model
-#' using Orton's exponential arterial input function}
-#' \item{list("orton.cos")}{Extended model using Orton's raised cosine arterial
-#' input function} \item{list("kety.orton.exp")}{Kety model using Orton's
-#' exponential arterial input function} \item{list("kety.orton.cos")}{Kety
-#' model using Orton's raised cosine arterial input function}
-#' \item{list("weinmann.empirical")}{User-specified empirical AIF convolved
-#' with a single compartment model} \item{list("extended.empirical")}{Extended
-#' model using a user-specified empirical arterial input function} }
+#' model to be used.  Acceptable models include: 
+#' \describe{
+#' \item{"weinmann"}{Weinmann AIF convolved with a single compartment
+#' (Kety) model} 
+#' \item{"extended"}{Kety model extended with additional vascular 
+#' compartment (default)} 
+#' \item{"orton.exp"}{Extended model using Orton's exponential arterial 
+#' input function}
+#' \item{"orton.cos"}{Extended model using Orton's raised cosine arterial
+#' input function} 
+#' \item{"kety.orton.exp"}{Kety model using Orton's exponential arterial 
+#' input function} 
+#' \item{"kety.orton.cos"}{Kety model using Orton's raised cosine 
+#' arterial input function}
+#' \item{"weinmann.empirical"}{User-specified empirical AIF convolved
+#' with a single compartment model} 
+#' \item{"extended.empirical"}{Extended model with user-specified 
+#' empirical arterial input function} 
+#' }
 #' @return A function.
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{aifParameters}}, \code{\link{dcemri.bayes}},
 #' \code{\link{dcemri.lm}}, \code{\link{dcemri.map}}
 #' @keywords misc
@@ -251,20 +259,17 @@ compartmentalModel <- function(type) {
          })
 }
 
-
-
 #' Convolution
 #' 
 #' ...
 #' 
 #' ...
 #' 
-#' @usage expConv(input, k1, k2)
 #' @param input ...
 #' @param k1 ...
 #' @param k2 ...
 #' @return ...
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @keywords misc
 #' @export expConv
 expConv <- function(input, k1, k2) {

@@ -47,18 +47,9 @@
 #' See Schmid \emph{et al.} (2009) for more details.
 #' 
 #' @aliases dcemri.spline dcemri.spline,array-method dcemri.spline.single
-#' @usage \S4method{dcemri.splinearray}(conc, time, img.mask, time.input=time,
-#' model="weinmann", aif="tofts.kermode", user=NULL, aif.observed=NULL,
-#' nriters=500, thin=5, burnin=100, ab.hyper=c(1e-5,1e-5),
-#' ab.tauepsilon=c(1,1/1000), k=4, p=25, rw=2, knots=NULL, nlr=FALSE,
-#' t0.compute=FALSE, samples=FALSE, multicore=FALSE, verbose=FALSE,
-#' response=FALSE, fitted=FALSE, ...)  dcemri.spline.single(conc, time, D,
-#' time.input, p, rw, knots, k, A, t0.compute=FALSE, nlr=FALSE, nriters=500,
-#' thin=5, burnin=100, ab.hyper=c(1e-5,1e-5), ab.tauepsilon=c(1,1/1000),
-#' silent=0, multicore=FALSE, model=NULL, model.func=NULL, model.guess=NULL,
-#' samples=FALSE, B=NULL)
 #' @param conc Matrix or array of concentration time series (last dimension
 #' must be time).
+#' @param ... Additional variables defined by the method.  
 #' @param time Time in minutes.
 #' @param img.mask Mask matrix or array. Voxels with \code{mask = 0} will be
 #' excluded.
@@ -71,14 +62,11 @@
 #' @param user \ldots{}
 #' @param aif.observed is the user-defined vector of arterial concentrations
 #' observed at \code{time.input} (only for \sQuote{aif}=observed).
-#' @param silent \ldots{}
-#' @param multicore (logical) use the \pkg{multicore} package.
+#' @param multicore (logical) use the \pkg{parallel} package.
 #' @param verbose (logical) allows text-based feedback during execution of the
 #' function (default = \code{FALSE}).
 #' @param samples If \code{TRUE} output includes samples drawn from the
 #' posterior distribution for all parameters.
-#' @param model.func \ldots{}
-#' @param model.guess \ldots{}
 #' @param nlr If \code{TRUE}, a response model is fitted to the estimated
 #' response function.
 #' @param model Only if \code{nlr = TRUE} Response model fitted to the
@@ -100,18 +88,15 @@
 #' returned.
 #' @param fitted If \code{TRUE}, then fitted time curved per voxel are
 #' returned.
-#' @param A \ldots{}
-#' @param B \ldots{}
-#' @param D \ldots{}
-#' @param list() \ldots{}
 #' @return The maximum of the response function \code{Fp} for the masked region
 #' is provided by default.  Where appropriate, response functions, fitted
 #' functions, and parameter estimates (along with their standard errors) are
 #' provided. All multi-dimensional arrays are provided in \code{nifti} format.
-#' @author Volker Schmid <\email{volkerschmid@@users.sourceforge.net}>
+#' @author Volker Schmid \email{volkerschmid@@users.sourceforge.net}
 #' @seealso \code{\link{dcemri.bayes}}, \code{\link{dcemri.lm}},
 #' \code{\link{dcemri.map}}
-#' @references Schmid, V., Whitcher, B., Padhani, A.R. and G.-Z. Yang (2009) A
+#' @references 
+#' Schmid, V., Whitcher, B., Padhani, A.R. and G.-Z. Yang (2009) A
 #' semi-parametric technique for the quantitative analysis of dynamic
 #' contrast-enhanced MR images based on Bayesian P-splines, \emph{IEEE
 #' Transactions on Medical Imaging}, \bold{28} (6), 789-798.
@@ -149,6 +134,7 @@ setGeneric("dcemri.spline", function(conc, ...) standardGeneric("dcemri.spline")
 #' @export
 #' @rdname dcemri.spline-methods
 #' @aliases dcemri.spline,array-method
+#' @useDynLib dcemriS4 dce_spline_run
 setMethod("dcemri.spline", signature(conc="array"),
           function(conc, time, img.mask, time.input=time,
                    model="weinmann", aif="tofts.kermode",

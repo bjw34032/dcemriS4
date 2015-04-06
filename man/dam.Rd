@@ -56,7 +56,7 @@ the preceding acquisition (i.e.,
 \eqn{f_1(T_1,TR)=f_2(T_1,TR)\ne1.0}{f1(T1,TR) = f2(T1,TR) != 1.0}).
 }
 \author{
-Brandon Whitcher <\email{bjw34032@users.sourceforge.net}>
+Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \references{
 Cunningham, C.H., Pauly, J.M. and Nayak, K.S. (2006) Saturated

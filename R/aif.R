@@ -47,9 +47,6 @@
 #' of observed contrast agent concentrations.
 #' 
 #' @aliases aif.orton.exp model.orton.exp orton.exp.lm
-#' @usage aif.orton.exp(tt, AB, muB, AG, muG) model.orton.exp(tt, aparams,
-#' kparams) orton.exp.lm(tt, aif, guess=c(log(100),log(10),log(1),log(0.1)),
-#' nprint=0)
 #' @param tt is a vector of acquisition times (in minutes) relative to
 #' injection of the contrast agent.  Negative values should be used prior to
 #' the injection.
@@ -79,7 +76,7 @@
 #' \item{info}{The success (or failure) code from the Levenburg-Marquardt
 #' algorithm \code{nls.lm}.} \item{message}{The text message associated with
 #' the \code{info} paramters.}
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{dcemri.lm}}, \code{\link{extract.aif}},
 #' \code{\link[minpack.lm]{nls.lm}}
 #' @references Orton, M.R., Collins, D.J., Walker-Samuel, S., d'Arcy, J.A.,
@@ -114,6 +111,7 @@
 #' 
 #' @rdname aif-models
 #' @export 
+#' @import oro.nifti
 aif.orton.exp <- function(tt, AB, muB, AG, muG) {
   out <- AB * tt * exp(-muB * tt) + AG * (exp(-muG * tt) - exp(-muB * tt))
   out[tt < 0] <- 0
@@ -166,30 +164,30 @@ model.orton.exp <- function(tt, aparams, kparams) {
 }
 #' Seed Growing for a 4D Array
 #' 
-#' Seed growing algorithm to find voxels in a three-dimensional array according
-#' to their correlation to a seed voxel.  The correlation is measured according
+#' Seed growing algorithm to find voxels in a three-dimensional array according 
+#' to their correlation to a seed voxel.  The correlation is measured according 
 #' to the fourth dimension of the array.
 #' 
-#' Correlation coefficients are computed for every voxel in the input array.  A
-#' recursive algorithm is then used to grow the region of interest
-#' (\acronym{ROI}) from the seed voxel in three dimensions.  All adjacent
+#' Correlation coefficients are computed for every voxel in the input array.  A 
+#' recursive algorithm is then used to grow the region of interest 
+#' (\acronym{ROI}) from the seed voxel in three dimensions.  All adjacent 
 #' voxels, where the correlation exceeds the threshold, are included.
 #' 
 #' @aliases extract.aif
-#' @usage extract.aif(img, x, y, z, thresh = 0.9)
 #' @param img is the four-dimensional array of medical imaging data.
 #' @param x,y,z are the coordinates of the seed voxel.
 #' @param thresh is the minimum correlation for inclusion in the region.
-#' @return \item{coord}{is a matrix of the three-dimesional coordinates
-#' \eqn{(x,y,z)} for all voxels found by the algorithm.} \item{conc}{is a
-#' matrix whose rows correspond to the voxels found by the algorithm and whose
-#' columns are the fourth dimension from the input array (e.g., contrast agent
-#' concentration time curve).} \item{mask}{is an array of boolean values, where
-#' only voxels included by the algorithm are given a value greater than zero.}
-#' \item{cor}{is an array that mimics the \code{mask}, but contains the
-#' estimated correlation coefficients for all voxels included by the
-#' algorithm.}
-#' @author Volker Schmid <\email{volker.schmid@@users.sourceforge.net}>
+#' @return 
+#' \item{coord}{is a matrix of the three-dimesional coordinates
+#' \eqn{(x,y,z)} for all voxels found by the algorithm.}
+#' \item{conc}{is a matrix whose rows correspond to the voxels found by the 
+#' algorithm and whose columns are the fourth dimension from the input array 
+#' (e.g., contrast agent concentration time curve).}
+#' \item{mask}{is an array of boolean values, where only voxels included by the
+#' algorithm are given a value greater than zero.} 
+#' \item{cor}{is an array that mimics the \code{mask}, but contains the 
+#' estimated correlation coefficients for all voxels included by the algorithm.}
+#' @author Volker Schmid \email{volker.schmid@@users.sourceforge.net}
 #' @keywords misc
 #' @rdname extract.aif
 #' @export

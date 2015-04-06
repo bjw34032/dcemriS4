@@ -54,10 +54,6 @@
 #' internal R functions instead of loops, and called \code{adc.lm}.
 #' 
 #' @aliases adc.lm ADC.fast,array-method ADC.fast
-#' @usage adc.lm(signal, b, guess, control=minpack.lm::nls.lm.control())
-#' \S4method{ADC.fastarray}(dwi, bvalues, dwi.mask,
-#' control=minpack.lm::nls.lm.control(maxiter=150), multicore=FALSE,
-#' verbose=FALSE)
 #' @param signal Signal intensity vector as a function of b-values.
 #' @param b,bvalues Diffusion weightings (b-values).
 #' @param guess Initial values of \eqn{S_0}{S0} and \eqn{D}.
@@ -65,14 +61,15 @@
 #' \code{nls.lm.control} for the names of the settable control values and their
 #' effect.
 #' @param dwi Multidimensional array of diffusion-weighted images.
+#' @param ... Additional variables defined by the method.  
 #' @param dwi.mask Logical array that defines the voxels to be analyzed.
 #' @param multicore is a logical variable (default = \code{FALSE}) that allows
-#' parallel processing via \pkg{multicore}.
+#' parallel processing via \pkg{parallel}.
 #' @param verbose Additional information will be printed when
 #' \code{verbose=TRUE}.
 #' @return A list structure is produced with estimates of \eqn{S_0}, \eqn{D}
 #' and information about the convergence of the nonlinear optimization routine.
-#' @author Brandon Whitcher \email{bjw34032@@users.sourceforge.net}
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link[minpack.lm]{nls.lm}}
 #' @references Buxton, R.B. (2002) \emph{Introduction to Functional Magnetic
 #' Resonance Imaging: Principles & Techniques}, Cambridge University Press:

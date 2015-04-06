@@ -32,28 +32,28 @@
 ## $Id:$
 ##
 
-
-
 #' Convolution of 3D Arrays using the Fourier Transform
 #' 
-#' Convolve a
+#' Convolve a three-dimensinal array with another three-dimensional arry using 
+#' the Fast Fourier Transform (FFT).
 #' 
-#' The arrays \eqn{A} and \eqn{B} are transformed into the Fourier domain and
-#' multiplied together (equivalent to a convolution in the image domain across
+#' 
+#' The arrays \eqn{A} and \eqn{B} are transformed into the Fourier domain and 
+#' multiplied together (equivalent to a convolution in the image domain across 
 #' all spatial locations simultaneously).
 #' 
-#' @usage conv.fft(A, B, C, FFTA=NULL)
 #' @param A is a three-dimensional array (\dQuote{the template}).
 #' @param B is a three-dimensional array (\dQuote{the target}).
 #' @param C is a vector of length three (the center of \dQuote{the template}).
-#' @param FFTA is the three-dimensional Fourier transform of \code{A}, this may
-#' save time when looping over multiple \dQuote{targets}.
-#' @return A three-dimensional array, the same dimension as the input arrays,
-#' that is the convolution of the \dQuote{target} to the \dQuote{template} at
-#' all spatial locations.
-#' @author Brandon Whitcher
+#' @param FFTA is the three-dimensional Fourier transform of \code{A}, this may 
+#'   save time when looping over multiple \dQuote{targets}.
+#' @return A three-dimensional array, the same dimension as the input arrays, 
+#'   that is the convolution of the \dQuote{target} to the \dQuote{template} at 
+#'   all spatial locations.
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{fft}}, \code{\link{ftm}}, \code{\link{shift3D}}
-#' @references Briggs, W.L. and Henson, V.E. (1995) \emph{The DFT: An Owner's
+#' @references 
+#' Briggs, W.L. and Henson, V.E. (1995) \emph{The DFT: An Owner's
 #' Manual for the Discrete Fourier Transform}, SIAM: Philadelphia.
 #' @examples
 #' 
@@ -110,10 +110,9 @@ conv.fft <- function(A, B, C, FFTA=NULL) {
 #' (e.g., a hyper-rectangle).  Further testing is required to know the limits
 #' of the current implementation.
 #' 
-#' @usage find.center(M)
 #' @param M is a binary mask (multidimensional array of logical values).
 #' @return A vector of values the same length as the input array.
-#' @author Brandon Whitcher
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{ftm}}
 #' @keywords misc
 #' @examples
@@ -149,8 +148,6 @@ find.center <- function(M) {
 #' One axis of the three-dimensional array is translated by an integer amount.
 #' This is useful when applying convolution operators in the Fourier domain.
 #' 
-#' 
-#' @usage shift3D(A, s, type, fill=0)
 #' @param A is a three-dimensional array.
 #' @param s is the integer number of translation steps.
 #' @param type is a character string using anatomical coordinates assuming a
@@ -161,7 +158,7 @@ find.center <- function(M) {
 #' (circular boundary conditions are NOT used).
 #' @return A three-dimensional array is returned, the same dimension as the
 #' original array, with one dimension translated.
-#' @author Brandon Whitcher
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{conv.fft}}
 #' @examples
 #' 
@@ -242,19 +239,20 @@ shift3D <- function(A, s, type, fill=0) {
 #' manipulations of the data.
 #' 
 #' @aliases ftm ftm,array-method
-#' @usage \S4method{ftmarray}(input, ...)
 #' @param input is a four-dimensional array of signal intensities.
 #' @param ... Additional variables passed to the \code{plot} function.
 #' @return A list of objects are returned: \item{out}{Motion-corrected version
 #' of the four-dimensional array.} \item{offset}{Translations (in 3D) for each
 #' volume in the 4D array.} \item{t.center}{Estimated center of the binary
 #' mask.}
-#' @author Brandon Whitcher <\email{bjw34032@@users.sourceforge.net}>
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{conv.fft}}, \code{\link{find.center}},
 #' \code{\link{shift3D}}
-#' @references Lewis, J.P. (2003) Fast normalized cross-correlation.\cr
+#' @references 
+#' Lewis, J.P. (2003) Fast normalized cross-correlation.\cr
 #' \url{www.idiom.com/~zilla/}
 #' @rdname ftm
+#' @docType methods
 #' @export
 setGeneric("ftm", function(input, ...) standardGeneric("ftm"))
 #' @rdname ftm
@@ -307,4 +305,3 @@ setMethod("ftm", signature(input="array"),
   }
   list(out=output, offset=offset, t.center=tc, localCOR=localCOR, plot=NA)
 }
-
