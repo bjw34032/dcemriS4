@@ -78,12 +78,13 @@
 #' array would only contain ones.  Numbers other than one indicate the extent
 #' of the inhomogeneity as a function of spatial location.
 #' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
-#' @references Cunningham, C.H., Pauly, J.M. and Nayak, K.S. (2006) Saturated
-#' Double-Angle Method for Rapid B1+ Mapping, \emph{Magnetic Resonance in
-#' Medicine}, \bold{55}, 1326-1333.
+#' @references 
+#' Cunningham, C.H., Pauly, J.M. and Nayak, K.S. (2006) Saturated Double-Angle 
+#' Method for Rapid B1+ Mapping, \emph{Magnetic Resonance in Medicine}, 
+#' \bold{55}, 1326-1333.
 #' @keywords models
-#' @export dam
-dam <- function(low, high, low.deg) {
+#' @export doubleAngleMethod
+doubleAngleMethod <- function(low, high, low.deg) {
   alpha <- acos(abs(high /(2*low)))
   (180/pi * alpha) / low.deg # radians to degrees
 }
@@ -187,7 +188,7 @@ E10.lm <- function(signal, alpha, guess,
 #' @param r1 is the spin-lattice relaxivity constant (default = 4.39 for 1.5T).
 #' For 3T data it may be necessary to adjust this value.
 #' @param multicore is a logical variable (default = \code{FALSE}) that allows
-#' parallel processing via \pkg{multicore}.
+#' parallel processing via \pkg{parallel}.
 #' @param verbose is a logical variable (default = \code{FALSE}) that allows
 #' text-based feedback during execution of the function.
 #' @return A list structure is produced with (all or some of the) parameter
@@ -203,7 +204,8 @@ E10.lm <- function(signal, alpha, guess,
 #' procedure manual to ensure the correct value is used.
 #' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{dcemri.lm}}, \code{\link[minpack.lm]{nls.lm}}
-#' @references Buxton, R.B. (2002) \emph{Introduction to Functional Magnetic
+#' @references 
+#' Buxton, R.B. (2002) \emph{Introduction to Functional Magnetic
 #' Resonance Imaging: Principles & Techniques}, Cambridge University Press:
 #' Cambridge, UK.
 #' 
@@ -241,7 +243,7 @@ E10.lm <- function(signal, alpha, guess,
 #' unlist(out)
 #' plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
 #' lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
-#' lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
+#' lines(alpha, gre(c(out$M0), TR, 1/c(out$R10), alpha), lwd=2, col=2)
 #' legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 #' 
 #' @export

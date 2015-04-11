@@ -168,7 +168,7 @@ legend("bottomright", c("extended/empirical","orton.exp/user"), pch=2:3)
 cbind(breast$vp, fit2$vp[,,1], fit3$vp[,,1])
 }
 \author{
-Brandon Whitcher \email{bwhitcher@gmail.com} and Volker
+Brandon Whitcher \email{bwhitcher@gmail.com},\cr Volker
 Schmid \email{volkerschmid@users.sourceforge.net}
 }
 \references{

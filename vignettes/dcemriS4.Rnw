@@ -273,7 +273,7 @@ multiplicative factor relative to the low flip angle using the
 saturated double-angle method \citep{cun-pau-nay:saturated}.  Note,
 repeated acquisitions (five) of each flip angle were obtained and force
 the additional \code{rowMeans} step to average the results from the
-function \code{dam} (double-angle method) in the code below.
+function \code{doubleAngleMethod} in the code below.
   
 <<doubleanglemethod>>=
 f60 <- system.file(file.path("nifti", "SDAM_ep2d_60deg_26slc.nii.gz"), 
@@ -282,7 +282,7 @@ sdam60 <- readNIfTI(f60)
 f120 <- system.file(file.path("nifti", "SDAM_ep2d_120deg_26slc.nii.gz"),
                     package="dcemriS4")
 sdam120 <- readNIfTI(f120)
-sdam.image <- rowMeans(dam(sdam60, sdam120, 60), dims=3)
+sdam.image <- rowMeans(doubleAngleMethod(sdam60, sdam120, 60), dims=3)
 mask <- (rowSums(sdam60, dims=3) > 64)
 @ 
 <<dam+png,echo=FALSE,results=hide>>=

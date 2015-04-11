@@ -102,7 +102,7 @@
 #' par(mfrow=c(1,1)) # graphical output
 #' plot(b, signal, xlab="b-value", ylab="Signal intensity")
 #' lines(seq(0,800,10), dwi(S0, seq(0,800,10), D), lwd=2, col=1)
-#' lines(seq(0,800,10), dwi(ADC$S0, seq(0,800,10), ADC$D), lwd=2, col=2)
+#' lines(seq(0,800,10), dwi(c(ADC$S0), seq(0,800,10), c(ADC$D)), lwd=2, col=2)
 #' legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 #' 
 #' @export

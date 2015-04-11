@@ -23,7 +23,7 @@ Type 'q()' to quit R.
 > library('dcemriS4')
 Loading required package: oro.nifti
 
-oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.4.3)
+oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.5.1)
 
 
 dcemriS4: A Package for Medical Image Analysis (version = 0.55)
@@ -63,7 +63,7 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > par(mfrow=c(1,1)) # graphical output
 > plot(b, signal, xlab="b-value", ylab="Signal intensity")
 > lines(seq(0,800,10), dwi(S0, seq(0,800,10), D), lwd=2, col=1)
-> lines(seq(0,800,10), dwi(ADC$S0, seq(0,800,10), ADC$D), lwd=2, col=2)
+> lines(seq(0,800,10), dwi(c(ADC$S0), seq(0,800,10), c(ADC$D)), lwd=2, col=2)
 > legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 > 
 > 
@@ -75,9 +75,9 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > 
 > flush(stderr()); flush(stdout())
 > 
-> ### Name: aif.orton.exp
+> ### Name: aif-models
 > ### Title: Arterial Input Functions
-> ### Aliases: aif.orton.exp model.orton.exp orton.exp.lm
+> ### Aliases: aif-models aif.orton.exp model.orton.exp orton.exp.lm
 > ### Keywords: models
 > 
 > ### ** Examples
@@ -115,14 +115,14 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > 
 > 
 > cleanEx()
-> nameEx("conv.fft")
-> ### * conv.fft
+> nameEx("convFFT")
+> ### * convFFT
 > 
 > flush(stderr()); flush(stdout())
 > 
-> ### Name: conv.fft
+> ### Name: convFFT
 > ### Title: Convolution of 3D Arrays using the Fourier Transform
-> ### Aliases: conv.fft
+> ### Aliases: convFFT
 > 
 > ### ** Examples
 > 
@@ -130,8 +130,8 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > cube[9:12,9:12,1] <- 1
 > tkernel <- array(0, c(20,20,1))
 > tkernel[,,1] <- c(.5, 1, .5, rep(0,20-3)) %o% c(.5, 1, .5, rep(0,20-3))
-> tcenter <- find.center(ifelse(tkernel > 0, TRUE, FALSE))
-> out <- conv.fft(tkernel, cube, tcenter)
+> tcenter <- findCenter(ifelse(tkernel > 0, TRUE, FALSE))
+> out <- convFFT(tkernel, cube, tcenter)
 > out[8:13,8:13,1]  ## text output
      [,1] [,2] [,3] [,4] [,5] [,6]
 [1,] 0.25 0.75    1    1 0.75 0.25
@@ -170,14 +170,16 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > time <- buckley$time.min[xi]
 > 
 > ## Bayesian estimation with Fritz-Hansen default AIF
-> fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen")
+> fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen",
++                          nriters=1500, thin=2, burnin=500)
 > 
 > ## Bayesian estimation with "orton.exp" function fit to Buckley's AIF
 > aif <- buckley$input[xi]
 > aifparams <- orton.exp.lm(time, aif)
 > aifparams$D <- 1
 > fit.bayes.aif <- dcemri.bayes(img, time, mask, model="orton.exp",
-+                               aif="user", user=aifparams)
++                               aif="user", user=aifparams,
++                               nriters=1500, thin=2, burnin=500)
 > 
 > plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -187,19 +189,19 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > legend("right", c("extended/fritz.hansen","orton.exp/user"), pch=1:2)
 > cbind(breast$ktrans, fit.bayes$ktrans[,,1], fit.bayes.aif$ktrans[,,1])
              [,1]      [,2]       [,3]
- [1,] 0.145599052 0.3810125 0.55292642
- [2,] 0.218344559 0.5962536 0.50322417
- [3,] 0.250521815 0.6975559 0.48797216
- [4,] 0.268391926 0.7516978 0.48087096
- [5,] 0.279725126 0.7905062 0.47505964
- [6,] 0.009912791 0.4574822 0.08727356
- [7,] 0.146992146 0.4597193 0.47426411
- [8,] 0.328712966 0.8578130 0.49763244
- [9,] 0.387767110 0.9703206 0.50389926
-[10,] 0.250521815 0.5507150 0.45706188
-[11,] 0.250521815 0.6216169 0.47242806
-[12,] 0.250521815 0.7714078 0.50453120
-[13,] 0.250521815 0.8395316 0.52522990
+ [1,] 0.145599052 0.3792681 0.55841519
+ [2,] 0.218344559 0.5942625 0.50270903
+ [3,] 0.250521815 0.6954287 0.48807738
+ [4,] 0.268391926 0.7530414 0.47980721
+ [5,] 0.279725126 0.7877058 0.47522840
+ [6,] 0.009912791 0.4137977 0.07708375
+ [7,] 0.146992146 0.4621665 0.47151488
+ [8,] 0.328712966 0.8640210 0.49736287
+ [9,] 0.387767110 0.9916494 0.50472058
+[10,] 0.250521815 0.5502222 0.45727976
+[11,] 0.250521815 0.6191903 0.47263203
+[12,] 0.250521815 0.7703639 0.50629422
+[13,] 0.250521815 0.8393636 0.52379954
 > 
 > fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
 > fit.lm.aif <- dcemri.lm(img, time, mask, model="orton.exp", aif="user",
@@ -420,10 +422,10 @@ $message
 > aif <- buckley$input[xi]
 > 
 > fit.spline <- dcemri.spline(img, time, mask, aif="fritz.hansen",
-+                             nriters=250, nlr=TRUE)
++                             nriters=250, thin=4, burnin=75, nlr=TRUE)
 > fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
-+                                 aif.observed=aif, nriters=250,
-+                                 nlr=TRUE)
++                                 aif.observed=aif, nriters=250, thin=4,
++                                 burnin=75, nlr=TRUE)
 > 
 > plot(breast$ktrans, fit.spline$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -434,19 +436,19 @@ $message
 > 
 > cbind(breast$ktrans, fit.spline$ktrans[,,1], fit.spline.aif$ktrans[,,1])
              [,1]      [,2]      [,3]
- [1,] 0.145599052 0.3789511 0.1633419
- [2,] 0.218344559 0.5890241 0.2686158
- [3,] 0.250521815 0.6907638 0.3264283
- [4,] 0.268391926 0.7496435 0.3633549
- [5,] 0.279725126 0.7925732 0.3900094
- [6,] 0.009912791 0.4894625 0.7023563
- [7,] 0.146992146 0.4888983 0.2270190
- [8,] 0.328712966 0.8272781 0.3970100
- [9,] 0.387767110 0.9256766 0.4481946
-[10,] 0.250521815 0.5322583 0.2390196
-[11,] 0.250521815 0.6121643 0.2807765
-[12,] 0.250521815 0.7693844 0.3709485
-[13,] 0.250521815 0.8433382 0.4125105
+ [1,] 0.145599052 0.3790719 0.1634991
+ [2,] 0.218344559 0.5892872 0.2687568
+ [3,] 0.250521815 0.6908252 0.3263325
+ [4,] 0.268391926 0.7517310 0.3633178
+ [5,] 0.279725126 0.7913467 0.3897359
+ [6,] 0.009912791 0.4786902 0.6897942
+ [7,] 0.146992146 0.4897488 0.2270669
+ [8,] 0.328712966 0.8275625 0.3969420
+ [9,] 0.387767110 0.9261580 0.4486662
+[10,] 0.250521815 0.5322487 0.2386943
+[11,] 0.250521815 0.6123510 0.2814535
+[12,] 0.250521815 0.7678804 0.3710532
+[13,] 0.250521815 0.8437293 0.4120485
 > 
 > 
 > 
@@ -475,21 +477,21 @@ $message
 > 
 > 
 > cleanEx()
-> nameEx("find.center")
-> ### * find.center
+> nameEx("findCenter")
+> ### * findCenter
 > 
 > flush(stderr()); flush(stdout())
 > 
-> ### Name: find.center
+> ### Name: findCenter
 > ### Title: Find the Center of a Binary Mask
-> ### Aliases: find.center
+> ### Aliases: findCenter
 > ### Keywords: misc
 > 
 > ### ** Examples
 > 
 > M <- array(FALSE, rep(10,3))
 > M[6:10,6:10,6:10] <- TRUE
-> Mc <- find.center(M)
+> Mc <- findCenter(M)
 > print(Mc)
 [1] 8 8 8
 > 
@@ -578,7 +580,7 @@ $message
 99.5197735  0.6534572 
 > plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
 > lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
-> lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
+> lines(alpha, gre(c(out$M0), TR, 1/c(out$R10), alpha), lwd=2, col=2)
 > legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 > 
 > 
@@ -609,7 +611,7 @@ $message
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  27.086 0.032 27.095 0 0 
+Time elapsed:  23.635 0.019 23.686 0 0 
 > grDevices::dev.off()
 null device 
           1 

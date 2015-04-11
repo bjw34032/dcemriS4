@@ -51,7 +51,7 @@
 #'   that is the convolution of the \dQuote{target} to the \dQuote{template} at 
 #'   all spatial locations.
 #' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
-#' @seealso \code{\link{fft}}, \code{\link{ftm}}, \code{\link{shift3D}}
+#' @seealso \code{\link{fft}}, \code{\link{fastTemplateMatching}}, \code{\link{shift3D}}
 #' @references 
 #' Briggs, W.L. and Henson, V.E. (1995) \emph{The DFT: An Owner's
 #' Manual for the Discrete Fourier Transform}, SIAM: Philadelphia.
@@ -61,8 +61,8 @@
 #' cube[9:12,9:12,1] <- 1
 #' tkernel <- array(0, c(20,20,1))
 #' tkernel[,,1] <- c(.5, 1, .5, rep(0,20-3)) %o% c(.5, 1, .5, rep(0,20-3))
-#' tcenter <- find.center(ifelse(tkernel > 0, TRUE, FALSE))
-#' out <- conv.fft(tkernel, cube, tcenter)
+#' tcenter <- findCenter(ifelse(tkernel > 0, TRUE, FALSE))
+#' out <- convFFT(tkernel, cube, tcenter)
 #' out[8:13,8:13,1]  ## text output
 #' 
 #' par(mfrow=c(2,2))  ## graphic output
@@ -70,8 +70,8 @@
 #' image(drop(cube), col=oro.nifti::tim.colors(), main="Target")
 #' image(drop(out), col=oro.nifti::tim.colors(), main="Output")
 #' 
-#' @export conv.fft
-conv.fft <- function(A, B, C, FFTA=NULL) {
+#' @export convFFT
+convFFT <- function(A, B, C, FFTA=NULL) {
   if (length(dim(A)) == 3) {
     if (length(dim(A)) == length(dim(B)) && length(dim(A)) == length(C)) {
       X <- nrow(A)
@@ -100,8 +100,6 @@ conv.fft <- function(A, B, C, FFTA=NULL) {
   }
 }
 
-
-
 #' Find the Center of a Binary Mask
 #' 
 #' The center of a binary mask is determined.
@@ -113,17 +111,17 @@ conv.fft <- function(A, B, C, FFTA=NULL) {
 #' @param M is a binary mask (multidimensional array of logical values).
 #' @return A vector of values the same length as the input array.
 #' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
-#' @seealso \code{\link{ftm}}
+#' @seealso \code{\link{fastTemplateMatching}}
 #' @keywords misc
 #' @examples
 #' 
 #' M <- array(FALSE, rep(10,3))
 #' M[6:10,6:10,6:10] <- TRUE
-#' Mc <- find.center(M)
+#' Mc <- findCenter(M)
 #' print(Mc)
 #' 
-#' @export find.center
-find.center <- function(M) {
+#' @export findCenter
+findCenter <- function(M) {
   if (!is.logical(M)) {
     stop("Object must be logical!")
   }
@@ -142,7 +140,6 @@ find.center <- function(M) {
 
 ### FIXME Should this be genericised? 
 
-
 #' Shift a 3D Array in One Dimension
 #' 
 #' One axis of the three-dimensional array is translated by an integer amount.
@@ -159,7 +156,7 @@ find.center <- function(M) {
 #' @return A three-dimensional array is returned, the same dimension as the
 #' original array, with one dimension translated.
 #' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
-#' @seealso \code{\link{conv.fft}}
+#' @seealso \code{\link{convFFT}}
 #' @examples
 #' 
 #' cube <- array(0, rep(20,3))
@@ -217,7 +214,7 @@ shift3D <- function(A, s, type, fill=0) {
 }
 
 #############################################################################
-## setGeneric("ftm")
+## setGeneric("fastTemplateMatching")
 #############################################################################
 #' Fast Template Matching via Cross-Correlation
 #' 
@@ -238,7 +235,7 @@ shift3D <- function(A, s, type, fill=0) {
 #' along with interploation schemes in order to capture intra-voxel
 #' manipulations of the data.
 #' 
-#' @aliases ftm ftm,array-method
+#' @aliases fastTemplateMatching fastTemplateMatching,array-method
 #' @param input is a four-dimensional array of signal intensities.
 #' @param ... Additional variables passed to the \code{plot} function.
 #' @return A list of objects are returned: \item{out}{Motion-corrected version
@@ -246,19 +243,20 @@ shift3D <- function(A, s, type, fill=0) {
 #' volume in the 4D array.} \item{t.center}{Estimated center of the binary
 #' mask.}
 #' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
-#' @seealso \code{\link{conv.fft}}, \code{\link{find.center}},
+#' @seealso \code{\link{convFFT}}, \code{\link{findCenter}},
 #' \code{\link{shift3D}}
 #' @references 
 #' Lewis, J.P. (2003) Fast normalized cross-correlation.\cr
 #' \url{www.idiom.com/~zilla/}
-#' @rdname ftm
+#' @rdname fastTemplateMatching
 #' @docType methods
 #' @export
-setGeneric("ftm", function(input, ...) standardGeneric("ftm"))
-#' @rdname ftm
+setGeneric("fastTemplateMatching", 
+           function(input, ...) standardGeneric("fastTemplateMatching"))
+#' @rdname fastTemplateMatching
 #' @export
-setMethod("ftm", signature(input="array"),
-          function(input, ...) .dcemriWrapper("ftm", input, ...))
+setMethod("fastTemplateMatching", signature(input="array"),
+          function(input, ...) .dcemriWrapper("fastTemplateMatching", input, ...))
 
 .ftm <- function(input, mask, reference, plot=TRUE, ...) {
   ## Fast template matching via cross-correlation
@@ -269,16 +267,16 @@ setMethod("ftm", signature(input="array"),
   template <- ifelse(mask > 0, reference, 0)
   templateFFT <- fft(template)
   maskFFT <- fft(mask)
-  tc <- find.center(ifelse(template > 0, TRUE, FALSE))
-  templateSS <- conv.fft(mask, template^2, tc, FFTA=maskFFT)
+  tc <- findCenter(ifelse(template > 0, TRUE, FALSE))
+  templateSS <- convFFT(mask, template^2, tc, FFTA=maskFFT)
   ##numerator <- localSS <- array(0, dim(input))
   localCOR <- array(0, dim(input))
   for (w in 1:W) {
     target <- input[,,,w]
-    ##numerator[,,,w] <- conv.fft(template, target, tc, FFTA=templateFFT)
-    ##localSS[,,,w] <- conv.fft(mask, target^2, tc, FFTA=maskFFT)
-    numerator <- conv.fft(template, target, tc, FFTA=templateFFT)
-    localSS <- conv.fft(mask, target*target, tc, FFTA=maskFFT)
+    ##numerator[,,,w] <- convFFT(template, target, tc, FFTA=templateFFT)
+    ##localSS[,,,w] <- convFFT(mask, target^2, tc, FFTA=maskFFT)
+    numerator <- convFFT(template, target, tc, FFTA=templateFFT)
+    localSS <- convFFT(mask, target*target, tc, FFTA=maskFFT)
     localCOR[,,,w] <- numerator / sqrt(templateSS[tc[1],tc[2],tc[3]]) / sqrt(localSS)
   }
   ## localCOR <- numerator / sqrt(templateSS[tc[1],tc[2],tc[3]]) / sqrt(localSS)

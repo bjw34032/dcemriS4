@@ -36,7 +36,10 @@
 #############################################################################
 #' Quantitative T2 Methods
 #' 
-#' Carr-Purcell-Meiboom-Gill (CPMG)
+#' The regional blood volume is found by integrating of the tissue concentration
+#' curve and the artieral input funciton (AIF).  In order to avoid reperfusion
+#' effects on the rCBV measurements, the tissue and arteiral concentration 
+#' curves must first be reduced to their first-pass versions.  
 #' 
 #' @aliases T2.lm T2.fast T2.fast,array-method T2.fast,anlz-method
 #' T2.fast,nifti-method
@@ -64,6 +67,10 @@
 #' \item{T2}{T2 relaxation time.}
 #' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
 #' @seealso \code{\link{R1.fast}}, \code{\link{R10.lm}}
+#' @references 
+#' Kennan, R.P. and J\"ager, H.R. (2004) $T_2$- and $T_2^*$-w DCE-MRI: Blood
+#' Perfusion and Volume Estimation using Bolus Tracking, in \emph{Quantiative 
+#' MRI of the Brain} (P. Tofts ed.), Wiley: Chichester, UK, pp. 365-412.
 #' @keywords misc
 #' @rdname CPMG-methods
 #' @export

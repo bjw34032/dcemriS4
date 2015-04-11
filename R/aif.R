@@ -46,6 +46,7 @@
 #' estimates the AIF parameters, using nonlinear optimization, using a vector
 #' of observed contrast agent concentrations.
 #' 
+#' @name aif-models
 #' @aliases aif.orton.exp model.orton.exp orton.exp.lm
 #' @param tt is a vector of acquisition times (in minutes) relative to
 #' injection of the contrast agent.  Negative values should be used prior to
@@ -77,7 +78,7 @@
 #' algorithm \code{nls.lm}.} \item{message}{The text message associated with
 #' the \code{info} paramters.}
 #' @author Brandon Whitcher \email{bwhitcher@@gmail.com}
-#' @seealso \code{\link{dcemri.lm}}, \code{\link{extract.aif}},
+#' @seealso \code{\link{dcemri.lm}}, \code{\link{extractAIF}},
 #' \code{\link[minpack.lm]{nls.lm}}
 #' @references Orton, M.R., Collins, D.J., Walker-Samuel, S., d'Arcy, J.A.,
 #' Hawkes, D.J., Atkinson, D. and Leach, M.O. (2007) Bayesian estimation of
@@ -172,7 +173,7 @@ model.orton.exp <- function(tt, aparams, kparams) {
 #' (\acronym{ROI}) from the seed voxel in three dimensions.  All adjacent 
 #' voxels, where the correlation exceeds the threshold, are included.
 #' 
-#' @aliases extract.aif
+#' @aliases extractAIF
 #' @param img is the four-dimensional array of medical imaging data.
 #' @param x,y,z are the coordinates of the seed voxel.
 #' @param thresh is the minimum correlation for inclusion in the region.
@@ -188,9 +189,9 @@ model.orton.exp <- function(tt, aparams, kparams) {
 #' estimated correlation coefficients for all voxels included by the algorithm.}
 #' @author Volker Schmid \email{volker.schmid@@users.sourceforge.net}
 #' @keywords misc
-#' @rdname extract.aif
+#' @rdname extractAIF
 #' @export
-extract.aif <- function(img, x, y, z, thresh=0.9) {
+extractAIF <- function(img, x, y, z, thresh=0.9) {
   c.start <- function(ctc) {
     if (sum(is.na(ctc)) > 0) {
       return(0)

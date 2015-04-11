@@ -129,7 +129,7 @@
 #' not have any serious effect on the parameter estimates, but caution should
 #' be exercised if very fast sampling rates are used to obtain an empirical
 #' AIF.
-#' @author Brandon Whitcher \email{bwhitcher@@gmail.com} and Volker
+#' @author Brandon Whitcher \email{bwhitcher@@gmail.com},\cr Volker
 #' Schmid \email{volkerschmid@@users.sourceforge.net}
 #' @seealso \code{\link{dcemri.bayes}}, \code{\link{dcemri.map}},
 #' \code{\link{dcemri.spline}}, \code{\link[minpack.lm]{nls.lm}}

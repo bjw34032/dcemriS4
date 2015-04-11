@@ -39,6 +39,6 @@ image(cube.shift[,,10], xlab="", ylab="", axes=FALSE)
 Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \seealso{
-\code{\link{conv.fft}}
+\code{\link{convFFT}}
 }
 

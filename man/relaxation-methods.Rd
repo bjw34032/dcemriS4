@@ -62,7 +62,7 @@ identifies the voxels to be analyzed.}
 \item{fangles}{is the vector of flip angles (in degrees).}
 
 \item{multicore}{is a logical variable (default = \code{FALSE}) that allows
-parallel processing via \pkg{multicore}.}
+parallel processing via \pkg{parallel}.}
 
 \item{verbose}{is a logical variable (default = \code{FALSE}) that allows
 text-based feedback during execution of the function.}
@@ -139,7 +139,7 @@ out <- R1.fast(signal, array(TRUE, rep(1,3)), alpha, TR)
 unlist(out)
 plot(alpha, signal, xlab="Flip angle", ylab="Signal intensity")
 lines(alpha, gre(S0, TR, T1, alpha), lwd=2, col=1)
-lines(alpha, gre(out$M0, TR, 1/out$R10, alpha), lwd=2, col=2)
+lines(alpha, gre(c(out$M0), TR, 1/c(out$R10), alpha), lwd=2, col=2)
 legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 }
 \author{
