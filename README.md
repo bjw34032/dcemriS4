@@ -12,6 +12,6 @@ The scientific backbone of this software is based on research in the area of par
 
 The **dcemriS4** package provides a comprehensive set of R functions (subroutines) that perform all the necessary tasks to produce quantitative estimates of tumor perfusion/permeability using "standard" kinetic models. Data must be in one of two standard formats,	<a href="http://www.mayo.edu/bir/PDF/ANALYZE75.pdf">Analyze</a> or <a href="http://nifti.nimh.nih.gov/">NIfTI</a>, and results may be written out to either format.  If your data are in <a href="http://medical.nema.org">DICOM</a> format, then we suggest using **oro.dicom** in R or feel free to use one of the many OSS implementations that convert to Analyze or NIfTI.
 
-Travis-CI build status for bjw34032/oro.dicom
+Travis-CI build status for bjw34032/dcemriS4
 
 [![Travis-CI Build Status](https://travis-ci.org/bjw34032/dcemriS4.svg?branch=master)](https://travis-ci.org/bjw34032/dcemriS4)
