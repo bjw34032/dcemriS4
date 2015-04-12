@@ -14,4 +14,4 @@ The **dcemriS4** package provides a comprehensive set of R functions (subroutine
 
 Travis-CI build status for bjw34032/oro.dicom
 
-https://travis-ci.org/bjw34032/dcemriS4.svg?branch=master
+[![Travis-CI Build Status](https://travis-ci.org/bjw34032/dcemriS4.svg?branch=master)](https://travis-ci.org/bjw34032/dcemriS4)
