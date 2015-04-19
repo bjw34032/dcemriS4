@@ -35,7 +35,7 @@
 .onAttach <- function(lib, pkg) {
   txt <- paste("\n",
                pkg,
-               ": A Package for Medical Image Analysis (version = ",
+               ": A Package for Image Analysis of DCE-MRI (version = ",
                utils::packageDescription(pkg, lib)[["Version"]],
                ")\n",
                sep="")

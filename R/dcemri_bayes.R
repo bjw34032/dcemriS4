@@ -129,7 +129,7 @@
 #' 
 #' ## Bayesian estimation with Fritz-Hansen default AIF
 #' fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen",
-#'                          nriters=1500, thin=2, burnin=500)
+#'                          nriters=1000, thin=2, burnin=200)
 #' 
 #' ## Bayesian estimation with "orton.exp" function fit to Buckley's AIF
 #' aif <- buckley$input[xi]
@@ -145,7 +145,6 @@
 #' points(breast$ktrans, fit.bayes.aif$ktrans, pch=2)
 #' abline(0, 1, lwd=2, col=2)
 #' legend("right", c("extended/fritz.hansen","orton.exp/user"), pch=1:2)
-#' cbind(breast$ktrans, fit.bayes$ktrans[,,1], fit.bayes.aif$ktrans[,,1])
 #' 
 #' fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
 #' fit.lm.aif <- dcemri.lm(img, time, mask, model="orton.exp", aif="user",

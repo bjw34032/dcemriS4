@@ -1,6 +1,6 @@
 
-R version 3.1.2 (2014-10-31) -- "Pumpkin Helmet"
-Copyright (C) 2014 The R Foundation for Statistical Computing
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -26,7 +26,7 @@ Loading required package: oro.nifti
 oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.5.1)
 
 
-dcemriS4: A Package for Medical Image Analysis (version = 0.55)
+dcemriS4: A Package for Image Analysis of DCE-MRI (version = 0.55)
 
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
@@ -171,7 +171,7 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > 
 > ## Bayesian estimation with Fritz-Hansen default AIF
 > fit.bayes <- dcemri.bayes(img, time, mask, aif="fritz.hansen",
-+                          nriters=1500, thin=2, burnin=500)
++                          nriters=1000, thin=2, burnin=200)
 > 
 > ## Bayesian estimation with "orton.exp" function fit to Buckley's AIF
 > aif <- buckley$input[xi]
@@ -187,21 +187,6 @@ dcemriS4: A Package for Medical Image Analysis (version = 0.55)
 > points(breast$ktrans, fit.bayes.aif$ktrans, pch=2)
 > abline(0, 1, lwd=2, col=2)
 > legend("right", c("extended/fritz.hansen","orton.exp/user"), pch=1:2)
-> cbind(breast$ktrans, fit.bayes$ktrans[,,1], fit.bayes.aif$ktrans[,,1])
-             [,1]      [,2]       [,3]
- [1,] 0.145599052 0.3792681 0.55841519
- [2,] 0.218344559 0.5942625 0.50270903
- [3,] 0.250521815 0.6954287 0.48807738
- [4,] 0.268391926 0.7530414 0.47980721
- [5,] 0.279725126 0.7877058 0.47522840
- [6,] 0.009912791 0.4137977 0.07708375
- [7,] 0.146992146 0.4621665 0.47151488
- [8,] 0.328712966 0.8640210 0.49736287
- [9,] 0.387767110 0.9916494 0.50472058
-[10,] 0.250521815 0.5502222 0.45727976
-[11,] 0.250521815 0.6191903 0.47263203
-[12,] 0.250521815 0.7703639 0.50629422
-[13,] 0.250521815 0.8393636 0.52379954
 > 
 > fit.lm <- dcemri.lm(img, time, mask, aif="fritz.hansen")
 > fit.lm.aif <- dcemri.lm(img, time, mask, model="orton.exp", aif="user",
@@ -422,10 +407,10 @@ $message
 > aif <- buckley$input[xi]
 > 
 > fit.spline <- dcemri.spline(img, time, mask, aif="fritz.hansen",
-+                             nriters=250, thin=4, burnin=75, nlr=TRUE)
++                             nriters=200, thin=3, burnin=40, nlr=TRUE)
 > fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
-+                                 aif.observed=aif, nriters=250, thin=4,
-+                                 burnin=75, nlr=TRUE)
++                                 aif.observed=aif, nriters=200, thin=3,
++                                 burnin=40, nlr=TRUE)
 > 
 > plot(breast$ktrans, fit.spline$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -433,22 +418,6 @@ $message
 > points(breast$ktrans, fit.spline.aif$ktrans, pch=2)
 > abline(0, 1, lwd=1.5, col="red")
 > legend("right", c("fritz.hansen", "observed"), pch=1:2)
-> 
-> cbind(breast$ktrans, fit.spline$ktrans[,,1], fit.spline.aif$ktrans[,,1])
-             [,1]      [,2]      [,3]
- [1,] 0.145599052 0.3790719 0.1634991
- [2,] 0.218344559 0.5892872 0.2687568
- [3,] 0.250521815 0.6908252 0.3263325
- [4,] 0.268391926 0.7517310 0.3633178
- [5,] 0.279725126 0.7913467 0.3897359
- [6,] 0.009912791 0.4786902 0.6897942
- [7,] 0.146992146 0.4897488 0.2270669
- [8,] 0.328712966 0.8275625 0.3969420
- [9,] 0.387767110 0.9261580 0.4486662
-[10,] 0.250521815 0.5322487 0.2386943
-[11,] 0.250521815 0.6123510 0.2814535
-[12,] 0.250521815 0.7678804 0.3710532
-[13,] 0.250521815 0.8437293 0.4120485
 > 
 > 
 > 
@@ -611,7 +580,7 @@ $message
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  23.635 0.019 23.686 0 0 
+Time elapsed:  16.392 21.939 14.255 0 0 
 > grDevices::dev.off()
 null device 
           1 
