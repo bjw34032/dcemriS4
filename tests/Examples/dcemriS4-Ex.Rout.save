@@ -22,12 +22,8 @@ Type 'q()' to quit R.
 > options(warn = 1)
 > library('dcemriS4')
 Loading required package: oro.nifti
-
-oro.nifti: Rigorous - NIfTI+ANALYZE+AFNI Input / Output (version = 0.5.1)
-
-
-dcemriS4: A Package for Image Analysis of DCE-MRI (version = 0.55)
-
+oro.nifti 0.5.2
+dcemriS4 0.55
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 > cleanEx()
@@ -179,7 +175,7 @@ dcemriS4: A Package for Image Analysis of DCE-MRI (version = 0.55)
 > aifparams$D <- 1
 > fit.bayes.aif <- dcemri.bayes(img, time, mask, model="orton.exp",
 +                               aif="user", user=aifparams,
-+                               nriters=1500, thin=2, burnin=500)
++                               nriters=1000, thin=2, burnin=200)
 > 
 > plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -407,10 +403,10 @@ $message
 > aif <- buckley$input[xi]
 > 
 > fit.spline <- dcemri.spline(img, time, mask, aif="fritz.hansen",
-+                             nriters=200, thin=3, burnin=40, nlr=TRUE)
++                             nriters=125, thin=3, burnin=25, nlr=TRUE)
 > fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
-+                                 aif.observed=aif, nriters=200, thin=3,
-+                                 burnin=40, nlr=TRUE)
++                                 aif.observed=aif, nriters=125, thin=3,
++                                 burnin=25, nlr=TRUE)
 > 
 > plot(breast$ktrans, fit.spline$ktrans, xlim=c(0,1), ylim=c(0,1),
 +      xlab=expression(paste("True ", K^{trans})),
@@ -580,7 +576,7 @@ $message
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  16.392 21.939 14.255 0 0 
+Time elapsed:  14.099 15.879 13.103 0 0 
 > grDevices::dev.off()
 null device 
           1 

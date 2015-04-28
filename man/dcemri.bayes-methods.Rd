@@ -128,7 +128,7 @@ aifparams <- orton.exp.lm(time, aif)
 aifparams$D <- 1
 fit.bayes.aif <- dcemri.bayes(img, time, mask, model="orton.exp",
                               aif="user", user=aifparams,
-                              nriters=1500, thin=2, burnin=500)
+                              nriters=1000, thin=2, burnin=200)
 
 plot(breast$ktrans, fit.bayes$ktrans, xlim=c(0,1), ylim=c(0,1),
      xlab=expression(paste("True ", K^{trans})),

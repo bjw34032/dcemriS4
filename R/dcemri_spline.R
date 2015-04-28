@@ -113,10 +113,10 @@
 #' aif <- buckley$input[xi]
 #' 
 #' fit.spline <- dcemri.spline(img, time, mask, aif="fritz.hansen",
-#'                             nriters=200, thin=3, burnin=40, nlr=TRUE)
+#'                             nriters=125, thin=3, burnin=25, nlr=TRUE)
 #' fit.spline.aif <- dcemri.spline(img, time, mask, aif="observed",
-#'                                 aif.observed=aif, nriters=200, thin=3,
-#'                                 burnin=40, nlr=TRUE)
+#'                                 aif.observed=aif, nriters=125, thin=3,
+#'                                 burnin=25, nlr=TRUE)
 #' 
 #' plot(breast$ktrans, fit.spline$ktrans, xlim=c(0,1), ylim=c(0,1),
 #'      xlab=expression(paste("True ", K^{trans})),
