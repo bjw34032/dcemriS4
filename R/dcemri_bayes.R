@@ -172,14 +172,14 @@ setGeneric("dcemri.bayes", function(conc, ...) standardGeneric("dcemri.bayes"))
 setMethod("dcemri.bayes", signature(conc="array"),
           function(conc, time, img.mask, model="extended", spatial=0,
                          aif=NULL, user=NULL, nriters=3000, thin=3,
-                         burnin=1000, tune=267, ab.ktrans=c(0,1),
+                         burnin=1000, tune=267, ab.ktrans=if(spatial==0)c(0,1)else{c(0.0001,0.0001)},
                          ab.kep=ab.ktrans, ab.vp=c(1,19),
                          ab.tauepsilon=c(1,1/1000), samples=FALSE,
-                         multicore=FALSE, verbose=FALSE, dic=FALSE, ...)
+                         parallel=FALSE, verbose=FALSE, dic=FALSE, ...)
           .dcemriWrapper("dcemri.bayes", conc, time, img.mask, model, spatial,
                         aif, user, nriters, thin, burnin, tune, ab.ktrans,
                         ab.kep, ab.vp, ab.tauepsilon, samples,
-                        multicore, verbose, dic, ...))
+                        parallel, verbose, dic, ...))
 
 .dcemri.bayes.single <- function(conc, time, nriters=3000, thin=3,
                                  burnin=1000, tune=267, ab.gamma=c(0,1),
@@ -203,7 +203,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
                     as.double(ab.vp),
                     as.double(ab.tauepsilon),
                     as.double(c(aif.model, aif.parameter)),
-                    as.integer(vp), # is this correct?
+                    as.integer(vp), 
                     as.double(time),
                     as.integer(length(time)),
                     as.double(n0),
@@ -226,14 +226,15 @@ setMethod("dcemri.bayes", signature(conc="array"),
                           burnin=1000, tune=267, ab.ktrans=c(0,1),
                           ab.kep=ab.ktrans, ab.vp=c(1,19),
                           ab.tauepsilon=c(1,1/1000), samples=FALSE,
-                          multicore=FALSE, verbose=FALSE, dic=FALSE,
+                          parallel=FALSE, verbose=FALSE, dic=FALSE,
                           ...) {
 
+  multicore=parallel
   
   #2comp model: use Julias dcemri_space2.R
   if (model=="weinmann2"|model=="extended2")
   {
-    print("Switching to Julia")
+ #   print("Switching to Julia")
     if (!exists("starting"))starting=0
     if (!exists("ab.ktrans2"))ab.ktrans2=ab.ktrans
     if (!exists("ab.kep2"))ab.kep2=ab.kep
@@ -244,6 +245,8 @@ setMethod("dcemri.bayes", signature(conc="array"),
     if (!exists("retunecycles"))retunecycles=3
     if (!exists("tunepct"))tunepct=5
     if (adaptive)stop(sprintf("Adaptive smoothing not possible for 2-compartment models"))
+    uptauep=2
+    if(spatial==0)uptauep=0
     return(dcemri.space2(conc=conc, time=time, img.mask=img.mask, starting=starting,
                          model=model, aif=aif,
                          nriters=nriters, burnin=burnin, tuning=tune, thin=thin,
@@ -254,7 +257,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
                          spatial=spatial,
                          slice=slice,
                          gemupdate=0,
-                         uptauep=2,
+                         uptauep=uptauep,
                          retunecycles=retunecycles,
                          tunepct=tunepct,
                          t0=0,
@@ -267,7 +270,7 @@ setMethod("dcemri.bayes", signature(conc="array"),
 # spatial: use dcemri.space
 if (spatial>0)
 {
-  print("Switiching to Volker")
+  #print("Switching to Volker")
   if (!exists("ab.ktrans3d"))ab.ktrans3d=3*ab.ktrans
   if (!exists("ab.kep3d"))ab.kep3d=3*ab.kep
   if (!exists("slice"))slice=0
@@ -276,7 +279,7 @@ if (spatial>0)
   if (!exists("tunepct"))tunepct=5
   uptauep=2
   if (adaptive)uptauep=3
-  
+
   return(dcemri.space(conc=conc, time=time, img.mask=img.mask, 
                        model=model, aif=aif,
                        nriters=nriters, burnin=burnin, tuning=tune, thin=thin,
@@ -614,4 +617,5 @@ if (spatial>0)
 
   return(returnable)
 }
+
 
