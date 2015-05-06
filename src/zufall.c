@@ -88,3 +88,21 @@ void gausssample(double* temp, int* noa) {
   }
   return;
 }
+
+double log_lik_normal(double x, double e, double var)
+{
+double pi = 3.14159265358979323;
+  return exp(-0.5*pow(x-e,2)/var)/(sqrt(2*pi*var));
+}
+
+int einsk(int k)
+{
+  if (k==1){return 1;}
+  int zuf;
+	zuf=floor((double)(k)*nulleins()+1);
+	if(zuf>k|zuf<1)
+	{
+	  zuf=einsk(k);
+	}
+	return zuf;
+}
