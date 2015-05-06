@@ -170,13 +170,13 @@ setGeneric("dcemri.bayes", function(conc, ...) standardGeneric("dcemri.bayes"))
 #' @aliases dcemri.bayes,array-method
 #' @useDynLib dcemriS4 dce_bayes_run_single
 setMethod("dcemri.bayes", signature(conc="array"),
-          function(conc, time, img.mask, model="extended",
+          function(conc, time, img.mask, model="extended", spatial=0,
                          aif=NULL, user=NULL, nriters=3000, thin=3,
                          burnin=1000, tune=267, ab.ktrans=c(0,1),
                          ab.kep=ab.ktrans, ab.vp=c(1,19),
                          ab.tauepsilon=c(1,1/1000), samples=FALSE,
                          multicore=FALSE, verbose=FALSE, dic=FALSE, ...)
-          .dcemriWrapper("dcemri.bayes", conc, time, img.mask, model,
+          .dcemriWrapper("dcemri.bayes", conc, time, img.mask, model, spatial,
                         aif, user, nriters, thin, burnin, tune, ab.ktrans,
                         ab.kep, ab.vp, ab.tauepsilon, samples,
                         multicore, verbose, dic, ...))
@@ -221,13 +221,82 @@ setMethod("dcemri.bayes", signature(conc="array"),
   }
 }
 
-.dcemri.bayes <- function(conc, time, img.mask, model="extended",
+.dcemri.bayes <- function(conc, time, img.mask, model="extended", spatial=0,
                           aif=NULL, user=NULL, nriters=3000, thin=3,
                           burnin=1000, tune=267, ab.ktrans=c(0,1),
                           ab.kep=ab.ktrans, ab.vp=c(1,19),
                           ab.tauepsilon=c(1,1/1000), samples=FALSE,
                           multicore=FALSE, verbose=FALSE, dic=FALSE,
                           ...) {
+
+  
+  #2comp model: use Julias dcemri_space2.R
+  if (model=="weinmann2"|model=="extended2")
+  {
+    print("Switching to Julia")
+    if (!exists("starting"))starting=0
+    if (!exists("ab.ktrans2"))ab.ktrans2=ab.ktrans
+    if (!exists("ab.kep2"))ab.kep2=ab.kep
+    if (!exists("ab.ktrans3d"))ab.ktrans3d=2*ab.ktrans
+    if (!exists("ab.kep3d"))ab.kep3d=3*ab.kep
+    if (!exists("slice"))slice=0
+    if (!exists("adaptive"))adaptive=FALSE
+    if (!exists("retunecycles"))retunecycles=3
+    if (!exists("tunepct"))tunepct=5
+    if (adaptive)stop(sprintf("Adaptive smoothing not possible for 2-compartment models"))
+    return(dcemri.space2(conc=conc, time=time, img.mask=img.mask, starting=starting,
+                         model=model, aif=aif,
+                         nriters=nriters, burnin=burnin, tuning=tune, thin=thin,
+                         ab.gamma=ab.ktrans, ab.gamma3=ab.ktrans3d,	ab.gamma2comp=ab.ktrans2,			  
+                         ab.theta=ab.kep, ab.theta3=ab.ktrans3d, ab.theta2comp=ab.kep2,
+                         ab.vp=ab.vp,
+                         ab.tauepsilon=ab.tauepsilon, 
+                         spatial=spatial,
+                         slice=slice,
+                         gemupdate=0,
+                         uptauep=2,
+                         retunecycles=retunecycles,
+                         tunepct=tunepct,
+                         t0=0,
+                         samples=samples,
+                         multicore=multicore, 
+                         verbose=verbose, 
+                         dic=dic))
+  }
+
+# spatial: use dcemri.space
+if (spatial>0)
+{
+  print("Switiching to Volker")
+  if (!exists("ab.ktrans3d"))ab.ktrans3d=3*ab.ktrans
+  if (!exists("ab.kep3d"))ab.kep3d=3*ab.kep
+  if (!exists("slice"))slice=0
+  if (!exists("adaptive"))adaptive=FALSE
+  if (!exists("retunecycles"))retunecycles=3
+  if (!exists("tunepct"))tunepct=5
+  uptauep=2
+  if (adaptive)uptauep=3
+  
+  return(dcemri.space(conc=conc, time=time, img.mask=img.mask, 
+                       model=model, aif=aif,
+                       nriters=nriters, burnin=burnin, tuning=tune, thin=thin,
+                       ab.gamma=ab.ktrans, ab.gamma3=ab.ktrans3d,  			  
+                       ab.theta=ab.kep, ab.theta3=ab.ktrans3d, 
+                       ab.vp=ab.vp,
+                       ab.tauepsilon=ab.tauepsilon, 
+                       spatial=spatial,
+                       slice=slice,
+                       gemupdate=0,
+                       uptauep=uptauep,
+                       retunecycles=retunecycles,
+                       tunepct=tunepct,
+                       t0=0,
+                       samples=samples,
+                       multicore=multicore, 
+                       verbose=verbose, 
+                       dic=dic))
+}
+
 
   ## dcemri.bayes - a function for fitting 1-compartment PK models to
   ## DCE-MRI images using Bayes inference
