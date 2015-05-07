@@ -84,15 +84,6 @@ int ix(int x,int y,int z,int X,int Y, int Z)
   return((z-1)*Y*X+(y-1)*X+x-1);
 }
 
-int ix1(int x,int y,int z,int X,int Y,int Z)
-{
-  return((x-1)*(Y-1)*(Z-1)+(y-1)*(Z-1)+z);
-}
-int space_ix2(int x,int y,int X, int Y)
-{
-  return((x-1)*(Y-1)+y);
-}
-
 int indx(int x,int y,int z, int t, int X, int Y, int Z, int T) 
 {
   return((t-1)*X*Y*Z+(z-1)*X*Y+(y-1)*X+x-1);
@@ -797,7 +788,7 @@ void dce_space(int* NRI,
 { 
 	 GetRNGstate();
 
-	 // dimensions
+// dimensions
 	 int X=dim[0];
 	 int Y=dim[1];
 	 int Z=dim[2];
@@ -854,29 +845,32 @@ void dce_space(int* NRI,
 	 //Rprint("%i pixels to analyse.\n",N1);
 	 
 	 int newvalue=0;
-
+   
 	 /************************************/
 	 /* MCMC iterations                  */
 	 /************************************/
-
 	 //Rprintf("Starting iterations.\n",0);
 	 double temp;
 	 int respace_tune=0;
 	 int sign=0;
 	 for (int iter=1;iter<=nriters;iter++)
 	 {
-	   
-	   	   if (iter==1)
-	   {
-	     Rprintf("Iteration 1");
-	    }
-	   	 if (fmod(iter,10.0)==0)
-	    	 {
-	   	       if(iter>1000){Rprintf("\b");}
-	    	   if(iter>100){Rprintf("\b");}
-	    	   if(iter>10){Rprintf("\b");}
-	    	   Rprintf("\b%i",iter);
-	    	 }
+	   if (tuning>0)
+     {
+       if (iter==1)
+       {
+         Rprintf("Tuning:\nIteration 1");
+       }
+       if (fmod(iter,10.0)==0)
+	     {
+	   	    if(iter>100000){Rprintf("\b");}
+     	    if(iter>10000){Rprintf("\b");}
+     	    if(iter>1000){Rprintf("\b");}
+	    	  if(iter>100){Rprintf("\b");}
+	    	  if(iter>10){Rprintf("\b");}
+	    	  Rprintf("\b%i",iter);
+	    	}
+     }
 
 		 // iterate over all voxels
 		 for (int riter=0;riter<2*N;riter++)
@@ -888,14 +882,15 @@ void dce_space(int* NRI,
 			 if (slice!=0)
 			   {
 			     z=slice;
-			   }
+    	   }
 			 else
 			   {
-			     int z=einsk(Z);
-			   }
-			 if (img_mask[ix(x,y,z,X,Y,Z)]==1)
+  		     z=einsk(Z);
+  		   }
+  
+         if (img_mask[ix(x,y,z,X,Y,Z)]==1)
 			   {
-			     acc[ix(x,y,z,X,Y,Z)]=acc[ix(x,y,z,X,Y,Z)]+1;
+	         acc[ix(x,y,z,X,Y,Z)]=acc[ix(x,y,z,X,Y,Z)]+1;
 			     
 			     // update Ktrans
 			     temp=space_update_gamma2(log(ktrans[ix(x,y,z,X,Y,Z)]), ktrans, kep[ix(x,y,z,X,Y,Z)], vp[ix(x,y,z,X,Y,Z)], tau_gamma, tau_gamma2,  tau_gamma3, tau_epsilon[ix(x,y,z,X,Y,Z)], conc, time, t0[ix(x,y,z,X,Y,Z)], x, y, z, X, Y, Z, T, sigmagamma[ix(x,y,z,X,Y,Z)], aif_settings, spatial, img_mask);
@@ -963,7 +958,6 @@ void dce_space(int* NRI,
 		 
 		 } // end iterate over all voxels
 					
-			 
 		 // update tau_epsilon (inverse noise variance)
 		 if (uptauep>=1)
 		   {
@@ -989,7 +983,8 @@ void dce_space(int* NRI,
 		   {
 		     update_tau_global(tau_theta, tau_theta2, tau_theta3, a_theta, a_theta3, b_theta, b_theta3, img_mask, kep, X, Y, Z, N, spatial);
 		     update_tau_global(tau_gamma, tau_gamma2, tau_gamma3, a_gamma, a_gamma3, b_gamma, b_gamma3, img_mask, kep, X, Y, Z, N, spatial);
-		   }
+       
+       }
 
 		 if (vpupdate==1&&spatial==0)
 		   {
@@ -1049,12 +1044,14 @@ void dce_space(int* NRI,
 			       respace_tune++;
 			       if(!(respace_tune==respace_tunecycles-1))
 				 {
-				   //Rprintf("\nStarting re-tuning.\n");
+   			   Rprintf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bRe-tuning:\n");
 				   iter=0;
 				 }
 			     }
 			   else
 			     {
+     		   Rprintf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b%i of ",count5);
+           Rprintf("%i done.\n", N1);
 			       iter=0;
 			     }
 			   for (int i=0; i<N; i++)

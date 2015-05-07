@@ -326,12 +326,11 @@ setMethod("dcemri.space2", signature(conc="array"),
 			
 		}
 		
-	
 	  	# tuning step
 	  	singlerun <- .C("dce_space_2comp",
 			  as.integer(c(tuning+2, tuning+1, tuning)),
 			  as.double(conc),
-			  as.integer(img.mask),
+			  as.integer(c(img.mask,0)),
 			  as.integer(dim(conc)),
 			  as.double(ab.gamma), #5
 			  as.double(ab.gamma3),
@@ -342,36 +341,36 @@ setMethod("dcemri.space2", signature(conc="array"),
 			  as.double(c(aif.model, aif.parameter)),
 			  as.integer(c(vp.do,spatial,slice,gemupdate,uptauep,retunecycles,tunepct)),
 			  as.double(c(0,time)), # time shifted, s.t. it fits with conc
-			  as.double(rep(0,N)),	# t0						  
-			  as.double(ktrans1_start), # ktrans #15
-			  as.double(kep1_start), # kep
-			  as.double(ktrans2_start), # ktrans2 
-			  as.double(kep2_start), # kep2			  
-			  as.double(if(vp.do==3){rep(0.1,N)}else{rep(0,N)}), # vp
-			  as.double(rep(ab.tauepsilon[1]/ab.tauepsilon[2],N)), # tau_epsilon 20	  			  
-			  as.double(rep(ab.gamma[1]/ab.gamma[2],N)), # tau_gamma
-			  as.double(rep(ab.theta[1]/ab.theta[2],N)), # tau_theta
-			  as.double(rep(ab.gamma2comp[1]/ab.gamma2comp[2],N)), # tau_gamma_2comp
-			  as.double(rep(ab.theta2comp[1]/ab.theta2comp[2],N)), # tau_theta_2comp
-			  as.double(rep(ab.vp[1]/ab.vp[2],N)), # tau_vp 25			  
-			  as.double(rep(ab.gamma3[1]/ab.gamma3[2],N)), #tau_gamma3
-			  as.double(rep(ab.theta3[1]/ab.theta3[2],N)), #tau_theta3
-			  as.double(rep(ab.gamma3[1]/ab.gamma3[2],N)), #tau_gamma3_2comp
-			  as.double(rep(ab.theta3[1]/ab.theta3[2],N)), #tau_theta3_2comp
-			  as.double(rep(ab.vp[1]/ab.vp[2],N)),  # tau_vp3 #30			  
-			  as.double(rep(0.5,N)), #sigmatheta
-			  as.double(rep(0.5,N)), #sigmagamma
-			  as.double(rep(0.5,N)), #sigmatheta_2comp
-			  as.double(rep(0.5,N)), #sigmagamma_2comp
-			  as.double(rep(1,N)), #sigmavp #35
-			  as.integer(rep(0,N)), # acc_gamma
-			  as.integer(rep(0,N)), # acc_theta
-			  as.integer(rep(0,N)), # acc_gamma_2comp
-			  as.integer(rep(0,N)), # acc_theta_2comp
-			  as.integer(rep(0,N)), # acc_vp #40
-			  as.integer(rep(0,N)), # acc
-			  as.double(rep(0,N)), # devi
-			  as.double(rep(0,N*T)), # fit
+			  as.double(rep(0,N+1)),	# t0						  
+			  as.double(c(ktrans1_start,0)), # ktrans #15
+			  as.double(c(kep1_start,0)), # kep
+			  as.double(c(ktrans2_start,0)), # ktrans2 
+			  as.double(c(kep2_start,0)), # kep2			  
+			  as.double(if(vp.do==3){rep(0.1,N+1)}else{rep(0,N+1)}), # vp
+			  as.double(rep(ab.tauepsilon[1]/ab.tauepsilon[2],N+1)), # tau_epsilon 20	  			  
+			  as.double(rep(ab.gamma[1]/ab.gamma[2],N+1)), # tau_gamma
+			  as.double(rep(ab.theta[1]/ab.theta[2],N+1)), # tau_theta
+			  as.double(rep(ab.gamma2comp[1]/ab.gamma2comp[2],N+1)), # tau_gamma_2comp
+			  as.double(rep(ab.theta2comp[1]/ab.theta2comp[2],N+1)), # tau_theta_2comp
+			  as.double(rep(ab.vp[1]/ab.vp[2],N+1)), # tau_vp 25			  
+			  as.double(rep(ab.gamma3[1]/ab.gamma3[2],N+1)), #tau_gamma3
+			  as.double(rep(ab.theta3[1]/ab.theta3[2],N+1)), #tau_theta3
+			  as.double(rep(ab.gamma3[1]/ab.gamma3[2],N+1)), #tau_gamma3_2comp
+			  as.double(rep(ab.theta3[1]/ab.theta3[2],N+1)), #tau_theta3_2comp
+			  as.double(rep(ab.vp[1]/ab.vp[2],N+1)),  # tau_vp3 #30			  
+			  as.double(rep(0.5,N+1)), #sigmatheta
+			  as.double(rep(0.5,N+1)), #sigmagamma
+			  as.double(rep(0.5,N+1)), #sigmatheta_2comp
+			  as.double(rep(0.5,N+1)), #sigmagamma_2comp
+			  as.double(rep(1,N+1)), #sigmavp #35
+			  as.integer(rep(0,N+1)), # acc_gamma
+			  as.integer(rep(0,N+1)), # acc_theta
+			  as.integer(rep(0,N+1)), # acc_gamma_2comp
+			  as.integer(rep(0,N+1)), # acc_theta_2comp
+			  as.integer(rep(0,N+1)), # acc_vp #40
+			  as.integer(rep(0,N+1)), # acc
+			  as.double(rep(0,N+1)), # devi
+			  as.double(rep(0,(N+1)*(T+1))), # fit
 			  PACKAGE="dcemriS4")
 			  			  	  
 	 	 cat("\b\b. Burnin phase 2Comp")
@@ -413,14 +412,14 @@ setMethod("dcemri.space2", signature(conc="array"),
 			  as.double(singlerun[[33]]), #sigmatheta_2comp
 			  as.double(singlerun[[34]]), #sigmagamma_2comp			  
 			  as.double(singlerun[[35]]), #sigmavp			  
-			  as.integer(rep(0,N)), # acc_
-			  as.integer(rep(0,N)),
-			  as.integer(rep(0,N)),
-			  as.integer(rep(0,N)),
-			  as.integer(rep(0,N)),
-			  as.integer(rep(0,N)),
-			  as.double(rep(0,N)), # devi
-			  as.double(rep(0,N*T)), # fit
+			  as.integer(rep(0,N+1)), # acc_
+			  as.integer(rep(0,N+1)),
+			  as.integer(rep(0,N+1)),
+			  as.integer(rep(0,N+1)),
+			  as.integer(rep(0,N+1)),
+			  as.integer(rep(0,N+1)),
+			  as.double(rep(0,N+1)), # devi
+			  as.double(rep(0,(N+1)*(T+1))), # fit
 			  PACKAGE="dcemriS4")
 	  	  
 	  cat(" done. 2comp MCMC iteration 0")
@@ -495,14 +494,14 @@ setMethod("dcemri.space2", signature(conc="array"),
 				  as.double(singlerun[[33]]), #sigmatheta_2comp
 				  as.double(singlerun[[34]]), #sigmagamma_2comp			  
 				  as.double(singlerun[[35]]), #sigmavp			  
-				  as.integer(rep(0,N)), # acc_gamma
-				  as.integer(rep(0,N)), # acc_theta
-				  as.integer(rep(0,N)), # acc_gamma_2comp
-				  as.integer(rep(0,N)), # acc_theta_2comp
-				  as.integer(rep(0,N)), # acc_vp
-				  as.integer(rep(0,N)), # acc
-				  as.double(rep(0,N)), # devi
-				  as.double(rep(0,N*T)), # fit
+				  as.integer(rep(0,N+1)), # acc_gamma
+				  as.integer(rep(0,N+1)), # acc_theta
+				  as.integer(rep(0,N+1)), # acc_gamma_2comp
+				  as.integer(rep(0,N+1)), # acc_theta_2comp
+				  as.integer(rep(0,N+1)), # acc_vp
+				  as.integer(rep(0,N+1)), # acc
+				  as.double(rep(0,N+1)), # devi
+				  as.double(rep(0,(N+1)*(T+1))), # fit
 				  PACKAGE="dcemriS4")				
 		
 			#cat("... after call of dce_space_2comp")	

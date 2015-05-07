@@ -289,12 +289,12 @@ setMethod("dcemri.space", signature(conc="array"),
 		kep1_start[is.na(kep1_start)] <- 0
 		
 	}
-   
+
   # tuning step
   singlerun <- .C("dce_space",
                   as.integer(c(tuning+2, tuning+1, tuning)),
                   as.double(conc),
-                  as.integer(img.mask),
+                  as.integer(c(img.mask,0)),
                   as.integer(dim(conc)),
                   as.double(ab.gamma), #5
                   as.double(ab.gamma3),
@@ -304,35 +304,36 @@ setMethod("dcemri.space", signature(conc="array"),
                   as.double(ab.tauepsilon),#10
                   as.double(c(aif.model, aif.parameter)),
                   as.integer(c(vp.do,spatial,slice,gemupdate,uptauep,retunecycles,tunepct)),
-				  as.double(c(0,time)), # time shifted, s.t. it fits with conc
-                  as.double(rep(0,N)),					
-                  as.double(rep(ab.gamma[1]/ab.gamma[2],N)), # 15
-                  as.double(rep(ab.theta[1]/ab.theta[2],N)), 
-				  as.double(ktrans1_start), # ktrans
-				  as.double(kep1_start), # kep
-                  as.double(if(vp.do==3){rep(0.1,N)}else{rep(0,N)}), # vp
-                  as.double(rep(ab.tauepsilon[1]/ab.tauepsilon[2],N)), # tau_epsilon 20
-                  as.double(rep(.5,N)), 
-                  as.double(rep(0.5,N)), 
-                  as.double(rep(0.5,N)), 
-                  as.double(rep(0.5,N)), #
-                  as.integer(rep(0,N)), #25
-                  as.integer(rep(0,N)),
-                  as.integer(rep(0,N)),
-                  as.integer(rep(0,N)),
-                  as.double(rep(ab.gamma[1]/ab.gamma[2],N)), 
-                  as.double(rep(ab.theta[1]/ab.theta[2],N)), # 30
-                  as.double(rep(ab.gamma3[1]/ab.gamma3[2],N)), 
-                  as.double(rep(ab.theta3[1]/ab.theta3[2],N)), 
-                  as.double(rep(ab.vp[1]/ab.vp[2],N)), 
-                  as.double(rep(ab.vp[1]/ab.vp[2],N)), 
-                  as.double(rep(ab.vp[1]/ab.vp[2],N)), #35
-                  as.double(rep(ab.vp[1]/ab.vp[2],N)),
-                  as.double(rep(0,N)), #
+				          as.double(c(0,time)), # time shifted, s.t. it fits with conc
+                  as.double(rep(0,N+1)),					
+                  as.double(rep(ab.gamma[1]/ab.gamma[2],N+1)), # 15
+                  as.double(rep(ab.theta[1]/ab.theta[2],N+1)), 
+			         	  as.double(c(ktrans1_start,0)), # ktrans
+				          as.double(c(kep1_start,0)), # kep
+                  as.double(if(vp.do==3){rep(0.1,N+1)}else{rep(0,N+1)}), # vp
+                  as.double(rep(ab.tauepsilon[1]/ab.tauepsilon[2],N+1)), # tau_epsilon 20
+                  as.double(rep(.5,N+1)), 
+                  as.double(rep(0.5,N+1)), 
+                  as.double(rep(0.5,N+1)), 
+                  as.double(rep(0.5,N+1)), #
+                  as.integer(rep(0,N+1)), #25
+                  as.integer(rep(0,N+1)),
+                  as.integer(rep(0,N+1)),
+                  as.integer(rep(0,N+1)),
+                  as.double(rep(ab.gamma[1]/ab.gamma[2],N+1)), 
+                  as.double(rep(ab.theta[1]/ab.theta[2],N+1)), # 30
+                  as.double(rep(ab.gamma3[1]/ab.gamma3[2],N+1)), 
+                  as.double(rep(ab.theta3[1]/ab.theta3[2],N+1)), 
+                  as.double(rep(ab.vp[1]/ab.vp[2],N+1)), 
+                  as.double(rep(ab.vp[1]/ab.vp[2],N+1)), 
+                  as.double(rep(ab.vp[1]/ab.vp[2],N+1)), #35
+                  as.double(rep(ab.vp[1]/ab.vp[2],N+1)),
+                  as.double(rep(0,N+1)), #
                   PACKAGE="dcemriS4")
 
-  cat("\b\b. Burnin phase")
+ save(singlerun,file="nachtuning.Rdata")
   
+  cat("\b\b. Burnin phase")
   # burnin
     	    singlerun <- .C("dce_space",
                             as.integer(c(burnin+1-thin, burnin-thin, 0)),
@@ -347,7 +348,7 @@ setMethod("dcemri.space", signature(conc="array"),
                             as.double(ab.tauepsilon),
                             as.double(c(aif.model, aif.parameter)),
                             as.integer(c(vp.do,spatial,slice,gemupdate,uptauep,0,0)),
-							as.double(c(0,time)), # time shifted, s.t. it fits with conc
+							              as.double(c(0,time)), # time shifted, s.t. it fits with conc
                             as.double(singlerun[[14]]),
                             as.double(singlerun[[15]]),
                             as.double(singlerun[[16]]),
@@ -359,10 +360,10 @@ setMethod("dcemri.space", signature(conc="array"),
                             as.double(singlerun[[22]]),
                             as.double(singlerun[[23]]),
                             as.double(singlerun[[24]]),
-                            as.integer(rep(0,N)), #25
-                            as.integer(rep(0,N)),
-                            as.integer(rep(0,N)),
-                            as.integer(rep(0,N)),
+                            as.integer(rep(0,N+1)), #25
+                            as.integer(rep(0,N+1)),
+                            as.integer(rep(0,N+1)),
+                            as.integer(rep(0,N+1)),
                             as.double(singlerun[[29]]),
                             as.double(singlerun[[30]]),
                             as.double(singlerun[[31]]),
@@ -371,12 +372,14 @@ setMethod("dcemri.space", signature(conc="array"),
                             as.double(singlerun[[34]]),
                             as.double(singlerun[[35]]),
                             as.double(singlerun[[36]]),
-                            as.double(rep(0,N)), #
+                            as.double(rep(0,N+1)), #
                             PACKAGE="dcemriS4")
   
   cat(" done. MCMC iteration 0")
 
-  samplesize <- floor(nriters/thin)
+  singlerun[[17]][164712]
+
+  samplesize <- floor(nriters/thin)+1
   
   ktrans<-array(NA,c(II,JJ,KK,samplesize))
   kep<-array(NA,c(II,JJ,KK,samplesize))
@@ -392,7 +395,7 @@ setMethod("dcemri.space", signature(conc="array"),
   
   for (i in 1:samplesize)
     {
-      #print(singlerun[[18]][1])
+      print(singlerun[[18]][164973])
       singlerun <- .C("dce_space",
                       as.integer(c(thin, 0, 0)),
                       as.double(conc),
@@ -406,7 +409,7 @@ setMethod("dcemri.space", signature(conc="array"),
                       as.double(ab.tauepsilon),
                       as.double(c(aif.model, aif.parameter)),
                       as.integer(c(vp.do,spatial,slice,gemupdate,uptauep,0,0)),
-					  as.double(c(0,time)), # time shifted, s.t. it fits with conc
+					            as.double(c(0,time)), # time shifted, s.t. it fits with conc
                       as.double(singlerun[[14]]),
                       as.double(singlerun[[15]]),
                       as.double(singlerun[[16]]),
@@ -418,10 +421,10 @@ setMethod("dcemri.space", signature(conc="array"),
                       as.double(singlerun[[22]]),
                       as.double(singlerun[[23]]),
                       as.double(singlerun[[24]]),
-                      as.integer(rep(0,N)), #25 acc_gamma
-                      as.integer(rep(0,N)), # acc_theta
-                      as.integer(rep(0,N)), # acc_eta
-                      as.integer(rep(0,N)), # acc
+                      as.integer(rep(0,N+1)), #25 acc_gamma
+                      as.integer(rep(0,N+1)), # acc_theta
+                      as.integer(rep(0,N+1)), # acc_eta
+                      as.integer(rep(0,N+1)), # acc
                       as.double(singlerun[[29]]),
                       as.double(singlerun[[30]]),
                       as.double(singlerun[[31]]),
@@ -430,7 +433,7 @@ setMethod("dcemri.space", signature(conc="array"),
                       as.double(singlerun[[34]]),
                       as.double(singlerun[[35]]),
                       as.double(singlerun[[36]]),
-                      as.double(rep(0,N)), #
+                      as.double(rep(0,N+1)), #
                       PACKAGE="dcemriS4")
       
       ktrans[,,,i]<-array(singlerun[[17]],c(II,JJ,KK))

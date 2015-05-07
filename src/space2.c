@@ -30,13 +30,6 @@
 ## OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ## 
 
-#include <R.h>
-#include <Rmath.h>
-#include <R_ext/Lapack.h>
-#include <R_ext/BLAS.h>
-#include "zufall.h"
-#include "baymri.h"
-#include "space.h"
 
 
 /******************************/
@@ -44,6 +37,13 @@
 /******************************/
 //int printerlevel = 0;
 
+#include <R.h>
+#include <Rmath.h>
+#include <R_ext/Lapack.h>
+#include <R_ext/BLAS.h>
+#include "zufall.h"
+#include "baymri.h"
+#include "space.h"
 
 /************************************************************************************************/
 double log_likelihood(double tau_epsilon, double ktrans, double kep, double ktrans2, double kep2,
@@ -568,6 +568,8 @@ void dce_space_2comp(
 	       )
 { 
 	 GetRNGstate();
+     //   Rprintf("%f - ",ab_gamma[0]);
+    //    Rprintf("%f\n",ab_gamma[1]);
 
 	// Rprintf("Start C-procedure dce_space_2comp\n",0);
 
@@ -576,7 +578,7 @@ void dce_space_2comp(
 	 int Y=dim[1];
 	 int Z=dim[2];
 	 int T=dim[3];
-	 int N = X*Y*Z;
+	 int N = X*Y*Z+1;
 	 int N1 = N;
 
 	 // parameters for priors
@@ -601,7 +603,7 @@ void dce_space_2comp(
 	 int uptauep=settings[4];
 	 int respace_tunecycles=settings[5];
 	 int space_tunepct=settings[6];
-	 int regularize=settings[7];
+//	 int regularize=settings[7];
 
 	 // precision in x-y-direction is the same
 	 double tau_gamma2[N];
@@ -684,18 +686,27 @@ void dce_space_2comp(
 	 int sign=0;
 	 for (int iter=1;iter<=nriters;iter++)
 	 {
-	   	   if (iter==1)
+	   	   if (tuning>0)
+          {
+            if (iter==1)
 	   	   {
-	   		   Rprintf("Iteration 1");
+	   		   Rprintf("Tuning:\nIteration 1");
 	   	   }
-	   	   if (fmod(iter,1000.0)==0)
+	   	   if (fmod(iter,10.0)==0)
 	   	   {
-	   		   if(iter>1000){Rprintf("\b");}
+	   		   if(iter>10){Rprintf("\b");}
+     		   if(iter>100){Rprintf("\b");}
+     		   if(iter>1000){Rprintf("\b");}
+       	   if(iter>10000){Rprintf("\b");}
+       	   if(iter>100000){Rprintf("\b");}
 	    	   Rprintf("\b%i",iter);
-
+	   	   }
 	    	}
 
-		 // iterate over all voxels
+       // Rprintf("%f - ",tau_theta[0]);
+//        Rprintf("%f\n",tau_gamma[0]);
+
+    // iterate over all voxels
 		 for (int riter=0;riter<2*N;riter++)
 		 {
 			 // randomly choose one voxel
@@ -708,7 +719,7 @@ void dce_space_2comp(
 			 }
 			 else // random slice
 			 {
-			     int z=einsk(Z);
+			     z=einsk(Z);
 			 }
 			 if (img_mask[ix(x,y,z,X,Y,Z)]==1)
 			 {
@@ -895,13 +906,15 @@ void dce_space_2comp(
 			   respace_tune++;
 			   if(!(respace_tune==respace_tunecycles-1))
 			   {
-				   Rprintf("\nStarting re-tuning.\n");
+				   Rprintf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bRe-tuning:\n");
 				   iter=0;
 			   }
 			}
 			// else: tune everything again without increasing completed respace_tunecycles
 			else
 			{
+       	   Rprintf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b%i of ",count5);
+           Rprintf("%i done.\n", N1);
 			   iter=0;
 			}
 			for (int i=0; i<N; i++)
@@ -919,7 +932,7 @@ void dce_space_2comp(
 
 	 } // end for MCMC iterations
 	 
-	 Rprintf("End of MCMC iterations\n");
+	 //Rprintf("End of MCMC iterations\n");
 
 	 PutRNGstate();
 
