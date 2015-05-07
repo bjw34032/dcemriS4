@@ -330,8 +330,6 @@ setMethod("dcemri.space", signature(conc="array"),
                   as.double(rep(ab.vp[1]/ab.vp[2],N+1)),
                   as.double(rep(0,N+1)), #
                   PACKAGE="dcemriS4")
-
- save(singlerun,file="nachtuning.Rdata")
   
   cat("\b\b. Burnin phase")
   # burnin

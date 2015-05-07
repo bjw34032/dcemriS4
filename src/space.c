@@ -1044,13 +1044,23 @@ void dce_space(int* NRI,
 			       respace_tune++;
 			       if(!(respace_tune==respace_tunecycles-1))
 				 {
-   			   Rprintf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\bRe-tuning:\n");
+          if(iter>100000){Rprintf("\b");}
+     	    if(iter>10000){Rprintf("\b");}
+     	    if(iter>1000){Rprintf("\b");}
+	    	  if(iter>100){Rprintf("\b");}
+	    	  if(iter>10){Rprintf("\b");}
+   			   Rprintf("\b\b\b\b\b\b\b\b\b\bRe-tuning:\n");
 				   iter=0;
 				 }
 			     }
 			   else
 			     {
-     		   Rprintf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b%i of ",count5);
+          if(iter>100000){Rprintf("\b");}
+           if(iter>10000){Rprintf("\b");}
+     	    if(iter>1000){Rprintf("\b");}
+	    	  if(iter>100){Rprintf("\b");}
+	    	  if(iter>10){Rprintf("\b");}
+          Rprintf("\b\b\b\b\b\b\b\b\b\b%i of ",count5);
            Rprintf("%i done.\n", N1);
 			       iter=0;
 			     }
