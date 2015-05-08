@@ -11,9 +11,10 @@ MRI Data}
 dcemri.bayes(conc, ...)
 
 \S4method{dcemri.bayes}{array}(conc, time, img.mask, model = "extended",
-  aif = NULL, user = NULL, nriters = 3000, thin = 3, burnin = 1000,
-  tune = 267, ab.ktrans = c(0, 1), ab.kep = ab.ktrans, ab.vp = c(1, 19),
-  ab.tauepsilon = c(1, 1/1000), samples = FALSE, multicore = FALSE,
+  spatial = 0, aif = NULL, user = NULL, nriters = 3000, thin = 3,
+  burnin = 1000, tune = 267, ab.ktrans = if (spatial == 0) c(0, 1) else { 
+     c(1e-04, 1e-04) }, ab.kep = ab.ktrans, ab.vp = c(1, 19),
+  ab.tauepsilon = c(1, 1/1000), samples = FALSE, parallel = FALSE,
   verbose = FALSE, dic = FALSE, ...)
 }
 \arguments{
@@ -72,15 +73,15 @@ prior.}
 \item{samples}{If \code{TRUE} output includes samples drawn from the
 posterior distribution for all parameters.}
 
-\item{multicore}{If \code{TRUE} algorithm is parallelized using
-\pkg{multicore}.}
-
 \item{verbose}{Logical variable (default = \code{FALSE}) that allows
 text-based feedback during execution of the function.}
 
 \item{dic}{If \code{TRUE}, the deviance information criterion (DIC) and
 effective number of parameters (pD) will be computed.  If
 \code{"samples = TRUE"}, then samples of the DIC and pD will be given.}
+
+\item{multicore}{If \code{TRUE} algorithm is parallelized using
+\pkg{multicore}.}
 
 \item{vp}{Fractional occupancy in the plasma space.}
 }
