@@ -58,6 +58,12 @@
 #' \item{"orton.exp"}{Extended model using Orton's exponential AIF} 
 #' \item{"kety.orton.exp"}{Kety model using Orton's exponential AIF}
 #' }
+#' @param spatial is an integer specifying spatial smoothing of kinetic parameters
+#' \describe{
+#' \item{0}{no spatial smoothing, fit voxelwise}
+#' \item{2}{2D smoothing, fit slices separately}
+#' \item{3}{3D smoothing; Warning: this is computationally very expensive}
+#' }
 #' @param aif is a character string that identifies the parameters of the type
 #' of arterial input function (AIF) used with the above model.  Acceptable
 #' values are: 
@@ -82,8 +88,8 @@
 #' prior.
 #' @param samples If \code{TRUE} output includes samples drawn from the
 #' posterior distribution for all parameters.
-#' @param multicore If \code{TRUE} algorithm is parallelized using
-#' \pkg{multicore}.
+#' @param parallel If \code{TRUE} algorithm is parallelized using
+#' \pkg{parallel}.
 #' @param verbose Logical variable (default = \code{FALSE}) that allows
 #' text-based feedback during execution of the function.
 #' @param dic If \code{TRUE}, the deviance information criterion (DIC) and
