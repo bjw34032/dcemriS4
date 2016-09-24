@@ -112,6 +112,7 @@
 #' 
 #' @rdname aif-models
 #' @export 
+#' @importFrom minpack.lm nls.lm
 aif.orton.exp <- function(tt, AB, muB, AG, muG) {
   out <- AB * tt * exp(-muB * tt) + AG * (exp(-muG * tt) - exp(-muB * tt))
   out[tt < 0] <- 0

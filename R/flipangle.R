@@ -95,6 +95,7 @@ doubleAngleMethod <- function(low, high, low.deg) {
 #' @export
 #' @rdname relaxation-methods
 #' @aliases R1.lm
+#' @importFrom minpack.lm nls.lm.control
 R10.lm <- function(signal, alpha, TR, guess,
                    control=minpack.lm::nls.lm.control()) {
   func <- function(x, signal, alpha, TR) {

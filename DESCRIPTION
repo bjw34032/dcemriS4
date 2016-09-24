@@ -1,6 +1,6 @@
 Package: dcemriS4
-Version: 0.57
-Date: 2015-10-29
+Version: 0.57.1
+Date: 2016-09-23
 Title: A Package for Image Analysis of DCE-MRI (S4 Implementation)
 Authors@R: c(person("Brandon", "Whitcher", role = c("aut", "cre"),
 		     email = "bwhitcher@gmail.com"),
@@ -8,27 +8,27 @@ Authors@R: c(person("Brandon", "Whitcher", role = c("aut", "cre"),
 	        email="volker.schmid@lmu.de"),
 	      person("Andrew", "Thornton", role = "ctb",
 		     email = "zeripath@gmail.com"))
-Depends: 
-  R (>= 2.14.0),
-  minpack.lm, 
-  oro.nifti (>= 0.5.0)
-Suggests: 
-  bitops, 
-  splines, 
-  XML, 
-  oro.dicom (>= 0.5.0),
-  testthat
-Imports: 
-  utils,
-  parallel,
-  methods
+Depends:
+    R (>= 2.14.0),
+    minpack.lm,
+    oro.nifti (>= 0.5.0)
+Suggests:
+    bitops,
+    splines,
+    XML,
+    oro.dicom (>= 0.5.0),
+    testthat
+Imports:
+    utils,
+    parallel,
+    methods
 Description: A collection of routines and documentation that allows one to
-  perform voxel-wise quantitative analysis of dynamic contrast-enhanced MRI 
-  (DEC-MRI) and diffusion-weighted imaging (DWI) data, with emphasis on 
-  oncology applications.
+    perform voxel-wise quantitative analysis of dynamic contrast-enhanced MRI
+    (DEC-MRI) and diffusion-weighted imaging (DWI) data, with emphasis on
+    oncology applications.
 License: BSD_3_clause + file LICENSE
-URL: 
-  http://www.dcemri.com/, 
-  http://dcemri.blogspot.com/
+URL: http://www.dcemri.com/,
+    http://dcemri.blogspot.com/
 LazyData: true
 LazyDataCompression: gzip
+RoxygenNote: 5.0.1.9000
