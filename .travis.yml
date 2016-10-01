@@ -4,8 +4,8 @@ language: r
 warnings_are_errors: true
 sudo: required
 
-r_build_args: --compact-vignettes=gs+qpdf --resave-data
-r_check_args: 
+r_build_args: --compact-vignettes=gs+qpdf --resave-data --as-cran
+r_check_args: --as-cran
 
 notifications:
   email:

@@ -142,6 +142,10 @@
 #' @export
 #' @docType methods
 #' @rdname dcemri.map-methods
+#' @importFrom graphics legend matplot
+#' @importFrom stats approx cor dbeta dgamma dnorm fft
+#' @importFrom stats lsfit median optim quantile sd
+#' @importFrom utils setTxtProgressBar txtProgressBar
 setGeneric("dcemri.map", function(conc, ...) standardGeneric("dcemri.map"))
 #' @export
 #' @rdname dcemri.map-methods
