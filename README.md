@@ -19,3 +19,6 @@ The **dcemriS4** package provides a comprehensive set of R functions (subroutine
 Travis-CI build status for bjw34032/dcemriS4
 
 [![Travis-CI Build Status](https://travis-ci.org/bjw34032/dcemriS4.svg?branch=master)](https://travis-ci.org/bjw34032/dcemriS4)
+
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dcemriS4)](http://cran.rstudio.com/web/packages/dcemriS4/index.html)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/dcemriS4)](http://cran.rstudio.com/web/packages/dcemriS4/index.html)
