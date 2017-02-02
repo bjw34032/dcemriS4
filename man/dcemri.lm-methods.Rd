@@ -62,8 +62,9 @@ empirical AIF.}
 \item{control}{is a list of parameters used by \code{nls.lm.control} that
 are set by default, but may be customized by the user.}
 
-\item{user}{is a list with the following parameters required: D, AB, muB,
-AG, muG.}
+\item{user}{if \code{aif="user"} a list with the following parameters required: D, AB, muB,
+AG, muG. If \code{aif="empirical"} a vector of values that fully characterize the
+empirical AIF.}
 
 \item{guess}{is a vector of starting values for kinetic parameter
 estimation.  The vector must have length = 3 (with names \code{th0},

@@ -1,6 +1,6 @@
 Package: dcemriS4
 Version: 0.57.1
-Date: 2016-09-23
+Date: 2017-02-02
 Title: A Package for Image Analysis of DCE-MRI (S4 Implementation)
 Authors@R: c(person("Brandon", "Whitcher", role = c("aut", "cre"),
 		     email = "bwhitcher@gmail.com"),
@@ -31,4 +31,4 @@ URL: http://www.dcemri.com/,
     http://dcemri.blogspot.com/
 LazyData: true
 LazyDataCompression: gzip
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 5.0.1

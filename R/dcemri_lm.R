@@ -94,8 +94,9 @@
 #' empirical AIF.
 #' @param control is a list of parameters used by \code{nls.lm.control} that
 #' are set by default, but may be customized by the user.
-#' @param user is a list with the following parameters required: D, AB, muB,
-#' AG, muG.
+#' @param user if \code{aif="user"} a list with the following parameters required: D, AB, muB,
+#' AG, muG. If \code{aif="empirical"} a vector of values that fully characterize the
+#' empirical AIF.
 #' @param guess is a vector of starting values for kinetic parameter
 #' estimation.  The vector must have length = 3 (with names \code{th0},
 #' \code{th1} and \code{th3}) when the extended Kety model is used with the
