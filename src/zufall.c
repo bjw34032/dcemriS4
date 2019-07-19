@@ -100,7 +100,7 @@ int einsk(int k)
   if (k==1){return 1;}
   int zuf;
 	zuf=floor((double)(k)*nulleins()+1);
-	if(zuf>k|zuf<1)
+	if(zuf>k||zuf<1)
 	{
 	  zuf=einsk(k);
 	}
