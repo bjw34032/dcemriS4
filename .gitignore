@@ -6,3 +6,6 @@
 .*~
 .Rproj.user
 .Rhistory
+
+# Development
+/.idea

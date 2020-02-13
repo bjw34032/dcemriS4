@@ -3,15 +3,20 @@
 \docType{methods}
 \name{ADC.fast}
 \alias{ADC.fast}
-\alias{ADC.fast,array-method}
 \alias{adc.lm}
+\alias{ADC.fast,array-method}
 \title{Estimate the Apparent Diffusion Coefficient (ADC)}
 \usage{
 ADC.fast(dwi, ...)
 
-\S4method{ADC.fast}{array}(dwi, bvalues, dwi.mask,
-  control = minpack.lm::nls.lm.control(maxiter = 150), multicore = FALSE,
-  verbose = FALSE)
+\S4method{ADC.fast}{array}(
+  dwi,
+  bvalues,
+  dwi.mask,
+  control = minpack.lm::nls.lm.control(maxiter = 150),
+  multicore = FALSE,
+  verbose = FALSE
+)
 
 adc.lm(signal, b, guess, control = minpack.lm::nls.lm.control())
 }
@@ -84,9 +89,6 @@ lines(seq(0,800,10), dwi(c(ADC$S0), seq(0,800,10), c(ADC$D)), lwd=2, col=2)
 legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \references{
 Buxton, R.B. (2002) \emph{Introduction to Functional Magnetic
 Resonance Imaging: Principles & Techniques}, Cambridge University Press:
@@ -102,5 +104,7 @@ Roentgenology}, \bold{188}, 1622-1635.
 \seealso{
 \code{\link[minpack.lm]{nls.lm}}
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}
 \keyword{models}
-

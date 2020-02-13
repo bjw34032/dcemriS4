@@ -2,17 +2,16 @@
 % Please edit documentation in R/rcbv.R
 \docType{methods}
 \name{rCBV.fast}
-\alias{rCBV}
 \alias{rCBV.fast}
-\alias{rCBV.fast,anlz-method}
+\alias{rCBV}
 \alias{rCBV.fast,array-method}
+\alias{rCBV.fast,anlz-method}
 \alias{rCBV.fast,nifti-method}
 \title{Regional Cerebral Blood Volume}
 \usage{
 rCBV.fast(signal, ...)
 
-\S4method{rCBV.fast}{array}(signal, mask, aif, time, multicore = FALSE,
-  verbose = FALSE)
+\S4method{rCBV.fast}{array}(signal, mask, aif, time, multicore = FALSE, verbose = FALSE)
 
 rCBV(Ct, Ca, time, Hf = 1, rho = 1)
 }
@@ -57,4 +56,3 @@ from a bolus injection of a contrast agent.
 Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \keyword{misc}
-

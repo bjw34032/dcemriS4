@@ -40,9 +40,6 @@ extensions include rigid-body, affine and nonlinear registration techniques
 along with interploation schemes in order to capture intra-voxel
 manipulations of the data.
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \references{
 Lewis, J.P. (2003) Fast normalized cross-correlation.\cr
 \url{www.idiom.com/~zilla/}
@@ -51,4 +48,6 @@ Lewis, J.P. (2003) Fast normalized cross-correlation.\cr
 \code{\link{convFFT}}, \code{\link{findCenter}},
 \code{\link{shift3D}}
 }
-
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}

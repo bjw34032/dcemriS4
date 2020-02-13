@@ -39,4 +39,3 @@ voxels, where the correlation exceeds the threshold, are included.
 Volker Schmid \email{volker.schmid@users.sourceforge.net}
 }
 \keyword{misc}
-

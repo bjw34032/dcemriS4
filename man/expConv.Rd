@@ -26,4 +26,3 @@ The convolved time series.
 Brandon Whitcher \email{bwhitcher@gmail.com}
 }
 \keyword{misc}
-

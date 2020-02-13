@@ -64,10 +64,6 @@ legend("bottomright", c("Levenburg-Marquardt (extended/fritz.hansen)",
 cbind(time, img[3,,,], curve.lm, curve.bayes)[20:30,]
 
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com} and Volker
-Schmid \email{volkerschmid@users.sourceforge.net}
-}
 \references{
 Fritz-Hansen, T., Rostrup, E., Larsson, H.B.W, Sondergaard, L.,
 Ring, P. and Henriksen, O. (1993) Measurement of the arterial concentration
@@ -94,5 +90,8 @@ Gd-DTPA/dimeglumine after intraveneous injection into healthy volunteers,
 \code{\link{dcemri.lm}}, \code{\link{dcemri.bayes}},
 \code{\link{dcemri.spline}}
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com} and Volker
+Schmid \email{volkerschmid@users.sourceforge.net}
+}
 \keyword{models}
-

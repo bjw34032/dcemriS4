@@ -3,17 +3,22 @@
 \docType{methods}
 \name{T2.fast}
 \alias{T2.fast}
-\alias{T2.fast,anlz-method}
-\alias{T2.fast,array-method}
-\alias{T2.fast,nifti-method}
 \alias{T2.lm}
+\alias{T2.fast,array-method}
+\alias{T2.fast,anlz-method}
+\alias{T2.fast,nifti-method}
 \title{Quantitative T2 Methods}
 \usage{
 T2.fast(cpmg, ...)
 
-\S4method{T2.fast}{array}(cpmg, cpmg.mask, TE,
-  control = minpack.lm::nls.lm.control(maxiter = 150), multicore = FALSE,
-  verbose = FALSE)
+\S4method{T2.fast}{array}(
+  cpmg,
+  cpmg.mask,
+  TE,
+  control = minpack.lm::nls.lm.control(maxiter = 150),
+  multicore = FALSE,
+  verbose = FALSE
+)
 
 T2.lm(signal, TE, guess, control = minpack.lm::nls.lm.control())
 }
@@ -57,9 +62,6 @@ curve and the artieral input funciton (AIF).  In order to avoid reperfusion
 effects on the rCBV measurements, the tissue and arteiral concentration 
 curves must first be reduced to their first-pass versions.
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \references{
 Kennan, R.P. and J\"ager, H.R. (2004) $T_2$- and $T_2^*$-w DCE-MRI: Blood
 Perfusion and Volume Estimation using Bolus Tracking, in \emph{Quantiative 
@@ -68,5 +70,7 @@ MRI of the Brain} (P. Tofts ed.), Wiley: Chichester, UK, pp. 365-412.
 \seealso{
 \code{\link{R1.fast}}, \code{\link{R10.lm}}
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}
 \keyword{misc}
-

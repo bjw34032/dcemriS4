@@ -30,11 +30,10 @@ Specification of parameters for arterial input functions (AIFs)
 \details{
 See \code{\link{kineticModel}} for more information.
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \seealso{
 \code{\link{compartmentalModel}}, \code{\link{dcemri.lm}}
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}
 \keyword{misc}
-

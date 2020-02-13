@@ -10,12 +10,28 @@ MRI Data}
 \usage{
 dcemri.bayes(conc, ...)
 
-\S4method{dcemri.bayes}{array}(conc, time, img.mask, model = "extended",
-  spatial = 0, aif = NULL, user = NULL, nriters = 3000, thin = 3,
-  burnin = 1000, tune = 267, ab.ktrans = if (spatial == 0) c(0, 1) else { 
-     c(1e-04, 1e-04) }, ab.kep = ab.ktrans, ab.vp = c(1, 19),
-  ab.tauepsilon = c(1, 1/1000), samples = FALSE, parallel = FALSE,
-  verbose = FALSE, dic = FALSE, ...)
+\S4method{dcemri.bayes}{array}(
+  conc,
+  time,
+  img.mask,
+  model = "extended",
+  spatial = 0,
+  aif = NULL,
+  user = NULL,
+  nriters = 3000,
+  thin = 3,
+  burnin = 1000,
+  tune = 267,
+  ab.ktrans = if (spatial == 0) c(0, 1) else {     c(1e-04, 1e-04) },
+  ab.kep = ab.ktrans,
+  ab.vp = c(1, 19),
+  ab.tauepsilon = c(1, 1/1000),
+  samples = FALSE,
+  parallel = FALSE,
+  verbose = FALSE,
+  dic = FALSE,
+  ...
+)
 }
 \arguments{
 \item{conc}{Matrix or array of concentration time series (last dimension
@@ -163,9 +179,6 @@ legend("bottomright", c("Bayesian Estimation (fritz-hansen)",
                         "Levenburg-Marquardt (orton.exp/user)"), pch=1:4)
 
 }
-\author{
-Volker Schmid \email{volkerschmid@users.sourceforge.net}
-}
 \references{
 Schmid, V., Whitcher, B., Padhani, A.R., Taylor, N.J. and Yang,
 G.-Z.  (2006) Bayesian methods for pharmacokinetic models in dynamic
@@ -176,5 +189,7 @@ Medical Imaging}, \bold{25} (12), 1627-1636.
 \code{\link{dcemri.lm}}, \code{\link{dcemri.map}},
 \code{\link{dcemri.spline}}
 }
+\author{
+Volker Schmid \email{volkerschmid@users.sourceforge.net}
+}
 \keyword{models}
-

@@ -37,10 +37,9 @@ image(cube[,,10], xlab="", ylab="", axes=FALSE)
 image(cube.shift[,,10], xlab="", ylab="", axes=FALSE)
 
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \seealso{
 \code{\link{convFFT}}
 }
-
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}

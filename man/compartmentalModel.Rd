@@ -41,12 +41,11 @@ kinetic parameter estimation.  All models, with the exception of those
 marked \sQuote{empirical} incorporate a parametric model for the arterial
 input function (AIF).
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \seealso{
 \code{\link{aifParameters}}, \code{\link{dcemri.bayes}},
 \code{\link{dcemri.lm}}, \code{\link{dcemri.map}}
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}
 \keyword{misc}
-

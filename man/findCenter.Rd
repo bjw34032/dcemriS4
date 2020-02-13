@@ -28,11 +28,10 @@ Mc <- findCenter(M)
 print(Mc)
 
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \seealso{
 \code{\link{fastTemplateMatching}}
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}
 \keyword{misc}
-

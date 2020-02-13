@@ -9,13 +9,33 @@
 \usage{
 dcemri.spline(conc, ...)
 
-\S4method{dcemri.spline}{array}(conc, time, img.mask, time.input = time,
-  model = "weinmann", aif = "tofts.kermode", user = NULL,
-  aif.observed = NULL, nriters = 500, thin = 5, burnin = 100,
-  ab.hyper = c(1e-05, 1e-05), ab.tauepsilon = c(1, 1/1000), k = 4,
-  p = 25, rw = 2, knots = NULL, nlr = FALSE, t0.compute = FALSE,
-  samples = FALSE, multicore = FALSE, verbose = FALSE, response = FALSE,
-  fitted = FALSE, ...)
+\S4method{dcemri.spline}{array}(
+  conc,
+  time,
+  img.mask,
+  time.input = time,
+  model = "weinmann",
+  aif = "tofts.kermode",
+  user = NULL,
+  aif.observed = NULL,
+  nriters = 500,
+  thin = 5,
+  burnin = 100,
+  ab.hyper = c(1e-05, 1e-05),
+  ab.tauepsilon = c(1, 1/1000),
+  k = 4,
+  p = 25,
+  rw = 2,
+  knots = NULL,
+  nlr = FALSE,
+  t0.compute = FALSE,
+  samples = FALSE,
+  multicore = FALSE,
+  verbose = FALSE,
+  response = FALSE,
+  fitted = FALSE,
+  ...
+)
 }
 \arguments{
 \item{conc}{Matrix or array of concentration time series (last dimension
@@ -126,9 +146,6 @@ abline(0, 1, lwd=1.5, col="red")
 legend("right", c("fritz.hansen", "observed"), pch=1:2)
 
 }
-\author{
-Volker Schmid \email{volkerschmid@users.sourceforge.net}
-}
 \references{
 Schmid, V., Whitcher, B., Padhani, A.R. and G.-Z. Yang (2009) A
 semi-parametric technique for the quantitative analysis of dynamic
@@ -139,5 +156,7 @@ Transactions on Medical Imaging}, \bold{28} (6), 789-798.
 \code{\link{dcemri.bayes}}, \code{\link{dcemri.lm}},
 \code{\link{dcemri.map}}
 }
+\author{
+Volker Schmid \email{volkerschmid@users.sourceforge.net}
+}
 \keyword{models}
-

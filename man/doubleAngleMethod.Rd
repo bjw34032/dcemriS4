@@ -55,13 +55,12 @@ regardless of whether the or \eqn{\alpha_2}{alpha2} excitation was used for
 the preceding acquisition (i.e.,
 \eqn{f_1(T_1,TR)=f_2(T_1,TR)\ne1.0}{f1(T1,TR) = f2(T1,TR) != 1.0}).
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \references{
 Cunningham, C.H., Pauly, J.M. and Nayak, K.S. (2006) Saturated Double-Angle 
 Method for Rapid B1+ Mapping, \emph{Magnetic Resonance in Medicine}, 
 \bold{55}, 1326-1333.
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}
 \keyword{models}
-

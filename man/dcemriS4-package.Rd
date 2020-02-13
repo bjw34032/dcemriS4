@@ -2,8 +2,8 @@
 % Please edit documentation in R/dcemriS4-package.R
 \docType{package}
 \name{dcemriS4-package}
-\alias{dcemriS4}
 \alias{dcemriS4-package}
+\alias{dcemriS4}
 \title{dcemri: A Package for Medical Image Analysis (S4 implementation)}
 \description{
 A collection of routines and documentation that allows one to perform a 
@@ -27,11 +27,6 @@ demo(zstat1)
 }
 
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}\cr Volker Schmid
-  \email{volkerschmid@users.sourceforge.net}\cr Andrew Thornton 
-  \email{zeripath@users.sourceforge.net}
-}
 \references{
 Schmid, V., Whitcher, B., Padhani, A.R., Taylor, N.J. and Yang, 
   G.-Z.  (2006) Bayesian methods for pharmacokinetic models in dynamic 
@@ -43,5 +38,9 @@ Schmid, V., Whitcher, B., Padhani, A.R., Taylor, N.J. and Yang,
   contrast-enhanced MR images based on Bayesian P-splines, \emph{IEEE 
   Transactions on Medical Imaging}, \bold{28} (6), 789-798.
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}\cr Volker Schmid
+  \email{volkerschmid@users.sourceforge.net}\cr Andrew Thornton 
+  \email{zeripath@users.sourceforge.net}
+}
 \keyword{package}
-

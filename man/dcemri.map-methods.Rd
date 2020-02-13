@@ -8,10 +8,23 @@
 \usage{
 dcemri.map(conc, ...)
 
-\S4method{dcemri.map}{array}(conc, time, img.mask, model = "extended",
-  aif = NULL, user = NULL, ab.ktrans = c(0, 1), ab.kep = ab.ktrans,
-  ab.vp = c(1, 19), ab.tauepsilon = c(1, 1/1000), maxit = 5000,
-  samples = FALSE, multicore = FALSE, verbose = FALSE, ...)
+\S4method{dcemri.map}{array}(
+  conc,
+  time,
+  img.mask,
+  model = "extended",
+  aif = NULL,
+  user = NULL,
+  ab.ktrans = c(0, 1),
+  ab.kep = ab.ktrans,
+  ab.vp = c(1, 19),
+  ab.tauepsilon = c(1, 1/1000),
+  maxit = 5000,
+  samples = FALSE,
+  multicore = FALSE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{conc}{Matrix or array of concentration time series (last dimension
@@ -127,9 +140,6 @@ cbind(breast$ktrans, fit.lm$ktrans[,,1], fit.lm.vp$ktrans[,,1],
       fit.map$ktrans[,,1], fit.map.vp$ktrans[,,1])
 
 }
-\author{
-Volker Schmid \email{volkerschmid@users.sourceforge.net}
-}
 \references{
 Schmid, V., Whitcher, B., Padhani, A.R., Taylor, N.J. and Yang,
 G.-Z.  (2006) Bayesian methods for pharmacokinetic models in dynamic
@@ -139,5 +149,7 @@ Medical Imaging}, \bold{25} (12), 1627-1636.
 \seealso{
 \code{\link{dcemri.lm}}, \code{\link{dcemri.bayes}}
 }
+\author{
+Volker Schmid \email{volkerschmid@users.sourceforge.net}
+}
 \keyword{models}
-

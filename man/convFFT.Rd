@@ -46,9 +46,6 @@ image(drop(cube), col=oro.nifti::tim.colors(), main="Target")
 image(drop(out), col=oro.nifti::tim.colors(), main="Output")
 
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \references{
 Briggs, W.L. and Henson, V.E. (1995) \emph{The DFT: An Owner's
 Manual for the Discrete Fourier Transform}, SIAM: Philadelphia.
@@ -56,4 +53,6 @@ Manual for the Discrete Fourier Transform}, SIAM: Philadelphia.
 \seealso{
 \code{\link{fft}}, \code{\link{fastTemplateMatching}}, \code{\link{shift3D}}
 }
-
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}

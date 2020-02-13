@@ -8,9 +8,19 @@
 \usage{
 dcemri.lm(conc, ...)
 
-\S4method{dcemri.lm}{array}(conc, time, img.mask, model = "extended",
-  aif = NULL, control = minpack.lm::nls.lm.control(), user = NULL,
-  guess = NULL, multicore = FALSE, verbose = FALSE, ...)
+\S4method{dcemri.lm}{array}(
+  conc,
+  time,
+  img.mask,
+  model = "extended",
+  aif = NULL,
+  control = minpack.lm::nls.lm.control(),
+  user = NULL,
+  guess = NULL,
+  multicore = FALSE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{conc}{is a multidimensional (1D-4D) array of contrast agent
@@ -170,10 +180,6 @@ legend("bottomright", c("extended/empirical","orton.exp/user"), pch=2:3)
 cbind(breast$vp, fit2$vp[,,1], fit3$vp[,,1])
 
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com},\cr Volker
-Schmid \email{volkerschmid@users.sourceforge.net}
-}
 \references{
 Ahearn, T.S., Staff, R.T., Redpath, T.W. and Semple, S.I.K.
 (2005) The use of the Levenburg-Marquardt curve-fitting algorithm in
@@ -215,5 +221,8 @@ Gd-DTPA/dimeglumine after intraveneous injection into healthy volunteers,
 \code{\link{dcemri.bayes}}, \code{\link{dcemri.map}},
 \code{\link{dcemri.spline}}, \code{\link[minpack.lm]{nls.lm}}
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com},\cr Volker
+Schmid \email{volkerschmid@users.sourceforge.net}
+}
 \keyword{models}
-

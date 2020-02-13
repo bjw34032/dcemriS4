@@ -9,8 +9,12 @@
 \usage{
 aif.orton.exp(tt, AB, muB, AG, muG)
 
-orton.exp.lm(tt, aif, guess = c(log(100), log(10), log(1), log(0.1)),
-  nprint = 0)
+orton.exp.lm(
+  tt,
+  aif,
+  guess = c(log(100), log(10), log(1), log(0.1)),
+  nprint = 0
+)
 
 model.orton.exp(tt, aparams, kparams)
 }
@@ -85,9 +89,6 @@ legend("right", c("Buckley's AIF", "Our approximation"), lty=1,
 cbind(time, aif, aoe)[1:10,]
 
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \references{
 Orton, M.R., Collins, D.J., Walker-Samuel, S., d'Arcy, J.A.,
 Hawkes, D.J., Atkinson, D. and Leach, M.O. (2007) Bayesian estimation of
@@ -104,5 +105,7 @@ input function models for quantitative kinetic modelling using DCE-MRI,
 \code{\link{dcemri.lm}}, \code{\link{extractAIF}},
 \code{\link[minpack.lm]{nls.lm}}
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}
 \keyword{models}
-

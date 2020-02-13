@@ -2,8 +2,8 @@
 % Please edit documentation in R/dcemriS4-package.R
 \docType{data}
 \name{buckley}
-\alias{breast}
 \alias{buckley}
+\alias{breast}
 \alias{meningioma}
 \title{Simulated Data from Buckley (2002)}
 \format{Two lists are created (breast and meningioma) that contain the
@@ -45,4 +45,3 @@ using MRI; a step toward quantitative perfusion imaging. \emph{Magn Reson
 Med} \bold{36}, 347-357.
 }
 \keyword{datasets}
-

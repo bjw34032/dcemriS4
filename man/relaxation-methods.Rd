@@ -2,15 +2,15 @@
 % Please edit documentation in R/flipangle.R
 \docType{methods}
 \name{R10.lm}
-\alias{CA.fast}
-\alias{CA.fast,array-method}
-\alias{CA.fast2}
-\alias{CA.fast2,array-method}
+\alias{R10.lm}
+\alias{R1.lm}
 \alias{E10.lm}
 \alias{R1.fast}
 \alias{R1.fast,array-method}
-\alias{R1.lm}
-\alias{R10.lm}
+\alias{CA.fast,array-method}
+\alias{CA.fast2,array-method}
+\alias{CA.fast}
+\alias{CA.fast2}
 \title{Estimate Intrinsic Tissue Relaxivity}
 \usage{
 R10.lm(signal, alpha, TR, guess, control = minpack.lm::nls.lm.control())
@@ -19,20 +19,34 @@ E10.lm(signal, alpha, guess, control = minpack.lm::nls.lm.control())
 
 R1.fast(flip, ...)
 
-\S4method{R1.fast}{array}(flip, flip.mask, fangles, TR,
-  control = minpack.lm::nls.lm.control(), multicore = FALSE,
-  verbose = FALSE)
+\S4method{R1.fast}{array}(
+  flip,
+  flip.mask,
+  fangles,
+  TR,
+  control = minpack.lm::nls.lm.control(),
+  multicore = FALSE,
+  verbose = FALSE
+)
 
 CA.fast(dynamic, ...)
 
-\S4method{CA.fast}{array}(dynamic, dyn.mask, dangle, flip, fangles, TR,
-  r1 = 4, control = minpack.lm::nls.lm.control(maxiter = 200),
-  multicore = FALSE, verbose = FALSE)
+\S4method{CA.fast}{array}(
+  dynamic,
+  dyn.mask,
+  dangle,
+  flip,
+  fangles,
+  TR,
+  r1 = 4,
+  control = minpack.lm::nls.lm.control(maxiter = 200),
+  multicore = FALSE,
+  verbose = FALSE
+)
 
 CA.fast2(dynamic, ...)
 
-\S4method{CA.fast2}{array}(dynamic, dyn.mask, dangle, flip, fangles, TR,
-  r1 = 4, verbose = FALSE)
+\S4method{CA.fast2}{array}(dynamic, dyn.mask, dangle, flip, fangles, TR, r1 = 4, verbose = FALSE)
 }
 \arguments{
 \item{signal}{is the vector of signal intensities as a function of flip
@@ -144,9 +158,6 @@ lines(alpha, gre(c(out$M0), TR, 1/c(out$R10), alpha), lwd=2, col=2)
 legend("topright", c("True","Estimated"), lwd=2, col=1:2)
 
 }
-\author{
-Brandon Whitcher \email{bwhitcher@gmail.com}
-}
 \references{
 Buxton, R.B. (2002) \emph{Introduction to Functional Magnetic
 Resonance Imaging: Principles & Techniques}, Cambridge University Press:
@@ -169,5 +180,7 @@ MRI of the Brain} (P. Tofts ed.), Wiley: Chichester, UK, pp. 341-364.
 \seealso{
 \code{\link{dcemri.lm}}, \code{\link[minpack.lm]{nls.lm}}
 }
+\author{
+Brandon Whitcher \email{bwhitcher@gmail.com}
+}
 \keyword{misc}
-
