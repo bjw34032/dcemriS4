@@ -1,6 +1,4 @@
-# dcemriS4
-
-## Open-source software has arrived!
+# A Package for the Quantitative Analysis of DCE-MRI
 
 **dcemriS4** is a package, written in the <a href="http://www.r-project.org/">R programming environment</a>, for the quantitative analysis of dynamic contrast-enhanced MRI (DCE-MRI) and diffusion-weighted imaging (DWI) for oncology applications. It has been released under the <a href="http://www.opensource.org/licenses/bsd-license.php">BSD license</a>.
 
