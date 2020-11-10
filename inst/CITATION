@@ -9,12 +9,11 @@ citEntry(entry = "Article",
   volume       = "44",
   number       = "5",
   pages        = "1--29",
-  url          = "http://www.jstatsoft.org/v44/i05/",
+  doi          = "10.18637/jss.v044.i05",
 
   textVersion  =
   paste("Brandon Whitcher, Volker J. Schmid (2011).",
         "Quantitative Analysis of Dynamic Contrast-Enhanced and Diffusion-Weighted Magnetic Resonance Imaging for Oncology in R.",
-        "Journal of Statistical Software, 44(5), 1-29.",
-        "URL http://www.jstatsoft.org/v44/i05/.")
+        "Journal of Statistical Software, 44(5), 1-29.")
 )
 
