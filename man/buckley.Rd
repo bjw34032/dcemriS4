@@ -6,8 +6,10 @@
 \alias{breast}
 \alias{meningioma}
 \title{Simulated Data from Buckley (2002)}
-\format{Two lists are created (breast and meningioma) that contain the
-simulated time curves and all associated kinetic parameter values.}
+\format{
+Two lists are created (breast and meningioma) that contain the
+simulated time curves and all associated kinetic parameter values.
+}
 \source{
 See below.
 }
