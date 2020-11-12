@@ -3,17 +3,32 @@
 ![Travis-CI Build Status](https://travis-ci.org/bjw34032/dcemriS4.svg?branch=master)
 ![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dcemriS4)
 ![CRAN Downloads Badge](http://cranlogs.r-pkg.org/badges/grand-total/dcemriS4)
+![CRAN Downloads Badge](http://cranlogs.r-pkg.org/badges/last-week/dcemriS4)
+![CRAN Downloads Badge](http://cranlogs.r-pkg.org/badges/last-day/dcemriS4)
 
 **dcemriS4** is a package, written in the [R](https://www.r-project.org) programming environment, for the quantitative analysis of dynamic contrast-enhanced MRI (DCE-MRI) and diffusion-weighted imaging (DWI) for oncology applications. It has been released under the [BSD license](https://www.opensource.org/licenses/bsd-license.php).
 
 ## Getting started
 
-Install the R package using the following commands on the R console:
+Install the R package using the following commands on the R console
 
 ```
 install.packages("devtools")
 devtools::install_github("bjw34032/dcemriS4")
 library(dcemriS4)
+```
+
+or using [NeuroConductor](https://neuroconductor.org)
+
+```
+source("https://neuroconductor.org/neurocLite.R")
+
+# Default Install
+neuro_install('dcemriS4')
+
+# from GitHub
+neuro_install('dcemriS4', release = "stable", release_repo = "github")
+neuro_install('dcemriS4', release = "current", release_repo = "github")
 ```
 
 At this point in time the package is not available on CRAN.  
