@@ -1,8 +1,8 @@
 # A Package for the Quantitative Analysis of DCE-MRI
 
-[![Travis-CI Build Status](https://travis-ci.org/bjw34032/dcemriS4.svg?branch=master)](https://travis-ci.org/bjw34032/dcemriS4) 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dcemriS4)](http://cran.rstudio.com/web/packages/dcemriS4/index.html)
-[![CRAN Downloads Badge](http://cranlogs.r-pkg.org/badges/grand-total/dcemriS4)](http://cran.rstudio.com/web/packages/dcemriS4/index.html)
+![Travis-CI Build Status](https://travis-ci.org/bjw34032/dcemriS4.svg?branch=master)
+![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dcemriS4)
+![CRAN Downloads Badge](http://cranlogs.r-pkg.org/badges/grand-total/dcemriS4)
 
 **dcemriS4** is a package, written in the [R](https://www.r-project.org) programming environment, for the quantitative analysis of dynamic contrast-enhanced MRI (DCE-MRI) and diffusion-weighted imaging (DWI) for oncology applications. It has been released under the [BSD license](https://www.opensource.org/licenses/bsd-license.php).
 
