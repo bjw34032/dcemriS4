@@ -42,6 +42,6 @@ The scientific backbone of this software is based on research in the area of par
 
 An application of both the Bayesian and frequentist methods to fit compartmental models to DCE-MRI data from a clinical trial may be found at
 
-* Whitcher, Schmid, et al. (2011), <a href="http://dx.doi.org/10.1007/s10334-010-0238-3">A Bayesian Hierarchical Model for DCE-MRI to Evaluate Treatment Response in a Phase II Study in Advanced Squamous Cell Carcinoma of the Head and Neck</a>, *Magnetic Resonance Materials in Physics, Biology and Medicine*, **24** (2), 85-96.
+* Whitcher, Schmid, et al. (2011), <a href="https://dx.doi.org/10.1007/s10334-010-0238-3">A Bayesian Hierarchical Model for DCE-MRI to Evaluate Treatment Response in a Phase II Study in Advanced Squamous Cell Carcinoma of the Head and Neck</a>, *Magnetic Resonance Materials in Physics, Biology and Medicine*, **24** (2), 85-96.
 
 The **dcemriS4** package provides a comprehensive set of R functions that perform all the necessary tasks to produce quantitative estimates of tumor perfusion/permeability using "standard" kinetic models. Data must be in one of two standard formats, Analyze or [NIfTI](http://nifti.nimh.nih.gov), and results may be written out to either format.  If your data are in [DICOM](https://medical.nema.org) format, we suggest using [**oro.dicom**](https://github.com/bjw34032/oro.dicom) in R or feel free to use one of the many OSS implementations that convert to Analyze or NIfTI.
