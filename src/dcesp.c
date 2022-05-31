@@ -33,23 +33,27 @@
 ##
 */
 
+#define USE_FC_LEN_T
 #include <R.h>
 #include <Rmath.h>
 #include <R_ext/Lapack.h>
 #include <R_ext/BLAS.h>
 #include "zufall.h"
 
+#ifndef FCONE
+# define FCONE
+#endif
 
 void cholesky(int* n, double* matrix,  int* lda, int* info) {
-  F77_CALL(dpotrf)("L", n, matrix, lda, info);
+  F77_CALL(dpotrf)("L", n, matrix, lda, info FCONE);
 }
 
 void loese(double* A, double* z, int* n, int* lda, int* incx) {
-  F77_CALL(dtrsv)("L","T","N", n, A, lda, z, incx);
+  F77_CALL(dtrsv)("L","T","N", n, A, lda, z, incx FCONE FCONE FCONE);
 } 
 
 void loese2(double* A, double* z, int* n, int* lda, int* incx) {
-  F77_CALL(dtrsv)("L","N","N", n, A, lda, z, incx);
+  F77_CALL(dtrsv)("L","N","N", n, A, lda, z, incx FCONE FCONE FCONE);
 } 
 
 void copy(double* A, double* B, int n1, int n2) {

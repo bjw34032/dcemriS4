@@ -22,7 +22,9 @@ dcemri.bayes(conc, ...)
   thin = 3,
   burnin = 1000,
   tune = 267,
-  ab.ktrans = if (spatial == 0) c(0, 1) else {     c(1e-04, 1e-04) },
+  ab.ktrans = if (spatial == 0) c(0, 1) else {
+     c(1e-04, 1e-04)
+ },
   ab.kep = ab.ktrans,
   ab.vp = c(1, 19),
   ab.tauepsilon = c(1, 1/1000),

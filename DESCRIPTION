@@ -1,6 +1,6 @@
 Package: dcemriS4
-Version: 0.57.3
-Date: 2020-10-10
+Version: 0.57.4
+Date: 2022-05-31
 Title: A Package for Image Analysis of DCE-MRI (S4 Implementation)
 Authors@R: c(person("Brandon", "Whitcher", role = c("aut", "cre"),
 		     email = "bwhitcher@gmail.com"),
@@ -29,4 +29,5 @@ Description: A collection of routines and documentation that allows one to
 License: BSD_3_clause + file LICENSE
 LazyData: true
 LazyDataCompression: gzip
-RoxygenNote: 7.1.1
+Encoding: UTF-8
+RoxygenNote: 7.2.0
